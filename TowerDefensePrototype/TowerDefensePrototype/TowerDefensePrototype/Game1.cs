@@ -300,7 +300,7 @@ namespace TowerDefensePrototype
 
         #region Turret sprites
         Texture2D TurretSelectBox;
-        Dictionary<string, Texture2D> TurretSpriteDictionary = new Dictionary<string, Texture2D>();
+        Dictionary<string, List<Texture2D>> TurretSpriteDictionary = new Dictionary<string, List<Texture2D>>();
 
         public Texture2D MachineGunTurretBarrelGib;
         #endregion
@@ -561,20 +561,49 @@ namespace TowerDefensePrototype
 
         SpecialAbility CurrentSpecialAbility;
 
-        //float CurrentWeatherTime;
         Nullable<Weather> CurrentWeather;
 
         PowerupDelivery PowerupDelivery;
 
         public static List<Drawable> DrawableList = new List<Drawable>();
-
-
+        
         #region For lighting - needs to be moved once lighting all works properly
-
-
         BasicEffect BasicEffect, BasicEffect2, ProjectileBasicEffect, JetBasicEffect;
         Effect ShadowBlurEffect;
 
+        #region For Lighting
+        #region RenderTargets
+        RenderTarget2D EmissiveMap, BlurMap, ColorMap, NormalMap, LightMap, FinalMap, SpecMap, DepthMap, ShadowMap;
+        RenderTarget2D CrepLightMap, CrepColorMap, OcclusionMap;
+        RenderTarget2D Buffer1, Buffer2;
+        #endregion
+
+        VertexPositionColorTexture[] LightVertices;
+        VertexPositionColorTexture[] EmissiveVertices;
+        VertexPositionColorTexture[] CrepVertices;
+
+        List<Light> LightList = new List<Light>();
+        List<CrepuscularLight> CrepLightList = new List<CrepuscularLight>();
+        List<Solid> SolidList = new List<Solid>();
+        List<PolygonShadow> ShadowList = new List<PolygonShadow>();
+        List<myRay> RayList = new List<myRay>();
+        Texture2D CrepuscularLightTexture;
+
+        Color AmbientLight = new Color(0.75f, 0.75f, 0.75f, 1f);
+        #endregion
+
+        #region BlendBlack
+        public static BlendState BlendBlack = new BlendState()
+        {
+            ColorBlendFunction = BlendFunction.Add,
+            ColorSourceBlend = Blend.One,
+            ColorDestinationBlend = Blend.One,
+
+            AlphaBlendFunction = BlendFunction.Add,
+            AlphaSourceBlend = Blend.SourceAlpha,
+            AlphaDestinationBlend = Blend.One
+        };
+        #endregion
         #endregion
 
         Texture2D JetEngineSprite, ExplosionRingSprite, ShieldSprite;
@@ -598,11 +627,7 @@ namespace TowerDefensePrototype
         List<StickyMine> StickyMineList = new List<StickyMine>();
 
         Vector2 GroundRange = new Vector2(672, 896);
-        //List<SmokeTrail> SmokeTrailList = new List<SmokeTrail>();
-
-        //^:b*[^:b#/]+.*$//
-        //Regular expression to count KLOC
-
+        
         List<myRay> ExplosionRays = new List<myRay>();
 
         List<Rope> RopeList = new List<Rope>();
@@ -611,45 +636,8 @@ namespace TowerDefensePrototype
         public LevelDialogue LoadoutMenuDialogue;
 
         LightProjectile CurrentBeam;
-        
-        //StoryDialogueItems Level1Dialogue;
 
         #endregion
-
-
-        #region Commonly re-used emitters. Use ShallowCopy to get.
-
-        #endregion
-        
-        RenderTarget2D EmissiveMap, BlurMap, ColorMap, NormalMap, LightMap, FinalMap, SpecMap, DepthMap, ShadowMap;
-        RenderTarget2D CrepLightMap, CrepColorMap, OcclusionMap;
-        RenderTarget2D Buffer1, Buffer2;
-
-        VertexPositionColorTexture[] LightVertices;
-        VertexPositionColorTexture[] EmissiveVertices;
-        VertexPositionColorTexture[] CrepVertices;
-
-        List<Light> LightList = new List<Light>();
-        List<CrepuscularLight> CrepLightList = new List<CrepuscularLight>();
-        List<Solid> SolidList = new List<Solid>();
-        List<PolygonShadow> ShadowList = new List<PolygonShadow>();
-        List<myRay> RayList = new List<myRay>();
-        Texture2D CrepuscularLightTexture;
-
-        Color AmbientLight = new Color(0.75f, 0.75f, 0.75f, 1f);
-        //Color AmbientLight = new Color(0.15f, 0.15f, 0.15f, 1f);
-
-
-        public static BlendState BlendBlack = new BlendState()
-        {
-            ColorBlendFunction = BlendFunction.Add,
-            ColorSourceBlend = Blend.One,
-            ColorDestinationBlend = Blend.One,
-
-            AlphaBlendFunction = BlendFunction.Add,
-            AlphaSourceBlend = Blend.SourceAlpha,
-            AlphaDestinationBlend = Blend.One
-        };
 
         public Game1()
         {
@@ -2082,21 +2070,22 @@ namespace TowerDefensePrototype
                 string TurretBaseName = "Turrets\\" + turretType.ToString() + "Turret\\" + turretType.ToString() + "TurretBase";
                 string TurretBarrelName = "Turrets\\" + turretType.ToString() + "Turret\\" + turretType.ToString() + "TurretBarrel"; ;
 
-                string TurretBaseTextureName = turretType.ToString() + "TurretBase";
-                string TurretBarrelTextureName = turretType.ToString() + "TurretBarrel";
-                
                 string pat = Directory.GetCurrentDirectory() + "\\Content\\" + TurretBaseName + ".xnb";
+
+                List<Texture2D> BaseBarrelList = new List<Texture2D>();
 
                 if (File.Exists(pat))
                 {
-                    TurretSpriteDictionary.Add(TurretBaseTextureName, Content.Load<Texture2D>(TurretBaseName));
-                    TurretSpriteDictionary.Add(TurretBarrelTextureName, Content.Load<Texture2D>(TurretBarrelName));
+                    BaseBarrelList.Add(Content.Load<Texture2D>(TurretBaseName));
+                    BaseBarrelList.Add(Content.Load<Texture2D>(TurretBarrelName));
                 }
                 else
                 {
-                    TurretSpriteDictionary.Add(TurretBaseTextureName, Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineGunTurretBase"));
-                    TurretSpriteDictionary.Add(TurretBarrelTextureName, Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineGunTurretBarrel"));
+                    BaseBarrelList.Add(Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineGunTurretBase"));
+                    BaseBarrelList.Add(Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineGunTurretBarrel"));
                 }
+
+                TurretSpriteDictionary.Add(turretType.ToString(), BaseBarrelList);
             }
         }
 
@@ -2573,13 +2562,13 @@ namespace TowerDefensePrototype
                     effect.Draw(spriteBatch);
                 }
 
-                foreach (Trap trap in TrapList.Where(Trap => Trap.AmbientShadowTexture != null))
+                foreach (Trap trap in TrapList)
                 {
-                    spriteBatch.Draw(trap.AmbientShadowTexture, new Vector2(trap.DestinationRectangle.Left, trap.DestinationRectangle.Bottom - trap.ZDepth), Color.White);
+                    //spriteBatch.Draw(trap.AmbientShadowTexture, new Vector2(trap.DestinationRectangle.Left, trap.DestinationRectangle.Bottom - trap.ZDepth), Color.White);
 
                     if (trap.DestinationRectangle.Contains(new Point((int)CursorPosition.X, (int)CursorPosition.Y)))
                     {
-                        spriteBatch.Draw(WhiteBlock, BoundingBoxToRect(trap.CollisionBox), Color.DarkGray);
+                        spriteBatch.Draw(WhiteBlock, BoundingBoxToRect(trap.CollisionBox), new Color(200, 200, 200));
                     }
                 }
 
@@ -5190,8 +5179,14 @@ namespace TowerDefensePrototype
                                             switch (newTurret.TurretType)
                                             {
                                                 default:
-                                                    TurretSpriteDictionary.TryGetValue(newTurret.TurretType.ToString() + "TurretBase", out newTurret.TurretBase);
-                                                    TurretSpriteDictionary.TryGetValue(newTurret.TurretType.ToString() + "TurretBarrel", out newTurret.TurretBarrel);
+                                                    List<Texture2D> texList;
+                                                    TurretSpriteDictionary.TryGetValue(newTurret.TurretType.ToString(), out texList);
+
+                                                    newTurret.TurretBase = texList[0];
+                                                    newTurret.TurretBarrel = texList[1];
+
+                                                    //TurretSpriteDictionary.TryGetValue(newTurret.TurretType.ToString(), out newTurret.TurretBase);
+                                                    //TurretSpriteDictionary.TryGetValue(newTurret.TurretType.ToString(), out newTurret.TurretBarrel);
                                                     break;
                                             }
 
@@ -5207,7 +5202,7 @@ namespace TowerDefensePrototype
                                             newTurret.TurretOutline = new UIOutline(new Vector2(newTurret.SelectBox.X, newTurret.SelectBox.Y), new Vector2(newTurret.SelectBox.Width, newTurret.SelectBox.Height), null, newTurret);
                                             newTurret.TurretOutline.OutlineTexture = TurretSelectBox;
 
-                                            newTurret.TurretClickHappened += OnTurretClick;
+                                            newTurret.TurretClickHappened += OnTurretClick; 
                                             TurretList[Index] = newTurret;
                                             AddDrawable(newTurret);
 
