@@ -8,11 +8,11 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace TowerDefensePrototype
 {
-    class VectorSprite : Drawable
+    public class VectorSprite : Drawable
     {
         //Texture2D Texture;
-        Vector2 Size, Origin;
-        float Rotation;
+        public Vector2 Size, Origin;
+        public float Rotation;
         
         //Rectangle DestinationRectangle;
         //Color Color;
@@ -111,7 +111,7 @@ namespace TowerDefensePrototype
 
             effect.World = Matrix.CreateTranslation(new Vector3(-Position.X, -Position.Y, 0)) *
                            Matrix.CreateTranslation(new Vector3(-Origin.X, -Origin.Y, 0)) *
-                           Matrix.CreateRotationZ(Rotation) *
+                           Matrix.CreateRotationZ(MathHelper.ToRadians(Rotation)) *
                            Matrix.CreateTranslation(new Vector3(Position.X, Position.Y, 0));
             base.Draw(graphics, effect);
 

@@ -32,20 +32,20 @@ namespace TowerDefensePrototype
                     //new RifleMan(new Vector2(2050, 600), new Vector2(700, 850)),
                     ////new RifleMan(new Vector2(2050, 600), new Vector2(700, 850)),
                     ////3500,
-                    //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                    //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                    //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                    //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                    //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                    //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                    //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                    //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                    //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                    //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                    //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                    //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                    //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                    //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
                     //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
                     //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
 
@@ -63,9 +63,10 @@ namespace TowerDefensePrototype
                     //5000,
 
                     //new HealDrone(new Vector2(2050, 600), new Vector2(700, 850)),
+                    //new HealDrone(new Vector2(2050, 600), new Vector2(700, 850)),
                     //new HealDrone(new Vector2(2050, 600), new Vector2(700, 850))//,
 
-                    new DropShip(new Vector2(2050, 600), new Vector2(700, 850))
+                    new GunShip(new Vector2(2050, 600), new Vector2(700, 850))
                     //new DropShip(new Vector2(2050, 600), new Vector2(700, 850))
                  );
 

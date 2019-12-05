@@ -333,7 +333,7 @@ namespace TowerDefensePrototype
                                TankAnimations, SpiderAnimations, SlimeAnimations, SuicideBomberAnimations,
                                FireElementalAnimations, TestInvaderAnimations, StationaryCannonAnimations,
                                HealDroneAnimations, JumpManAnimations, RifleManAnimations, ShieldGeneratorAnimations,
-                               HarpoonCannonAnimations, DropShipAnimations;
+                               HarpoonCannonAnimations, DropShipAnimations, GunShipAnimations;
 
         //HEAVYRANGED_INVADER A **barrel animation declarations here**
         public InvaderAnimation StationaryCannonBarrelAnimation, HarpoonCannonBarrelAnimation;
@@ -410,7 +410,8 @@ namespace TowerDefensePrototype
                          GasGrenadeProjectileSprite,
                          FireGrenadeProjectileSprite,
                          HarpoonProjectileSprite,
-                         StickyMineProjectileSprite;
+                         StickyMineProjectileSprite,
+                         DropMissileProjectileSprite;
 
         #endregion
 
@@ -603,7 +604,7 @@ namespace TowerDefensePrototype
         StoryDialogueBox StoryDialogueBox;
         StoryDialogue StoryDialogue;
 
-        public List<Drawable> DrawableList = new List<Drawable>();
+        public static List<Drawable> DrawableList = new List<Drawable>();
 
 
         #region For lighting - needs to be moved once lighting all works properly
@@ -622,13 +623,12 @@ namespace TowerDefensePrototype
 
         List<TutorialBox> TutorialBoxList = new List<TutorialBox>();
 
-        Texture2D ShieldBoundingSphere;
+        Texture2D ShieldBoundingSphere, RopeTexture1;
 
         AnimatedSprite ThinkingAnimation;
         ResourceCounter ResourceCounter;
 
         List<AmmoBelt> AmmoBeltList = new List<AmmoBelt>();
-        List<JetEngine> JetEngineList = new List<JetEngine>();
         List<ExplosionEffect> ExplosionEffectList = new List<ExplosionEffect>();
         List<Shield> ShieldList = new List<Shield>();
         List<ToonLightning> ToonLightningList = new List<ToonLightning>();
@@ -644,7 +644,8 @@ namespace TowerDefensePrototype
         List<myRay> ExplosionRays = new List<myRay>();
 
         List<Rope> RopeList = new List<Rope>();
-        
+        List<JetEngine> JetEngineList = new List<JetEngine>();
+
         #endregion
 
         #region Commonly re-used emitters. Use ShallowCopy to get.
@@ -1171,6 +1172,8 @@ namespace TowerDefensePrototype
 
                 #endregion
 
+                RopeTexture1 = Content.Load<Texture2D>("RopeTexture");
+
                 MysteryEmployerTexture = Content.Load<Texture2D>("MysteryEmployer");
                 StoryDialogueBox = new StoryDialogueBox(new Vector2(-400, 64), new Vector2(0, 64), new Vector2(500, 180), MysteryEmployerTexture, RobotoRegular20_0, StoryDialogue, CurrentProfile.Name);
 
@@ -1645,6 +1648,39 @@ namespace TowerDefensePrototype
 
             #endregion
 
+
+            #region Gun Ship Animations
+            GunShipAnimations = new List<InvaderAnimation>()
+            {
+                new InvaderAnimation()
+                {
+                    CurrentInvaderState = AnimationState_Invader.Walk,
+                    Texture = Content.Load<Texture2D>("Invaders/GunShip/GunShipTexture"),
+                    Animated = false,
+                    CurrentFrame = 0,
+                    FrameDelay = 150,
+                    Looping = false,
+                    TotalFrames = 1
+                },
+
+                new InvaderAnimation()
+                {
+                    CurrentInvaderState = AnimationState_Invader.Stand,
+                    Texture = Content.Load<Texture2D>("Invaders/GunShip/GunShipTexture"),
+                    Animated = false,
+                    CurrentFrame = 0,
+                    FrameDelay = 150,
+                    Looping = false,
+                    TotalFrames = 1
+                }
+            };
+
+            foreach (InvaderAnimation animation in GunShipAnimations)
+            {
+                animation.GetFrameSize();
+            }
+
+            #endregion
             //NEW_INVADER D **if invaders aren't showing up, make sure you added this**
             //foreach (InvaderAnimation animation in INVADERANIMATIONLIST)
             //{
@@ -2275,8 +2311,14 @@ namespace TowerDefensePrototype
 
                     if (drawable.GetType() == typeof(JetEngine))
                     {
-                        drawable.Draw(GraphicsDevice, JetBasicEffect, ShadowBlurEffect, spriteBatch);
+                        drawable.Draw(GraphicsDevice, BasicEffect);
+                        (drawable as JetEngine).JetEmitter.Draw(GraphicsDevice, ParticleEffect);
                     }
+
+                    //if (drawable.GetType() == typeof(JetEngine))
+                    //{
+                    //    drawable.Draw(GraphicsDevice, JetBasicEffect, ShadowBlurEffect, spriteBatch);
+                    //}
                     
                     if (drawable.GetType() == typeof(Shield))
                     {
@@ -3342,10 +3384,10 @@ namespace TowerDefensePrototype
                         //    ResourceCounter.AddChange(diff);
                         //}
 
-                        foreach (JetEngine engine in JetEngineList)
-                        {
-                            engine.Update(gameTime);
-                        }
+                        //foreach (JetEngine engine in JetEngineList)
+                        //{
+                        //    engine.Update(gameTime);
+                        //}
 
                         foreach (Rope rope in RopeList)
                         {
@@ -3357,6 +3399,10 @@ namespace TowerDefensePrototype
                             }
                         }
 
+                        foreach (JetEngine engine in JetEngineList)
+                        {
+                            engine.Update(gameTime);
+                        }
                         
                         //ToonLightningList.RemoveAll(Lightning => Lightning.Active == false);
 
@@ -5552,7 +5598,7 @@ namespace TowerDefensePrototype
                                 HeavyProjectileList.Add(heavyProjectile);
                                 
 
-                                Rope rope = new Rope(heavyRangedInvader.BarrelEnd, heavyProjectile);
+                                Rope rope = new Rope(heavyRangedInvader.BarrelEnd, heavyProjectile, heavyRangedInvader.BoundingBox.Max.Y);
                                 rope.DrawDepth = invader.DrawDepth - (1f / 1080f);
                                 rope.LoadContent(Content);
                                 RopeList.Add(rope);
@@ -5561,6 +5607,20 @@ namespace TowerDefensePrototype
                                 AddDrawable(heavyProjectile, rope);
                             }
                             break;
+                        #endregion
+
+                        #region GunShip
+                        case InvaderType.GunShip:
+                            {
+                                HeavyProjectile heavyProjectile = new DropMissile(heavyRangedInvader, CannonBallProjectileSprite,
+                                    BallParticle, new Vector2(heavyRangedInvader.Center.X, heavyRangedInvader.BoundingBox.Max.Y - 80),
+                                    0, 0, 0.52f, 80, 100, new Vector2(690, 930));
+                                heavyProjectile.Update(gameTime);
+                                HeavyProjectileList.Add(heavyProjectile);
+
+                                AddDrawable(heavyProjectile);
+                            }
+                            break; 
                         #endregion
                     }
                 }
@@ -6544,7 +6604,7 @@ namespace TowerDefensePrototype
                         #region Stationary Cannon
                         case InvaderType.StationaryCannon:
                             {
-
+                                DeactivateProjectile(heavyProjectile);
                             }
                             break;
                         #endregion
@@ -6556,6 +6616,12 @@ namespace TowerDefensePrototype
                             }
                             break;
                         #endregion
+
+                        case InvaderType.GunShip:
+                            {
+                                DeactivateProjectile(heavyProjectile);
+                            }
+                            break;
                     }
 
                     //DeactivateProjectile(heavyProjectile);
@@ -9438,13 +9504,32 @@ namespace TowerDefensePrototype
                                         #region HealDrone
                                         case InvaderType.HealDrone:
                                             {
-                                                JetEngine newEngine = new JetEngine(JetEngineSprite)
+                                                Emitter jetEmitter = new Emitter(BallParticle, nextInvader.Position, new Vector2(90f, 90f), 
+                                                    new Vector2(6.8f, 6.8f), new Vector2(150, 150), 1f, true, 
+                                                    new Vector2(0f, 360f), new Vector2(-2f, 2f), new Vector2(1f, 1f), 
+                                                    new Color(255, 128, 0, 63), new Color(0, 0, 255, 255), 0f, 0f, 16f, 
+                                                    1, false, new Vector2(0f, 720f), true, 0, false, false, 
+                                                    new Vector2(0f, 0f), new Vector2(0f, 0f), 0f, false, new Vector2(0.045f, 0.045f), 
+                                                    false, false, 0f, false, false, false, null);
+
+                                                JetEngine newEngine = new JetEngine(new Vector2(100, 100), new Vector2(JetEngineSprite.Width, JetEngineSprite.Height), JetEngineSprite, Color.White) 
                                                 {
-                                                    Tether = nextInvader
+                                                    JetEmitter = jetEmitter,
+                                                    Tether = nextInvader,
+                                                    TetherOffset = new Vector2(42, 30),
+                                                    Origin = new Vector2(JetEngineSprite.Width/2, 0)
                                                 };
 
                                                 JetEngineList.Add(newEngine);
                                                 AddDrawable(newEngine);
+
+                                                //JetEngine newEngine = new JetEngine(JetEngineSprite)
+                                                //{
+                                                //    Tether = nextInvader
+                                                //};
+
+                                                //JetEngineList.Add(newEngine);
+                                                //AddDrawable(newEngine);
                                             }
                                             break; 
                                         #endregion
@@ -9469,6 +9554,7 @@ namespace TowerDefensePrototype
                                             {
                                                 (nextInvader as DropShip).DoorTexture = DropShipDoorTexture;
                                                 (nextInvader as DropShip).VapourTexture = ToonSmoke3;
+                                                (nextInvader as DropShip).RopeTexture = RopeTexture1;
 
                                             }
                                             break; 
@@ -10123,7 +10209,7 @@ namespace TowerDefensePrototype
         }
 
 
-        public void AddDrawable(params Drawable[] newDrawable)
+        public static void AddDrawable(params Drawable[] newDrawable)
         {
             //AddDrawable(newDrawable)
 
@@ -10148,6 +10234,7 @@ namespace TowerDefensePrototype
             //}
             //--*********************************************************************--
 
+            
             DrawableList.AddRange(newDrawable);
             DrawableList.Sort((x, y) => x.DrawDepth.CompareTo(y.DrawDepth));
 

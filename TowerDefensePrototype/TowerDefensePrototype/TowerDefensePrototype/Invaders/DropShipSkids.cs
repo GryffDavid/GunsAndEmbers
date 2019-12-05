@@ -12,15 +12,14 @@ namespace TowerDefensePrototype
     {
         public enum SkidState { Closed, Opening, Open, Closing };
         public SkidState CurrentSkidState = SkidState.Closed;
+        VectorSprite Skid, Piston, Strut;
+
+        float SkidRotation, PistonRotation, StrutRotation;
+
 
         public DropShipSkid()
         {
-
-        }
-
-        public void LoadContent(ContentManager content)
-        {
-
+            
         }
 
         public void Update(GameTime gameTime)

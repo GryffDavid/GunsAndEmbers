@@ -93,10 +93,10 @@ namespace TowerDefensePrototype
             indices[5] = 0;
         }
 
-        public virtual void Update()
-        {
-            DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, (int)Texture.Width, (int)Texture.Height);
-        }
+        //public virtual void Update()
+        //{
+        //    DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, (int)Texture.Width, (int)Texture.Height);
+        //}
 
         public virtual void Draw(SpriteBatch spriteBatch)
         {

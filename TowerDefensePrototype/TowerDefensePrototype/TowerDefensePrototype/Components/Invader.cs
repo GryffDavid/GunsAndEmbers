@@ -25,7 +25,7 @@ namespace TowerDefensePrototype
     {
         Soldier,
         BatteringRam,
-        Airship,
+        GunShip,
         Archer,
         Tank,
         Spider,

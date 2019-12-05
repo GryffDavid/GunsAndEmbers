@@ -15,10 +15,11 @@ namespace TowerDefensePrototype
 
         public override float OriginalSpeed { get { return 1.8f; } }
 
-        public Texture2D DoorTexture, VapourTexture;
+        public Texture2D DoorTexture, VapourTexture, RopeTexture;
         public DropShipDoor LeftDoor, RightDoor;
 
         Vector2 HoverRange = new Vector2(590, 610);
+        List<Rope> RopeList = new List<Rope>();
 
         //Drop ship needs to arrive from top right corner, but not move in normally like the other invaders
         //instead it should pull in at an angle with its decent like a helicopter getting ready to land,
@@ -97,10 +98,30 @@ namespace TowerDefensePrototype
                 #region DropOff
                 case SpecificBehaviour.DropOff:
                     {
+                        if (RopeList.Count == 0)
+                        {
+                            for (int i = 0; i < 6; i++)
+                            {
+                                float maxY = Random.Next(760, 900);
+                                Rope rope = new Rope(RightDoor.Position - (i * new Vector2(36, 0)), null, maxY);
+                                rope.DrawDepth = maxY / 1080.0f;
+                                rope.StickTexture = RopeTexture;
+                                RopeList.Add(rope);
+                                rope.Sticks.RemoveAt(rope.Sticks.Count - 1);
+                                Game1.AddDrawable(rope);
+                                //DrawableList.Add(rope);
+                            }
+                        }
+
                         if (LeftDoor.CurrentState == DropShipDoor.DoorState.Closing &&
                             RightDoor.CurrentState == DropShipDoor.DoorState.Closing)
                         {
                             DropShipBehaviour = SpecificBehaviour.Retreat;
+
+                            foreach (Rope rope in RopeList)
+                            {
+                                rope.Sticks.RemoveAt(0);
+                            }
                         }
                     }
                     break;
@@ -109,11 +130,26 @@ namespace TowerDefensePrototype
                 #region Retreat
                 case SpecificBehaviour.Retreat:
                     {
-                        Velocity.X = -3f;
-                        Velocity.Y = -0.5f;
+                        if (Velocity.X > -3f)
+                        {
+                            Velocity.X -= 0.02f;
+                        }
+
+                        //Velocity.X = -3f;
+
+                        if (Velocity.Y > -0.5f)
+                        {
+                            Velocity.Y -= 0.001f;
+                            //Velocity.Y = -0.5f;
+                        }
                     }
                     break;
                 #endregion
+            }
+
+            foreach (Rope rope in RopeList)
+            {
+                rope.Update(gameTime);
             }
 
             base.Update(gameTime, cursorPosition);
@@ -150,9 +186,14 @@ namespace TowerDefensePrototype
             //    Matrix.CreateRotationZ(rot) *
             //    Matrix.CreateTranslation(new Vector3(Position.X + 450, Position.Y + 150, 0));
             base.Draw(graphics, effect);
-
+            
             LeftDoor.Draw(graphics, effect);
             RightDoor.Draw(graphics, effect);
+
+            //foreach (Rope rope in RopeList)
+            //{
+            //    rope.Draw(graphics, effect);
+            //}
 
             //effect.World = world;
         }

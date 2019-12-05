@@ -76,7 +76,7 @@ namespace TowerDefensePrototype
 
                         CurrentTime += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
 
-                        if (CurrentTime > 1000)
+                        if (CurrentTime > 5000)
                         {
                             CurrentTime = 0;
                             CurrentState = DoorState.Closing;

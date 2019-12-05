@@ -12,6 +12,7 @@ namespace TowerDefensePrototype
     class Rope : Drawable
     {
         public Texture2D StickTexture;
+        public Texture2D FirstStickTexture, EndStickTexture;
         float Bounce = 0.25f;
         float Gravity = 0.5f;
         float Friction = 0.95f;
@@ -40,19 +41,41 @@ namespace TowerDefensePrototype
         public HeavyProjectile TetherProjectile;
         public Vector2 StartPoint, EndPoint;
 
-        public Rope(Vector2 startPoint, object tether)
+        //public float MaxY;
+        public static Random Random = new Random();
+
+        public Rope(Vector2 startPoint, object tether, float maxY)
         {
+            MaxY = maxY;
             StartPoint = startPoint;
 
             if (tether as HeavyProjectile != null)
+            {
                 TetherProjectile = (HeavyProjectile)tether;
+                //MaxY = StartPoint.Y + 40;
+            }
+            //else
+            //{
+            //    MaxY = 900;
+            //}
+
+            Vector2 tempP;
+
+            if (TetherProjectile != null)
+            {
+                tempP = StartPoint;
+            }
+            else
+            {
+                tempP = StartPoint + new Vector2(Random.Next(-4, 4), Random.Next(-4, 0));
+            }
 
             for (int i = 0; i < Segments; i++)
             {
                 Nodes.Add(new Node()
                 {
                     CurrentPosition = StartPoint,
-                    PreviousPosition = StartPoint
+                    PreviousPosition = tempP                    
                 });
             }
 
@@ -65,6 +88,7 @@ namespace TowerDefensePrototype
                     Length = 10
                 });
             }
+
 
         }
 
@@ -82,13 +106,17 @@ namespace TowerDefensePrototype
                 Nodes[0].CurrentPosition = TetherProjectile.BasePosition;
                 Nodes[0].Tether = true;
             }
+            else
+            {
+                Nodes[0].CurrentPosition = StartPoint + new Vector2(1, 0);
+                Nodes[0].Tether = true;
+            }
 
             if ((Segments - 1) > 0)
             {
                 Nodes[Segments - 1].CurrentPosition = StartPoint;
                 Nodes[Segments - 1].Tether = true;
             }
-
 
             foreach (Node node in Nodes)
             {
@@ -112,9 +140,9 @@ namespace TowerDefensePrototype
                         node.PreviousPosition.X = (node.CurrentPosition.X + node.Velocity.X * Bounce);
                     }
 
-                    if (node.CurrentPosition.Y > StartPoint.Y + 40)
+                    if (node.CurrentPosition.Y > MaxY)
                     {
-                        node.CurrentPosition.Y = StartPoint.Y + 40;
+                        node.CurrentPosition.Y = MaxY;
                         node.PreviousPosition.Y = (node.CurrentPosition.Y + node.Velocity.Y * Bounce);
                     }
 

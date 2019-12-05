@@ -126,14 +126,14 @@
     <Compile Include="Invaders\DropShipSkids.cs" />
     <Compile Include="Invaders\HeavyRanged\HarpoonCannon.cs" />
     <Compile Include="Invaders\ShieldGenerator.cs" />
-    <Compile Include="ParticleSystem\PropEngine.cs" />
     <Compile Include="ParticleSystem\Corpse.cs" />
     <Compile Include="ParticleSystem\ExplosionEffect.cs" />
     <Compile Include="ParticleSystem\JetEngine.cs" />
-    <Compile Include="ParticleSystem\JetTrail.cs" />
+    <Compile Include="ParticleSystem\Pipe.cs" />
     <Compile Include="ParticleSystem\Rope.cs" />
     <Compile Include="ParticleSystem\SmokeTrail.cs" />
     <Compile Include="ParticleSystem\ToonLightning.cs" />
+    <Compile Include="Projectiles\DropMissile.cs" />
     <Compile Include="Projectiles\Grenades\StickyMineProjectile.cs" />
     <Compile Include="Projectiles\Heavy\HarpoonProjectile.cs" />
     <Compile Include="Projectiles\StickyMine.cs" />
@@ -228,7 +228,7 @@
     <Compile Include="UIComponents\HorizontalBar.cs" />
     <Compile Include="Basics\Camera.cs" />
     <Compile Include="Traps\DefenseTraps\IceTrap.cs" />
-    <Compile Include="Invaders\Airborne\Airship.cs" />
+    <Compile Include="Invaders\Airborne\GunShip.cs" />
     <Compile Include="Traps\OffenseTraps\SawBladeTrap.cs" />
     <Compile Include="Projectiles\Heavy\AcidProjectile.cs" />
     <Compile Include="Projectiles\Heavy\Arrow.cs" />

@@ -25,12 +25,15 @@ namespace TowerDefensePrototype
         GasGrenade,
         FireGrenade,
         Harpoon,
-        StickyMine
+        StickyMine,
+        DropMissile
     }; 
     #endregion
     
     public abstract class HeavyProjectile : Drawable
     {
+        
+
         #region For Verlet Physics
         public class Stick
         {
