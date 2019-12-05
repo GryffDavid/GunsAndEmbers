@@ -348,15 +348,17 @@ namespace TowerDefensePrototype
         public Color GetColor()
         {
             Color[] retrievedColor = new Color[1];
+            Rectangle Rect;
+            Rect =  new Rectangle((int)((1 / Scale.X) * (Mouse.GetState().X - Position.X)), (int)((1 / Scale.Y) * (Mouse.GetState().Y - Position.Y)), 1, 1);
 
             if (CurrentMousePosition == MousePosition.Inside && 
                 new Rectangle(0, 0, 1280, 720).Contains(new Point(Mouse.GetState().X, Mouse.GetState().Y)))
             {
-                if (DestinationRectangle.Contains(new Point(Mouse.GetState().X, Mouse.GetState().Y)))
+                if (DestinationRectangle.Contains(new Point(Mouse.GetState().X, Mouse.GetState().Y)) && Rect != null && Rect.Width == 1 && Rect.Height == 1)
                 {
                     //Vector2 pos = new Vector2((1 / Scale.X) * (Mouse.GetState().X - Position.X), (1 / Scale.Y) * (Mouse.GetState().Y - Position.Y));
                     //Rectangle testRect = new Rectangle((int)((1 / Scale.X) * (Mouse.GetState().X - Position.X)), (int)((1 / Scale.Y) * (Mouse.GetState().Y - Position.Y)), 1, 1);
-                    ButtonStrip.GetData<Color>(0, new Rectangle((int)((1 / Scale.X) * (Mouse.GetState().X - Position.X)), (int)((1 / Scale.Y) * (Mouse.GetState().Y - Position.Y)), 1, 1), retrievedColor, 0, 1);
+                    ButtonStrip.GetData<Color>(0,Rect, retrievedColor, 0, 1);
                 }
             }
 

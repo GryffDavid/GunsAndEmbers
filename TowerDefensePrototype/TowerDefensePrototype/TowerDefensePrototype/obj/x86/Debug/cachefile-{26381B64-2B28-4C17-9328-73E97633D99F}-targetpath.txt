@@ -8,14 +8,11 @@ Content\Cursors\DefaultCursor.xnb
 Content\Particles\Splodge.xnb
 Content\WhiteBlock.xnb
 Content\Particles\FireParticle.xnb
-Content\Particles\Shell.xnb
 Content\Icons\FireIcon.xnb
 Content\Icons\WallIcon.xnb
 Content\Icons\SpikesIcon.xnb
 Content\Projectiles\CannonBall.xnb
 Content\Particles\Smoke.xnb
-Content\Turrets\MachineTurretBarrel.xnb
-Content\Turrets\MachineTurretBase.xnb
 Content\Turrets\FlameThrowerBase.xnb
 Content\Turrets\FlameThrowerBarrel.xnb
 Content\Turrets\CannonTurretBarrel.xnb
@@ -54,10 +51,7 @@ Content\Buttons\LeftArrow.xnb
 Content\Buttons\RightArrow.xnb
 Content\Particles\BigShell.xnb
 Content\Projectiles\CannonRound.xnb
-Content\Turrets\MachineTurretBarrel2.xnb
 Content\TrapDetBlock.xnb
-Content\Turrets\MachineTurretAnimation3.xnb
-Content\Turrets\MachineTurretAnimation4.xnb
 Content\Turrets\CannonAnimation1.xnb
 Content\Particles\HealthParticle.xnb
 Content\Particles\Cap.xnb
@@ -76,6 +70,9 @@ Content\Particles\Coin.xnb
 Content\HealthBar.xnb
 Content\ShieldBar.xnb
 Content\Shadow.xnb
+Content\Turrets\MachineTurretBarrel.xnb
+Content\Turrets\MachineTurretBase.xnb
+Content\Particles\MachineShell.xnb
 Content\Fonts\BoxFont1.xnb
 Content\Fonts\HUDFont.xnb
 Content\Fonts\ButtonFont.xnb

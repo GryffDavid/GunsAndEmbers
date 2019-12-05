@@ -26,7 +26,7 @@ namespace TowerDefensePrototype
 
             CurrentAnimation = new Animation()
             {
-                AssetName = "Turrets/MachineTurretAnimation4",
+                AssetName = "Turrets/MachineTurretBarrel",
                 TotalFrames = 6
             };            
         }
@@ -35,15 +35,15 @@ namespace TowerDefensePrototype
         {
             if (Active == true)
             {
-                BaseRectangle = new Rectangle((int)Position.X+20, (int)Position.Y+6, TurretBase.Width, TurretBase.Height);
-                BarrelRectangle = new Rectangle((int)Position.X+20, (int)Position.Y+6, TurretBarrel.Width/CurrentAnimation.TotalFrames, TurretBarrel.Height);
+                BaseRectangle = new Rectangle((int)Position.X, (int)Position.Y, TurretBase.Width, TurretBase.Height);
+                BarrelRectangle = new Rectangle((int)Position.X, (int)Position.Y, TurretBarrel.Width/CurrentAnimation.TotalFrames, TurretBarrel.Height);
 
-                BarrelPivot = new Vector2(20, TurretBarrel.Height / 2);
-                BasePivot = new Vector2(TurretBase.Width / 2, TurretBase.Height / 2-10);
+                BarrelPivot = new Vector2(32, 32);
+                BasePivot = new Vector2(40, 5);
 
-                spriteBatch.Draw(TurretBarrel, BarrelRectangle, SourceRectangle, Color, Rotation, BarrelPivot, SpriteEffects.None, 0.99f);
+                spriteBatch.Draw(TurretBarrel, BarrelRectangle, SourceRectangle, Color, Rotation, BarrelPivot, SpriteEffects.None, 0.69f);
 
-                spriteBatch.Draw(TurretBase, BaseRectangle, null, Color, 0, BasePivot, SpriteEffects.None, 1f);
+                spriteBatch.Draw(TurretBase, BaseRectangle, null, Color, 0, BasePivot, SpriteEffects.None, 0.7f);
             }
         }
     }

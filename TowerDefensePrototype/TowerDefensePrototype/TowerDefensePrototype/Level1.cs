@@ -14,42 +14,18 @@ namespace TowerDefensePrototype
             WorldType = "Basic";
             WaveList = new List<Wave>();
 
-            Wave Wave1 = new Wave(true, 500,
+            Wave Wave1 = new Wave(false, 500, 10000,
+                new FireElemental(new Vector2(1300, 400)),
+                new FireElemental(new Vector2(1300, 400)),
+                new FireElemental(new Vector2(1300, 400)));
+
+            Wave Wave2 = new Wave(false, 500, 6000,
                 new Soldier(new Vector2(1300, 400)),
-                new Spider(new Vector2(1300, 400)),
+                new Soldier(new Vector2(1300, 400)),
                 new Soldier(new Vector2(1300, 400)));
-
-            Wave Wave2 = new Wave(false, 4000,
-               new Tank(new Vector2(1300, 400)),
-               new Tank(new Vector2(1300, 400)));
-
-            Wave Wave3 = new Wave(false, 700,
-               new SuicideBomber(new Vector2(1300, 400)),
-               new SuicideBomber(new Vector2(1300, 400)),
-               new SuicideBomber(new Vector2(1300, 400)));
-
-            Wave Wave4 = new Wave(false, 700,
-               new Soldier(new Vector2(1300, 400)),
-               new Soldier(new Vector2(1300, 400)),
-               new Soldier(new Vector2(1300, 400)),
-               new Soldier(new Vector2(1300, 400)),
-               new Soldier(new Vector2(1300, 400)),
-               new Soldier(new Vector2(1300, 400)),
-               new Soldier(new Vector2(1300, 400)),
-               new Soldier(new Vector2(1300, 400)),
-               new Soldier(new Vector2(1300, 400)),
-               new Soldier(new Vector2(1300, 400)));
-
-            Wave Wave5 = new Wave(false, 700,
-               new SuicideBomber(new Vector2(1300, 400)),
-               new SuicideBomber(new Vector2(1300, 400)),
-               new SuicideBomber(new Vector2(1300, 400)));
 
             WaveList.Add(Wave1);
             WaveList.Add(Wave2);
-            WaveList.Add(Wave3);
-            WaveList.Add(Wave4);
-            WaveList.Add(Wave5);
         }
     }
 }

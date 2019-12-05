@@ -59,12 +59,6 @@ namespace TowerDefensePrototype
         {
             if (Active == true)
             {
-                if (ParticleEmitter != null)
-                {
-                    ParticleEmitter.Update(gameTime);
-                    ParticleEmitter.Position = new Vector2(DestinationRectangle.Center.X, DestinationRectangle.Bottom);
-                }
-
                 ResourceValue = Random.Next((int)ResourceMinMax.X, (int)ResourceMinMax.Y);
 
                 VulnerableToTurret = true;

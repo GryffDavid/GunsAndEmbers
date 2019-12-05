@@ -37,6 +37,14 @@ namespace TowerDefensePrototype
 
         public override void Update(GameTime gameTime)
         {
+            if (Active == true)
+            {
+                if (ParticleEmitter != null)
+                {
+                    ParticleEmitter.Update(gameTime);
+                    ParticleEmitter.Position = new Vector2(DestinationRectangle.Center.X, DestinationRectangle.Bottom);
+                }
+            }
             base.Update(gameTime);
         }
 

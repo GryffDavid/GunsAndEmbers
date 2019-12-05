@@ -31,7 +31,7 @@ namespace TowerDefensePrototype
         public Animation CurrentAnimation;
         public double CurrentFrameTime;
         public int CurrentFrame;
-        public Vector2 FrameSize;
+        public Vector2 FrameSize, BarrelEnd;
         public bool Animated, Looping;
 
         public void LoadContent(ContentManager contentManager)
@@ -108,6 +108,12 @@ namespace TowerDefensePrototype
                     Direction.Normalize();
 
                     Rotation = (float)Math.Atan2((double)Direction.Y, (double)Direction.X);
+
+                    Vector2 TestVector = new Vector2(BarrelRectangle.X + (float)Math.Cos(Rotation - 90) * (BarrelPivot.Y - BarrelRectangle.Height / 2),
+                                                                BarrelRectangle.Y + (float)Math.Sin(Rotation - 90) * (BarrelPivot.Y - BarrelRectangle.Height / 2));
+
+                    BarrelEnd = new Vector2(TestVector.X + (float)Math.Cos(Rotation) * (BarrelRectangle.Width - BarrelPivot.X),
+                                            TestVector.Y + (float)Math.Sin(Rotation) * (BarrelRectangle.Width - BarrelPivot.X));
 
                     PreviousMouseState = CurrentMouseState;
                 }
