@@ -113,12 +113,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Basics\Animation.cs" />
     <Compile Include="Basics\InvaderAnimation.cs" />
     <Compile Include="Basics\Ballistics.cs" />
     <Compile Include="Basics\BulletTrail.cs" />
     <Compile Include="Basics\Gibs.cs" />
     <Compile Include="Basics\Powerup.cs" />
     <Compile Include="Basics\StoryDialogueBox.cs" />
+    <Compile Include="Basics\TrapAnimation.cs" />
     <Compile Include="Basics\VerletProjectile.cs" />
     <Compile Include="Basics\Drawable.cs" />
     <Compile Include="Invaders\Airborne\HealerDrone.cs" />
@@ -185,6 +187,7 @@
     <Compile Include="Turrets\Beam\FreezeTurret.cs" />
     <Compile Include="Turrets\Heavy\FelCannonTurret.cs" />
     <Compile Include="Turrets\Grenade\GrenadeTurret.cs" />
+    <Compile Include="Upgrades\GatlingDamage15.cs" />
     <Compile Include="Upgrades\GatlingSpeed50.cs" />
     <Compile Include="Invaders\HeavyRanged\Archer.cs" />
     <Compile Include="Invaders\HeavyRanged\FireElemental.cs" />
@@ -237,7 +240,6 @@
     <Compile Include="Turrets\Heavy\CannonTurret.cs" />
     <Compile Include="Turrets\Heavy\FlameThrowerTurret.cs" />
     <Compile Include="Turrets\Light\LightningTurret.cs" />
-    <Compile Include="Upgrades\GatlingDamage15.cs" />
     <Compile Include="Basics\Wave.cs" />
     <Compile Include="Basics\WeaponBox.cs" />
     <Compile Include="Basics\Weapon.cs" />

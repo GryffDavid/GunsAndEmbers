@@ -19,12 +19,13 @@ namespace TowerDefensePrototype
         public float Power;
         public int LightDecay;
         public bool Active;
-        public float Depth;
+        public float Depth, CurrentTime, MaxTime;
+        public object Tether;
 
         public Light()
         {
-            Range = 500;
-            Radius = 250;
+            //Range = 500;
+            //Radius = 250;
         }
 
         public void Update()

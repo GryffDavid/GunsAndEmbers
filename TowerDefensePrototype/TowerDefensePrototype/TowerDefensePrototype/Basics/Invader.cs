@@ -57,8 +57,11 @@ namespace TowerDefensePrototype
 
                 if (AnimationList != null)
                 {
-                    CurrentAnimation = AnimationList.Find(Animation => Animation.CurrentInvaderState == value);
-                    CurrentAnimation.CurrentFrame = Random.Next(0, CurrentAnimation.TotalFrames);
+                    CurrentAnimation = AnimationList.Find(Animation => Animation.CurrentInvaderState == value);   
+                 
+                    if (CurrentAnimation.CurrentInvaderState == InvaderState.Stand)
+                        CurrentAnimation.CurrentFrame = Random.Next(0, CurrentAnimation.TotalFrames);
+
                     CurrentAnimation.CurrentFrameDelay = 0;
                 }
             }
@@ -311,11 +314,11 @@ namespace TowerDefensePrototype
                                                          (int)(CurrentAnimation.FrameSize.X * Scale.X),
                                                          (int)(CurrentAnimation.FrameSize.Y * Scale.Y));
 
-                    BoundingBox = new BoundingBox(new Vector3(Position.X, Position.Y, 0),
-                                                  new Vector3(Position.X + (CurrentAnimation.FrameSize.X * Scale.X),
-                                                              Position.Y + (CurrentAnimation.FrameSize.Y * Scale.Y), 0));
+                    BoundingBox = new BoundingBox(new Vector3(Position.X + 6, Position.Y + 6, 0),
+                                                  new Vector3(Position.X + 6 + ((CurrentAnimation.FrameSize.X - 6) * Scale.X),
+                                                              Position.Y + 6 + ((CurrentAnimation.FrameSize.Y - 6) * Scale.Y), 0));
 
-                    Center = new Vector2(DestinationRectangle.Center.X, DestinationRectangle.Center.Y);
+                    Center = new Vector2(DestinationRectangle.Center.X, DestinationRectangle.Center.Y + 6);
                 }
                 
                 if (HitByBeam == true)
@@ -332,6 +335,8 @@ namespace TowerDefensePrototype
                 {
                     CurrentHealDelay += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
                 }
+
+                ShadowPosition = new Vector2(Position.X, Position.Y + CurrentAnimation.FrameSize.Y);
 
                 Bottom = DestinationRectangle.Bottom;
                 DrawDepth = Bottom / 1080.0f;
@@ -360,10 +365,88 @@ namespace TowerDefensePrototype
                     //There should be a limit on the number of shadows drawn. Could be set in the options menu by the player
                     //To help with performance
                     #region Draw the shadows
+                    foreach (Light light in lightList)
+                    {
+                        float lightDistance = Vector2.Distance(ShadowPosition, new Vector2(light.Position.X, light.Position.Y));
 
+                        if (lightDistance < light.Radius)
+                        {
+                            Vector2 direction = ShadowPosition - new Vector2(light.Position.X, light.Position.Y);
+                            direction.Normalize();
+
+                            heightMod = lightDistance / (light.Range / 10);
+                            height = MathHelper.Clamp(CurrentAnimation.FrameSize.Y * heightMod, 16, 64);
+                            float width = MathHelper.Clamp(CurrentAnimation.FrameSize.Y * heightMod, 16, 92);
+
+                            shadowColor = Color.Lerp(Color.Lerp(Color.Black, Color.Transparent, 0f), Color.Transparent, lightDistance / light.Radius);
+                            foreach (Light light3 in lightList.FindAll(Light2 => Vector2.Distance(ShadowPosition, new Vector2(Light2.Position.X, Light2.Position.Y)) < light.Radius && Light2 != light).ToList())
+                            {
+                                shadowColor *= MathHelper.Clamp(Vector2.Distance(new Vector2(light3.Position.X, light3.Position.Y), ShadowPosition) / light3.Radius, 0.8f, 1f);
+                            }
+
+                            shadowVertices[0] = new VertexPositionColorTexture()
+                            {
+                                Position = new Vector3(ShadowPosition.X, ShadowPosition.Y, 0),
+                                TextureCoordinate = new Vector2(animX, 0.5f),
+                                Color = shadowColor
+                            };
+
+                            shadowVertices[1] = new VertexPositionColorTexture()
+                            {
+                                Position = new Vector3(ShadowPosition.X + CurrentAnimation.FrameSize.X, ShadowPosition.Y, 0),
+                                TextureCoordinate = new Vector2(animX + animWid, 0.5f),
+                                Color = shadowColor
+                            };
+
+                            shadowVertices[2] = new VertexPositionColorTexture()
+                            {
+                                Position = new Vector3(ShadowPosition.X + CurrentAnimation.FrameSize.X + (direction.X * width), ShadowPosition.Y + (direction.Y * height), 0),
+                                TextureCoordinate = new Vector2(animX + animWid, 0),
+                                Color = shadowColor
+                            };
+
+                            shadowVertices[3] = new VertexPositionColorTexture()
+                            {
+                                Position = new Vector3(ShadowPosition.X + (direction.X * width), ShadowPosition.Y + (direction.Y * height), 0),
+                                TextureCoordinate = new Vector2(animX, 0),
+                                Color = shadowColor
+                            };
+
+                            //This stops backface culling when the shadow flips vertically
+                            if (direction.Y > 0)
+                            {
+                                shadowIndices[0] = 0;
+                                shadowIndices[1] = 1;
+                                shadowIndices[2] = 2;
+                                shadowIndices[3] = 2;
+                                shadowIndices[4] = 3;
+                                shadowIndices[5] = 0;
+                            }
+                            else
+                            {
+                                shadowIndices[0] = 3;
+                                shadowIndices[1] = 2;
+                                shadowIndices[2] = 1;
+                                shadowIndices[3] = 1;
+                                shadowIndices[4] = 0;
+                                shadowIndices[5] = 3;
+                            }
+
+                            shadowEffect.Parameters["Texture"].SetValue(CurrentAnimation.Texture);
+                            shadowEffect.Parameters["texSize"].SetValue(CurrentAnimation.FrameSize);
+
+                            foreach (EffectPass pass in shadowEffect.CurrentTechnique.Passes)
+                            {
+                                pass.Apply();
+                                graphics.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, shadowVertices, 0, 4, shadowIndices, 0, 2, VertexPositionColorTexture.VertexDeclaration);
+                            }
+                        }
+                    }
                     #endregion
 
                     #region Draw the sprite
+
+                    graphics.SamplerStates[0] = SamplerState.PointClamp;
                     spriteVertices[0] = new VertexPositionColorTexture()
                     {
                         Color = Color,

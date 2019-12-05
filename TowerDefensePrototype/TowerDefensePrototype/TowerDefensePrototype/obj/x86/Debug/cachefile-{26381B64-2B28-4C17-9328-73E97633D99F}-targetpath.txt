@@ -160,11 +160,10 @@ Content\Sounds\Splat1.xnb
 Content\Sounds\Splat2.xnb
 Content\Sounds\Menu\MenuPing.xnb
 Content\Sounds\Menu\MenuWoosh.xnb
-Content\Sounds\Menu\MenuMusic1.xnb
 Content\Sounds\Implosion.xnb
 Content\Sounds\Implosion2.xnb
 Content\Sounds\TurretOverheat.xnb
-Content\Sounds\Ambience\PolarWindAmbience.xnb
+Content\Sounds\Menu\MenuMusic1.xnb
 Content\Shaders\HealthBarEffect.xnb
 Content\Shaders\ShockWaveEffect.xnb
 Content\Shaders\ShieldBubbleEffect.xnb

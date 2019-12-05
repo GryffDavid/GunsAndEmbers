@@ -197,10 +197,10 @@ namespace TowerDefensePrototype
             ForegroundTexture = contentManager.Load<Texture2D>("Backgrounds/Foreground");
             SkyBackgroundTexture = contentManager.Load<Texture2D>("Backgrounds/Sky");
 
-            AmbienceList = new List<SoundEffect>()
-            {
-                contentManager.Load<SoundEffect>("Sounds/Ambience/PolarWindAmbience")
-            };
+            //AmbienceList = new List<SoundEffect>()
+            //{
+            //    contentManager.Load<SoundEffect>("Sounds/Ambience/PolarWindAmbience")
+            //};
         }
     }
 }

@@ -17,20 +17,22 @@ namespace TowerDefensePrototype
 
         }
 
-        public virtual void Draw(SpriteBatch spriteBatch, BasicEffect effect, GraphicsDevice graphicsDevice)
-        {
-
-        }
-
         public virtual void Draw(SpriteBatch spriteBatch, BasicEffect effect, GraphicsDevice graphicsDevice, Effect shadowEffect, List<Light> lightList)
         {
 
         }
 
+
         public virtual void DrawSpriteDepth(GraphicsDevice graphics, Effect effect)
         {
 
         }
+
+        public virtual void DrawSpriteDepth(SpriteBatch spriteBatch)
+        {
+
+        }
+
 
         public virtual void DrawSpriteNormal(GraphicsDevice graphics, BasicEffect basicEffect)
         {
