@@ -17,6 +17,7 @@ namespace TowerDefensePrototype
         public float MaxHP, CurrentHP, Slots, MaxShield, CurrentShield;
         public bool ShieldOn;
         public double CurrentShieldTime, ShieldTime;
+        public Color Color;
         
         public Tower(string assetName, Vector2 position, int totalHitpoints, int maxShield, int slots, float shieldTime)
         {
@@ -29,6 +30,7 @@ namespace TowerDefensePrototype
             MaxShield = maxShield;
             ShieldTime = shieldTime;
             ShieldOn = true;
+            Color = Color.White;
         }
 
         public void LoadContent(ContentManager contentManager)
@@ -59,7 +61,7 @@ namespace TowerDefensePrototype
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(Texture, DestinationRectangle, null, Color.White, MathHelper.ToRadians(0), Vector2.Zero, SpriteEffects.None, 1);
+            spriteBatch.Draw(Texture, DestinationRectangle, null, Color, MathHelper.ToRadians(0), Vector2.Zero, SpriteEffects.None, 1);
         }
 
         public void TakeDamage(float value)

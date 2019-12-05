@@ -64,12 +64,12 @@ namespace TowerDefensePrototype
             }
         }
 
-        public void Update()
+        public void Update(Vector2 cursorPosition)
         {
-            LeftButton.Update();
+            LeftButton.Update(cursorPosition);
             
             if (RightText != null)
-            RightButton.Update();
+                RightButton.Update(cursorPosition);
         }
 
         public void Draw(SpriteBatch spriteBatch)

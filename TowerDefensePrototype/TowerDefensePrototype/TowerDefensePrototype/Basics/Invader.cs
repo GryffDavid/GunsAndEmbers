@@ -85,7 +85,7 @@ namespace TowerDefensePrototype
                 }
 
                 #region This makes sure that the invader can't take damage if it's off screen (i.e. before it's visible to the player)
-                    if (Position.X > 1280)
+                    if (Position.X > 1920)
                     {
                         VulnerableToTurret = false;
                         VulnerableToTrap = false;
@@ -206,7 +206,7 @@ namespace TowerDefensePrototype
                 BoundingBox = new BoundingBox(new Vector3(Position.X, Position.Y, 0), new Vector3(Position.X + FrameSize.X, Position.Y + FrameSize.Y, 0));
 
                 Bottom = DestinationRectangle.Bottom;
-                DrawDepth = Bottom / 720;                
+                DrawDepth = Bottom / 1080;                
             }
         }
 

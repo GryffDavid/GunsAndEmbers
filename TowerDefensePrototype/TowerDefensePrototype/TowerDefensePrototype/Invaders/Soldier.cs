@@ -24,7 +24,7 @@ namespace TowerDefensePrototype
             AttackPower = 24;
             CurrentFrame = 0;            
             InvaderType = InvaderType.Soldier;
-            YRange = new Vector2(500, 600);
+            YRange = new Vector2(700, 900);
             Airborne = false;
 
             DustEmitter = new Emitter("Particles/Smoke", new Vector2(DestinationRectangle.Center.X, DestinationRectangle.Bottom - 8),

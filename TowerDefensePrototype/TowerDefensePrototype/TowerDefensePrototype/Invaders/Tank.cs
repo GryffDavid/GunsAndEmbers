@@ -30,7 +30,7 @@ namespace TowerDefensePrototype
 
             CurrentAnimation = new Animation() 
             { 
-                AssetName = "Invaders/Invader", 
+                AssetName = "Invaders/BlankTank", 
                 TotalFrames = 1, 
                 FrameDelay = 120 
             };

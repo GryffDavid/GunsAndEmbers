@@ -127,7 +127,7 @@ namespace TowerDefensePrototype
 
             Bottom = DestinationRectangle.Bottom;
 
-            DrawDepth = Bottom / 720;
+            DrawDepth = Bottom / 1080;
         }
 
         public virtual void Draw(SpriteBatch spriteBatch)

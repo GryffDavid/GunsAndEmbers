@@ -11,7 +11,7 @@ namespace TowerDefensePrototype
 {
     public class Tooltip
     {
-        Vector2 Position;
+        Vector2 Position, CursorPosition;
         Texture2D BoxTexture;
         SpriteFont Font;
         String Text;
@@ -46,22 +46,21 @@ namespace TowerDefensePrototype
             Loaded = true;
         }
 
-        public void Update()
+        public void Update(Vector2 cursorPosition)
         {
-            MouseState MouseState = Mouse.GetState();
-            Position = new Vector2(MouseState.X, MouseState.Y);
+            CursorPosition = cursorPosition;
+            Position = new Vector2(cursorPosition.X, cursorPosition.Y);
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            MouseState MouseState = Mouse.GetState();
-                       Color = Color.Lerp(Color, Color.Lerp(Color.White, Color.Transparent, 0.30f), 0.02f);
+            Color = Color.Lerp(Color, Color.Lerp(Color.White, Color.Transparent, 0.30f), 0.02f);
 
             ActualSize = Vector2.Lerp(ActualSize, new Vector2(Font.MeasureString(Text).X, Font.MeasureString(Text).Y), 0.2f);
 
             Vector2 MeasureSize = new Vector2(Font.MeasureString(Text).X, Font.MeasureString(Text).Y);
 
-            if (MouseState.X <= MeasureSize.X + 16)
+            if (CursorPosition.X <= MeasureSize.X + 16)
             {
                 Offset.X = MeasureSize.X + 4;
             }
@@ -70,7 +69,7 @@ namespace TowerDefensePrototype
                 Offset.X = -16;
             }
 
-            if (MouseState.Y >= MeasureSize.Y)
+            if (CursorPosition.Y >= MeasureSize.Y)
             {
                 Offset.Y = -MeasureSize.Y;
             }
@@ -79,23 +78,23 @@ namespace TowerDefensePrototype
                 Offset.Y = 0;
             }
 
-            spriteBatch.Draw(BoxTexture, 
-                new Rectangle((int)(MouseState.X - ActualSize.X + Offset.X - 2),
-                              (int)(MouseState.Y + Offset.Y - 2),
+            spriteBatch.Draw(BoxTexture,
+                new Rectangle((int)(CursorPosition.X - ActualSize.X + Offset.X - 2),
+                              (int)(CursorPosition.Y + Offset.Y - 2),
                               (int)ActualSize.X + 16 + 4,
                               (int)ActualSize.Y + 4),
                     Color.Gray);
 
             spriteBatch.Draw(BoxTexture,
-                new Rectangle((int)(MouseState.X - ActualSize.X + Offset.X),
-                              (int)(MouseState.Y + Offset.Y),
+                new Rectangle((int)(CursorPosition.X - ActualSize.X + Offset.X),
+                              (int)(CursorPosition.Y + Offset.Y),
                               (int)ActualSize.X + 16,
                               (int)ActualSize.Y),
                     Color.White);
 
             spriteBatch.DrawString(Font, Text,
-                new Vector2(MouseState.X - ActualSize.X + Offset.X + 8,
-                            MouseState.Y + Offset.Y - 8), Color);
+                new Vector2(CursorPosition.X - ActualSize.X + Offset.X + 8,
+                            CursorPosition.Y + Offset.Y - 8), Color);
 
         }
     }

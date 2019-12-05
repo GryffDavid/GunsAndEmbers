@@ -156,7 +156,7 @@ namespace TowerDefensePrototype
                 DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, Texture.Width, Texture.Height);
                 CollisionRectangle = new Rectangle(DestinationRectangle.X, DestinationRectangle.Y, DestinationRectangle.Width / 2, DestinationRectangle.Height / 2);
                 spriteBatch.Draw(Texture, DestinationRectangle, null, CurrentColor, CurrentRotation,
-                    new Vector2(Texture.Width / 2, Texture.Height / 2), SpriteEffects.None, MaxY / 720);
+                    new Vector2(Texture.Width / 2, Texture.Height / 2), SpriteEffects.None, MaxY / 1080);
 
                 foreach (Emitter emitter in EmitterList)
                 {

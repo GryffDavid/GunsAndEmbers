@@ -72,6 +72,7 @@ Content\Traps\Trap.xnb
 Content\Invaders\Invader.xnb
 Content\Buttons\WeaponBox.xnb
 Content\HealthBarSprite.xnb
+Content\Invaders\BlankTank.xnb
 Content\HealthBarEffect.xnb
 Content\Fonts\DefaultFont.xnb
 Content\Fonts\ButtonFont.xnb

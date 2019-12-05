@@ -62,7 +62,7 @@ namespace TowerDefensePrototype
             Font = contentManager.Load<SpriteFont>("Fonts/DefaultFont");
         }
 
-        public void Update(GameTime gameTime)
+        public void Update(GameTime gameTime, Vector2 cursorPosition)
         {
             foreach (Emitter emitter in EmitterList)
             {
@@ -149,7 +149,7 @@ namespace TowerDefensePrototype
                 if (Selected == true)
                 {
                     CurrentMouseState = Mouse.GetState();
-                    MousePosition = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
+                    MousePosition = cursorPosition;
 
                     BarrelCenter = new Vector2(BarrelRectangle.X + (float)Math.Cos(Rotation - 90) * (BarrelPivot.Y - BarrelRectangle.Height / 2),
                                              BarrelRectangle.Y + (float)Math.Sin(Rotation - 90) * (BarrelPivot.Y - BarrelRectangle.Height / 2));
@@ -182,10 +182,10 @@ namespace TowerDefensePrototype
             SourceRectangle = new Rectangle(0 + (int)FrameSize.X * CurrentFrame, 0, (int)FrameSize.X, (int)FrameSize.Y);
 
             #region Handle selection
-            if ((InsideRotatedRectangle(BarrelRectangle, BarrelPivot, 
-                new Vector2(Mouse.GetState().X, Mouse.GetState().Y), MathHelper.ToRadians(Rotation)) == true ||
-                new Rectangle((int)(BaseRectangle.X - BasePivot.X), (int)(BaseRectangle.Y - BasePivot.Y), 
-                BaseRectangle.Width, BaseRectangle.Height).Contains(new Point(Mouse.GetState().X, Mouse.GetState().Y)) == true) &&
+            if ((InsideRotatedRectangle(BarrelRectangle, BarrelPivot,
+                new Vector2(cursorPosition.X, cursorPosition.Y), MathHelper.ToRadians(Rotation)) == true ||
+                new Rectangle((int)(BaseRectangle.X - BasePivot.X), (int)(BaseRectangle.Y - BasePivot.Y),
+                BaseRectangle.Width, BaseRectangle.Height).Contains(new Point((int)cursorPosition.X, (int)cursorPosition.Y)) == true) &&
                 CurrentMouseState.LeftButton == ButtonState.Released && PreviousMouseState.LeftButton == ButtonState.Pressed)
             {
                 JustClicked = true;

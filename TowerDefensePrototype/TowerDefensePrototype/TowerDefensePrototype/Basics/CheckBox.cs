@@ -15,9 +15,9 @@ namespace TowerDefensePrototype
             base.FontName = "Fonts/DefaultFont";
         }
 
-        public override void Update()
+        public void Update()
         {
-            base.Update();
+            //base.Update();
 
             if (Checked == true)
                 base.Text = "X";

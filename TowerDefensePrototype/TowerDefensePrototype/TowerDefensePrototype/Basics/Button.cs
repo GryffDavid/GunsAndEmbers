@@ -109,11 +109,10 @@ namespace TowerDefensePrototype
             }
         }
 
-        public virtual void Update()
+        public virtual void Update(Vector2 cursorPosition)
         {
             CurrentMouseState = Mouse.GetState();
-
-            CursorPosition = new Vector2(CurrentMouseState.X, CurrentMouseState.Y);
+            CursorPosition = cursorPosition;
 
             if (IconNextPosition != IconPosition)
             {
@@ -407,17 +406,17 @@ namespace TowerDefensePrototype
         {
             Color[] retrievedColor = new Color[1];
             Rectangle Rect;
-            Rect =  new Rectangle((int)((1 / Scale.X) * (Mouse.GetState().X - CurrentPosition.X)), (int)((1 / Scale.Y) * (Mouse.GetState().Y - CurrentPosition.Y)), 1, 1);
+            Rect =  new Rectangle((int)((1 / Scale.X) * ((int)CursorPosition.X - CurrentPosition.X)), (int)((1 / Scale.Y) * ((int)CursorPosition.Y - CurrentPosition.Y)), 1, 1);
 
             if (CurrentMousePosition == MousePosition.Inside && 
-                new Rectangle(0, 0, 1280, 720).Contains(new Point(Mouse.GetState().X, Mouse.GetState().Y)))
+                new Rectangle(0, 0, 1920, 1080).Contains(new Point((int)CursorPosition.X, (int)CursorPosition.Y)))
             {
-                if (DestinationRectangle.Contains(new Point(Mouse.GetState().X, Mouse.GetState().Y)) && Rect != null && Rect.Width == 1 && Rect.Height == 1)
+                if (DestinationRectangle.Contains(new Point((int)CursorPosition.X, (int)CursorPosition.Y)) && Rect != null && Rect.Width == 1 && Rect.Height == 1)
                 {
-                    //Vector2 pos = new Vector2((1 / Scale.X) * (Mouse.GetState().X - Position.X), (1 / Scale.Y) * (Mouse.GetState().Y - Position.Y));
-                    //Rectangle testRect = new Rectangle((int)((1 / Scale.X) * (Mouse.GetState().X - Position.X)), (int)((1 / Scale.Y) * (Mouse.GetState().Y - Position.Y)), 1, 1);
-                    if (Rect != new Rectangle(Math.Abs((int)((1 / Scale.X) * (Mouse.GetState().X - CurrentPosition.X))), 
-                        Math.Abs((int)((1 / Scale.Y) * (Mouse.GetState().Y - CurrentPosition.Y))), 1, 1))
+                    //Vector2 pos = new Vector2((1 / Scale.X) * ((int)CursorPosition.X - Position.X), (1 / Scale.Y) * ((int)CursorPosition.Y - Position.Y));
+                    //Rectangle testRect = new Rectangle((int)((1 / Scale.X) * ((int)CursorPosition.X - Position.X)), (int)((1 / Scale.Y) * ((int)CursorPosition.Y - Position.Y)), 1, 1);
+                    if (Rect != new Rectangle(Math.Abs((int)((1 / Scale.X) * ((int)CursorPosition.X - CurrentPosition.X))), 
+                        Math.Abs((int)((1 / Scale.Y) * ((int)CursorPosition.Y - CurrentPosition.Y))), 1, 1))
                         return Color.White;
                     else
                         ButtonStrip.GetData<Color>(0, Rect, retrievedColor, 0, 1);

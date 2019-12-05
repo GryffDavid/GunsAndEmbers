@@ -156,7 +156,7 @@ namespace TowerDefensePrototype
                         CurrentRotation = MathHelper.Lerp(CurrentRotation, 0, 0.2f);
                 }
 
-                DrawDepth = DestinationRectangle.Bottom / 720;
+                DrawDepth = DestinationRectangle.Bottom / 1080;
             }
 
             if (Active == true)

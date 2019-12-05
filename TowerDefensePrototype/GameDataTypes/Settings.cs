@@ -9,5 +9,6 @@ namespace GameDataTypes
     {
         public bool FullScreen;
         public float SFXVolume, MusicVolume;
+        public int TimesPlayed;
     }
 }
