@@ -67,7 +67,7 @@ namespace TowerDefensePrototype
 
         public void Update(GameTime gameTime)
         {
-            if (Active == false)
+            if (Active == true)
             {
                 ElapsedTime += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
 

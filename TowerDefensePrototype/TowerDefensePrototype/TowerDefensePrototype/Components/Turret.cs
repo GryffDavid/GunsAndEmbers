@@ -87,9 +87,9 @@ namespace TowerDefensePrototype
                     InOut = false;
                 }
 
-                if (PrevInOut == true && InOut == true &&
-                    CurrentMouseState.LeftButton == ButtonState.Released &&
-                    PreviousMouseState.LeftButton == ButtonState.Pressed)
+                if (PrevInOut == true && 
+                    InOut == true &&
+                    value == ButtonState.Released)
                 {
                     CreateTurretClick();
                 }
@@ -294,7 +294,7 @@ namespace TowerDefensePrototype
 
         }
 
-        public override void  DrawSpriteDepth(GraphicsDevice graphics, Effect effect)
+        public override void DrawSpriteDepth(GraphicsDevice graphics, Effect effect)
         {
 
         }

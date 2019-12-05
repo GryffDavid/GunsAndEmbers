@@ -16,7 +16,7 @@ namespace TowerDefensePrototype
             Active = true;
             Direction = new Vector2(-1f, 0);
             Speed = 0.68f;
-            Position = position;
+            ActualPosition = position;
             CurrentHP = 20;
             MaxHP = 20;
             ResourceMinMax = new Vector2(8, 20);

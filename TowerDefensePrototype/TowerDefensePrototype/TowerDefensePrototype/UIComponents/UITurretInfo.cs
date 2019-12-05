@@ -16,6 +16,7 @@ namespace TowerDefensePrototype
         public Turret CurrentTurret;
         public SpriteFont Font;
         public Rectangle DestinationRectangle;
+
         public UITurretInfo()
         {
             TurretHealthBar = new UIBar(new Vector2(45, 1080 - 15 - 85 - 15), new Vector2(390, 15), Color.Lerp(Color.White, Color.Transparent, 0.25f), true);
@@ -61,19 +62,7 @@ namespace TowerDefensePrototype
                     DestinationRectangle.Y + 5,
                     DamageIconTexture.Width / 2,
                     DamageIconTexture.Height / 2),
-                    Color.White);
-
-
-            //spriteBatch.DrawString(Font, CurrentTurret.Damage.ToString(),
-            //    new Vector2(
-            //        DestinationRectangle.X + TurretIconTexture.Width + 10 + Font.MeasureString(CurrentTurret.Damage.ToString()).X / 2, 
-            //        DestinationRectangle.Y + DestinationRectangle.Height / 2 + 4), 
-            //        Color.White, 0, 
-            //        new Vector2(
-            //            Font.MeasureString(CurrentTurret.Damage.ToString()).X / 2, 
-            //            Font.MeasureString(CurrentTurret.Damage.ToString()).Y / 2), 
-            //        1, SpriteEffects.None, 0);
-     
+                    Color.White);     
         }
     }
 }

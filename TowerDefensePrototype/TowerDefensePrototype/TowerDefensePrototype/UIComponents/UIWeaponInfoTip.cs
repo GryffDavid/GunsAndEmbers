@@ -11,15 +11,17 @@ namespace TowerDefensePrototype
 {
     public class UIWeaponInfoTip
     {
+        public Button DetailsButton;
         public SpriteFont RobotoItalic20_0, RobotoRegular20_0, RobotoBold40_2, RobotoRegular20_2;
         public Vector2 BoxSize, NameBoxSize, Position;
         UIBar UIBar1, UIBar2, UIBar3, UIBar4, UIBar5;
         DamageType DamageType;
         string BarText1, BarText2, BarText3, BarText4, BarText5;
 
-        public Texture2D DamageIcon, WeaponIcon, ConcussiveDamageIcon, KineticDamageIcon, FireDamageIcon, RadiationDamageIcon, ElectricDamageIcon;
+        public Texture2D DamageIcon, WeaponIcon, ConcussiveDamageIcon, KineticDamageIcon, 
+                         FireDamageIcon, RadiationDamageIcon, ElectricDamageIcon;
 
-        public Texture2D CurrencyIcon;
+        public Texture2D CurrencyIcon, PowerUnitIcon;
 
         public string WeaponDescription, WeaponTip, WeaponName, WeaponType;
         public bool Visible;
@@ -325,6 +327,16 @@ namespace TowerDefensePrototype
                         new Rectangle((int)(Position.X + 5), (int)(Position.Y - 80), 24, 24),
                         Color.White);
 
+                    if (ContainsTrap != null)
+                    {
+                        spriteBatch.Draw(PowerUnitIcon,
+                            new Rectangle((int)(Position.X + BoxSize.X - 5 - 24 - 35), (int)(Position.Y - 80), 24, 24),
+                            Color.White);
+
+                        spriteBatch.DrawString(RobotoRegular20_0, WeaponCost.ToString(), new Vector2(Position.X + BoxSize.X - 35, Position.Y - 78),
+                        Color.White, 0, new Vector2(0, 0), 1f, SpriteEffects.None, 0);
+                    }
+
                     if (DamageIcon != null)
                     {
                         Vector2 NewSize = new Vector2(20, (int)((20f / DamageIcon.Width) * DamageIcon.Height));
@@ -340,6 +352,7 @@ namespace TowerDefensePrototype
                     spriteBatch.DrawString(RobotoRegular20_0, WeaponCost.ToString(), new Vector2(Position.X + 35, Position.Y - 78),
                         Color.White, 0, new Vector2(0, 0), 1f, SpriteEffects.None, 0);
 
+                    
                     #region Draw the names and values of the bars
                     #region Bar 1
                     //Name

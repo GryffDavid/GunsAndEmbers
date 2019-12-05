@@ -10,10 +10,18 @@ namespace TowerDefensePrototype
 {
     class CooldownButton
     {
-        public ButtonSpriteState CurrentButtonState, PreviousButtonState;
-        public Vector2 CurrentPosition, CurrentSize, IconTextureSizeOffset, IconPosition, IconSize, IconSizeOffset;
-        Vector3 IconOffset = Vector3.Zero;
+        public event ButtonClickHappenedEventHandler ButtonClickHappened;
+        public void CreateButtonClick(MouseButton button)
+        {
+            OnButtonClickHappened(button);
+        }
+        protected virtual void OnButtonClickHappened(MouseButton button)
+        {
+            if (ButtonClickHappened != null)
+                ButtonClickHappened(this, new ButtonClickEventArgs() { ClickedButton = button });
+        }
 
+        #region Vertices and Indices
         VertexPositionColor[] OutlineVertices = new VertexPositionColor[16];
         int[] OutlineIndices = new int[24];
 
@@ -22,19 +30,52 @@ namespace TowerDefensePrototype
 
         VertexPositionColorTexture[] IconVertices = new VertexPositionColorTexture[6];
         int[] iconIndices = new int[6];
+        #endregion
 
+        public ButtonSpriteState CurrentButtonState, PreviousButtonState;
+        public Vector2 CursorPosition, CurrentPosition, CurrentSize, IconTextureSizeOffset, IconPosition, IconSize, IconSizeOffset;
         float CurrentCooldownTime, MaxCooldownTime, OutlineThickness;
+        public Color IconColor;
+        public bool CoolingDown;
 
+        public int ResourceCost;
+
+        Color OutlineColor, InteriorColor;
+        Vector3 IconOffset = Vector3.Zero;
+        Texture2D Icon; 
         Rectangle MouseRectangle;
         MouseState CurrentMouseState, PreviousMouseState;
-        MousePosition CurrentMousePosition, PreviousMousePosition;
-        
-        Color OutlineColor, InteriorColor;
-        public Color IconColor;
 
-        Texture2D Icon;
+        bool InOut, PrevInOut;
 
-        public bool JustClicked, CoolingDown;
+        private ButtonState _LeftButtonState;
+        public ButtonState LeftButtonState
+        {
+            get { return _LeftButtonState; }
+            set
+            {
+                _LeftButtonState = value;
+                PrevInOut = InOut;
+
+                if (MouseRectangle.Contains(new Point((int)CursorPosition.X, (int)CursorPosition.Y)) == true)
+                {
+                    //In                    
+                    InOut = true;
+                }
+                else
+                {
+                    //Out
+                    InOut = false;
+                }
+
+                if (PrevInOut == true && InOut == true &&
+                    CurrentMouseState.LeftButton == ButtonState.Released &&
+                    PreviousMouseState.LeftButton == ButtonState.Pressed)
+                {
+                    CreateButtonClick(MouseButton.Left);
+                }
+            }
+        }
 
         public CooldownButton(Vector2 position, Vector2 size, float outlineThickness, Texture2D icon)
         {
@@ -61,9 +102,7 @@ namespace TowerDefensePrototype
 
             CurrentCooldownTime = 0;
             MaxCooldownTime = 2000;
-            CoolingDown = false;            
-
-            JustClicked = false;
+            CoolingDown = false;
 
             MouseRectangle = new Rectangle((int)CurrentPosition.X, (int)CurrentPosition.Y, (int)CurrentSize.X, (int)CurrentSize.Y);
 
@@ -288,6 +327,10 @@ namespace TowerDefensePrototype
         public void Update(GameTime gameTime, Vector2 cursorPosition)
         {
             CurrentMouseState = Mouse.GetState();
+            CursorPosition = cursorPosition;
+
+            if (CurrentMouseState.LeftButton != PreviousMouseState.LeftButton)
+                LeftButtonState = Mouse.GetState().LeftButton;
 
             if (CoolingDown == true)
             {
@@ -333,10 +376,9 @@ namespace TowerDefensePrototype
                 }
             }
             #endregion
-
-
+            
             #region Check if the mouse is inside the button
-            if (MouseRectangle.Contains(new Point((int)cursorPosition.X, (int)cursorPosition.Y)))
+            if (MouseRectangle.Contains(new Point((int)CursorPosition.X, (int)CursorPosition.Y)))
             {
                 CurrentButtonState = ButtonSpriteState.Hover;
                 InteriorColor = Color.Lerp(Color.White, Color.Transparent, 0.5f);
@@ -348,50 +390,9 @@ namespace TowerDefensePrototype
             }
             #endregion
 
-            #region As the mouse is clicked down store its state
-            if (CurrentMouseState.LeftButton == ButtonState.Pressed &&
-                PreviousMouseState.LeftButton == ButtonState.Released)
-            {
-                //When the button is clicked down, check if it was inside or outside the button
-                if (MouseRectangle.Contains(new Point((int)cursorPosition.X, (int)cursorPosition.Y)))
-                {
-                    CurrentMousePosition = MousePosition.Inside;
-                }
-                else
-                {
-                    CurrentMousePosition = MousePosition.Outside;
-                }
-            }
-            #endregion
-            
-            #region As the mouse is released check it's state against the stored state
-            if (CurrentMouseState.LeftButton == ButtonState.Released &&
-                PreviousMouseState.LeftButton == ButtonState.Pressed)
-            {
-                //If the mouse button was just released update the mouse position and 
-                //check if the current mouse position and the previous position are both inside the button
-                if (MouseRectangle.Contains(new Point((int)cursorPosition.X, (int)cursorPosition.Y)))
-                {
-                    CurrentMousePosition = MousePosition.Inside;
-                }
-                else
-                {
-                    CurrentMousePosition = MousePosition.Outside;
-                }
-
-                if (CurrentMousePosition == MousePosition.Inside && PreviousMousePosition == MousePosition.Inside)
-                {
-                    if (CoolingDown == false)
-                    {
-                        JustClicked = true;
-                    }
-                }
-            }
-            #endregion
-
-
             #region Update the position of the icon based on whether the button state
-            if (CurrentMousePosition == MousePosition.Inside && CurrentMouseState.LeftButton == ButtonState.Pressed)
+            if (MouseRectangle.Contains(new Point((int)CursorPosition.X, (int)CursorPosition.Y)) && 
+                CurrentMouseState.LeftButton == ButtonState.Pressed)
             {
                 if (CoolingDown == false)
                 {
@@ -404,15 +405,7 @@ namespace TowerDefensePrototype
                 IconOffset = new Vector3(0, 0, 0);
             }
             #endregion
-
-            #region Set JustClicked back to false again
-            if (CurrentMouseState.LeftButton == ButtonState.Released &&
-                PreviousMouseState.LeftButton == ButtonState.Released)
-            {
-                JustClicked = false;
-            }
-            #endregion
-
+            
             #region Update icon position and color
             if (Icon != null)
             {
@@ -469,7 +462,7 @@ namespace TowerDefensePrototype
             }
             #endregion
 
-            PreviousMousePosition = CurrentMousePosition;
+            //PreviousMousePosition = CurrentMousePosition;
             PreviousButtonState = CurrentButtonState;
             PreviousMouseState = CurrentMouseState;
         }

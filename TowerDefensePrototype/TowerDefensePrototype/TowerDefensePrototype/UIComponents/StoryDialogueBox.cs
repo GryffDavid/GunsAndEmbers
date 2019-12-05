@@ -29,7 +29,7 @@ namespace TowerDefensePrototype
         public string Text, Name;
 
         KeyboardState CurrentKeyboardState, PreviousKeyboardState;
-        StoryDialogue CurrentDialogue;
+        public StoryDialogue CurrentDialogue;
 
         public StoryDialogueBox(Vector2 currentPosition, Vector2 nextPosition, Vector2 size, Texture2D headIcon, SpriteFont font, StoryDialogue dialogue, string profileName)
         {
@@ -76,9 +76,13 @@ namespace TowerDefensePrototype
             BoxIndices[4] = 3;
             BoxIndices[5] = 0;
 
-            Text = CurrentDialogue.Lines[DialogueIndex];
-            ReplaceName(Name);
-            WrapText();
+            if (CurrentDialogue != null)
+            {
+                Text = CurrentDialogue.Lines[DialogueIndex];
+
+                ReplaceName(Name);
+                WrapText();
+            }
         }
 
         public void WrapText()
@@ -96,10 +100,7 @@ namespace TowerDefensePrototype
 
         public void ReplaceName(string name)
         {
-            if (Text.Contains("[name]"))
-            {
-                Text = Text.Replace("[name]", name);
-            }
+            Text = Text.Replace("[name]", name);
         }
 
         public void Update(GameTime gameTime)
@@ -154,7 +155,7 @@ namespace TowerDefensePrototype
 
         public void Draw(SpriteBatch spriteBatch, GraphicsDevice graphics, BasicEffect basicEffect)
         {
-            if (Active == true)
+            if (Active == true && CurrentDialogue != null)
             {
                 foreach (EffectPass pass in basicEffect.CurrentTechnique.Passes)
                 {

@@ -14,7 +14,7 @@ namespace TowerDefensePrototype
         {
             Active = true;
             Direction = new Vector2(-1, 0);
-            Position = position;
+            ActualPosition = position;
             CurrentHP = 800;
             MaxHP = 800;
             //MoveDelay = 40;

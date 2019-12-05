@@ -23,7 +23,6 @@ namespace TowerDefensePrototype
 
         VertexPositionColorTexture[] ParticleVertices = new VertexPositionColorTexture[4];
         int[] ParticleIndices = new int[6];
-        bool Vertices = false;
         public Vector2[] texCoords = new Vector2[4];
 
         public Particle(Texture2D texture, Vector2 position, float angle, float speed, float maxHP,
@@ -100,19 +99,23 @@ namespace TowerDefensePrototype
         public void Update(GameTime gameTime)
         {
             if (FadeDelay == 0)
+            {
                 CurrentHP -= (float)(1 * gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
-            else
-                if (CurrentFadeDelay > FadeDelay)
+            }
+            
+            if (FadeDelay > 0)
+            {
+                if (CurrentFadeDelay >= FadeDelay)
                 {
                     CurrentHP -= (float)(1 * gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
                 }
+            }
 
-            if (CurrentFadeDelay < FadeDelay)
+            if (CurrentFadeDelay <= FadeDelay)
                 CurrentFadeDelay += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
 
             if (CurrentHP <= 0)
                 Active = false;
-
             else
                 Active = true;
 
@@ -176,21 +179,9 @@ namespace TowerDefensePrototype
 
             if (Friction != new Vector2(0, 0))
             {
-                //Velocity = new Vector2(MathHelper.Lerp(Velocity.X, 0, Friction.X), MathHelper.Lerp(Velocity.Y, 0, Friction.Y));
-                //Velocity = 
-                //Velocity = Vector2.Lerp(Velocity, new Vector2(0, 0), Friction * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
                 Velocity.Y = MathHelper.Lerp(Velocity.Y, 0, Friction.Y * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
                 Velocity.X = MathHelper.Lerp(Velocity.X, 0, Friction.X * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
             }
-            //if (Velocity.X > 0)
-            //{
-            //    Velocity.X -= Friction;
-            //}
-
-            //if (Velocity.X < 0)
-            //{
-            //    Velocity.X += Friction;
-            //}
 
             if (Velocity.Y == 0 && CanBounce == true)
             {

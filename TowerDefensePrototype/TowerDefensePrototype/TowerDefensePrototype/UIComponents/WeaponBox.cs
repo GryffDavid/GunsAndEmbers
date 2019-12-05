@@ -11,30 +11,69 @@ namespace TowerDefensePrototype
 {
     class WeaponBox : UIWeaponInfoTip
     {
-        //public Nullable<TurretType> ContainsTurret = null;
-        //public Nullable<TrapType> ContainsTrap = null;
+        public event ButtonClickHappenedEventHandler ButtonClickHappened;
+        public void CreateButtonClick(MouseButton button)
+        {
+            OnButtonClickHappened(button);
+        }
+        protected virtual void OnButtonClickHappened(MouseButton button)
+        {
+            if (ButtonClickHappened != null)
+                ButtonClickHappened(this, new ButtonClickEventArgs() { ClickedButton = button });
+        }
 
-        MouseState CurrentMouseState, PreviousMouseState;
-        public MousePosition CurrentMousePosition, PreviousMousePosition;
+        MouseState CurrentMouseState, PreviousMouseState; 
+        Vector2 CursorPosition;
+
         public ButtonSpriteState CurrentBoxState;
-
         public Rectangle DestinationRectangle;
+        bool InOut, PrevInOut;
 
-        public bool JustClicked = false;
+        private ButtonState _LeftButtonState;
+        public ButtonState LeftButtonState
+        {
+            get { return _LeftButtonState; }
+            set
+            {
+                _LeftButtonState = value;
+                PrevInOut = InOut;
+
+                if (DestinationRectangle.Contains(new Point((int)CursorPosition.X, (int)CursorPosition.Y)) == true)
+                {
+                    //In                    
+                    InOut = true;
+                }
+                else
+                {
+                    //Out
+                    InOut = false;
+                }
+
+                if (PrevInOut == true && InOut == true &&
+                    CurrentMouseState.LeftButton == ButtonState.Released &&
+                    PreviousMouseState.LeftButton == ButtonState.Pressed)
+                {
+                    CreateButtonClick(MouseButton.Left);
+                }
+            }
+        }
 
         public WeaponBox(Vector2 position, Turret turret, Trap trap) : base(position, turret, trap)
         {
             
         }
 
-        public void Update(GameTime gameTime)
+        public void Update(GameTime gameTime, Vector2 cursorPosition)
         {
             CurrentMouseState = Mouse.GetState();
-            JustClicked = false;
+            CursorPosition = cursorPosition;            
+
+            if (CurrentMouseState.LeftButton != PreviousMouseState.LeftButton)
+                LeftButtonState = Mouse.GetState().LeftButton;
 
             DestinationRectangle = new Rectangle((int)Position.X, (int)(Position.Y - BoxSize.Y), (int)BoxSize.X, (int)BoxSize.Y);
 
-            #region Check if a tab has been clicked
+            #region Change the appearance of the tab when it's moused over
             if (DestinationRectangle.Contains(new Point(CurrentMouseState.X, CurrentMouseState.Y)))
             {
                 if (Locked == false)
@@ -44,49 +83,11 @@ namespace TowerDefensePrototype
                 }
             }
             else
-            {                
+            {
                 CurrentBoxState = ButtonSpriteState.Released;
                 WeaponBoxColor = Color.Lerp(Color.Black, Color.Transparent, 0.5f);
             }
-
-            #region Check whether the mouse is inside the button as it's pressed and store that state
-            if (CurrentMouseState.LeftButton == ButtonState.Pressed &&
-                PreviousMouseState.LeftButton == ButtonState.Released)
-            {
-                if (DestinationRectangle.Contains(new Point(CurrentMouseState.X, CurrentMouseState.Y)))
-                {
-                    CurrentMousePosition = MousePosition.Inside;
-                }
-                else
-                {
-                    CurrentMousePosition = MousePosition.Outside;
-                }
-            }
-            #endregion
-
-            #region Compare the previous position of the mouse with the current position, if they're both inside the tab, it has been clicked
-            if (CurrentMouseState.LeftButton == ButtonState.Released &&
-                PreviousMouseState.LeftButton == ButtonState.Pressed)
-            {
-                if (DestinationRectangle.Contains(new Point(CurrentMouseState.X, CurrentMouseState.Y)))
-                {
-                    CurrentMousePosition = MousePosition.Inside;
-                }
-                else
-                {
-                    CurrentMousePosition = MousePosition.Outside;
-                }
-
-                if (CurrentMousePosition == MousePosition.Inside && PreviousMousePosition == MousePosition.Inside)
-                {
-                    JustClicked = true;
-                }
-            }
-            #endregion
-
-            PreviousMousePosition = CurrentMousePosition;
-            #endregion
-            
+            #endregion            
 
             PreviousMouseState = CurrentMouseState;
 

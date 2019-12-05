@@ -123,7 +123,7 @@ Content\Fonts\RobotoRegular20_5.xnb
 Content\Icons\CurrencyIcon.xnb
 Content\Icons\DamageTypeIcons\FireDamageIcon.xnb
 Content\Particles\MachineBullet.xnb
-Content\Backgrounds\MenuBackground.xnb
+Content\Backgrounds\MenuBackground1.xnb
 Content\Fonts\RobotoRegular40_2.xnb
 Content\Fonts\RobotoRegular20_2(2).xnb
 Content\ShortButtonLeft.xnb
@@ -143,6 +143,10 @@ Content\BaseLight.xnb
 Content\tileNormal.xnb
 Content\MappingOutlines.xnb
 Content\Traps\CatapultTrap.xnb
+Content\Icons\PowerUnitIcon.xnb
+Content\Backgrounds\MenuBackground2.xnb
+Content\Backgrounds\MenuBackground4.xnb
+Content\Backgrounds\MenuBackground3.xnb
 Content\Sounds\Menu\MenuClick.xnb
 Content\Sounds\FireTrapStart.xnb
 Content\Sounds\Menu\MenuAmbiance.xnb

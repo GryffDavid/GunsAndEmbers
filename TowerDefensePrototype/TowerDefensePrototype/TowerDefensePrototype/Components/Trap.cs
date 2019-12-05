@@ -20,7 +20,7 @@ namespace TowerDefensePrototype
         public Vector2 Scale = new Vector2(1, 1);
         public bool Solid, CanTrigger, Affected;
         public float MaxHP, CurrentHP, DetonateDelay, CurrentDetonateDelay, AffectedTime, CurrentAffectedTime, Bottom;
-        public int ResourceCost, DetonateLimit, CurrentDetonateLimit, CurrentFrame;
+        public int ResourceCost, DetonateLimit, CurrentDetonateLimit, CurrentFrame, PowerCost;
         public double CurrentFrameDelay;
         public static Random Random = new Random();
         public UIBar TimingBar, HealthBar;

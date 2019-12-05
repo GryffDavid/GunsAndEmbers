@@ -17,7 +17,7 @@ namespace TowerDefensePrototype
             Position = position;
             Selected = true;
             //The length of time the player has to keep the beam on an invader to do damage
-            FireDelay = 300;
+            FireDelay = 1500;
             Damage = 12;
             AngleOffset = 0f;
             Animated = false;

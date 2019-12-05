@@ -9,20 +9,17 @@ using Microsoft.Xna.Framework.Input;
 
 namespace TowerDefensePrototype
 {
-    //Using a non-generic delegate so that I can pass it to all the buttons when they're initialised
-    public delegate void ButtonClickHappenedEventHandler(object source, EventArgs e);
-
     public class Button
     {
         public event ButtonClickHappenedEventHandler ButtonClickHappened;
-        public void CreateButtonClick()
+        public void CreateButtonClick(MouseButton button)
         {
-            OnButtonClickHappened();
+            OnButtonClickHappened(button);
         }
-        protected virtual void OnButtonClickHappened()
+        protected virtual void OnButtonClickHappened(MouseButton button)
         {
             if (ButtonClickHappened != null)
-                ButtonClickHappened(this, null);
+                ButtonClickHappened(this, new ButtonClickEventArgs() { ClickedButton = button });
         }
 
         public string Text;
@@ -38,7 +35,7 @@ namespace TowerDefensePrototype
         public ButtonSpriteState CurrentButtonState;
 
         int CurrentFrame;
-        public bool Active, CanBeRightClicked, JustClicked, JustRightClicked;
+        public bool Active;
         public bool ButtonActive;
         public Color CurrentIconColor;
 
@@ -59,6 +56,7 @@ namespace TowerDefensePrototype
             {
                 _LeftButtonState = value;
                 PrevInOut = InOut;
+
                 if (DestinationRectangle.Contains(new Point((int)CursorPosition.X, (int)CursorPosition.Y)) == true &&
                     GetColor() != Color.Transparent)
                 {
@@ -71,18 +69,48 @@ namespace TowerDefensePrototype
                     InOut = false;
                 }
 
-                if (PrevInOut == true && InOut == true &&
-                    CurrentMouseState.LeftButton == ButtonState.Released &&
-                    PreviousMouseState.LeftButton == ButtonState.Pressed)
+                if (PrevInOut == true && 
+                    InOut == true &&
+                    value == ButtonState.Released)
                 {
-                    CreateButtonClick();
+                    CreateButtonClick(MouseButton.Left);
+                }
+            }
+        }
+
+        private ButtonState _RightButtonState;
+        public ButtonState RightButtonState
+        {
+            get { return _RightButtonState; }
+            set
+            {
+                _RightButtonState = value;
+                PrevInOut = InOut;
+
+                if (DestinationRectangle.Contains(new Point((int)CursorPosition.X, (int)CursorPosition.Y)) == true &&
+                    GetColor() != Color.Transparent)
+                {
+                    //In                    
+                    InOut = true;
+                }
+                else
+                {
+                    //Out
+                    InOut = false;
+                }
+
+                if (PrevInOut == true && 
+                    InOut == true &&
+                    value == ButtonState.Released)
+                {
+                    CreateButtonClick(MouseButton.Right);
                 }
             }
         }
 
         public Button(Texture2D buttonStrip, Vector2 position, Texture2D icon = null, Vector2? scale = null, 
                       Color? color = null, string text = "", SpriteFont font = null, string alignment = "Left", 
-                      Color? textColor = null, bool? canBeRightClicked = null)
+                      Color? textColor = null)
         {
             ButtonActive = true;
 
@@ -110,15 +138,6 @@ namespace TowerDefensePrototype
             else
                 TextColor = textColor.Value;
 
-            if (canBeRightClicked == null)
-            {
-                CanBeRightClicked = false;
-            }
-            else
-            {
-                CanBeRightClicked = canBeRightClicked.Value;
-            }
-
             DrawDepth = 0.99f;
 
             Alignment = alignment;
@@ -132,7 +151,8 @@ namespace TowerDefensePrototype
 
         public void Initialize(ButtonClickHappenedEventHandler thing)
         {
-            ButtonClickHappened += thing;
+            if (ButtonClickHappened == null)
+                ButtonClickHappened += thing;
 
             if (ButtonActive == true)
             {
@@ -149,6 +169,9 @@ namespace TowerDefensePrototype
             if (CurrentMouseState.LeftButton != PreviousMouseState.LeftButton)
                 LeftButtonState = Mouse.GetState().LeftButton;
 
+            if (CurrentMouseState.RightButton != PreviousMouseState.RightButton)
+                RightButtonState = Mouse.GetState().RightButton;
+            
             #region Reposition the icon with the button
             if (IconNextPosition != IconPosition)
             {
