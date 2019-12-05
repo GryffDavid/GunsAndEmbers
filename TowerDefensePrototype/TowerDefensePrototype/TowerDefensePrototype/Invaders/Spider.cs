@@ -15,7 +15,7 @@ namespace TowerDefensePrototype
             Active = true;
             MoveVector = new Vector2(-1, 0);
             Position = position;
-            AssetName = "SpiderSprite";
+            AssetName = "Invaders/SpiderSprite";
             CurrentHP = 50;
             MaxHP = 50;
             MoveDelay = 20;
@@ -28,7 +28,7 @@ namespace TowerDefensePrototype
             TotalFrames = 3;
             CurrentFrame = 0;
             InvaderType = InvaderType.Spider;
-            YRange = new Vector2(420, 530);
+            YRange = new Vector2(525, 630);
             RangedAttackPower = 20;
             Range = new Vector2(200, 600); 
             AngleRange = new Vector2(110, 160);

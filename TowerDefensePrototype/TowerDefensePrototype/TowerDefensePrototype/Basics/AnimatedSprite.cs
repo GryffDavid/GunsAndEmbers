@@ -19,7 +19,7 @@ namespace TowerDefensePrototype
         public int ElapsedTime, FrameTime, FrameCount, CurrentFrame;        
         public bool Active, Looping;
 
-        public void Initialize(string assetName, Vector2 position, Vector2 frameSize, int frameCount, int frameTime, Color color, Vector2 scale, bool looping)
+        public AnimatedSprite(string assetName, Vector2 position, Vector2 frameSize, int frameCount, int frameTime, Color color, Vector2 scale, bool looping)
         {
             Color = color;
             FrameSize = frameSize;

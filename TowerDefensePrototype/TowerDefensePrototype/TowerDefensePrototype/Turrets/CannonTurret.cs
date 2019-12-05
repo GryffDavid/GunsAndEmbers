@@ -15,12 +15,12 @@ namespace TowerDefensePrototype
         {
             Active = true;
             TurretType = TurretType.Cannon;
-            TurretAsset = "CannonTurretBarrel";
-            BaseAsset = "CannonTurretBase";
+            TurretAsset = "Turrets/CannonTurretBarrel";
+            BaseAsset = "Turrets/CannonTurretBase";
             Position = position;
             Selected = true;
             FireDelay = 5000;
-            Damage = 20;
+            Damage = 100;
         }
 
         public override void Draw(SpriteBatch spriteBatch)

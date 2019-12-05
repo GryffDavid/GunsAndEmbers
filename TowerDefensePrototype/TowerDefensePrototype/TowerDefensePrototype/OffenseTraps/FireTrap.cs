@@ -21,6 +21,8 @@ namespace TowerDefensePrototype
             DetonateDelay = 1000;
             DetonateLimit = 5;
             AffectedTime = 300;
+            FrameTime = 30;
+            FrameCount = 1;
         }
     }
 }

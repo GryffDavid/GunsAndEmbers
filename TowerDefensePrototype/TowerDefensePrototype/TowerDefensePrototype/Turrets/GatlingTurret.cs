@@ -14,13 +14,14 @@ namespace TowerDefensePrototype
         public GatlingTurret(Vector2 position)
         {
             Active = true;
-            TurretType = TurretType.Basic;
-            TurretAsset = "MachineTurretBarrel";
-            BaseAsset = "MachineTurretBase";
+            TurretType = TurretType.Gatling;
+            TurretAsset = "Turrets/MachineTurretBarrel";
+            BaseAsset = "Turrets/MachineTurretBase";
             Position = position;
             Selected = true;
             FireDelay = 200;
-            Damage = 7;            
+            Damage = 7;
+            AngleOffset = 0;
         }
 
         public override void Draw(SpriteBatch spriteBatch)

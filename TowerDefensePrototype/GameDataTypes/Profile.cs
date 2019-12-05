@@ -10,8 +10,7 @@ namespace TowerDefensePrototype
     public class Profile
     {
         public string Name;
-        public int LevelNumber;
-        public int Points;
+        public int LevelNumber, Points, Credits;
         public List<string> Buttons;
 
         //What turrets the player has access to
@@ -19,5 +18,8 @@ namespace TowerDefensePrototype
 
         //What traps the player has access to
         public bool Fire, Spikes, Wall, Catapult;
+
+        //Upgrades the player has purchased
+        public bool Upgrade1, Upgrade2, Upgrade3;
     }
 }

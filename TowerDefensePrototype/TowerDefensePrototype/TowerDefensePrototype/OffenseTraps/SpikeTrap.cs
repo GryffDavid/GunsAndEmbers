@@ -14,11 +14,13 @@ namespace TowerDefensePrototype
         {
             Position = position;
             Solid = false;
-            AssetName = "SpikeTrap";
+            AssetName = "Traps/SpikeTrap";
             TrapType = TrapType.Spikes;
             MaxHP = 50;
             DetonateDelay = 300;
             DetonateLimit = -1;
+            FrameTime = 30;
+            FrameCount = 1;
         }
     }
 }

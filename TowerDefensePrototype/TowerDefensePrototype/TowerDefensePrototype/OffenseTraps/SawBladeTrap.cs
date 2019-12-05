@@ -8,20 +8,20 @@ using Microsoft.Xna.Framework.Content;
 
 namespace TowerDefensePrototype
 {
-    class TarTrap : Trap
+    class SawBladeTrap : Trap
     {
-        public TarTrap(Vector2 position)
+        public SawBladeTrap(Vector2 position)
         {
             Position = position;
             Solid = false;
-            AssetName = "Traps/IceTrap";
+            AssetName = "Blank";
             MaxHP = 50;
-            TrapType = TrapType.Tar;
-            DetonateDelay = 3000;
-            DetonateLimit = 4;
-            AffectedTime = 0;
+            TrapType = TrapType.SawBlade;
+            DetonateDelay = 1000;
+            DetonateLimit = 5;
+            AffectedTime = 300;
             FrameTime = 30;
             FrameCount = 1;
-        }    
+        }
     }
 }

@@ -10,6 +10,8 @@ namespace TowerDefensePrototype
         public LavaWorld()
         {
             WorldType = WorldType.Lava;
+            BackgroundAsset = "Blank";
+            GroundAsset = "Ground5";
         }
     }
 }

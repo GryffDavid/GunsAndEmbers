@@ -14,12 +14,14 @@ namespace TowerDefensePrototype
         {
             Position = position;
             Solid = false;
-            AssetName = "IceTrap";
+            AssetName = "Traps/IceTrap";
             MaxHP = 50;
             TrapType = TrapType.Ice;
             DetonateDelay = 4000;
             DetonateLimit = 5;
             AffectedTime = 300;
+            FrameTime = 30;
+            FrameCount = 1;
         }       
     }
 }

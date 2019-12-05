@@ -120,7 +120,6 @@
     <Compile Include="Invaders\Spider.cs" />
     <Compile Include="Invaders\SuicideBomber.cs" />
     <Compile Include="Invaders\WaterElemental.cs" />
-    <Compile Include="Level.cs" />
     <Compile Include="OffenseTraps\BarrelTrap.cs" />
     <Compile Include="Basics\AnimatedSprite.cs" />
     <Compile Include="Basics\Boss.cs" />
@@ -131,10 +130,11 @@
     <Compile Include="Basics\Camera.cs" />
     <Compile Include="DefenseTraps\IceTrap.cs" />
     <Compile Include="Invaders\Airship.cs" />
-    <Compile Include="Basics\Profile.cs" />
+    <Compile Include="OffenseTraps\SawBladeTrap.cs" />
     <Compile Include="Projectiles\AcidProjectile.cs" />
     <Compile Include="Projectiles\Arrow.cs" />
     <Compile Include="Projectiles\CannonBall.cs" />
+    <Compile Include="Projectiles\Torpedo.cs" />
     <Compile Include="Projectiles\FlameProjectile.cs" />
     <Compile Include="Projectiles\FreezeProjectile.cs" />
     <Compile Include="Projectiles\HeavyProjectile.cs" />
@@ -163,6 +163,8 @@
     <Compile Include="Turrets\CannonTurret.cs" />
     <Compile Include="Turrets\FlameThrowerTurret.cs" />
     <Compile Include="Basics\Wave.cs" />
+    <Compile Include="Basics\Upgrade.cs" />
+    <Compile Include="Upgrades\Upgrade1.cs" />
     <Compile Include="World\IceWorld.cs" />
     <Compile Include="World\LavaWorld.cs" />
   </ItemGroup>
@@ -171,6 +173,10 @@
     <Content Include="Service References\aOtherStuff\GameThumbnail.png" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\GameDataTypes\GameDataTypes.csproj">
+      <Project>{9D3EE047-E4E9-4E5F-A571-E255D7680B0D}</Project>
+      <Name>GameDataTypes</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TowerDefensePrototypeContent\TowerDefensePrototypeContent.contentproj">
       <Name>TowerDefensePrototypeContent</Name>
       <XnaReferenceType>Content</XnaReferenceType>

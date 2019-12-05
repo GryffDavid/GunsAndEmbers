@@ -12,7 +12,7 @@ namespace TowerDefensePrototype
     public enum ButtonSpriteState { Released, Hover, Pressed };
     public enum MousePosition { Inside, Outside };
 
-    class Button
+    public class Button
     {
         public string AssetName, IconName, Text, FontName;
         public Vector2 FrameSize, Scale, Position, CursorPosition;
@@ -32,8 +32,10 @@ namespace TowerDefensePrototype
         public bool Active, JustClicked;
         public bool ButtonActive;
 
+        string Alignment;
+
         public Button(string assetName, Vector2 position, string iconName = null, Vector2? scale = null, 
-            Color? color = null, string text = "", string fontName = "", Color? textColor = null)
+            Color? color = null, string text = "", string fontName = "", string alignment = "Left", Color? textColor = null)
         {
             ButtonActive = true;
 
@@ -60,6 +62,8 @@ namespace TowerDefensePrototype
                 TextColor = Color.White;
             else
                 TextColor = textColor.Value;
+
+            Alignment = alignment;
 
             CurrentButtonState = ButtonSpriteState.Released;
         }
@@ -175,15 +179,39 @@ namespace TowerDefensePrototype
 
         public void Draw(SpriteBatch spriteBatch)
         {
+            Color newColor, newColor2, drawColor;
+            newColor = Color.Lerp(TextColor, Color.Transparent, 0.5f);
+            newColor2 = TextColor;
+            drawColor = TextColor;
+
             if (ButtonActive == true)
             {
+                
+
                 spriteBatch.Draw(ButtonStrip, DestinationRectangle, SourceRectangle, Color, MathHelper.ToRadians(0), Vector2.Zero, SpriteEffects.None, 0.99f);
                 if (IconName != null)
                 {
                     if (CurrentButtonState != ButtonSpriteState.Pressed)                    
-                        spriteBatch.Draw(IconTexture, IconRectangle, null, Color.White, MathHelper.ToRadians(0), Vector2.Zero, SpriteEffects.None, 0.5f);
+                        spriteBatch.Draw(IconTexture, IconRectangle, null, Color.White, MathHelper.ToRadians(0), Vector2.Zero, 
+                            SpriteEffects.None, 0.5f);
                     else
-                        spriteBatch.Draw(IconTexture, new Rectangle(IconRectangle.X + 2, IconRectangle.Y + 2, IconRectangle.Width, IconRectangle.Height), null, Color.White, MathHelper.ToRadians(0), Vector2.Zero, SpriteEffects.None, 0.5f);              
+                        spriteBatch.Draw(IconTexture, new Rectangle(IconRectangle.X + 2, IconRectangle.Y + 2, IconRectangle.Width, 
+                            IconRectangle.Height), null, Color.White, MathHelper.ToRadians(0), Vector2.Zero, SpriteEffects.None, 0.5f);              
+                }
+
+                switch (CurrentButtonState)
+                {
+                    case ButtonSpriteState.Pressed:
+                        drawColor = newColor2;
+                        break;
+
+                    case ButtonSpriteState.Hover:
+                        drawColor = newColor2;
+                        break;
+
+                    case ButtonSpriteState.Released:
+                        drawColor = newColor;
+                        break;
                 }
 
                 if (Text != "")
@@ -191,12 +219,52 @@ namespace TowerDefensePrototype
                     if (CurrentButtonState != ButtonSpriteState.Pressed)
                     {
                         Vector2 TextSize = Font.MeasureString(Text);
-                        spriteBatch.DrawString(Font, Text, new Vector2(DestinationRectangle.Center.X - (TextSize.X / 2), DestinationRectangle.Center.Y - (TextSize.Y / 2)), TextColor, MathHelper.ToRadians(0), Vector2.Zero, 1, SpriteEffects.None, 0.5f);
+
+                        switch (Alignment)
+                        {
+                            case "Centre":                                
+                                spriteBatch.DrawString(Font, Text, new Vector2(DestinationRectangle.Center.X - (TextSize.X / 2),
+                                    DestinationRectangle.Center.Y - (TextSize.Y / 2) + 4), drawColor, MathHelper.ToRadians(0), 
+                                    Vector2.Zero, 1, SpriteEffects.None, 0.5f);
+                                break;
+
+                            case "Left":
+                                spriteBatch.DrawString(Font, Text, new Vector2(DestinationRectangle.Left + 16,
+                                    DestinationRectangle.Center.Y - (TextSize.Y / 2) + 4), drawColor, MathHelper.ToRadians(0), 
+                                    Vector2.Zero, 1, SpriteEffects.None, 0.5f);
+                                break;
+
+                            case "Right":
+                                spriteBatch.DrawString(Font, Text, new Vector2(DestinationRectangle.Right - TextSize.X - 16,
+                                    DestinationRectangle.Center.Y - (TextSize.Y / 2) + 4), drawColor, MathHelper.ToRadians(0), 
+                                    Vector2.Zero, 1, SpriteEffects.None, 0.5f);
+                                break;
+                        }
                     }
                     else
                     {
                         Vector2 TextSize = Font.MeasureString(Text);
-                        spriteBatch.DrawString(Font, Text, new Vector2(DestinationRectangle.Center.X - (TextSize.X / 2)+2, DestinationRectangle.Center.Y - (TextSize.Y / 2)+2), TextColor, MathHelper.ToRadians(0), Vector2.Zero, 1, SpriteEffects.None, 0.5f);
+
+                        switch (Alignment)
+                        {
+                            case "Centre":
+                                spriteBatch.DrawString(Font, Text, new Vector2(DestinationRectangle.Center.X - (TextSize.X / 2)+2,
+                                    DestinationRectangle.Center.Y - (TextSize.Y / 2) + 6), drawColor, MathHelper.ToRadians(0), 
+                                    Vector2.Zero, 1, SpriteEffects.None, 0.5f);
+                                break;
+
+                            case "Left":
+                                spriteBatch.DrawString(Font, Text, new Vector2(DestinationRectangle.Left + 16+2,
+                                    DestinationRectangle.Center.Y - (TextSize.Y / 2) + 6), drawColor, MathHelper.ToRadians(0), 
+                                    Vector2.Zero, 1, SpriteEffects.None, 0.5f);
+                                break;
+
+                            case "Right":
+                                spriteBatch.DrawString(Font, Text, new Vector2(DestinationRectangle.Right - TextSize.X - 16+2,
+                                    DestinationRectangle.Center.Y - (TextSize.Y / 2) + 6), drawColor, MathHelper.ToRadians(0), 
+                                    Vector2.Zero, 1, SpriteEffects.None, 0.5f);
+                                break;
+                        }
                     }
                 }                
             }

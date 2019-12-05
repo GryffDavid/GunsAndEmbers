@@ -10,7 +10,7 @@ namespace TowerDefensePrototype
         public IceWorld()
         {
             WorldType = WorldType.Ice;
-            BackgroundAsset = "TestBackground";
+            BackgroundAsset = "Backgrounds/TestBackground";
             GroundAsset = "Ground7";
         }
     }

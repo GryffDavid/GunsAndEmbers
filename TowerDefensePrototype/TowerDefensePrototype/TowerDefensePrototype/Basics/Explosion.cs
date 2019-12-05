@@ -10,13 +10,14 @@ namespace TowerDefensePrototype
     {
         public Vector2 Position;
         public bool Active;
-        public float BlastRadius;
+        public float BlastRadius, Damage;
 
-        public Explosion(Vector2 position, float blastRadius)
+        public Explosion(Vector2 position, float blastRadius, float damage)
         {
             Active = true;
             Position = position;
             BlastRadius = blastRadius;
+            Damage = damage;
         }
 
         public void Update(GameTime gameTime)

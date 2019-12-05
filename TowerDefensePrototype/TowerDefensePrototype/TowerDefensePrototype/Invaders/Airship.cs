@@ -15,7 +15,7 @@ namespace TowerDefensePrototype
             Active = true;            
             MoveVector = new Vector2(-1, 0);
             Position = position;
-            AssetName = "Airship";
+            AssetName = "Invaders/Airship";
             MaxHP = 300;
             CurrentHP = MaxHP;
             MoveDelay = 20;

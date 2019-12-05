@@ -14,13 +14,14 @@ namespace TowerDefensePrototype
         string AssetName;
         public Vector2 Position, Scale, Move;
         Color Color;
-        Rectangle DestinationRectangle;
+        public Rectangle DestinationRectangle;
         public BoundingBox BoundingBox;
         public bool VerticalLooping, HorizontalLooping;
         public double CurrentTime, UpdateDelay;
+        public float Rotation;
 
         public StaticSprite(string assetName, Vector2 position, Vector2? scale = null, Color? color = null, 
-            Vector2? move = null, bool? horizontalLooping = null, bool? verticalLooping = null, double? updateDelay = null)
+            Vector2? move = null, bool? horizontalLooping = null, bool? verticalLooping = null, double? updateDelay = null, float? rotation = null)
         {
             AssetName = assetName;
             Position = position;
@@ -54,6 +55,11 @@ namespace TowerDefensePrototype
                 UpdateDelay = 1;
             else
                 UpdateDelay = updateDelay.Value;
+
+            if (rotation == null)
+                Rotation = 0;
+            else
+                Rotation = rotation.Value;
         }
 
         public void LoadContent(ContentManager contentManager)
@@ -98,7 +104,7 @@ namespace TowerDefensePrototype
         {
             DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, (int)(Texture.Width * Scale.X), (int)(Texture.Height * Scale.Y));
             BoundingBox = new BoundingBox(new Vector3(Position.X, Position.Y, 0), new Vector3(Position.X + (Texture.Width * Scale.X), Position.Y + (Texture.Width * Scale.Y), 0));
-            spriteBatch.Draw(Texture, DestinationRectangle, Color);
+            spriteBatch.Draw(Texture, DestinationRectangle, null, Color, Rotation, Vector2.Zero, SpriteEffects.None, 0);
         }
     }
 }

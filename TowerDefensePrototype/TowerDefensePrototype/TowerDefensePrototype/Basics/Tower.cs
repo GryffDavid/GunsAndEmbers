@@ -14,14 +14,17 @@ namespace TowerDefensePrototype
         string AssetName;
         public Vector2 Position;
         public Rectangle DestinationRectangle;
-        public int MaxHP, CurrentHP;
-
-        public Tower(string assetName, Vector2 position, int totalHitpoints)
+        public float MaxHP, CurrentHP, Slots, MaxShield, CurrentShield, ShieldStrength;
+        
+        public Tower(string assetName, Vector2 position, int totalHitpoints, int totalShield, float shieldStrength)
         {
             AssetName = assetName;
             Position = position;
             MaxHP = totalHitpoints;
             CurrentHP = MaxHP;
+            MaxShield = totalShield;
+            CurrentShield = MaxShield;
+            ShieldStrength = shieldStrength;
         }
 
         public void LoadContent(ContentManager contentManager)
@@ -38,6 +41,19 @@ namespace TowerDefensePrototype
         public void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(Texture, DestinationRectangle, null, Color.White, MathHelper.ToRadians(0), Vector2.Zero, SpriteEffects.None, 1);
+        }
+
+        public void TakeDamage(int value)
+        {
+            if (CurrentShield > 0)
+            {
+                CurrentShield -= MathHelper.Clamp(value, 0, ShieldStrength);
+                CurrentHP -= MathHelper.Clamp(value - ShieldStrength, 0, value);
+            }
+            else
+            {
+                CurrentHP -= value;
+            }
         }
     }
 }

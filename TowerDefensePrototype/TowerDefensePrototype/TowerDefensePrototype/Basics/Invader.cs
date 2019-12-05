@@ -50,8 +50,7 @@ namespace TowerDefensePrototype
         public virtual void Update(GameTime gameTime)
         {
             if (Active == true)
-            {
-                Random = new Random();
+            {                
                 ResourceValue = Random.Next((int)ResourceMinMax.X, (int)ResourceMinMax.Y);
 
                 VulnerableToTurret = true;

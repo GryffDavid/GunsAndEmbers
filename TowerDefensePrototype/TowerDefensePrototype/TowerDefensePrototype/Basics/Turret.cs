@@ -21,7 +21,7 @@ namespace TowerDefensePrototype
         public bool Selected, Active, JustClicked, CanShoot;
         public Color Color;
         public double FireDelay;
-        public int Damage;
+        public int Damage, AngleOffset;
         public Random Random;
         public Vector2 FireDirection;
         public float FireRotation;
@@ -44,9 +44,10 @@ namespace TowerDefensePrototype
                 TurretBase = contentManager.Load<Texture2D>(BaseAsset);
                 TurretBarrel = contentManager.Load<Texture2D>(TurretAsset);
             }
-            //Line = contentManager.Load<Texture2D>("Projectile");
 
             SelectBox = new Rectangle((int)Position.X, (int)Position.Y-24, 64, 64);
+
+            Random = new Random();
         }
 
         public void Update(GameTime gameTime)
@@ -102,11 +103,9 @@ namespace TowerDefensePrototype
                 //}
                 //else
                 //    Color = Color.White;
-            #endregion
+            #endregion                
 
-                Random = new Random();
-
-                FireRotation = Rotation +MathHelper.ToRadians((float)(-2 + Random.NextDouble() * (2 - (-2))));
+                FireRotation = Rotation + MathHelper.ToRadians((float)(-AngleOffset + Random.NextDouble() * (AngleOffset - (-AngleOffset))));
 
                 FireDirection.X = (float)Math.Cos(FireRotation);
                 FireDirection.Y = (float)Math.Sin(FireRotation);

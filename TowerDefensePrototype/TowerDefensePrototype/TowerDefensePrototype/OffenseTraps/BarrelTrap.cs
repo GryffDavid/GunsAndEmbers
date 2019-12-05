@@ -14,11 +14,13 @@ namespace TowerDefensePrototype
         {
             Position = position;
             Solid = false;
-            AssetName = "BarrelTrap";
+            AssetName = "Traps/BarrelTrap";
             MaxHP = 50;
             TrapType = TrapType.Barrel;
             DetonateDelay = 10000;
             DetonateLimit = -1;
+            FrameTime = 30;
+            FrameCount = 1;
         }
     }
 }

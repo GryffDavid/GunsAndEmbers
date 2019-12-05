@@ -15,8 +15,8 @@ namespace TowerDefensePrototype
         {
             Active = true;
             TurretType = TurretType.FlameThrower;
-            TurretAsset = "FlameThrowerBarrel";
-            BaseAsset = "FlameThrowerBase";
+            TurretAsset = "Turrets/FlameThrowerBarrel";
+            BaseAsset = "Turrets/FlameThrowerBase";
             Position = position;
             Selected = true;
             FireDelay = 40;
