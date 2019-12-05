@@ -46,7 +46,7 @@ namespace TowerDefensePrototype
             OutlineColor = Color.Lerp(Color.White, Color.Transparent, 0.5f);
             OutlineThickness = outlineThickness;
 
-            InteriorColor = Color.Lerp(Color.Black, Color.Transparent, 0.75f);
+            InteriorColor = Color.Lerp(Color.White, Color.Transparent, 0.95f);
 
             CurrentPosition = position;
             CurrentSize = size;

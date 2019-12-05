@@ -120,6 +120,7 @@
     <Compile Include="UIComponents\CooldownButton.cs" />
     <Compile Include="Basics\GrassBlade.cs" />
     <Compile Include="Basics\TexturedQuad.cs" />
+    <Compile Include="UIComponents\Tabs.cs" />
     <Compile Include="UIComponents\UIBar.cs" />
     <Compile Include="Basics\Decal.cs" />
     <Compile Include="Basics\DialogBox.cs" />

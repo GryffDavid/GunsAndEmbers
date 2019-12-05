@@ -27,7 +27,7 @@ namespace TowerDefensePrototype
     public enum InvaderType { Soldier, BatteringRam, Airship, Archer, Tank, Spider, Slime, SuicideBomber, FireElemental, TestInvader };
     public enum HeavyProjectileType { CannonBall, FlameThrower, Arrow, Acid, Torpedo, ClusterBomb, ClusterBombShell, FelProjectile, Boomerang, Grenade };
     public enum LightProjectileType { MachineGun, Freeze, Lightning, Beam, Pulse, Shotgun, PersistentBeam };
-    public enum GameState { Menu, Loading, Playing, Paused, ProfileSelect, Options, ProfileManagement, GettingName, Victory, Upgrades };
+    public enum GameState { Menu, Loading, Playing, Paused, ProfileSelect, Options, ProfileManagement, GettingName, Victory};
     public enum ProfileState { Standard, Upgrades, Stats };
     public enum SpecialType { AirStrike };
     public enum DamageType { Fire, Electric, Concussive, Kinetic, Radiation };
@@ -35,7 +35,12 @@ namespace TowerDefensePrototype
     public enum Weather { Snow };
     public enum WorldType { Snowy };
     public enum InvaderBehaviour { AttackTraps, AttackTower, AttackTurrets };
-    
+    public enum ProfileManagementState { Loadout, Upgrades, Stats };
+
+    //For handling button presses and releases
+    public enum MousePosition { Inside, Outside };
+    public enum ButtonSpriteState { Released, Hover, Pressed };
+
     public struct StackedUpgrade
     {
         public float GatlingSpeed, GatlingDamage, GatlingAccuracy;
@@ -255,16 +260,16 @@ namespace TowerDefensePrototype
         #region Custom class declarations
         Button ProfileBackButton, ProfileManagementPlay, ProfileManagementBack,
                OptionsBack, OptionsSFXUp, OptionsSFXDown, OptionsMusicUp, OptionsMusicDown,
-               GetNameOK, GetNameBack, SelectTrapRight, SelectTrapLeft, SelectTurretRight, SelectTurretLeft,
-               ProfileManagementUpgrades, UpgradesBack;
+               GetNameOK, GetNameBack, SelectTrapRight, SelectTrapLeft, SelectTurretRight, SelectTurretLeft;
         Tower Tower;
-        StaticSprite Ground, ForeGround, ProfileMenuTitle, MainMenuBackground, SkyBackground, TextBox, MenuTower;
+        StaticSprite Ground, ForeGround, MainMenuBackground, SkyBackground, TextBox, MenuTower, ProfileManagementHeader;
         AnimatedSprite LoadingAnimation;
         Nullable<TrapType> SelectedTrap;
         Nullable<TurretType> SelectedTurret;
         Nullable<SpecialType> SelectedSpecial;
         LightProjectile CurrentProjectile, CurrentInvaderProjectile;
         GameState GameState;
+        ProfileManagementState ProfileManagementState;
         Thread LoadingThread;
         Profile CurrentProfile;
         StorageDevice Device;
@@ -285,6 +290,7 @@ namespace TowerDefensePrototype
         WaveCountDown WaveCountDown;
         Turret CurrentTurret;
         UITurretInfo UITurretInfo;
+        Tabs ProfileManagementTabs;
         
         
         //UIInvaderInfo UIInvaderInfo;
@@ -389,6 +395,7 @@ namespace TowerDefensePrototype
         {
             SecondaryContent = new ContentManager(Content.ServiceProvider, Content.RootDirectory);
             GameState = GameState.Menu;
+            ProfileManagementState = ProfileManagementState.Loadout;
             ContainerName = "Profiles";
             TrapLimit = 8;
             Camera = new Camera();
@@ -420,6 +427,7 @@ namespace TowerDefensePrototype
             WeaponBoxSprite = SecondaryContent.Load<Texture2D>("Buttons/WeaponBox");
             TurretSlotButtonSprite = SecondaryContent.Load<Texture2D>("Buttons/TurretSlotButton");
             DiamondButtonSprite = SecondaryContent.Load<Texture2D>("Buttons/DiamondButton");
+            WhiteBlock = SecondaryContent.Load<Texture2D>("WhiteBlock");
             #endregion
 
             #region Initialise Main Menu
@@ -500,6 +508,7 @@ namespace TowerDefensePrototype
             #endregion
 
             #region Initialise Profile Management Menu
+            ProfileManagementTabs = new Tabs(new Vector2(0,0), WhiteBlock, RobotoRegular20_2, "loadout", "upgrades", "stats");
 
             ProfileManagementPlay = new Button(ButtonRightSprite, new Vector2(1920 - 450 + 300, 1080 - 32 - 50), null, null, null, "Play     ", ButtonFont, "Right", Color.White);
             ProfileManagementPlay.LoadContent();
@@ -507,8 +516,10 @@ namespace TowerDefensePrototype
             ProfileManagementBack = new Button(ButtonLeftSprite, new Vector2(-300, 1080 - 32 - 50), null, null, null, "     Back", ButtonFont, "Left", Color.White);
             ProfileManagementBack.LoadContent();
 
-            ProfileMenuTitle = new StaticSprite("ProfileMenuTitle", new Vector2(0, 32));
-            ProfileMenuTitle.LoadContent(SecondaryContent);
+            //ProfileManagementHeader = new StaticSprite("Buttons/ProfileManagementHeader", new Vector2(0, 0));
+            //ProfileManagementHeader.LoadContent(SecondaryContent);
+            //ProfileMenuTitle = new StaticSprite("ProfileMenuTitle", new Vector2(0, 32));
+            //ProfileMenuTitle.LoadContent(SecondaryContent);
 
             SelectTrapLeft = new Button(LeftArrowSprite, new Vector2(80 + 196, 314 + 96));
             SelectTrapLeft.LoadContent();
@@ -522,8 +533,8 @@ namespace TowerDefensePrototype
             SelectTurretRight = new Button(RightArrowSprite, new Vector2(1920 - 80 - 50, 170 + 32));
             SelectTurretRight.LoadContent();
 
-            ProfileManagementUpgrades = new Button(ButtonLeftSprite, new Vector2(100, 100), null, null, null, "Upgrades", ButtonFont);
-            ProfileManagementUpgrades.LoadContent();
+            //ProfileManagementUpgrades = new Button(ButtonLeftSprite, new Vector2(100, 100), null, null, null, "Upgrades", ButtonFont);
+            //ProfileManagementUpgrades.LoadContent();
 
             PlaceWeaponList = new List<Button>();
             for (int i = 0; i < 8; i++)
@@ -576,16 +587,16 @@ namespace TowerDefensePrototype
             #endregion
 
             #region Initialise Upgrades Menu
-            UpgradesBack = new Button(ButtonLeftSprite, new Vector2(0, 1080 - 32 - 50), null, null, null, "Back", ButtonFont, "Left");
-            UpgradesBack.LoadContent();
+            //UpgradesBack = new Button(ButtonLeftSprite, new Vector2(0, 1080 - 32 - 50), null, null, null, "Back", ButtonFont, "Left");
+            //UpgradesBack.LoadContent();
 
-            UpgradeButtonList = new List<Button>();
-            for (int i = 0; i < 10; i++)
-            {
-                UpgradeButtonList.Add(new Button(WeaponBoxSprite, new Vector2(100 + (i * 92), 100), null, new Vector2(0.5f, 0.5f), Color.White, "Poop", ButtonFont, "Left", Color.White, false));
-                UpgradeButtonList[i].NextScale = new Vector2(0.5f, 0.5f);
-                UpgradeButtonList[i].LoadContent();
-            }
+            //UpgradeButtonList = new List<Button>();
+            //for (int i = 0; i < 10; i++)
+            //{
+            //    UpgradeButtonList.Add(new Button(WeaponBoxSprite, new Vector2(100 + (i * 92), 100), null, new Vector2(0.5f, 0.5f), Color.White, "Poop", ButtonFont, "Left", Color.White, false));
+            //    UpgradeButtonList[i].NextScale = new Vector2(0.5f, 0.5f);
+            //    UpgradeButtonList[i].LoadContent();
+            //}
             #endregion            
 
             LoadingAnimation = new AnimatedSprite("LoadingAnimation", new Vector2(1920 / 2 - 65, 1080 / 2 - 65), new Vector2(131, 131), 17, 30, HalfWhite, Vector2.One, true);
@@ -646,105 +657,120 @@ namespace TowerDefensePrototype
                 #region Draw Profile Managment Screen
                 if (GameState == GameState.ProfileManagement)
                 {
-                    ProfileMenuTitle.Draw(spriteBatch);
-                    spriteBatch.DrawString(DefaultFont, CurrentProfile.Name, new Vector2(16, 37), HalfWhite);
-                    spriteBatch.DrawString(DefaultFont, "Turrets", new Vector2(158 + 196, 116), HalfWhite);
-                    spriteBatch.DrawString(DefaultFont, "Traps", new Vector2(158 + 196, 120 + 130 + 60), HalfWhite);
-                    spriteBatch.DrawString(DefaultFont, "Selected Weapons", new Vector2(118, 1080 - 224), HalfWhite);
-                    //spriteBatch.DrawString(ProfileFont, CurrentProfile.Name, new Vector2(32, 16), Color.White);
-                    //spriteBatch.DrawString(ProfileFont, "Level: " + CurrentProfile.LevelNumber.ToString(), new Vector2(500, 16), Color.White);
-                    //spriteBatch.DrawString(DefaultFont, "Points: " + CurrentProfile.Points.ToString(), new Vector2(640, 64), Color.White);
-                    //spriteBatch.DrawString(DefaultFont, "Shots: " + CurrentProfile.ShotsFired.ToString(), new Vector2(640, 128), Color.White);
-                    //spriteBatch.DrawString(DefaultFont, "Level: " + CurrentProfile.LevelNumber.ToString(), new Vector2(640, 192), Color.White);
-                    //spriteBatch.DrawString(DefaultFont, SelectedTurret.ToString(), new Vector2(0, 0), Color.Red);
-                    //spriteBatch.DrawString(DefaultFont, SelectedTrap.ToString(), new Vector2(0, 0), Color.Red);
+                    //ProfileMenuTitle.Draw(spriteBatch);
+                    
+
+                    //spriteBatch.DrawString(RobotoRegular20_2, CurrentProfile.Name, new Vector2(16, 16), HalfWhite);
+                    //ProfileManagementHeader.Draw(spriteBatch);
+
+                    ProfileManagementTabs.Draw(spriteBatch, QuadEffect, GraphicsDevice);
+
+                    switch (ProfileManagementState)
+                    {
+                        #region Loadout screen
+                        case ProfileManagementState.Loadout:
+                            spriteBatch.DrawString(DefaultFont, "Turrets", new Vector2(158 + 196, 116), HalfWhite);
+                            spriteBatch.DrawString(DefaultFont, "Traps", new Vector2(158 + 196, 120 + 130 + 60), HalfWhite);
+                            spriteBatch.DrawString(DefaultFont, "Selected Weapons", new Vector2(118, 1080 - 224), HalfWhite);
+
+                            #region Draw the turret boxes
+                            foreach (WeaponBox turretBox in TurretBoxes)
+                            {
+                                if (turretBox.DestinationRectangle.Right > SelectTurretRight.DestinationRectangle.Center.X)
+                                {
+                                    turretBox.Color = Color.Lerp(turretBox.Color, Color.Transparent, 0.4f);
+                                    turretBox.CurrentIconColor = Color.Lerp(turretBox.CurrentIconColor, Color.Transparent, 0.4f);
+                                }
+
+                                if (turretBox.DestinationRectangle.Left < SelectTurretLeft.DestinationRectangle.Center.X)
+                                {
+                                    turretBox.Color = Color.Lerp(turretBox.Color, Color.Transparent, 0.4f);
+                                    turretBox.CurrentIconColor = Color.Lerp(turretBox.CurrentIconColor, Color.Transparent, 0.4f);
+                                }
+
+
+                                if (turretBox.DestinationRectangle.Right < SelectTurretRight.DestinationRectangle.Center.X &&
+                                    turretBox.DestinationRectangle.Center.X > SelectTurretLeft.DestinationRectangle.Center.X)
+                                {
+                                    turretBox.Color = Color.Lerp(turretBox.Color, Color.White, 0.3f);
+                                    turretBox.CurrentIconColor = Color.Lerp(turretBox.CurrentIconColor, Color.White, 0.3f);
+                                }
+
+                                if (turretBox.DestinationRectangle.Left > SelectTurretLeft.DestinationRectangle.Center.X &&
+                                    turretBox.DestinationRectangle.Center.X < SelectTurretRight.DestinationRectangle.Center.X)
+                                {
+                                    turretBox.Color = Color.Lerp(turretBox.Color, Color.White, 0.3f);
+                                    turretBox.CurrentIconColor = Color.Lerp(turretBox.CurrentIconColor, Color.White, 0.3f);
+                                }
+
+                                turretBox.Draw(spriteBatch);
+                            }
+                            #endregion
+
+                            #region Draw the trap boxes
+                            foreach (WeaponBox trapBox in TrapBoxes)
+                            {
+                                if (trapBox.DestinationRectangle.Right > SelectTurretRight.DestinationRectangle.Center.X)
+                                {
+                                    trapBox.Color = Color.Lerp(trapBox.Color, Color.Transparent, 0.4f);
+                                    trapBox.CurrentIconColor = Color.Lerp(trapBox.CurrentIconColor, Color.Transparent, 0.4f);
+                                }
+
+                                if (trapBox.DestinationRectangle.Left < SelectTurretLeft.DestinationRectangle.Center.X)
+                                {
+                                    trapBox.Color = Color.Lerp(trapBox.Color, Color.Transparent, 0.4f);
+                                    trapBox.CurrentIconColor = Color.Lerp(trapBox.CurrentIconColor, Color.Transparent, 0.4f);
+                                }
+
+
+                                if (trapBox.DestinationRectangle.Right < SelectTurretRight.DestinationRectangle.Center.X &&
+                                    trapBox.DestinationRectangle.Center.X > SelectTurretLeft.DestinationRectangle.Center.X)
+                                {
+                                    trapBox.Color = Color.Lerp(trapBox.Color, Color.White, 0.3f);
+                                    trapBox.CurrentIconColor = Color.Lerp(trapBox.CurrentIconColor, Color.White, 0.3f);
+                                }
+
+                                if (trapBox.DestinationRectangle.Left > SelectTurretLeft.DestinationRectangle.Center.X &&
+                                    trapBox.DestinationRectangle.Center.X < SelectTurretRight.DestinationRectangle.Center.X)
+                                {
+                                    trapBox.Color = Color.Lerp(trapBox.Color, Color.White, 0.3f);
+                                    trapBox.CurrentIconColor = Color.Lerp(trapBox.CurrentIconColor, Color.White, 0.3f);
+                                }
+
+                                trapBox.Draw(spriteBatch);
+                            }
+                            #endregion
+
+                            #region Draw the slots where weapons are placed
+                            foreach (Button button in PlaceWeaponList)
+                            {
+                                button.Draw(spriteBatch);
+                            }
+                            #endregion
+
+                            SelectTrapLeft.Draw(spriteBatch);
+                            SelectTrapRight.Draw(spriteBatch);
+
+                            SelectTurretLeft.Draw(spriteBatch);
+                            SelectTurretRight.Draw(spriteBatch);
+                            break;
+                        #endregion
+
+                        #region Stats screen
+                        case ProfileManagementState.Stats:
+
+                            break;
+                        #endregion
+
+                        #region Upgrades screen
+                        case ProfileManagementState.Upgrades:
+
+                            break;
+                        #endregion
+                    }
 
                     ProfileManagementPlay.Draw(spriteBatch);
                     ProfileManagementBack.Draw(spriteBatch);
-                    ProfileManagementUpgrades.Draw(spriteBatch);
-
-                    foreach (WeaponBox turretBox in TurretBoxes)
-                    {
-                        if (turretBox.DestinationRectangle.Right > SelectTurretRight.DestinationRectangle.Center.X)
-                        {
-                            turretBox.Color = Color.Lerp(turretBox.Color, Color.Transparent, 0.4f);
-                            turretBox.CurrentIconColor = Color.Lerp(turretBox.CurrentIconColor, Color.Transparent, 0.4f);
-                        }
-
-                        if (turretBox.DestinationRectangle.Left < SelectTurretLeft.DestinationRectangle.Center.X)
-                        {
-                            turretBox.Color = Color.Lerp(turretBox.Color, Color.Transparent, 0.4f);
-                            turretBox.CurrentIconColor = Color.Lerp(turretBox.CurrentIconColor, Color.Transparent, 0.4f);
-                        }
-
-
-                        if (turretBox.DestinationRectangle.Right < SelectTurretRight.DestinationRectangle.Center.X &&
-                            turretBox.DestinationRectangle.Center.X > SelectTurretLeft.DestinationRectangle.Center.X)
-                        {
-                            turretBox.Color = Color.Lerp(turretBox.Color, Color.White, 0.3f);
-                            turretBox.CurrentIconColor = Color.Lerp(turretBox.CurrentIconColor, Color.White, 0.3f);
-                        }
-
-                        if (turretBox.DestinationRectangle.Left > SelectTurretLeft.DestinationRectangle.Center.X &&
-                            turretBox.DestinationRectangle.Center.X < SelectTurretRight.DestinationRectangle.Center.X)
-                        {
-                            turretBox.Color = Color.Lerp(turretBox.Color, Color.White, 0.3f);
-                            turretBox.CurrentIconColor = Color.Lerp(turretBox.CurrentIconColor, Color.White, 0.3f);
-                        }
-                    }
-
-                    foreach (WeaponBox trapBox in TrapBoxes)
-                    {
-                        if (trapBox.DestinationRectangle.Right > SelectTurretRight.DestinationRectangle.Center.X)
-                        {
-                            trapBox.Color = Color.Lerp(trapBox.Color, Color.Transparent, 0.4f);
-                            trapBox.CurrentIconColor = Color.Lerp(trapBox.CurrentIconColor, Color.Transparent, 0.4f);
-                        }
-
-                        if (trapBox.DestinationRectangle.Left < SelectTurretLeft.DestinationRectangle.Center.X)
-                        {
-                            trapBox.Color = Color.Lerp(trapBox.Color, Color.Transparent, 0.4f);
-                            trapBox.CurrentIconColor = Color.Lerp(trapBox.CurrentIconColor, Color.Transparent, 0.4f);
-                        }
-
-
-                        if (trapBox.DestinationRectangle.Right < SelectTurretRight.DestinationRectangle.Center.X &&
-                            trapBox.DestinationRectangle.Center.X > SelectTurretLeft.DestinationRectangle.Center.X)
-                        {
-                            trapBox.Color = Color.Lerp(trapBox.Color, Color.White, 0.3f);
-                            trapBox.CurrentIconColor = Color.Lerp(trapBox.CurrentIconColor, Color.White, 0.3f);
-                        }
-
-                        if (trapBox.DestinationRectangle.Left > SelectTurretLeft.DestinationRectangle.Center.X &&
-                            trapBox.DestinationRectangle.Center.X < SelectTurretRight.DestinationRectangle.Center.X)
-                        {
-                            trapBox.Color = Color.Lerp(trapBox.Color, Color.White, 0.3f);
-                            trapBox.CurrentIconColor = Color.Lerp(trapBox.CurrentIconColor, Color.White, 0.3f);
-                        }
-                    }
-
-                    foreach (Button button in PlaceWeaponList)
-                    {
-                        button.Draw(spriteBatch);
-                    }
-
-                    foreach (WeaponBox turretBox in TurretBoxes)
-                    {
-                        turretBox.Draw(spriteBatch);
-                    }
-
-                    foreach (WeaponBox trapBox in TrapBoxes)
-                    {
-                        trapBox.Draw(spriteBatch);
-                    }
-
-                    SelectTrapLeft.Draw(spriteBatch);
-                    SelectTrapRight.Draw(spriteBatch);
-
-                    SelectTurretLeft.Draw(spriteBatch);
-                    SelectTurretRight.Draw(spriteBatch);
-
-                    //MenuTower.Draw(spriteBatch);
                 }
                 #endregion
 
@@ -801,20 +827,6 @@ namespace TowerDefensePrototype
                     GetNameOK.Draw(spriteBatch);
 
                     NameInput.Draw(spriteBatch);
-                }
-                #endregion
-
-                #region Draw Upgrades Menu
-                if (GameState == GameState.Upgrades)
-                {
-                    spriteBatch.DrawString(DefaultFont, "Upgrades", new Vector2(0, 0), Color.White);
-
-                    UpgradesBack.Draw(spriteBatch);
-
-                    foreach (Button button in UpgradeButtonList)
-                    {
-                        button.Draw(spriteBatch);
-                    }
                 }
                 #endregion
 
@@ -1822,8 +1834,6 @@ namespace TowerDefensePrototype
 
             CurrencyIcon = SecondaryContent.Load<Texture2D>("Icons/CurrencyIcon");
 
-            //LoadFonts();
-
             #region Cursor sprites
             //Turret Cursors        
             MachineGunTurretCursor = SecondaryContent.Load<Texture2D>("Icons/TurretIcons/MachineGunTurretIcon");
@@ -1940,8 +1950,6 @@ namespace TowerDefensePrototype
 
                 Tower.LoadContent(Content);
 
-                WhiteBlock = Content.Load<Texture2D>("WhiteBlock");
-
                 LoadInvaderSprites();
                 LoadTurretSprites();
                 LoadTrapSprites();
@@ -2047,8 +2055,6 @@ namespace TowerDefensePrototype
                 }
                 
                 #endregion
-
-                
 
                 CrepuscularEffect = Content.Load<Effect>("Shaders/CrepuscularRaysEffect");
                 CrepuscularEffect.Parameters["Projection"].SetValue(Matrix.CreateOrthographicOffCenter(0, 1920, 1080, 0, 0, 1));
@@ -2631,9 +2637,220 @@ namespace TowerDefensePrototype
                 #region Handling Profile Management Button Presses
                 if (GameState == GameState.ProfileManagement && DialogVisible == false)
                 {
+                    //Match the state of the tabs with the ProfileManagementState
+                    ProfileManagementTabs.Update(gameTime);
+                    ProfileManagementState = (ProfileManagementState)(ProfileManagementTabs.SelectedIndex);
+
                     ProfileManagementPlay.Update(CursorPosition, gameTime);
                     ProfileManagementBack.Update(CursorPosition, gameTime);
-                    ProfileManagementUpgrades.Update(CursorPosition, gameTime);
+
+                    switch (ProfileManagementState)
+                    {
+                        #region Loadout screen
+                        case ProfileManagementState.Loadout:
+                            #region Select Weapon Buttons
+                            foreach (WeaponBox trapBox in TrapBoxes)
+                            {
+                                trapBox.Update(CursorPosition, gameTime);
+
+                                if (trapBox.CurrentPosition.X > SelectTrapLeft.DestinationRectangle.Right &&
+                                    trapBox.DestinationRectangle.Right < SelectTrapRight.DestinationRectangle.Left)
+                                {
+                                    if (trapBox.JustClicked == true)
+                                    {
+                                        string WeaponName = trapBox.ContainsTrap.ToString();
+                                        var Available = CurrentProfile.GetType().GetField(WeaponName).GetValue(CurrentProfile);
+
+                                        if ((bool)Available == true)
+                                            SelectedTrap = trapBox.ContainsTrap;
+                                    }
+                                }
+                            }
+
+                            foreach (WeaponBox turretBox in TurretBoxes)
+                            {
+                                turretBox.Update(CursorPosition, gameTime);
+
+                                if (turretBox.CurrentPosition.X > SelectTurretLeft.DestinationRectangle.Right &&
+                                    turretBox.DestinationRectangle.Right < SelectTurretRight.DestinationRectangle.Left)
+                                {
+                                    if (turretBox.JustClicked == true)
+                                    {
+                                        string WeaponName = turretBox.ContainsTurret.ToString();
+                                        var Available = CurrentProfile.GetType().GetField(WeaponName).GetValue(CurrentProfile);
+
+                                        if ((bool)Available == true)
+                                            SelectedTurret = turretBox.ContainsTurret;
+                                    }
+                                }
+                            }
+                            #endregion
+
+                            #region Place Weapon Buttons
+                            foreach (Button button in PlaceWeaponList)
+                            {
+                                button.Update(CursorPosition, gameTime);
+
+                                if (button.JustClicked == true)
+                                {
+                                    int Index = PlaceWeaponList.IndexOf(button);
+                                    Button test = PlaceWeaponList[Index];
+
+                                    if (SelectedTrap == null && SelectedTurret == null && CurrentProfile.Buttons[PlaceWeaponList.IndexOf(button)] != null)
+                                    {
+                                        SelectedTurret = CurrentProfile.Buttons[PlaceWeaponList.IndexOf(button)].CurrentTurret;
+                                        SelectedTrap = CurrentProfile.Buttons[PlaceWeaponList.IndexOf(button)].CurrentTrap;
+                                        CurrentProfile.Buttons[PlaceWeaponList.IndexOf(button)] = null;
+                                        button.IconTexture = null;
+                                        HandlePlacedIcons();
+                                        return;
+                                    }
+
+                                    if (SelectedTurret != null)
+                                        switch (SelectedTurret)
+                                        {
+                                            default:
+                                                CurrentProfile.Buttons[PlaceWeaponList.IndexOf(button)] = new Weapon(SelectedTurret, null);
+                                                SelectedTurret = null;
+                                                SelectedTrap = null;
+                                                break;
+                                        }
+
+                                    if (SelectedTrap != null)
+                                        switch (SelectedTrap)
+                                        {
+                                            default:
+                                                CurrentProfile.Buttons[PlaceWeaponList.IndexOf(button)] = new Weapon(null, SelectedTrap);
+                                                SelectedTurret = null;
+                                                SelectedTrap = null;
+                                                break;
+                                        }
+
+                                    HandlePlacedIcons();
+                                }
+
+                                if (button.JustRightClicked == true)
+                                {
+                                    CurrentProfile.Buttons[PlaceWeaponList.IndexOf(button)] = null;
+                                    button.IconTexture = null;
+                                    button.LoadContent();
+                                }
+                            }
+                            #endregion
+
+                            #region Move weapons right
+                            SelectTrapLeft.Update(CursorPosition, gameTime);
+                            SelectTurretLeft.Update(CursorPosition, gameTime);
+
+                            if (TrapBoxes[TrapBoxes.Count - 1].NextPosition.X + TrapBoxes[TrapBoxes.Count - 1].SourceRectangle.Width > SelectTrapRight.DestinationRectangle.Left)
+                                if (SelectTrapRight.JustClicked == true)
+                                {
+                                    foreach (WeaponBox trapBox in TrapBoxes)
+                                    {
+                                        trapBox.NextPosition.X -= 196;
+                                        trapBox.IconNextPosition.X -= 196;
+                                    }
+                                }
+
+                            if (TurretBoxes[TurretBoxes.Count - 1].NextPosition.X + TurretBoxes[TurretBoxes.Count - 1].SourceRectangle.Width > SelectTurretRight.DestinationRectangle.Left)
+                                if (SelectTurretRight.JustClicked == true)
+                                {
+                                    foreach (WeaponBox turretBox in TurretBoxes)
+                                    {
+                                        turretBox.NextPosition.X -= 196;
+                                        turretBox.IconNextPosition.X -= 196;
+                                    }
+                                }
+                            #endregion
+
+                            #region Move weapons left
+                            SelectTrapRight.Update(CursorPosition, gameTime);
+                            SelectTurretRight.Update(CursorPosition, gameTime);
+
+                            if (TrapBoxes[0].NextPosition.X < SelectTrapLeft.DestinationRectangle.Right)
+                                if (SelectTrapLeft.JustClicked == true)
+                                {
+                                    foreach (WeaponBox trapBox in TrapBoxes)
+                                    {
+                                        trapBox.NextPosition.X += 196;
+                                        trapBox.IconNextPosition.X += 196;
+                                    }
+                                }
+
+                            if (TurretBoxes[0].NextPosition.X < SelectTurretLeft.DestinationRectangle.Right)
+                                if (SelectTurretLeft.JustClicked == true)
+                                {
+                                    foreach (WeaponBox turretBox in TurretBoxes)
+                                    {
+                                        turretBox.NextPosition.X += 196;
+                                        turretBox.IconNextPosition.X += 196;
+                                    }
+                                }
+                            #endregion
+
+                            #region Move weapons using scroll wheel
+                            if (SelectTrapRight.CurrentButtonState == ButtonSpriteState.Hover ||
+                                SelectTrapLeft.CurrentButtonState == ButtonSpriteState.Hover ||
+                                TrapBoxes.Any(WeaponBox => WeaponBox.CurrentButtonState == ButtonSpriteState.Hover))
+                            {
+                                if (TrapBoxes[TrapBoxes.Count - 1].NextPosition.X + TrapBoxes[TrapBoxes.Count - 1].SourceRectangle.Width > SelectTrapRight.DestinationRectangle.Left)
+                                    if (CurrentMouseState.ScrollWheelValue > PreviousMouseState.ScrollWheelValue)
+                                    {
+                                        foreach (WeaponBox trapBox in TrapBoxes)
+                                        {
+                                            trapBox.NextPosition.X -= 196;
+                                            trapBox.IconNextPosition.X -= 196;
+                                        }
+                                    }
+
+                                if (TrapBoxes[0].NextPosition.X < SelectTrapLeft.DestinationRectangle.Right)
+                                    if (CurrentMouseState.ScrollWheelValue < PreviousMouseState.ScrollWheelValue)
+                                    {
+                                        foreach (WeaponBox trapBox in TrapBoxes)
+                                        {
+                                            trapBox.NextPosition += new Vector2(196, 0);
+                                            trapBox.IconNextPosition.X += 196;
+                                        }
+                                    }
+                            }
+
+                            if (SelectTurretRight.CurrentButtonState == ButtonSpriteState.Hover ||
+                                SelectTurretLeft.CurrentButtonState == ButtonSpriteState.Hover ||
+                                TurretBoxes.Any(WeaponBox => WeaponBox.CurrentButtonState == ButtonSpriteState.Hover))
+                            {
+                                if (TurretBoxes[TurretBoxes.Count - 1].NextPosition.X + TurretBoxes[TurretBoxes.Count - 1].SourceRectangle.Width > SelectTurretRight.DestinationRectangle.Left)
+                                    if (CurrentMouseState.ScrollWheelValue > PreviousMouseState.ScrollWheelValue)
+                                    {
+                                        foreach (WeaponBox TurretBox in TurretBoxes)
+                                        {
+                                            TurretBox.NextPosition.X -= 196;
+                                            TurretBox.IconNextPosition.X -= 196;
+                                        }
+                                    }
+
+                                if (TurretBoxes[0].NextPosition.X < SelectTurretLeft.DestinationRectangle.Right)
+                                    if (CurrentMouseState.ScrollWheelValue < PreviousMouseState.ScrollWheelValue)
+                                    {
+                                        foreach (WeaponBox TurretBox in TurretBoxes)
+                                        {
+                                            TurretBox.NextPosition.X += 196;
+                                            TurretBox.IconNextPosition.X += 196;
+                                        }
+                                    }
+                            }
+                            #endregion
+                            break;
+                        #endregion
+
+                        case ProfileManagementState.Stats:
+
+                            break;
+
+                        case ProfileManagementState.Upgrades:
+
+                            break;
+                    }
+
                     RightClickClearSelected();
 
                     #region Play Button
@@ -2714,236 +2931,6 @@ namespace TowerDefensePrototype
                         StorageDevice.BeginShowSelector(this.SaveProfile, null);
                         GameState = GameState.ProfileSelect;
                         ProfileManagementBack.ResetState();
-                    }
-                    #endregion
-
-                    #region Upgrades Button
-                    if (ProfileManagementUpgrades.JustClicked == true)
-                    {
-                        GameState = GameState.Upgrades;
-                    }
-                    #endregion
-
-                    #region Select Weapon Buttons
-                    foreach (WeaponBox trapBox in TrapBoxes)
-                    {
-                        trapBox.Update(CursorPosition, gameTime);
-
-                        if (trapBox.CurrentPosition.X > SelectTrapLeft.DestinationRectangle.Right &&
-                            trapBox.DestinationRectangle.Right < SelectTrapRight.DestinationRectangle.Left)
-                        {
-                            if (trapBox.JustClicked == true)
-                            {
-                                string WeaponName = trapBox.ContainsTrap.ToString();
-                                var Available = CurrentProfile.GetType().GetField(WeaponName).GetValue(CurrentProfile);
-
-                                if ((bool)Available == true)
-                                    SelectedTrap = trapBox.ContainsTrap;
-                            }
-                        }
-
-                        //if (trapBox.CurrentButtonState == ButtonSpriteState.Hover &&
-                        //    trapBox.CurrentPosition.X > SelectTrapLeft.DestinationRectangle.Right &&
-                        //    trapBox.DestinationRectangle.Right < SelectTrapRight.DestinationRectangle.Left)
-                        //{
-                        //    string WeaponName = trapBox.ContainsTrap.ToString();
-                        //    var Available = CurrentProfile.GetType().GetField(WeaponName).GetValue(CurrentProfile);
-
-                        //    if ((bool)Available == true)
-                        //    {
-
-                        //    }
-                        //}
-                    }
-
-                    foreach (WeaponBox turretBox in TurretBoxes)
-                    {
-                        turretBox.Update(CursorPosition, gameTime);
-
-                        if (turretBox.CurrentPosition.X > SelectTurretLeft.DestinationRectangle.Right &&
-                            turretBox.DestinationRectangle.Right < SelectTurretRight.DestinationRectangle.Left)
-                        {
-                            if (turretBox.JustClicked == true)
-                            {
-                                string WeaponName = turretBox.ContainsTurret.ToString();
-                                var Available = CurrentProfile.GetType().GetField(WeaponName).GetValue(CurrentProfile);
-
-                                if ((bool)Available == true)
-                                    SelectedTurret = turretBox.ContainsTurret;
-                            }
-                        }
-
-                        //if (turretBox.CurrentButtonState == ButtonSpriteState.Hover &&
-                        //    turretBox.CurrentPosition.X > SelectTurretLeft.DestinationRectangle.Right && 
-                        //    turretBox.DestinationRectangle.Right < SelectTurretRight.DestinationRectangle.Left)
-                        //{
-                        //    string WeaponName = turretBox.ContainsTurret.ToString();
-                        //    var Available = CurrentProfile.GetType().GetField(WeaponName).GetValue(CurrentProfile);
-
-                        //    if ((bool)Available == true)
-                        //    {
-                        //    }
-                        //}
-                    }
-
-                    //if (TurretBoxes.All(WeaponBox => WeaponBox.CurrentButtonState == ButtonSpriteState.Released) &&
-                    //    TrapBoxes.All(WeaponBox => WeaponBox.CurrentButtonState == ButtonSpriteState.Released))
-                    //{
-
-                    //}
-                    #endregion
-
-                    #region Place Weapon Buttons
-                    foreach (Button button in PlaceWeaponList)
-                    {
-                        button.Update(CursorPosition, gameTime);
-
-                        if (button.JustClicked == true)
-                        {
-                            int Index = PlaceWeaponList.IndexOf(button);
-                            Button test = PlaceWeaponList[Index];
-
-                            if (SelectedTrap == null && SelectedTurret == null && CurrentProfile.Buttons[PlaceWeaponList.IndexOf(button)] != null)
-                            {
-                                SelectedTurret = CurrentProfile.Buttons[PlaceWeaponList.IndexOf(button)].CurrentTurret;
-                                SelectedTrap = CurrentProfile.Buttons[PlaceWeaponList.IndexOf(button)].CurrentTrap;
-                                CurrentProfile.Buttons[PlaceWeaponList.IndexOf(button)] = null;
-                                button.IconTexture = null;
-                                HandlePlacedIcons();
-                                return;
-                            }
-
-                            if (SelectedTurret != null)
-                                switch (SelectedTurret)
-                                {
-                                    default:
-                                        CurrentProfile.Buttons[PlaceWeaponList.IndexOf(button)] = new Weapon(SelectedTurret, null);
-                                        SelectedTurret = null;
-                                        SelectedTrap = null;
-                                        break;
-                                }
-
-                            if (SelectedTrap != null)
-                                switch (SelectedTrap)
-                                {
-                                    default:
-                                        CurrentProfile.Buttons[PlaceWeaponList.IndexOf(button)] = new Weapon(null, SelectedTrap);
-                                        SelectedTurret = null;
-                                        SelectedTrap = null;
-                                        break;
-                                }
-
-                            HandlePlacedIcons();
-                        }
-
-                        if (button.JustRightClicked == true)
-                        {
-                            CurrentProfile.Buttons[PlaceWeaponList.IndexOf(button)] = null;
-                            button.IconTexture = null;
-                            button.LoadContent();
-                        }
-                    }
-                    #endregion
-
-                    #region Move weapons right
-                    SelectTrapLeft.Update(CursorPosition, gameTime);
-                    SelectTurretLeft.Update(CursorPosition, gameTime);
-
-                    if (TrapBoxes[TrapBoxes.Count - 1].NextPosition.X + TrapBoxes[TrapBoxes.Count - 1].SourceRectangle.Width > SelectTrapRight.DestinationRectangle.Left)
-                        if (SelectTrapRight.JustClicked == true)
-                        {
-                            foreach (WeaponBox trapBox in TrapBoxes)
-                            {
-                                trapBox.NextPosition.X -= 196;
-                                trapBox.IconNextPosition.X -= 196;
-                            }
-                        }
-
-                    if (TurretBoxes[TurretBoxes.Count - 1].NextPosition.X + TurretBoxes[TurretBoxes.Count - 1].SourceRectangle.Width > SelectTurretRight.DestinationRectangle.Left)
-                        if (SelectTurretRight.JustClicked == true)
-                        {
-                            foreach (WeaponBox turretBox in TurretBoxes)
-                            {
-                                turretBox.NextPosition.X -= 196;
-                                turretBox.IconNextPosition.X -= 196;
-                            }
-                        }
-                    #endregion
-
-                    #region Move weapons left
-                    SelectTrapRight.Update(CursorPosition, gameTime);
-                    SelectTurretRight.Update(CursorPosition, gameTime);
-
-                    if (TrapBoxes[0].NextPosition.X < SelectTrapLeft.DestinationRectangle.Right)
-                        if (SelectTrapLeft.JustClicked == true)
-                        {
-                            foreach (WeaponBox trapBox in TrapBoxes)
-                            {
-                                trapBox.NextPosition.X += 196;
-                                trapBox.IconNextPosition.X += 196;
-                            }
-                        }
-
-                    if (TurretBoxes[0].NextPosition.X < SelectTurretLeft.DestinationRectangle.Right)
-                        if (SelectTurretLeft.JustClicked == true)
-                        {
-                            foreach (WeaponBox turretBox in TurretBoxes)
-                            {
-                                turretBox.NextPosition.X += 196;
-                                turretBox.IconNextPosition.X += 196;
-                            }
-                        }
-                    #endregion
-
-                    #region Move weapons using scroll wheel
-                    if (SelectTrapRight.CurrentButtonState == ButtonSpriteState.Hover ||
-                        SelectTrapLeft.CurrentButtonState == ButtonSpriteState.Hover ||
-                        TrapBoxes.Any(WeaponBox => WeaponBox.CurrentButtonState == ButtonSpriteState.Hover))
-                    {
-                        if (TrapBoxes[TrapBoxes.Count - 1].NextPosition.X + TrapBoxes[TrapBoxes.Count - 1].SourceRectangle.Width > SelectTrapRight.DestinationRectangle.Left)
-                            if (CurrentMouseState.ScrollWheelValue > PreviousMouseState.ScrollWheelValue)
-                            {
-                                foreach (WeaponBox trapBox in TrapBoxes)
-                                {
-                                    trapBox.NextPosition.X -= 196;
-                                    trapBox.IconNextPosition.X -= 196;
-                                }
-                            }
-
-                        if (TrapBoxes[0].NextPosition.X < SelectTrapLeft.DestinationRectangle.Right)
-                            if (CurrentMouseState.ScrollWheelValue < PreviousMouseState.ScrollWheelValue)
-                            {
-                                foreach (WeaponBox trapBox in TrapBoxes)
-                                {
-                                    trapBox.NextPosition += new Vector2(196, 0);
-                                    trapBox.IconNextPosition.X += 196;
-                                }
-                            }
-                    }
-
-                    if (SelectTurretRight.CurrentButtonState == ButtonSpriteState.Hover ||
-                        SelectTurretLeft.CurrentButtonState == ButtonSpriteState.Hover ||
-                        TurretBoxes.Any(WeaponBox => WeaponBox.CurrentButtonState == ButtonSpriteState.Hover))
-                    {
-                        if (TurretBoxes[TurretBoxes.Count - 1].NextPosition.X + TurretBoxes[TurretBoxes.Count - 1].SourceRectangle.Width > SelectTurretRight.DestinationRectangle.Left)
-                            if (CurrentMouseState.ScrollWheelValue > PreviousMouseState.ScrollWheelValue)
-                            {
-                                foreach (WeaponBox TurretBox in TurretBoxes)
-                                {
-                                    TurretBox.NextPosition.X -= 196;
-                                    TurretBox.IconNextPosition.X -= 196;
-                                }
-                            }
-
-                        if (TurretBoxes[0].NextPosition.X < SelectTurretLeft.DestinationRectangle.Right)
-                            if (CurrentMouseState.ScrollWheelValue < PreviousMouseState.ScrollWheelValue)
-                            {
-                                foreach (WeaponBox TurretBox in TurretBoxes)
-                                {
-                                    TurretBox.NextPosition.X += 196;
-                                    TurretBox.IconNextPosition.X += 196;
-                                }
-                            }
                     }
                     #endregion
                 }
@@ -3289,32 +3276,32 @@ namespace TowerDefensePrototype
                 #endregion                
 
                 #region Handling Upgrades Menu Button Presses
-                if (GameState == GameState.Upgrades && DialogVisible == false)
-                {
-                    UpgradesBack.Update(CursorPosition, gameTime);
+                //if (GameState == GameState.Upgrades && DialogVisible == false)
+                //{
+                //    UpgradesBack.Update(CursorPosition, gameTime);
 
-                    foreach (Button button in UpgradeButtonList)
-                    {
-                        button.Update(CursorPosition, gameTime);
+                //    foreach (Button button in UpgradeButtonList)
+                //    {
+                //        button.Update(CursorPosition, gameTime);
 
-                        int index = UpgradeButtonList.IndexOf(button);
+                //        int index = UpgradeButtonList.IndexOf(button);
 
-                        if (button.JustClicked == true)
-                        {
-                            switch (index)
-                            {
-                                case 0:
-                                    CurrentProfile.UpgradesList.Add(new Upgrade2());
-                                    break;
-                            }
-                        }
-                    }
+                //        if (button.JustClicked == true)
+                //        {
+                //            switch (index)
+                //            {
+                //                case 0:
+                //                    CurrentProfile.UpgradesList.Add(new Upgrade2());
+                //                    break;
+                //            }
+                //        }
+                //    }
 
-                    if (UpgradesBack.JustClicked == true)
-                    {
-                        GameState = GameState.ProfileManagement;
-                    }
-                }
+                //    if (UpgradesBack.JustClicked == true)
+                //    {
+                //        GameState = GameState.ProfileManagement;
+                //    }
+                //}
                 #endregion
 
                 #region Handling DialogBox Button Presses
@@ -7675,53 +7662,6 @@ namespace TowerDefensePrototype
                         break;
                 }
             }
-            //foreach (WeaponBox turretBox in TurretBoxes)
-            //{
-            //    switch (turretBox.ContainsTurret)
-            //    {
-            //        case null:
-
-            //            break;
-
-            //        default:
-            //            {
-            //                string WeaponName = turretBox.ContainsTurret.ToString();
-            //                var Available = CurrentProfile.GetType().GetField(WeaponName).GetValue(CurrentProfile);
-
-            //                if ((bool)Available == true)
-            //                    turretBox.IconName = "Icons/TurretIcons/" + WeaponName + "TurretIcon";
-            //                else
-            //                    turretBox.IconName = "Icons/LockIcon";
-            //            }
-            //            break;
-            //    }
-
-            //    turretBox.LoadContent(SecondaryContent);
-            //}
-
-            //foreach (WeaponBox trapBox in TrapBoxes)
-            //{
-            //    switch (trapBox.ContainsTrap)
-            //    {
-            //        case null:
-
-            //            break;
-
-            //        default:
-            //            {
-            //                string WeaponName = trapBox.ContainsTrap.ToString();
-            //                var Available = CurrentProfile.GetType().GetField(WeaponName).GetValue(CurrentProfile);
-
-            //                if ((bool)Available == true)
-            //                    trapBox.IconName = "Icons/TrapIcons/" + WeaponName + "TrapIcon";
-            //                else
-            //                    trapBox.IconName = "Icons/LockIcon";
-            //            }
-            //            break;                        
-            //    }
-
-            //    trapBox.LoadContent(SecondaryContent);
-            //}
         }
 
 

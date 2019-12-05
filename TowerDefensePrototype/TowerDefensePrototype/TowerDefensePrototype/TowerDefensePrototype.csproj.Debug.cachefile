@@ -80,7 +80,6 @@ Content\ShieldNormalMap.xnb
 Content\ShieldDistortionMap.xnb
 Content\Icons\TurretIcons\PersistentBeamTurretIcon.xnb
 Content\Icons\TrapIcons\LineTrapIcon.xnb
-Content\Backgrounds\MenuBackground.xnb
 Content\RedBox.xnb
 Content\Icons\TrapIcons\TarTrapIcon.xnb
 Content\Icons\TrapIcons\TriggerTrapIcon.xnb
@@ -158,3 +157,5 @@ Content\Shaders\ShieldBubbleEffect.xnb
 Content\Shaders\BackgroundEffect.xnb
 Content\Shaders\ButtonBlurEffect.xnb
 Content\Shaders\CrepuscularRaysEffect.xnb
+Content\Buttons\ProfileManagementHeader.xnb
+Content\Backgrounds\MenuBackground.xnb

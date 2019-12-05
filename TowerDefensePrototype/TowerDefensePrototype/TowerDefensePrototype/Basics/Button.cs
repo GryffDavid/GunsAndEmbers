@@ -9,8 +9,8 @@ using Microsoft.Xna.Framework.Input;
 
 namespace TowerDefensePrototype
 {
-    public enum ButtonSpriteState { Released, Hover, Pressed };
-    public enum MousePosition { Inside, Outside };
+    
+    
 
     public class Button
     {
