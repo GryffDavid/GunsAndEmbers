@@ -29,7 +29,7 @@ namespace TowerDefensePrototype
                              Freeze, Boomerang, Grenade, GasGrenade, Shotgun, PersistentBeam };
 
     public enum InvaderType { Soldier, BatteringRam, Airship, Archer, Tank, Spider, Slime, SuicideBomber, 
-                              FireElemental, TestInvader, StationaryCannon, HealDrone };
+                              FireElemental, TestInvader, StationaryCannon, HealDrone, JumpMan };
 
     public enum HeavyProjectileType { CannonBall, FlameThrower, Arrow, Acid, Torpedo, ClusterBomb, 
                                       ClusterBombShell, FelProjectile, Boomerang, Grenade,  GasGrenade, FireGrenade };
@@ -99,6 +99,7 @@ namespace TowerDefensePrototype
 
     public class Game1 : Game
     {
+        #region Events
         #region Explosion Event
         public EventHandler<ExplosionEventArgs> ExplosionHappenedEvent;
         public class ExplosionEventArgs : EventArgs
@@ -1061,6 +1062,7 @@ namespace TowerDefensePrototype
                 #endregion
             }
         }
+        #endregion
         #endregion
 
 

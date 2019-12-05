@@ -208,3 +208,9 @@ C:\Users\Gryff\Desktop\TowerDefensePrototype 92 - LightProjectile Event\GameData
 C:\Users\Gryff\Desktop\TowerDefensePrototype 92 - LightProjectile Event\GameDataTypes\obj\x86\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
 C:\Users\Gryff\Desktop\TowerDefensePrototype 92 - LightProjectile Event\GameDataTypes\obj\x86\Debug\GameDataTypes.dll
 C:\Users\Gryff\Desktop\TowerDefensePrototype 92 - LightProjectile Event\GameDataTypes\obj\x86\Debug\GameDataTypes.pdb
+G:\Google Drive\Tower Defense Backups\TowerDefensePrototype 94\GameDataTypes\bin\x86\Debug\GameDataTypes.dll
+G:\Google Drive\Tower Defense Backups\TowerDefensePrototype 94\GameDataTypes\bin\x86\Debug\GameDataTypes.pdb
+G:\Google Drive\Tower Defense Backups\TowerDefensePrototype 94\GameDataTypes\obj\x86\Debug\GameDataTypes.csprojResolveAssemblyReference.cache
+G:\Google Drive\Tower Defense Backups\TowerDefensePrototype 94\GameDataTypes\obj\x86\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
+G:\Google Drive\Tower Defense Backups\TowerDefensePrototype 94\GameDataTypes\obj\x86\Debug\GameDataTypes.dll
+G:\Google Drive\Tower Defense Backups\TowerDefensePrototype 94\GameDataTypes\obj\x86\Debug\GameDataTypes.pdb
