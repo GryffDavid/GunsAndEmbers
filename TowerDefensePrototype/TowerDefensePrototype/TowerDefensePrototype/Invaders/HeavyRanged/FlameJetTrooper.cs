@@ -72,7 +72,7 @@ namespace TowerDefensePrototype
                 HoverRange = new Vector2(Position.Y - 10, Position.Y + 10);
 
                 Velocity.Y = 0;
-                Velocity.X = -0.1f;
+                Velocity.X = -1.3f;
                 Airborne = true;
                 Gravity = 0.1f;
                 JumpManBehaviour = SpecificBehaviour.Hovering;
@@ -164,20 +164,39 @@ namespace TowerDefensePrototype
                             }
                             #endregion
 
-                            if (TargetTrap == null)
+                            if (TrapList.Count > 0)
                             {
-                                if (TrapList != null && TrapList.Count > 0)
-                                {
-                                    //Find the closest trap to target
-                                    TargetTrap = TrapList.OrderBy(Trap => Vector2.Distance(Position, Trap.Position)).FirstOrDefault(Trap => MaxY > Trap.CollisionBox.Min.Y && MaxY < Trap.CollisionBox.Max.Y && Trap.Solid == true);
-                                }
+                                Trap ClosestTrap = TrapList.OrderBy(Trap => Vector2.Distance(Position, Trap.Position)).FirstOrDefault();
+
+                                if (ClosestTrap != null)
+                                    if (Vector2.Distance(Position, ClosestTrap.Position) < 300)
+                                    {
+                                        if (InAir == false)
+                                        {
+                                            Trajectory(new Vector2(-3, -8));
+                                            Gravity = 0.2f;
+                                            Airborne = false;
+                                            InAir = true;
+                                        }
+
+                                        TargetTrap = ClosestTrap;
+                                    }
                             }
 
-                            if (TargetTrap != null)
-                            {
-                                TrapPosition = TargetTrap.BoundingBox.Min.X;
-                                DistToTrap = Position.X - TrapPosition;
-                            }
+                            //if (TargetTrap == null)
+                            //{
+                            //    if (TrapList != null && TrapList.Count > 0)
+                            //    {
+                            //        //Find the closest trap to target
+                            //        TargetTrap = TrapList.OrderBy(Trap => Vector2.Distance(Position, Trap.Position)).FirstOrDefault(Trap => MaxY > Trap.CollisionBox.Min.Y && MaxY < Trap.CollisionBox.Max.Y && Trap.Solid == true);
+                            //    }
+                            //}
+
+                            //if (TargetTrap != null)
+                            //{
+                            //    TrapPosition = TargetTrap.BoundingBox.Min.X;
+                            //    DistToTrap = Position.X - TrapPosition;
+                            //}
 
                             switch (CurrentMacroBehaviour)
                             {
@@ -186,13 +205,13 @@ namespace TowerDefensePrototype
                                     {
                                         if (InTowerRange == true)
                                         {
-                                            if (InAir == false)
-                                            {
-                                                Trajectory(new Vector2(-3, -8));
-                                                Gravity = 0.2f;
-                                                Airborne = false;
-                                                InAir = true;
-                                            }
+                                            //if (InAir == false)
+                                            //{
+                                            //    Trajectory(new Vector2(-3, -8));
+                                            //    Gravity = 0.2f;
+                                            //    Airborne = false;
+                                            //    InAir = true;
+                                            //}
                                         }
                                     }
                                     break;
@@ -261,6 +280,24 @@ namespace TowerDefensePrototype
                                 case MacroBehaviour.AttackTower:
                                     {
                                         UpdateFireDelay(gameTime);
+
+                                        if (Math.Abs(Position.X - TargetTrap.DestinationRectangle.Left) > 200)
+                                        {
+                                            CurrentMicroBehaviour = MicroBehaviour.MovingForwards;
+                                            JumpManBehaviour = SpecificBehaviour.None;
+                                            Airborne = false;
+                                            Gravity = 0.2f;
+
+                                            EmitterList.ForEach(Emitter =>
+                                            {
+                                                //Had to use the TextureName to make sure if an invader has another particle effect applied that
+                                                //I don't cancel that out too. e.g. If the invader is already on fire/poisoned and uses the flamethrower
+                                                //I don't want to also cancel out the particle effect that shows the fire/poison
+                                                if (Emitter.Tether == this && Emitter.TextureName == "FlameThrower")
+                                                    Emitter.AddMore = false;
+                                            });
+                                            //TargetTrap = null;
+                                        }
                                     }
                                     break;
                                 #endregion
