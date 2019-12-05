@@ -8,15 +8,18 @@ using Microsoft.Xna.Framework.Content;
 
 namespace TowerDefensePrototype
 {
+    public enum TrapState { Untriggered, Triggering, Active, Resetting };
+
     public abstract class Trap : Drawable
     {
-        //public Texture2D CurrentTexture;
-        
+        public Texture2D CurrentTexture;
+        public List<Texture2D> TextureList;
+        public InvaderAnimation CurrentAnimation;
         public Rectangle DestinationRectangle, SourceRectangle;
         public BoundingBox BoundingBox;
         public TrapType TrapType;
         public List<Emitter> TrapEmitterList = new List<Emitter>();
-        public Vector2 Position;
+        public Vector2 Position, FrameSize;
         public Vector2 Scale = new Vector2(1, 1);
         public bool Solid, CanTrigger, Affected;
         public float MaxHP, CurrentHP, DetonateDelay, CurrentDetonateDelay, AffectedTime, CurrentAffectedTime, Bottom;
@@ -30,29 +33,18 @@ namespace TowerDefensePrototype
         public SlowStruct InvaderSlow;
         public FreezeStruct InvaderFreeze;
         public float NormalDamage;
+        
 
-        public TrapAnimation CurrentAnimation;
-        public List<TrapAnimation> AnimationList;
-
-        private TrapState _TrapState;
-        public TrapState TrapState
-        {
-            get { return _TrapState; }
-            set
-            {
-                _TrapState = value;
-
-                if (AnimationList != null)
-                {
-                    CurrentAnimation = AnimationList.Find(Animation => Animation.CurrentTrapState == value);
-
-                    if (CurrentAnimation.CurrentTrapState == TrapState.Untriggered)
-                        CurrentAnimation.CurrentFrame = Random.Next(0, CurrentAnimation.TotalFrames);
-
-                    CurrentAnimation.CurrentFrameDelay = 0;
-                }
-            }
-        }
+        //public Trap(Vector2 position, float maxHP, float detonateDelay, float detonateLimit, bool solid)
+        //{
+        //    //Position = position;
+        //    //Solid = false;
+        //    //MaxHP = 50;
+        //    //TrapType = TrapType.SawBlade;
+        //    //DetonateDelay = 2000;
+        //    //DetonateLimit = 5;
+        //    //AffectedTime = 300;
+        //}
 
         public virtual void Initialize()
         {
@@ -60,14 +52,19 @@ namespace TowerDefensePrototype
 
             CurrentHP = MaxHP;
 
-            TimingBar = new UIBar(new Vector2(Position.X, Position.Y + CurrentAnimation.FrameSize.Y + 4), new Vector2(32, 4), Color.DodgerBlue);
-            HealthBar = new UIBar(new Vector2(Position.X, Position.Y + CurrentAnimation.FrameSize.Y + 8), new Vector2(32, 4), Color.White); 
+            TimingBar = new UIBar(new Vector2(Position.X, Position.Y + TextureList[0].Height + 4), new Vector2(32, 4), Color.DodgerBlue);
+            HealthBar = new UIBar(new Vector2(Position.X, Position.Y + TextureList[0].Height + 8), new Vector2(32, 4), Color.White); 
 
             CurrentDetonateLimit = DetonateLimit;
             CurrentDetonateDelay = DetonateDelay;
             CurrentAffectedTime = AffectedTime;
 
-            DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, (int)CurrentAnimation.FrameSize.X, (int)CurrentAnimation.FrameSize.Y);
+            //This is mostly here so that traps can have an effect around them when placed, such as a dust burst
+            if (CurrentAnimation == null && CurrentTexture != null)
+            {
+                FrameSize = new Vector2(CurrentTexture.Width, CurrentTexture.Height);
+                DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, (int)FrameSize.X, (int)FrameSize.Y);
+            }
 
             DrawDepth = (float)(DestinationRectangle.Bottom / 1080f);
             Affected = false;
@@ -77,11 +74,6 @@ namespace TowerDefensePrototype
         {
             if (CurrentHP <= 0)
                 Active = false;
-
-            if (CurrentAnimation.TotalFrames > 1)
-            {
-                CurrentAnimation.Update(gameTime);
-            }
 
             #region Handle how long the trap stays affected by outside stimulus for
             if (CurrentAffectedTime < AffectedTime)
@@ -133,11 +125,37 @@ namespace TowerDefensePrototype
             TimingBar.Update((float)DetonateDelay, (float)CurrentDetonateDelay);
             HealthBar.Update((float)MaxHP, (float)CurrentHP);
 
+            //Handle the animations
+            //if (CurrentTrapState != PreviousTrapState)
+            //{
+            //    CurrentFrameDelay = 0;
+            //    CurrentFrame = Random.Next(0, CurrentAnimation.TotalFrames);
+            //}
+
+            //This is so that if the animation bugs out I can know which trap is the problem.
+            TrapType traptype = TrapType;
+
+            if (CurrentAnimation != null)
+            {
+                FrameSize = new Vector2(CurrentTexture.Width / CurrentAnimation.TotalFrames, CurrentTexture.Height);
+            }
+            else
+            {
+                FrameSize = new Vector2(CurrentTexture.Width, CurrentTexture.Height);
+            }
+
+            SourceRectangle = new Rectangle((int)(CurrentFrame * FrameSize.X), 0, (int)FrameSize.X, (int)FrameSize.Y);
+            DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y,
+                                                 (int)(FrameSize.X * Scale.X), (int)(FrameSize.Y * Scale.Y));
+
             BoundingBox = new BoundingBox(new Vector3(Position.X, Position.Y, 0),
-                                          new Vector3(Position.X + CurrentAnimation.FrameSize.X, Position.Y + CurrentAnimation.FrameSize.Y, 0));
+                                          new Vector3(Position.X + FrameSize.X, Position.Y + FrameSize.Y, 0));
 
             Bottom = BoundingBox.Max.Y;
             DrawDepth = (Bottom / 1080);
+
+            //Bottom = BoundingBox.Max.Y;
+            //--------------------------------//
 
 
             if (TrapEmitterList.Count > 0)
@@ -161,23 +179,9 @@ namespace TowerDefensePrototype
 
             if (Active == true)
             {
-                spriteBatch.Draw(CurrentAnimation.Texture, DestinationRectangle, CurrentAnimation.DiffuseSourceRectangle, Color.White, 
+                spriteBatch.Draw(CurrentTexture, DestinationRectangle, SourceRectangle, Color.White, 
                                  MathHelper.ToRadians(0), Vector2.Zero, SpriteEffects.None, DrawDepth);
             }
-        }
-
-        public override void DrawSpriteNormal(SpriteBatch spriteBatch)
-        {
-            if (Active == true)
-            {
-                spriteBatch.Draw(CurrentAnimation.Texture, DestinationRectangle, CurrentAnimation.NormalSourceRectangle, Color.White,
-                                 MathHelper.ToRadians(0), Vector2.Zero, SpriteEffects.None, DrawDepth);
-            }
-        }
-
-        public override void DrawSpriteDepth(SpriteBatch spriteBatch)
-        {
-            spriteBatch.Draw(CurrentAnimation.Texture, DestinationRectangle, CurrentAnimation.DiffuseSourceRectangle, new Color(DrawDepth * 255, DrawDepth * 255, DrawDepth * 255));
         }
 
         public void DrawBars(GraphicsDevice graphicsDevice, BasicEffect basicEffect)

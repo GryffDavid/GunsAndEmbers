@@ -60,8 +60,7 @@ namespace TowerDefensePrototype
                     CurrentAnimation = AnimationList.Find(Animation => Animation.CurrentInvaderState == value);   
                  
                     if (CurrentAnimation.CurrentInvaderState == InvaderState.Stand)
-                        CurrentAnimation.CurrentFrame = Random.Next(0, CurrentAnimation.TotalFrames);
-
+                    CurrentAnimation.CurrentFrame = Random.Next(0, CurrentAnimation.TotalFrames);
                     CurrentAnimation.CurrentFrameDelay = 0;
                 }
             }

@@ -43,8 +43,6 @@ namespace TowerDefensePrototype
 
     public enum InvaderState { Walk, Stand, Melee, Ranged };
     public enum InvaderBehaviour { AttackTraps, AttackTower, AttackTurrets };
-
-    public enum TrapState { Untriggered, Triggering, Active, Resetting };
     
     public enum SpecialType { AirStrike };
     public enum DamageType { Fire, Electric, Concussive, Kinetic, Radiation };
@@ -1159,8 +1157,8 @@ namespace TowerDefensePrototype
         #endregion
 
         #region Trap sprites
-        public List<TrapAnimation> WallAnimations, BarrelTrapAnimations, CatapultTrapAnimations, IceTrapAnimations, TarTrapAnimations,
-                            LineTrapAnimations, SawBladeTrapAnimations, SpikeTrapAnimations, FireTrapAnimations;
+        List<Texture2D> WallSprite, BarrelTrapSprite, CatapultTrapSprite, IceTrapSprite, TarTrapSprite,
+                        LineTrapSprite, SawBladeTrapSprite, SpikeTrapSprite, FireTrapSprite;
         #endregion
 
         #region Turret sprites
@@ -1180,7 +1178,7 @@ namespace TowerDefensePrototype
         #endregion
 
         #region Enemy sprites
-        Texture2D IceBlock, Shadow;
+        public Texture2D IceBlock, Shadow;
         public List<InvaderAnimation> SoldierAnimations, BatteringRamAnimations, AirshipAnimations, ArcherAnimations, 
                                TankAnimations, SpiderAnimations, SlimeAnimations, SuicideBomberAnimations, 
                                FireElementalAnimations, TestInvaderAnimations, StationaryCannonAnimations,
@@ -1820,17 +1818,17 @@ namespace TowerDefensePrototype
             #region Menu sounds
             MenuClick = SecondaryContent.Load<SoundEffect>("Sounds/Menu/MenuPing");
             MenuWoosh = SecondaryContent.Load<SoundEffect>("Sounds/Menu/MenuWoosh");
-            MenuMusic = SecondaryContent.Load<SoundEffect>("Sounds/Menu/MenuMusic1");
+            //MenuMusic = SecondaryContent.Load<SoundEffect>("Sounds/Menu/MenuMusic1");
 
-            MenuMusicInstance = MenuMusic.CreateInstance();
-            MenuMusicInstance.IsLooped = true;
+            //MenuMusicInstance = MenuMusic.CreateInstance();
+            //MenuMusicInstance.IsLooped = true;
             //MenuMusicInstance.Play();
             #endregion
 
             Projection = Matrix.CreateOrthographicOffCenter(0, 1920, 1080, 0, -5.0f, 5.0f);
 
-            BackgroundEffect = SecondaryContent.Load<Effect>("Shaders/BackgroundEffect");
-            BackgroundEffect.Parameters["MatrixTransform"].SetValue(Projection);
+            //BackgroundEffect = SecondaryContent.Load<Effect>("Shaders/BackgroundEffect");
+            //BackgroundEffect.Parameters["MatrixTransform"].SetValue(Projection);
 
             ButtonBlurEffect = SecondaryContent.Load<Effect>("Shaders/ButtonBlurEffect");
             ButtonBlurEffect.Parameters["MatrixTransform"].SetValue(Projection);
@@ -2228,7 +2226,7 @@ namespace TowerDefensePrototype
                     Animated = true,
                     CurrentFrame = 0,
                     FrameDelay = 150,
-                    Looping = false,
+                    Looping = true,
                     TotalFrames = 4
                 },
 
@@ -2246,7 +2244,7 @@ namespace TowerDefensePrototype
 
             foreach (InvaderAnimation animation in SoldierAnimations)
             {
-                animation.GetFrameSize();
+                animation.GetInvaderFrameSize();
             }
             #endregion
 
@@ -2265,86 +2263,50 @@ namespace TowerDefensePrototype
 
         private void LoadTrapSprites()
         {
-            WallAnimations = new List<TrapAnimation>()
+            WallSprite = new List<Texture2D>(1)
             {
-                new TrapAnimation()
-                {
-                    CurrentTrapState = TrapState.Untriggered,
-                    Texture = Content.Load<Texture2D>("Traps/WallTrap"),
-                    Animated = false,
-                    CurrentFrame = 0,
-                    TotalFrames = 1
-                },
+                Content.Load<Texture2D>("Traps/WallTrap")
             };
 
-            foreach (TrapAnimation animation in WallAnimations)
+            BarrelTrapSprite = new List<Texture2D>(1)
             {
-                animation.GetFrameSize();
-            }
-
-
-            FireTrapAnimations = new List<TrapAnimation>()
-            {
-                new TrapAnimation()
-                {
-                    CurrentTrapState = TrapState.Untriggered,
-                    Texture = Content.Load<Texture2D>("Traps/FireTrap"),
-                    Animated = false,
-                    CurrentFrame = 0,
-                    TotalFrames = 1,
-                    Normal = false
-                },
+                Content.Load<Texture2D>("Traps/Trap")
             };
-            foreach (TrapAnimation animation in FireTrapAnimations)
+
+            CatapultTrapSprite = new List<Texture2D>(1)
             {
-                animation.GetFrameSize();
-            }
+                Content.Load<Texture2D>("Traps/Trap")
+            };
 
+            IceTrapSprite = new List<Texture2D>(1)
+            {
+                Content.Load<Texture2D>("Traps/Trap")
+            };
 
-            //WallSprite = new List<Texture2D>(1)
-            //{
-            //    Content.Load<Texture2D>("Traps/WallTrap")
-            //};
+            TarTrapSprite = new List<Texture2D>(1)
+            {
+                Content.Load<Texture2D>("Traps/Trap")
+            };
 
-            //BarrelTrapSprite = new List<Texture2D>(1)
-            //{
-            //    Content.Load<Texture2D>("Traps/Trap")
-            //};
+            LineTrapSprite = new List<Texture2D>(1)
+            {
+                Content.Load<Texture2D>("Traps/Trap")
+            };
 
-            //CatapultTrapSprite = new List<Texture2D>(1)
-            //{
-            //    Content.Load<Texture2D>("Traps/Trap")
-            //};
+            SawBladeTrapSprite = new List<Texture2D>(1)
+            {
+                Content.Load<Texture2D>("Traps/Trap")
+            };
 
-            //IceTrapSprite = new List<Texture2D>(1)
-            //{
-            //    Content.Load<Texture2D>("Traps/Trap")
-            //};
+            SpikeTrapSprite = new List<Texture2D>(1)
+            {
+                Content.Load<Texture2D>("Traps/Trap")
+            };
 
-            //TarTrapSprite = new List<Texture2D>(1)
-            //{
-            //    Content.Load<Texture2D>("Traps/Trap")
-            //};
-
-            //LineTrapSprite = new List<Texture2D>(1)
-            //{
-            //    Content.Load<Texture2D>("Traps/Trap")
-            //};
-
-            //SawBladeTrapSprite = new List<Texture2D>(1)
-            //{
-            //    Content.Load<Texture2D>("Traps/Trap")
-            //};
-
-            //SpikeTrapSprite = new List<Texture2D>(1)
-            //{
-            //    Content.Load<Texture2D>("Traps/Trap")
-            //};
-
-            //FireTrapSprite = new List<Texture2D>(1)
-            //{
-            //    Content.Load<Texture2D>("Traps/FireTrap")
-            //};
+            FireTrapSprite = new List<Texture2D>(1)
+            {
+                Content.Load<Texture2D>("Traps/FireTrap")
+            };
         }
 
         private void LoadProjectileSprites()
@@ -2710,11 +2672,10 @@ namespace TowerDefensePrototype
 
                 foreach (Drawable drawable in DrawableList)
                 {
-                    if (drawable.GetType().BaseType == typeof(Invader))
-                        drawable.Draw(spriteBatch, BasicEffect, GraphicsDevice, ShadowBlurEffect, LightList);
-                        //drawable.DrawSpriteNormal(GraphicsDevice, BasicEffect);
-                    else
+                    if (drawable.GetType().BaseType != typeof(Invader))
                         drawable.Draw(spriteBatch);
+                    else
+                        drawable.Draw(spriteBatch, BasicEffect, GraphicsDevice, ShadowBlurEffect, LightList);
                 }
 
                 //if (PowerupDelivery != null)
@@ -2797,7 +2758,6 @@ namespace TowerDefensePrototype
                 foreach (Drawable drawable in DrawableList)
                 {
                     drawable.DrawSpriteNormal(GraphicsDevice, BasicEffect);
-                    drawable.DrawSpriteNormal(spriteBatch);
                 }
 
                 spriteBatch.End();
@@ -2811,7 +2771,6 @@ namespace TowerDefensePrototype
                 foreach (Drawable drawable in DrawableList)
                 {
                     drawable.DrawSpriteDepth(GraphicsDevice, DepthEffect);
-                    drawable.DrawSpriteDepth(spriteBatch);
                 }
 
                 spriteBatch.End();
@@ -2853,17 +2812,9 @@ namespace TowerDefensePrototype
                 GraphicsDevice.SetRenderTarget(GameRenderTarget1);
                 GraphicsDevice.Clear(Color.CornflowerBlue);
 
-                #region For testing various maps
-                //spriteBatch.Begin();
-                ////spriteBatch.Draw(DepthMap, DepthMap.Bounds, Color.White);
-                ////spriteBatch.Draw(LightNormalMap, LightNormalMap.Bounds, Color.White);
-                //spriteBatch.Draw(LightShadowMap, LightShadowMap.Bounds, Color.White);
-                //spriteBatch.End();
-                #endregion                
-
-                #region Draw the lightmap and color map combined
                 spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, null, LightCombinedEffect);
 
+                #region Draw the lightmap and color map combined
                 LightCombinedEffect.CurrentTechnique = LightCombinedEffect.Techniques["DeferredCombined"];
                 LightCombinedEffect.Parameters["ambient"].SetValue(1f);
                 LightCombinedEffect.Parameters["lightAmbient"].SetValue(4f);
@@ -2876,11 +2827,11 @@ namespace TowerDefensePrototype
                 LightCombinedEffect.CurrentTechnique.Passes[0].Apply();
 
                 spriteBatch.Draw(LightColorMap, Vector2.Zero, Color.White);
+                #endregion
 
                 spriteBatch.End();
-                #endregion
-                #endregion
 
+                #endregion
 
                 #region Draw UI
                 GraphicsDevice.SetRenderTarget(UIRenderTarget);                
@@ -4788,7 +4739,7 @@ namespace TowerDefensePrototype
                         Debug.WriteLine("All content loaded - moving to game");
                         Debug.WriteLine(" ");
                         IsLoading = false;
-                        MenuMusicInstance.Stop();
+                        //MenuMusicInstance.Stop();
                         GameState = GameState.Playing;                        
                     //ParticleThread.
                     //}
@@ -5282,7 +5233,6 @@ namespace TowerDefensePrototype
 
                                         if (invader.CanAttack == true)
                                         {
-                                            invader.InvaderState = InvaderState.Melee;
                                             trap.CurrentHP -= invader.TrapAttackPower;
                                         }
                                         break;
@@ -8558,8 +8508,8 @@ namespace TowerDefensePrototype
                 case TrapType.Wall:
                     {
                         NewTrap = trap;
-                        NewTrap.AnimationList = WallAnimations;
-                        NewTrap.TrapState = NewTrap.TrapState;
+                        NewTrap.TextureList = WallSprite;
+                        NewTrap.CurrentTexture = NewTrap.TextureList[0];
 
                         NewTrap.Position = trapPosition;
                         TrapList.Add(NewTrap);
@@ -8575,13 +8525,14 @@ namespace TowerDefensePrototype
                         FireTrapStart.Play();
 
                         NewTrap = trap;
-                        NewTrap.AnimationList = FireTrapAnimations;
-                        NewTrap.TrapState = NewTrap.TrapState;
+                        NewTrap.TextureList = FireTrapSprite;
+                        NewTrap.CurrentTexture = NewTrap.TextureList[0];
+
                         NewTrap.Position = trapPosition;
                         NewTrap.Initialize();
                         TrapList.Add(NewTrap);
                         AddDrawable(NewTrap);
-
+                        
                         Color SmokeColor = Color.DarkGray;
                         SmokeColor.A = 200;
 
@@ -8589,21 +8540,21 @@ namespace TowerDefensePrototype
                         SmokeColor.A = 175;
 
                         Emitter FireEmitter = new Emitter(FireParticle,
-                            new Vector2(NewTrap.Position.X + NewTrap.CurrentAnimation.FrameSize.X / 2, NewTrap.Position.Y + NewTrap.CurrentAnimation.FrameSize.Y - 12), new Vector2(60, 120),
+                            new Vector2(NewTrap.Position.X + NewTrap.TextureList[0].Width / 2, NewTrap.Position.Y + NewTrap.TextureList[0].Height - 12), new Vector2(60, 120),
                             new Vector2(0.5f, 0.75f), new Vector2(90, 140), 0.85f, true,
                             new Vector2(-4, 4), new Vector2(-1f, 1f), new Vector2(0.075f, 0.15f), FireColor, FireColor2,
                             0.0f, -1, 75, 1, false, new Vector2(0, 1080), true, NewTrap.DestinationRectangle.Bottom / 1080f, null, null, null, null, null, null, null, true, true, 150);
                         FireEmitter.TextureName = "FireParticle";
 
                         Emitter SmokeEmitter = new Emitter(SmokeParticle,
-                            new Vector2(NewTrap.Position.X + NewTrap.CurrentAnimation.FrameSize.X / 2, NewTrap.Position.Y + NewTrap.CurrentAnimation.FrameSize.Y - 16),
+                            new Vector2(NewTrap.Position.X + NewTrap.TextureList[0].Width / 2, NewTrap.Position.Y + NewTrap.TextureList[0].Height - 16),
                             new Vector2(85, 95), new Vector2(0.2f, 0.5f), new Vector2(250, 350), 0.9f, true, new Vector2(-20, 20),
                             new Vector2(-2, 2), new Vector2(0.6f, 1f), SmokeColor, SmokeColor2, 0.0f, -1, 150, 1, false,
                             new Vector2(0, 1080), true, (NewTrap.DestinationRectangle.Bottom) / 1080f, null, null, null, null, null, null, null, true, true, 250);
                         SmokeEmitter.TextureName = "SmokeParticle";
 
                         Emitter SparkEmitter = new Emitter(RoundSparkParticle,
-                               new Vector2(NewTrap.Position.X + NewTrap.CurrentAnimation.FrameSize.X / 2, NewTrap.Position.Y + NewTrap.CurrentAnimation.FrameSize.Y - 16),
+                               new Vector2(NewTrap.Position.X + NewTrap.TextureList[0].Width / 2, NewTrap.Position.Y + NewTrap.TextureList[0].Height - 16),
                                new Vector2(80, 100),
                                new Vector2(1, 4), new Vector2(60, 180), 1f, true, new Vector2(0, 360), new Vector2(1, 3),
                                new Vector2(0.1f, 0.3f), Color.LightYellow, Color.White, -0.001f, -1f, 100, 1, false,
@@ -8629,110 +8580,110 @@ namespace TowerDefensePrototype
                     break;
                 #endregion
 
-                //#region Spikes
-                //case TrapType.Spikes:
-                //    {
-                //        NewTrap = trap;
-                //        NewTrap.TextureList = SpikeTrapSprite;
-                //        NewTrap.CurrentTexture = NewTrap.TextureList[0];
+                #region Spikes
+                case TrapType.Spikes:
+                    {
+                        NewTrap = trap;
+                        NewTrap.TextureList = SpikeTrapSprite;
+                        NewTrap.CurrentTexture = NewTrap.TextureList[0];
 
-                //        NewTrap.Position = trapPosition;
-                //        TrapList.Add(NewTrap); 
-                //        AddDrawable(NewTrap);
-                //        NewTrap.Initialize();
-                //    }
-                //    break;
-                //#endregion
+                        NewTrap.Position = trapPosition;
+                        TrapList.Add(NewTrap); 
+                        AddDrawable(NewTrap);
+                        NewTrap.Initialize();
+                    }
+                    break;
+                #endregion
 
-                //#region Catapult
-                //case TrapType.Catapult:
-                //    {
-                //        NewTrap = trap;
-                //        NewTrap.TextureList = CatapultTrapSprite;
-                //        NewTrap.CurrentTexture = NewTrap.TextureList[0];
+                #region Catapult
+                case TrapType.Catapult:
+                    {
+                        NewTrap = trap;
+                        NewTrap.TextureList = CatapultTrapSprite;
+                        NewTrap.CurrentTexture = NewTrap.TextureList[0];
 
-                //        NewTrap.Position = trapPosition;
-                //        TrapList.Add(NewTrap); 
-                //        AddDrawable(NewTrap);
-                //        NewTrap.Initialize();
-                //    }
-                //    break;
-                //#endregion
+                        NewTrap.Position = trapPosition;
+                        TrapList.Add(NewTrap); 
+                        AddDrawable(NewTrap);
+                        NewTrap.Initialize();
+                    }
+                    break;
+                #endregion
 
-                //#region Ice
-                //case TrapType.Ice:
-                //    {
-                //        //NewTrap = trap;
-                //        //NewTrap.TextureList = IceTrapSprite;
+                #region Ice
+                case TrapType.Ice:
+                    {
+                        //NewTrap = trap;
+                        //NewTrap.TextureList = IceTrapSprite;
 
-                //        //NewTrap.Position = trapPosition;
-                //        //TrapList.Add(NewTrap); AddDrawable(NewTrap);
-                //        //NewTrap.Initialize();
+                        //NewTrap.Position = trapPosition;
+                        //TrapList.Add(NewTrap); AddDrawable(NewTrap);
+                        //NewTrap.Initialize();
 
-                //        NewTrap = trap;
-                //        NewTrap.TextureList = IceTrapSprite;
-                //        NewTrap.CurrentTexture = NewTrap.TextureList[0];
+                        NewTrap = trap;
+                        NewTrap.TextureList = IceTrapSprite;
+                        NewTrap.CurrentTexture = NewTrap.TextureList[0];
 
-                //        NewTrap.Position = trapPosition;
-                //        TrapList.Add(NewTrap); 
-                //        AddDrawable(NewTrap);
-                //        NewTrap.Initialize();
-                //    }
-                //    break;
-                //#endregion
+                        NewTrap.Position = trapPosition;
+                        TrapList.Add(NewTrap); 
+                        AddDrawable(NewTrap);
+                        NewTrap.Initialize();
+                    }
+                    break;
+                #endregion
 
-                //#region Barrel
-                //case TrapType.Barrel:
-                //    {
-                //        NewTrap = trap;
-                //        NewTrap.TextureList = BarrelTrapSprite;
-                //        NewTrap.CurrentTexture = NewTrap.TextureList[0];
+                #region Barrel
+                case TrapType.Barrel:
+                    {
+                        NewTrap = trap;
+                        NewTrap.TextureList = BarrelTrapSprite;
+                        NewTrap.CurrentTexture = NewTrap.TextureList[0];
 
-                //        NewTrap.Position = trapPosition;
-                //        TrapList.Add(NewTrap); 
-                //        AddDrawable(NewTrap);
-                //        NewTrap.Initialize();
-                //    }
-                //    break;
-                //#endregion
+                        NewTrap.Position = trapPosition;
+                        TrapList.Add(NewTrap); 
+                        AddDrawable(NewTrap);
+                        NewTrap.Initialize();
+                    }
+                    break;
+                #endregion
 
-                //#region Sawblade
-                //case TrapType.SawBlade:
-                //    {
-                //        NewTrap = trap;
-                //        NewTrap.TextureList = SawBladeTrapSprite;
-                //        NewTrap.CurrentTexture = NewTrap.TextureList[0];
+                #region Sawblade
+                case TrapType.SawBlade:
+                    {
+                        NewTrap = trap;
+                        NewTrap.TextureList = SawBladeTrapSprite;
+                        NewTrap.CurrentTexture = NewTrap.TextureList[0];
 
-                //        NewTrap.Position = trapPosition;
-                //        TrapList.Add(NewTrap); 
-                //        AddDrawable(NewTrap);
-                //        NewTrap.Initialize();
-                //    }
-                //    break;
-                //#endregion
+                        NewTrap.Position = trapPosition;
+                        TrapList.Add(NewTrap); 
+                        AddDrawable(NewTrap);
+                        NewTrap.Initialize();
+                    }
+                    break;
+                #endregion
 
-                //#region Line
-                //case TrapType.Line:
-                //    {
-                //        NewTrap = trap;
-                //        NewTrap.TextureList = LineTrapSprite;
-                //        NewTrap.CurrentTexture = NewTrap.TextureList[0];
+                #region Line
+                case TrapType.Line:
+                    {
+                        NewTrap = trap;
+                        NewTrap.TextureList = LineTrapSprite;
+                        NewTrap.CurrentTexture = NewTrap.TextureList[0];
 
-                //        NewTrap.Position = trapPosition;
-                //        TrapList.Add(NewTrap);
-                //        AddDrawable(NewTrap);
-                //        //DrawableList.
-                //        NewTrap.Initialize();
+                        NewTrap.Position = trapPosition;
+                        TrapList.Add(NewTrap);
+                        AddDrawable(NewTrap);
+                        //DrawableList.
+                        NewTrap.Initialize();
 
-                //        Emitter FireEmitter = new Emitter(FireParticle, new Vector2(NewTrap.Position.X, NewTrap.Position.Y),
-                //          new Vector2(0, 0), new Vector2(1.5f, 2.0f), new Vector2(40 * 1.5f, 60 * 1.5f), 0.01f, true, new Vector2(-4, 4),
-                //          new Vector2(-4, 4), new Vector2(1 * 1.5f, 2 * 1.5f), FireColor, FireColor2, 0.0f, -1, 25 * 1.5f, 3, false, new Vector2(0, 1080),
-                //          false, CursorPosition.Y / 1080);
+                        Emitter FireEmitter = new Emitter(FireParticle, new Vector2(NewTrap.Position.X, NewTrap.Position.Y),
+                          new Vector2(0, 0), new Vector2(1.5f, 2.0f), new Vector2(40 * 1.5f, 60 * 1.5f), 0.01f, true, new Vector2(-4, 4),
+                          new Vector2(-4, 4), new Vector2(1 * 1.5f, 2 * 1.5f), FireColor, FireColor2, 0.0f, -1, 25 * 1.5f, 3, false, new Vector2(0, 1080),
+                          false, CursorPosition.Y / 1080);
 
-                //        NewTrap.TrapEmitterList.Add(FireEmitter);
-                //    }
-                //    break;
-                //#endregion
+                        NewTrap.TrapEmitterList.Add(FireEmitter);
+                    }
+                    break;
+                #endregion
             }
 
             
@@ -8834,14 +8785,13 @@ namespace TowerDefensePrototype
                             if (CurrentWave.InvaderList[CurrentInvaderIndex] is Invader)
                             {
                                 Invader nextInvader = (Invader)CurrentWave.InvaderList[CurrentInvaderIndex];
-                                float Multiplier = (float)RandomDouble(0.75f, 1.5f);
 
                                 switch (nextInvader.InvaderType)
                                 {
                                     default:
                                         string invaderName = nextInvader.InvaderType.ToString();
                                         var invaderAnimationList = (List<InvaderAnimation>)this.GetType().GetField(invaderName + "Animations").GetValue(this);
-                                        
+
                                         //Have to do it this way to make sure all the invaders aren't referencing the same animation
                                         nextInvader.AnimationList = new List<InvaderAnimation>(invaderAnimationList.Count);
 
@@ -8852,7 +8802,7 @@ namespace TowerDefensePrototype
                                                 Texture = invaderAnimationList[i].Texture,
                                                 Animated = invaderAnimationList[i].Animated,
                                                 Looping = invaderAnimationList[i].Looping,
-                                                FrameDelay = invaderAnimationList[i].FrameDelay / Multiplier,
+                                                FrameDelay = invaderAnimationList[i].FrameDelay,
                                                 TotalFrames = invaderAnimationList[i].TotalFrames,
                                                 FrameSize = invaderAnimationList[i].FrameSize,
                                                 CurrentInvaderState = invaderAnimationList[i].CurrentInvaderState,
@@ -8862,14 +8812,13 @@ namespace TowerDefensePrototype
                                         break;
                                 }
 
-                                //This makes sure that the property changes triggers
                                 nextInvader.InvaderState = nextInvader.InvaderState;
 
                                 nextInvader.IceBlock = IceBlock;
                                 nextInvader.Shadow = Shadow;
 
 
-                                nextInvader.Direction.X *= Multiplier;
+                                nextInvader.Direction.X *= (float)RandomDouble(0.75f, 1.5f);
 
                                 if (InvaderList.Find(Invader => Invader.MaxY == nextInvader.MaxY) != null)
                                 {
@@ -8879,8 +8828,8 @@ namespace TowerDefensePrototype
                                 nextInvader.Initialize();
                                 nextInvader.Update(gameTime, CursorPosition);
                                 nextInvader.InvaderOutline = new UIOutline(nextInvader.Position, 
-                                                                new Vector2(nextInvader.CurrentAnimation.GetFrameSize().X, 
-                                                                           nextInvader.CurrentAnimation.GetFrameSize().Y), 
+                                                                new Vector2(nextInvader.CurrentAnimation.GetInvaderFrameSize().X, 
+                                                                           nextInvader.CurrentAnimation.GetInvaderFrameSize().Y), 
                                                                            null, null, nextInvader);
                                 nextInvader.InvaderOutline.OutlineTexture = TurretSelectBox;
                                 InvaderList.Add(nextInvader);

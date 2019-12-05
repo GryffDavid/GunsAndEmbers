@@ -19,7 +19,7 @@ namespace TowerDefensePrototype
         public float Rotation, MaxHealth, CurrentHealth, FireRotation, CurrentHeat, MaxHeat,
                      CurrentHeatTime, MaxHeatTime, CoolValue, ShotHeat, BlastRadius, AngleOffset,
                      MaxAngleOffset, MinAngleOffset, LaunchVelocity;
-        public bool Selected, JustClicked, CanShoot, Animated, Looping, Overheated;
+        public bool Selected, Active, JustClicked, CanShoot, Animated, Looping, Overheated;
         public double FireDelay, CurrentFrameTime;
         public double ElapsedTime = 0;
         public int Damage, CurrentFrame, ResourceCost;        

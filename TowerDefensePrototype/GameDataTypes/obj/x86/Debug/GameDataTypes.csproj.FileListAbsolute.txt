@@ -280,3 +280,9 @@ G:\Google Drive\Tower Defense Backups\TowerDefensePrototype 97\GameDataTypes\obj
 G:\Google Drive\Tower Defense Backups\TowerDefensePrototype 97\GameDataTypes\obj\x86\Debug\GameDataTypes.dll
 G:\Google Drive\Tower Defense Backups\TowerDefensePrototype 97\GameDataTypes\obj\x86\Debug\GameDataTypes.pdb
 G:\Google Drive\Tower Defense Backups\TowerDefensePrototype 97\GameDataTypes\obj\x86\Debug\GameDataTypes.csprojResolveAssemblyReference.cache
+G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 97 - Soft shadows\GameDataTypes\bin\x86\Debug\GameDataTypes.dll
+G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 97 - Soft shadows\GameDataTypes\bin\x86\Debug\GameDataTypes.pdb
+G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 97 - Soft shadows\GameDataTypes\obj\x86\Debug\GameDataTypes.csprojResolveAssemblyReference.cache
+G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 97 - Soft shadows\GameDataTypes\obj\x86\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
+G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 97 - Soft shadows\GameDataTypes\obj\x86\Debug\GameDataTypes.dll
+G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 97 - Soft shadows\GameDataTypes\obj\x86\Debug\GameDataTypes.pdb

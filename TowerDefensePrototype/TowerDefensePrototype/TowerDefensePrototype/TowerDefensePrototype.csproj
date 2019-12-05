@@ -113,14 +113,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Basics\Animation.cs" />
     <Compile Include="Basics\InvaderAnimation.cs" />
     <Compile Include="Basics\Ballistics.cs" />
     <Compile Include="Basics\BulletTrail.cs" />
     <Compile Include="Basics\Gibs.cs" />
     <Compile Include="Basics\Powerup.cs" />
     <Compile Include="Basics\StoryDialogueBox.cs" />
-    <Compile Include="Basics\TrapAnimation.cs" />
     <Compile Include="Basics\VerletProjectile.cs" />
     <Compile Include="Basics\Drawable.cs" />
     <Compile Include="Invaders\Airborne\HealerDrone.cs" />
