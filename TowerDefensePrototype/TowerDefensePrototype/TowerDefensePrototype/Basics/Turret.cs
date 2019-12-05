@@ -22,7 +22,6 @@ namespace TowerDefensePrototype
         public double FireDelay;
         public int Damage;
         public Random Random;
-        public Projectile Projectile;
         public Vector2 FireDirection;
         public float FireRotation;
 
@@ -42,7 +41,7 @@ namespace TowerDefensePrototype
                 TurretBarrel = contentManager.Load<Texture2D>(TurretAsset);
             }
 
-            Line = contentManager.Load<Texture2D>("Projectile");
+            //Line = contentManager.Load<Texture2D>("Projectile");
         }
 
         public void Update(GameTime gameTime)
@@ -97,27 +96,37 @@ namespace TowerDefensePrototype
                 else
                     Color = Color.White;
             #endregion
-            
-            
+
+                Random = new Random();
+
+                FireRotation = Rotation + MathHelper.ToRadians((float)(-2 + Random.NextDouble() * (2 - (-2))));
+
+                FireDirection.X = (float)Math.Cos(FireRotation);
+                FireDirection.Y = (float)Math.Sin(FireRotation);
 
             PreviousMouseState = CurrentMouseState;
 
         }
 
-        public void Draw(SpriteBatch spriteBatch)
-        {
-            if (Active == true)
-            {
-                //if (Selected == true)
-                //    spriteBatch.Draw(Line, new Rectangle(BarrelRectangle.X, BarrelRectangle.Y, Line.Width * 8, Line.Height), null, Color.White, Rotation, new Vector2 (0,+(Line.Height/2)), SpriteEffects.None, 1f);
+        //public void Draw(SpriteBatch spriteBatch)
+        //{
+        //    if (Active == true)
+        //    {
+        //        //if (Selected == true)
+        //        //    spriteBatch.Draw(Line, new Rectangle(BarrelRectangle.X, BarrelRectangle.Y, Line.Width * 8, Line.Height), null, Color.White, Rotation, new Vector2 (0,+(Line.Height/2)), SpriteEffects.None, 1f);
 
-                BaseRectangle = new Rectangle((int)Position.X - 12, (int)Position.Y - 16-6, TurretBase.Width, TurretBase.Height);
-                BarrelRectangle = new Rectangle((int)Position.X+8, (int)Position.Y-6, TurretBarrel.Width, TurretBarrel.Height);
+        //        BaseRectangle = new Rectangle((int)Position.X - 12, (int)Position.Y - 16-6, TurretBase.Width, TurretBase.Height);
+        //        BarrelRectangle = new Rectangle((int)Position.X+8, (int)Position.Y-6, TurretBarrel.Width, TurretBarrel.Height);
 
-                spriteBatch.Draw(TurretBarrel, BarrelRectangle, null, Color, Rotation, new Vector2(24, TurretBarrel.Height / 2), SpriteEffects.None, 1f);
+        //        spriteBatch.Draw(TurretBarrel, BarrelRectangle, null, Color, Rotation, new Vector2(24, TurretBarrel.Height / 2), SpriteEffects.None, 1f);
                
-                spriteBatch.Draw(TurretBase, BaseRectangle, Color);               
-            }
+        //        spriteBatch.Draw(TurretBase, BaseRectangle, Color);               
+        //    }
+        //}
+
+        public virtual void Draw(SpriteBatch spriteBatch)
+        {
+
         }
     }
 }

@@ -17,8 +17,9 @@ namespace TowerDefensePrototype
             Position = position;
             Solid = false;
             AssetName = "FireTrap";
-            HP = 50;
+            CurrentHP = 50;
             TrapType = TrapType.Fire;
+            DetonateDelay = 300;
         }
     }
 }

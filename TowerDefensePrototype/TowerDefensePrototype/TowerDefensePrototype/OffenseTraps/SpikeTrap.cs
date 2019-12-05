@@ -16,7 +16,8 @@ namespace TowerDefensePrototype
             Solid = false;
             AssetName = "SpikeTrap";
             TrapType = TrapType.Spikes;
-            HP = 50;
+            CurrentHP = 50;
+            DetonateDelay = 300;
         }
     }
 }

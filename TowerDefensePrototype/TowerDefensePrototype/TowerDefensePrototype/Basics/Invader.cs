@@ -13,74 +13,90 @@ namespace TowerDefensePrototype
         public string AssetName;
         public Texture2D Texture;
         public Rectangle DestinationRectangle;
-        public Vector2 Position, MoveVector;
-        public bool Active, Attacking, CanMove, VulnerableToTurret, VulnerableToTrap;
+        public Vector2 Position, MoveVector, ResourceMinMax;
+        public bool Active, CanMove, VulnerableToTurret, VulnerableToTrap, CanAttack;
         public Color Color;
         public BoundingBox BoundingBox;
-        public Double MoveDelay, CurrentDelay; 
-        public int MaxHealth, CurrentHealth;
-        HorizontalBar HealthBar;
+        public Double MoveDelay, CurrentDelay, AttackDelay, CurrentAttackDelay;
+        public int MaxHP, CurrentHP, ResourceValue;
+        HorizontalBar HPBar;
         public abstract void TrapDamage(TrapType trapType);
-        public float DistanceToTower;
+        public Random Random;
 
         public void LoadContent(ContentManager contentManager)
-        {
+        {            
             VulnerableToTurret = true;
             VulnerableToTrap = true;
             Texture = contentManager.Load<Texture2D>(AssetName);
             Color = Color.White;
-            HealthBar = new HorizontalBar(contentManager, new Vector2(32, 4), MaxHealth, CurrentHealth);
+            HPBar = new HorizontalBar(contentManager, new Vector2(32, 4), MaxHP, CurrentHP);            
         }
 
-        public void Update(GameTime gameTime)
+        public virtual void Update(GameTime gameTime)
         {
-            VulnerableToTurret = true;
+            if (Active == true)
+            {
+                Random = new Random();
+                ResourceValue = Random.Next((int)ResourceMinMax.X, (int)ResourceMinMax.Y);
 
-            CurrentDelay += gameTime.ElapsedGameTime.Milliseconds;
+                VulnerableToTurret = true;
 
-            if (CurrentHealth <= 0)
-                Active = false;
+                CurrentDelay += gameTime.ElapsedGameTime.Milliseconds;
+                CurrentAttackDelay += gameTime.ElapsedGameTime.Milliseconds;
 
-            if (Position.X > 1280)
-                Active = false;
-            else
-                Active = true;
+                if (CurrentHP <= 0)
+                    Active = false;
 
-            HealthBar.Update(new Vector2(Position.X, Position.Y - 16), CurrentHealth);
+                if (Position.X > 1280)
+                    Active = false;
+                else
+                    Active = true;
+
+                if (CurrentAttackDelay >= AttackDelay)
+                {
+                    CanAttack = true;
+                    CurrentAttackDelay = 0;
+                }
+                else
+                {
+                    CanAttack = false;
+                }
+
+                HPBar.Update(new Vector2(Position.X, Position.Y - 16), CurrentHP);
+            }
         }
 
         public void Draw(SpriteBatch spriteBatch)
-        {           
-            DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, Texture.Width, Texture.Height);
-            BoundingBox = new BoundingBox(new Vector3(Position.X + 16, Position.Y, 0), new Vector3(Position.X + 15, Position.Y+Texture.Height, 0));
-            spriteBatch.Draw(Texture, DestinationRectangle, Color);
+        {
+            if (Active == true)
+            {
+                DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, Texture.Width, Texture.Height);
+                BoundingBox = new BoundingBox(new Vector3(Position.X + 16, Position.Y, 0), new Vector3(Position.X + 15, Position.Y + Texture.Height, 0));
+                spriteBatch.Draw(Texture, DestinationRectangle, Color);
 
-            HealthBar.Draw(spriteBatch);
+                HPBar.Draw(spriteBatch);
+            }
         }
 
         public void TurretDamage(int change)
         {
-            if (VulnerableToTurret == true)           
-            CurrentHealth += change;
+            if (Active == true)
+            {
+                if (VulnerableToTurret == true)
+                    CurrentHP += change;
+            }
         }
                
         public void Move()
         {
-            if (CurrentDelay > MoveDelay)
+            if (Active == true)
             {
-                Position += MoveVector;
-                CurrentDelay = 0;
-            }   
-        }
-
-        public void AttackTower()
-        {
-
-        }
-
-        public void AttackTrap()
-        {
-
+                if (CurrentDelay > MoveDelay)
+                {
+                    Position += MoveVector;
+                    CurrentDelay = 0;
+                }
+            }
         }
     }
 }

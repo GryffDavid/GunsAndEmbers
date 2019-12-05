@@ -16,7 +16,6 @@ namespace TowerDefensePrototype
 
         public Projectile(Vector2 position, Vector2 Direction)
         {
-            //Active = true;
             Position = position;
             Ray = new Ray(new Vector3(Position.X, Position.Y, 0), new Vector3(Direction.X, Direction.Y, 0));
         }

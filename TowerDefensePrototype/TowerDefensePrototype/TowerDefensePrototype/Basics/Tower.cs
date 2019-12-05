@@ -13,12 +13,15 @@ namespace TowerDefensePrototype
         public Texture2D Texture;
         string AssetName;
         public Vector2 Position;
-        Rectangle DestinationRectangle;
+        public Rectangle DestinationRectangle;
+        public int MaxHP, CurrentHP;
 
-        public Tower(string assetName, Vector2 position)
+        public Tower(string assetName, Vector2 position, int totalHitpoints)
         {
             AssetName = assetName;
             Position = position;
+            MaxHP = totalHitpoints;
+            CurrentHP = MaxHP;
         }
 
         public void LoadContent(ContentManager contentManager)

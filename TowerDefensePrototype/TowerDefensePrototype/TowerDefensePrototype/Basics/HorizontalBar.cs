@@ -12,27 +12,27 @@ namespace TowerDefensePrototype
     class HorizontalBar
     {
         Texture2D Box;
-        public int MaxHealth, CurrentHealth;
+        public int MaxHP, CurrentHP;
         int CurrentLength;
-        Vector2 Position, MaxSize;
+        public Vector2 Position, MaxSize;
 
-        public HorizontalBar(ContentManager contentManager, Vector2 maxSize, int maxHealth, int currentHealth)
+        public HorizontalBar(ContentManager contentManager, Vector2 maxSize, int maxHP, int currentHP)
         {
-            MaxHealth = maxHealth;
-            CurrentHealth = currentHealth;
+            MaxHP = maxHP;
+            CurrentHP = currentHP;
 
             MaxSize = maxSize;
 
             Box = contentManager.Load<Texture2D>("WhiteBlock");
         }
 
-        public void Update(Vector2 position, int currentHealth)
+        public void Update(Vector2 position, int currentHP)
         {
             Position = position;
 
-            CurrentHealth = (int)MathHelper.Clamp(currentHealth, 0, MaxHealth);
+            CurrentHP = (int)MathHelper.Clamp(currentHP, 0, MaxHP);
 
-            CurrentLength = (int)((MaxSize.X / MaxHealth) * CurrentHealth);
+            CurrentLength = (int)((MaxSize.X / MaxHP) * CurrentHP);
         }
 
         public void Draw(SpriteBatch spriteBatch)

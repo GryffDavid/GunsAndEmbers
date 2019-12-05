@@ -12,13 +12,13 @@ namespace TowerDefensePrototype
         public Texture2D Texture;
         public Vector2 CurrentPosition, Direction, Velocity;
         public Rectangle DestinationRectangle;
-        public float Angle, Speed, CurrentLife, MaxLife, CurrentTransparency, Scale;
+        public float Angle, Speed, CurrentHP, MaxHP, CurrentTransparency, Scale;
         public float RotationIncrement, CurrentRotation, Gravity;
         public Color CurrentColor, EndColor;
         public bool Active, Fade, BouncedOnGround, CanBounce;
         
 
-        public Particle(Texture2D texture, Vector2 position, float angle, float speed, float maxLife,
+        public Particle(Texture2D texture, Vector2 position, float angle, float speed, float maxHP,
             float startingTransparency, bool fade, float startingRotation, float rotationChange,
             float scale, Color startColor, Color endColor, float gravity, bool canBounce)
         {
@@ -27,8 +27,8 @@ namespace TowerDefensePrototype
             CurrentPosition = position;
             Angle = angle;
             Speed = speed;
-            MaxLife = maxLife;
-            CurrentLife = maxLife;
+            MaxHP = maxHP;
+            CurrentHP = maxHP;
             CurrentTransparency = startingTransparency;
             CurrentColor = startColor;
             EndColor = endColor;
@@ -51,9 +51,9 @@ namespace TowerDefensePrototype
 
         public void Update()
         {
-            CurrentLife--;            
+            CurrentHP--;            
 
-            if (CurrentLife <= 0)
+            if (CurrentHP <= 0)
                 Active = false;
 
             else
@@ -62,9 +62,9 @@ namespace TowerDefensePrototype
             if (CanBounce == true)
                 if (CurrentPosition.Y >= 493 && BouncedOnGround == false)
                 {
-                    Velocity.Y = -Velocity.Y / 2;
-                    Velocity.X = Velocity.X / 2;
-                    RotationIncrement = RotationIncrement * 2;
+                    Velocity.Y = -Velocity.Y / 3;
+                    Velocity.X = Velocity.X / 3;
+                    RotationIncrement = RotationIncrement * 3;
                     BouncedOnGround = true;
                 }        
 
@@ -76,18 +76,14 @@ namespace TowerDefensePrototype
                 DestinationRectangle = new Rectangle((int)CurrentPosition.X, (int)CurrentPosition.Y, (int)(Texture.Width * Scale), (int)(Texture.Height * Scale));
             }                      
 
-            float LifePercentage = CurrentLife / MaxLife;
+            float PercentageHP = CurrentHP / MaxHP;
 
             if (Fade == true)
             {
-                //CurrentTransparency *= (LifePercentage*1.4f);
-                //CurrentTransparency = LifePercentage / (CurrentLife*2);
-                CurrentTransparency = MathHelper.Lerp(LifePercentage, CurrentTransparency, LifePercentage);
+                CurrentTransparency = MathHelper.Lerp(PercentageHP, CurrentTransparency, PercentageHP);
             }
 
-            CurrentColor = Color.Lerp(CurrentColor, EndColor, LifePercentage / (CurrentLife * 0.5f));
-
-
+            CurrentColor = Color.Lerp(CurrentColor, EndColor, PercentageHP / (CurrentHP * 0.5f));
         }
 
         public void Draw(SpriteBatch spriteBatch)

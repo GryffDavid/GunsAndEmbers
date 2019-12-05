@@ -13,11 +13,13 @@ namespace TowerDefensePrototype
         Texture2D Texture;
         public Rectangle DestinationRectangle;
         public String AssetName;
-        public int HP;
+        public int CurrentHP;
         public Vector2 Scale, FrameSize, Position;
         public bool Active, Solid, CanTrigger;
         public BoundingBox BoundingBox;
         public TrapType TrapType;
+        public Emitter TrapEmitter;
+        public float DetonateDelay, CurrentDetonateDelay;
 
         public virtual void LoadContent(ContentManager contentManager)
         {
@@ -29,11 +31,24 @@ namespace TowerDefensePrototype
 
         public virtual void Update(GameTime gameTime)
         {
+            CurrentDetonateDelay += gameTime.ElapsedGameTime.Milliseconds;
 
+            if (CurrentDetonateDelay >= DetonateDelay)
+            {
+                CanTrigger = true;
+                CurrentDetonateDelay = 0;
+            }
+            else
+            {
+                CanTrigger = false;
+            }
         }
 
         public virtual void Draw(SpriteBatch spriteBatch)
         {
+            if (CurrentHP <= 0)
+                Active = false;
+
             if (Active == true)
                 spriteBatch.Draw(Texture, DestinationRectangle, Color.White);
         }

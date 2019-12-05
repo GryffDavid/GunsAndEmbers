@@ -15,7 +15,7 @@ namespace TowerDefensePrototype
             Active = true;
             Position = position;
             AssetName = "BatteringRam";
-            CurrentHealth = 1000;
+            CurrentHP = 1000;
         }
 
         public override void TrapDamage(TrapType trapType)

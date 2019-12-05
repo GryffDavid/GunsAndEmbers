@@ -8,27 +8,26 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace TowerDefensePrototype
 {
-    class Emitter
+    public class Emitter
     {
         public Vector2 Position, AngleRange;
-        List<Particle> ParticleList;
-        Texture2D ParticleTexture;
-        
+        List<Particle> ParticleList;        
 
         public Texture2D Texture;
-        public Vector2 ScaleRange, LifeRange, RotationIncrementRange, SpeedRange, StartingRotationRange;
+        public Vector2 ScaleRange, HPRange, RotationIncrementRange, SpeedRange, StartingRotationRange;
         public float Transparency, Gravity, ActiveSeconds, CurrentTime;
         public Color StartColor, EndColor;
         public bool Active, Fade;
+        public string TextureName;
         Random Random;
 
-        public Emitter(Texture2D texture, Vector2 position, Vector2 angleRange, Vector2 speedRange, Vector2 lifeRange, float startingTransparency, bool fade, Vector2 startingRotationRange,
+        public Emitter(String textureName, Vector2 position, Vector2 angleRange, Vector2 speedRange, Vector2 hpRange, float startingTransparency, bool fade, Vector2 startingRotationRange,
             Vector2 rotationIncrement, Vector2 scaleRange, Color startColor, Color endColor, float gravity, float activeSeconds)
         {
             Active = true;
-            Texture = texture;
+            TextureName = textureName;
             SpeedRange = speedRange;
-            LifeRange = lifeRange;
+            HPRange = hpRange;
             Transparency = startingTransparency;
             Fade = fade;
             StartingRotationRange = startingRotationRange;
@@ -48,7 +47,7 @@ namespace TowerDefensePrototype
         {
             if (Active == true)
             {
-                ParticleTexture = contentManager.Load<Texture2D>("star");
+                Texture = contentManager.Load<Texture2D>(TextureName);
             }
         }
 
@@ -70,16 +69,16 @@ namespace TowerDefensePrototype
                     }
                 }                
 
-                float angle, life, scale, rotation, speed, startingRotation;
+                float angle, hp, scale, rotation, speed, startingRotation;
                 
                 angle = -MathHelper.ToRadians(Random.Next((int)AngleRange.X, (int)AngleRange.Y));
-                life = (float)DoubleRange(LifeRange.X, LifeRange.Y);
+                hp = (float)DoubleRange(HPRange.X, HPRange.Y);
                 scale = (float)DoubleRange(ScaleRange.X, ScaleRange.Y);
                 rotation = (float)DoubleRange(RotationIncrementRange.X, RotationIncrementRange.Y);
                 speed = (float)DoubleRange(SpeedRange.X, SpeedRange.Y);
                 startingRotation = (float)DoubleRange(StartingRotationRange.X, StartingRotationRange.Y);
 
-                ParticleList.Add(new Particle(Texture, Position, angle, speed, life, Transparency, Fade, startingRotation, rotation, scale, StartColor, EndColor, Gravity, false));
+                ParticleList.Add(new Particle(Texture, Position, angle, speed, hp, Transparency, Fade, startingRotation, rotation, scale, StartColor, EndColor, Gravity, false));
 
                 foreach (Particle particle in ParticleList)
                 {

@@ -11,26 +11,32 @@ namespace TowerDefensePrototype
     class HeavyProjectile
     {
         Texture2D Texture;
-        Vector2 Velocity;
+        Vector2 Velocity, Position;
+        string TextureName;
+        float Gravity;
 
-        public HeavyProjectile(string TextureName, Vector2 position, float speed, float angle, float gravity)
+        public HeavyProjectile(string textureName, Vector2 position, float speed, float angle, float gravity)
         {
-
+            TextureName = textureName;
+            Velocity.X = (float)(Math.Sin(angle) * speed);
+            Velocity.Y = (float)(Math.Cos(angle) * speed);
+            Gravity = gravity;
         }
 
         public void LoadContent(ContentManager contentManager)
         {
-            
+            Texture = contentManager.Load<Texture2D>(TextureName);
         }
 
         public void Update()
         {
-
+            Position += Velocity;
+            Velocity.Y += Gravity;
         }
 
-        public void Draw()
+        public void Draw(SpriteBatch spriteBatch)
         {
-
+            spriteBatch.Draw(Texture, new Rectangle((int)Position.X, (int)Position.Y, Texture.Width, Texture.Height), Color.White);
         }
     }
 }

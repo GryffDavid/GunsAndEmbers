@@ -111,12 +111,10 @@
     <Compile Include="Basics\Button.cs" />
     <Compile Include="Basics\BlankTrap.cs" />
     <Compile Include="Basics\Invader.cs" />
-    <Compile Include="Basics\Fire.cs" />
     <Compile Include="Basics\HorizontalBar.cs" />
     <Compile Include="HeavyProjectile.cs" />
     <Compile Include="Particles\Emitter.cs" />
     <Compile Include="Invaders\BatteringRam.cs" />
-    <Compile Include="Basics\Trajectory.cs" />
     <Compile Include="Basics\Projectile.cs" />
     <Compile Include="Particles\Particle.cs" />
     <Compile Include="Turrets\BasicTurret.cs" />

@@ -14,7 +14,7 @@ namespace TowerDefensePrototype
         {
             Position = position;
             Solid = true;
-            HP = 50;
+            CurrentHP = 50;
             AssetName = "Wall";
             TrapType = TrapType.Wall;
         }

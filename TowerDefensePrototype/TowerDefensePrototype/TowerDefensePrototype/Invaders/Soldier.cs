@@ -17,9 +17,17 @@ namespace TowerDefensePrototype
             MoveVector = new Vector2(-1, 0);
             Position = position;
             AssetName = "Soldier";
-            CurrentHealth = 50;
-            MaxHealth = 50;
+            CurrentHP = 50;
+            MaxHP = 50;
             MoveDelay = 10;
+            ResourceMinMax = new Vector2(1, 5);
+            CurrentAttackDelay = 0;
+            AttackDelay = 1500;
+        }
+
+        public override void Update(GameTime gameTime)
+        {
+            base.Update(gameTime);
         }
 
         public override void TrapDamage(TrapType trapType)
@@ -29,11 +37,11 @@ namespace TowerDefensePrototype
                 switch (trapType)
                 {
                     case TrapType.Fire:
-                        CurrentHealth -= 10;
+                        CurrentHP -= 10;
                         break;
 
                     case TrapType.Spikes:
-                        CurrentHealth -= 25;
+                        CurrentHP -= 25;
                         break;
                 }
             }
