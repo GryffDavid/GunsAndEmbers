@@ -14,11 +14,19 @@ namespace TowerDefensePrototype
         Vector2 Position;
         Texture2D BoxTexture;
         SpriteFont Font;
-        String Text;        
+        String Text;
+        Vector2 Offset;
+        Vector2 ActualSize, TextPosition;
+        Rectangle DestinationRectangle;
+        Color Color;
+        public bool Loaded;
 
         public InformationBox(string text)
         {
             Text = text;
+            Loaded = false;
+            ActualSize = Vector2.Zero;
+            Color = Color.Transparent;
         }
 
         public void LoadContent(ContentManager contentManager)
@@ -35,6 +43,8 @@ namespace TowerDefensePrototype
                     Text = Text.Insert(k+1, Environment.NewLine);
                 }
             }
+
+            Loaded = true;
         }
 
         public void Update()
@@ -45,22 +55,25 @@ namespace TowerDefensePrototype
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            Vector2 ActualSize = new Vector2(Font.MeasureString(Text).X, Font.MeasureString(Text).Y);
             MouseState MouseState = Mouse.GetState();
-            Vector2 Offset;
+                       Color = Color.Lerp(Color, Color.Lerp(Color.White, Color.Transparent, 0.30f), 0.02f);
 
-            if (MouseState.X <= ActualSize.X + 16)
+            ActualSize = Vector2.Lerp(ActualSize, new Vector2(Font.MeasureString(Text).X, Font.MeasureString(Text).Y), 0.2f);
+
+            Vector2 MeasureSize = new Vector2(Font.MeasureString(Text).X, Font.MeasureString(Text).Y);
+
+            if (MouseState.X <= MeasureSize.X + 16)
             {
-                Offset.X = ActualSize.X;
+                Offset.X = MeasureSize.X + 4;
             }
             else
             {
                 Offset.X = -16;
             }
 
-            if (MouseState.Y >= ActualSize.Y)
+            if (MouseState.Y >= MeasureSize.Y)
             {
-                Offset.Y = -ActualSize.Y;
+                Offset.Y = -MeasureSize.Y;
             }
             else
             {
@@ -68,16 +81,22 @@ namespace TowerDefensePrototype
             }
 
             spriteBatch.Draw(BoxTexture, 
-                new Rectangle((int)(MouseState.X - ActualSize.X + Offset.X), 
-                              (int)(MouseState.Y + Offset.Y), 
-                              (int)ActualSize.X + 16, 
-                              (int)ActualSize.Y), 
+                new Rectangle((int)(MouseState.X - ActualSize.X + Offset.X - 2),
+                              (int)(MouseState.Y + Offset.Y - 2),
+                              (int)ActualSize.X + 16 + 4,
+                              (int)ActualSize.Y + 4),
+                    Color.Gray);
+
+            spriteBatch.Draw(BoxTexture,
+                new Rectangle((int)(MouseState.X - ActualSize.X + Offset.X),
+                              (int)(MouseState.Y + Offset.Y),
+                              (int)ActualSize.X + 16,
+                              (int)ActualSize.Y),
                     Color.White);
 
-            spriteBatch.DrawString(Font, Text, 
-                new Vector2(MouseState.X - ActualSize.X + Offset.X + 8, 
-                            MouseState.Y + Offset.Y - 8),
-                Color.Lerp(Color.White, Color.Transparent, 0.5f));
+            spriteBatch.DrawString(Font, Text,
+                new Vector2(MouseState.X - ActualSize.X + Offset.X + 8,
+                            MouseState.Y + Offset.Y - 8), Color);
 
         }
     }

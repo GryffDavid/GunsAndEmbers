@@ -53,10 +53,10 @@ namespace TowerDefensePrototype
                 TurretBarrel = contentManager.Load<Texture2D>(CurrentAnimation.AssetName);
                 FrameSize = new Vector2(TurretBarrel.Width / CurrentAnimation.TotalFrames, TurretBarrel.Height);
             }
-
-            SelectBox = new Rectangle((int)Position.X, (int)Position.Y-24, 64, 64);   
-      
+                        
             CurrentHealth = Health;
+
+            SelectBox = new Rectangle((int)Position.X - 32, (int)Position.Y - 32, 64, 64);
         }
 
         public void Update(GameTime gameTime)
@@ -132,21 +132,22 @@ namespace TowerDefensePrototype
             SourceRectangle = new Rectangle(0 + (int)FrameSize.X * CurrentFrame, 0, (int)FrameSize.X, (int)FrameSize.Y);
 
             #region Handle selection
-                if (SelectBox.Contains(new Point(CurrentMouseState.X, CurrentMouseState.Y)) && CurrentMouseState.LeftButton == ButtonState.Released && PreviousMouseState.LeftButton == ButtonState.Pressed)            
-                {
-                    JustClicked = true;
-                }
-                else
-                {
-                    JustClicked = false;
-                }
+            if (SelectBox.Contains(new Point(CurrentMouseState.X, CurrentMouseState.Y)) &&
+                CurrentMouseState.LeftButton == ButtonState.Released && PreviousMouseState.LeftButton == ButtonState.Pressed)
+            {
+                JustClicked = true;
+            }
+            else
+            {
+                JustClicked = false;
+            }
 
-                if (Selected == true)
-                {
-                    Color = Color.Red;
-                }
-                else
-                    Color = Color.White;
+            if (Selected == true)
+            {
+                Color = Color.Red;
+            }
+            else
+                Color = Color.White;
             #endregion                
 
             PreviousMouseState = CurrentMouseState;

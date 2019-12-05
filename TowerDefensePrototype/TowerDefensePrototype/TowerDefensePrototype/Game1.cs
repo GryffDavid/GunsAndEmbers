@@ -14,6 +14,10 @@ using System.Threading;
 using System.Xml.Serialization;
 using System.Windows;
 using GameDataTypes;
+using System.Configuration;
+using System.Security.Cryptography;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Text;
 
 namespace TowerDefensePrototype
 {
@@ -23,6 +27,7 @@ namespace TowerDefensePrototype
     public enum HeavyProjectileType { CannonBall, FlameThrower, Arrow, Acid, Torpedo, ClusterBomb, ClusterBombShell };
     public enum LightProjectileType { MachineGun, Freeze, Lightning };
     public enum GameState { Menu, Loading, Playing, Paused, ProfileSelect, Options, ProfileManagement, Tutorial, LoadingGame, GettingName };
+    public enum ProfileState { Standard, Upgrades, Stats };
 
     public struct StackedUpgrade 
     { 
@@ -80,6 +85,10 @@ namespace TowerDefensePrototype
         int MaxWaves = 0;
 
         double Seconds;
+        float VictoryTime;
+        bool Victory;
+
+        BinaryFormatter formatter = new BinaryFormatter();
 
         #region List declarations
         List<Button> SelectButtonList, TowerButtonList, MainMenuButtonList, PauseButtonList,
@@ -162,7 +171,7 @@ namespace TowerDefensePrototype
             ContainerName = "Profiles";
             TrapLimit = 8;
             Camera = new Camera();
-            Tower = new Tower("Tower2", new Vector2(32, 180), 300, 20, 3);
+            Tower = new Tower("Tower2", new Vector2(32, 180), 300, 20, 3, 5000);
             TowerButtons = (int)Tower.Slots;
 
             MainMenuNameList = new List<string>();
@@ -598,9 +607,40 @@ namespace TowerDefensePrototype
 
                 foreach (Button button in SelectWeaponList)
                 {
-                    if (button.Position.X > 40 && button.Position.X < 1280-40-50)
+                    if (button.DestinationRectangle.Left > (SelectWeaponLeft.DestinationRectangle.Left - 24) &&
+                        button.DestinationRectangle.Right < (SelectWeaponRight.DestinationRectangle.Right + 24))
                     {
                         button.Draw(spriteBatch);
+                    }
+
+
+
+                    if (button.DestinationRectangle.Right > SelectWeaponRight.DestinationRectangle.Center.X)
+                    {
+                        button.Color = Color.Lerp(button.Color, Color.Transparent, 0.3f);
+                        button.CurrentIconColor = Color.Lerp(button.CurrentIconColor, Color.Transparent, 0.3f);
+                    }
+
+                    if (button.DestinationRectangle.Left < SelectWeaponLeft.DestinationRectangle.Center.X)
+                    {
+                        button.Color = Color.Lerp(button.Color, Color.Transparent, 0.3f);
+                        button.CurrentIconColor = Color.Lerp(button.CurrentIconColor, Color.Transparent, 0.3f);
+                    }
+
+
+
+                    if (button.DestinationRectangle.Right < SelectWeaponRight.DestinationRectangle.Center.X && 
+                        button.DestinationRectangle.Center.X > SelectWeaponLeft.DestinationRectangle.Center.X)
+                    {
+                        button.Color = Color.Lerp(button.Color, Color.White, 0.2f);
+                        button.CurrentIconColor = Color.Lerp(button.CurrentIconColor, Color.White, 0.2f);
+                    }
+
+                    if (button.DestinationRectangle.Left > SelectWeaponLeft.DestinationRectangle.Center.X &&
+                        button.DestinationRectangle.Center.X < SelectWeaponRight.DestinationRectangle.Center.X)
+                    {
+                        button.Color = Color.Lerp(button.Color, Color.White, 0.2f);
+                        button.CurrentIconColor = Color.Lerp(button.CurrentIconColor, Color.White, 0.2f);
                     }
                 }
 
@@ -767,7 +807,10 @@ namespace TowerDefensePrototype
                 spriteBatch.DrawString(HUDFont, (CurrentWaveNumber).ToString() + "/" + MaxWaves, new Vector2(250, 100), Color.White);
 
                 spriteBatch.DrawString(HUDFont, Tower.ShieldOn.ToString(), new Vector2(100, 100), Color.White);
-                spriteBatch.DrawString(HUDFont, Tower.CurrentTime.ToString(), new Vector2(100, 120), Color.White);
+                spriteBatch.DrawString(HUDFont, Tower.CurrentShieldTime.ToString(), new Vector2(100, 120), Color.White);
+
+                spriteBatch.DrawString(HUDFont, CurrentWaveTime.ToString(), new Vector2(300, 400), Color.Yellow);               
+
                 spriteBatch.End();
             }
             #endregion
@@ -947,6 +990,12 @@ namespace TowerDefensePrototype
 
             CursorDraw(spriteBatch);
             spriteBatch.DrawString(HUDFont, Slow.ToString(), Vector2.Zero, Color.Red);
+
+            if (Victory == true && GameState == GameState.Playing && IsLoading == false)
+            {                
+                spriteBatch.Draw(PauseMenuBackground, new Rectangle(0, 0, 1280, 720), Color.White);
+                spriteBatch.DrawString(HUDFont, "Victory.", new Vector2(1280 / 2, 720 / 2), Color.White);
+            }
 
             spriteBatch.End();
             #endregion
@@ -1171,101 +1220,103 @@ namespace TowerDefensePrototype
 
             foreach (Button towerButton in TowerButtonList)
             {
-                towerButton.Update();
-
-                if (towerButton.JustClicked == true)
+                if (this.IsActive == true)
                 {
-                    Index = TowerButtonList.IndexOf(towerButton);
-                    switch (SelectedTurret)
+                    towerButton.Update();
+
+                    if (towerButton.JustClicked == true)
                     {
-                        //The upgrades for the turrets are applied before the LoadContent method is called to ensure that the correct values
-                        //are used. Otherwise strange things happen like the timing bars not matching the actual timing.
-                        case TurretType.MachineGun:
+                        Index = TowerButtonList.IndexOf(towerButton);
+                        switch (SelectedTurret)
+                        {
+                            //The upgrades for the turrets are applied before the LoadContent method is called to ensure that the correct values
+                            //are used. Otherwise strange things happen like the timing bars not matching the actual timing.
+                            case TurretType.MachineGun:
 
-                            if (Resources >= new MachineGunTurret(Vector2.Zero).ResourceCost)
-                            {
-                                TowerButtonList[Index].ButtonActive = false;
-                                TurretList[Index] = new MachineGunTurret(TowerButtonList[Index].Position); //Fix this to make sure that the BasicTurret has the resource names built in.
+                                if (Resources >= new MachineGunTurret(Vector2.Zero).ResourceCost)
+                                {
+                                    TowerButtonList[Index].ButtonActive = false;
+                                    TurretList[Index] = new MachineGunTurret(TowerButtonList[Index].CurrentPosition); //Fix this to make sure that the BasicTurret has the resource names built in.
 
-                                //Apply the upgrades for the gatling turret in here
-                                TurretList[Index].FireDelay = PercentageChange(TurretList[Index].FireDelay, GatlingSpeed);
-                                TurretList[Index].Damage = (int)PercentageChange(TurretList[Index].Damage, 0);
+                                    //Apply the upgrades for the gatling turret in here
+                                    TurretList[Index].FireDelay = PercentageChange(TurretList[Index].FireDelay, GatlingSpeed);
+                                    TurretList[Index].Damage = (int)PercentageChange(TurretList[Index].Damage, 0);
 
-                                TurretList[Index].LoadContent(Content);
-                                Resources -= new MachineGunTurret(Vector2.Zero).ResourceCost;
-                                SelectedTurret = null;
-                                TurretList[Index].Selected = false;
-                            }
-                            break;
+                                    TurretList[Index].LoadContent(Content);
+                                    Resources -= new MachineGunTurret(Vector2.Zero).ResourceCost;
+                                    SelectedTurret = null;
+                                    TurretList[Index].Selected = true;
+                                }
+                                break;
 
-                        case TurretType.Cannon:
-                            if (Resources >= new CannonTurret(Vector2.Zero).ResourceCost)
-                            {
-                                TowerButtonList[Index].ButtonActive = false;
-                                TurretList[Index] = new CannonTurret(TowerButtonList[Index].Position);
+                            case TurretType.Cannon:
+                                if (Resources >= new CannonTurret(Vector2.Zero).ResourceCost)
+                                {
+                                    TowerButtonList[Index].ButtonActive = false;
+                                    TurretList[Index] = new CannonTurret(TowerButtonList[Index].CurrentPosition);
 
-                                //Apply the upgrades for the cannon turret in here
-                                TurretList[Index].FireDelay = PercentageChange(TurretList[Index].FireDelay, CannonSpeed);
-                                TurretList[Index].Damage = (int)PercentageChange(TurretList[Index].Damage, 0);
+                                    //Apply the upgrades for the cannon turret in here
+                                    TurretList[Index].FireDelay = PercentageChange(TurretList[Index].FireDelay, CannonSpeed);
+                                    TurretList[Index].Damage = (int)PercentageChange(TurretList[Index].Damage, 0);
 
-                                TurretList[Index].LoadContent(Content);
-                                Resources -= new CannonTurret(Vector2.Zero).ResourceCost;
-                                SelectedTurret = null;
-                                TurretList[Index].Selected = false;
+                                    TurretList[Index].LoadContent(Content);
+                                    Resources -= new CannonTurret(Vector2.Zero).ResourceCost;
+                                    SelectedTurret = null;
+                                    TurretList[Index].Selected = true;
 
 
-                            }
-                            break;
+                                }
+                                break;
 
-                        case TurretType.FlameThrower:
-                            if (Resources >= new FlameThrowerTurret(Vector2.Zero).ResourceCost)
-                            {
-                                TowerButtonList[Index].ButtonActive = false;
-                                TurretList[Index] = new FlameThrowerTurret(TowerButtonList[Index].Position);
+                            case TurretType.FlameThrower:
+                                if (Resources >= new FlameThrowerTurret(Vector2.Zero).ResourceCost)
+                                {
+                                    TowerButtonList[Index].ButtonActive = false;
+                                    TurretList[Index] = new FlameThrowerTurret(TowerButtonList[Index].CurrentPosition);
 
-                                //Apply the upgrades for the flamethrower turret in here
+                                    //Apply the upgrades for the flamethrower turret in here
 
-                                TurretList[Index].LoadContent(Content);
-                                Resources -= new FlameThrowerTurret(Vector2.Zero).ResourceCost;
-                                SelectedTurret = null;
-                                TurretList[Index].Selected = false;
+                                    TurretList[Index].LoadContent(Content);
+                                    Resources -= new FlameThrowerTurret(Vector2.Zero).ResourceCost;
+                                    SelectedTurret = null;
+                                    TurretList[Index].Selected = true;
 
-                            }
-                            break;
+                                }
+                                break;
 
-                        case TurretType.Lightning:
-                            if (Resources >= new LightningTurret(Vector2.Zero).ResourceCost)
-                            {
-                                TowerButtonList[Index].ButtonActive = false;
-                                TurretList[Index] = new LightningTurret(TowerButtonList[Index].Position);
+                            case TurretType.Lightning:
+                                if (Resources >= new LightningTurret(Vector2.Zero).ResourceCost)
+                                {
+                                    TowerButtonList[Index].ButtonActive = false;
+                                    TurretList[Index] = new LightningTurret(TowerButtonList[Index].CurrentPosition);
 
-                                //Apply the upgrades for the flamethrower turret in here
+                                    //Apply the upgrades for the flamethrower turret in here
 
-                                TurretList[Index].LoadContent(Content);
-                                Resources -= new LightningTurret(Vector2.Zero).ResourceCost;
-                                SelectedTurret = null;
-                                TurretList[Index].Selected = false;
-                            }
-                            break;
+                                    TurretList[Index].LoadContent(Content);
+                                    Resources -= new LightningTurret(Vector2.Zero).ResourceCost;
+                                    SelectedTurret = null;
+                                    TurretList[Index].Selected = true;
+                                }
+                                break;
 
-                        case TurretType.Cluster:
-                            if (Resources >= new ClusterTurret(Vector2.Zero).ResourceCost)
-                            {
-                                TowerButtonList[Index].ButtonActive = false;
-                                TurretList[Index] = new ClusterTurret(TowerButtonList[Index].Position);
+                            case TurretType.Cluster:
+                                if (Resources >= new ClusterTurret(Vector2.Zero).ResourceCost)
+                                {
+                                    TowerButtonList[Index].ButtonActive = false;
+                                    TurretList[Index] = new ClusterTurret(TowerButtonList[Index].CurrentPosition);
 
-                                //Apply the upgrades for the flamethrower turret in here
+                                    //Apply the upgrades for the flamethrower turret in here
 
-                                TurretList[Index].LoadContent(Content);
-                                Resources -= new ClusterTurret(Vector2.Zero).ResourceCost;
-                                SelectedTurret = null;
-                                TurretList[Index].Selected = false;
-                            }
-                            break;
+                                    TurretList[Index].LoadContent(Content);
+                                    Resources -= new ClusterTurret(Vector2.Zero).ResourceCost;
+                                    SelectedTurret = null;
+                                    TurretList[Index].Selected = true;
+                                }
+                                break;
+                        }
                     }
                 }
             }
-
         }
 
         private void SelectButtonsUpdate()
@@ -1277,843 +1328,881 @@ namespace TowerDefensePrototype
 
             foreach (Button button in SelectButtonList)
             {
-                button.Update();
-
-                #region Check if a select button has been clicked
-                if (button.JustClicked == true)
+                if (this.IsActive == true)
                 {
-                    ClearTurretSelect();
-                    Index = SelectButtonList.IndexOf(button);
+                    button.Update();
 
-                    Action CheckLayout = new Action(() =>
+                    #region Check if a select button has been clicked
+                    if (button.JustClicked == true)
                     {
-                        if (Index <= CurrentProfile.Buttons.Count - 1)
+                        ClearTurretSelect();
+                        Index = SelectButtonList.IndexOf(button);
+
+                        Action CheckLayout = new Action(() =>
                         {
-                            switch (CurrentProfile.Buttons[Index])
+                            if (Index <= CurrentProfile.Buttons.Count - 1)
                             {
-                                case null:
-                                    {
-                                        SelectedTrap = null;
-                                        SelectedTurret = null;
-                                    }
-                                    break;
-
-                                case "":
-                                    {
-                                        SelectedTrap = null;
-                                        SelectedTurret = null;
-                                    }
-                                    break;
-
-                                case "FireTrap":
-                                    {
-                                        if (CurrentProfile.FireTrap == true && Resources >= new FireTrap(Vector2.Zero).ResourceCost)
+                                switch (CurrentProfile.Buttons[Index])
+                                {
+                                    case null:
                                         {
-                                            SelectedTrap = TrapType.Fire;
+                                            SelectedTrap = null;
                                             SelectedTurret = null;
                                         }
-                                    }
-                                    break;
+                                        break;
 
-                                case "IceTrap":
-                                    {
-                                        if (CurrentProfile.IceTrap == true && Resources >= new IceTrap(Vector2.Zero).ResourceCost)
+                                    case "":
                                         {
-                                            SelectedTrap = TrapType.Ice;
-                                        }
-                                    }
-                                    break;
-
-                                case "WallTrap":
-                                    {
-                                        if (CurrentProfile.WallTrap == true && Resources >= new Wall(Vector2.Zero).ResourceCost)
-                                        {
-                                            SelectedTrap = TrapType.Wall;
+                                            SelectedTrap = null;
                                             SelectedTurret = null;
                                         }
-                                    }
-                                    break;
+                                        break;
 
-                                case "MachineGunTurret":
-                                    {
-                                        if (CurrentProfile.CannonTurret == true && Resources >= new MachineGunTurret(Vector2.Zero).ResourceCost)
+                                    case "FireTrap":
                                         {
-                                            SelectedTrap = null;
-                                            SelectedTurret = TurretType.MachineGun;
+                                            if (CurrentProfile.FireTrap == true && Resources >= new FireTrap(Vector2.Zero).ResourceCost)
+                                            {
+                                                SelectedTrap = TrapType.Fire;
+                                                SelectedTurret = null;
+                                            }
                                         }
-                                    }
-                                    break;
+                                        break;
 
-                                case "CannonTurret":
-                                    {
-                                        if (CurrentProfile.CannonTurret == true && Resources >= new CannonTurret(Vector2.Zero).ResourceCost)
+                                    case "IceTrap":
                                         {
-                                            SelectedTrap = null;
-                                            SelectedTurret = TurretType.Cannon;
+                                            if (CurrentProfile.IceTrap == true && Resources >= new IceTrap(Vector2.Zero).ResourceCost)
+                                            {
+                                                SelectedTrap = TrapType.Ice;
+                                            }
                                         }
-                                    }
-                                    break;
+                                        break;
 
-                                case "SawBladeTrap":
-                                    {
-                                        if (CurrentProfile.SawBladeTrap == true && Resources >= new SawBladeTrap(Vector2.Zero).ResourceCost)
+                                    case "WallTrap":
                                         {
-                                            SelectedTrap = TrapType.SawBlade;
-                                            SelectedTurret = null;
+                                            if (CurrentProfile.WallTrap == true && Resources >= new Wall(Vector2.Zero).ResourceCost)
+                                            {
+                                                SelectedTrap = TrapType.Wall;
+                                                SelectedTurret = null;
+                                            }
                                         }
-                                    }
-                                    break;
+                                        break;
 
-                                case "FlameThrowerTurret":
-                                    {
-                                        if (CurrentProfile.FlameThrowerTurret == true && Resources >= new FlameThrowerTurret(Vector2.Zero).ResourceCost)
+                                    case "MachineGunTurret":
                                         {
-                                            SelectedTrap = null;
-                                            SelectedTurret = TurretType.FlameThrower;
+                                            if (CurrentProfile.MachineGunTurret == true && Resources >= new MachineGunTurret(Vector2.Zero).ResourceCost)
+                                            {
+                                                SelectedTrap = null;
+                                                SelectedTurret = TurretType.MachineGun;
+                                            }
                                         }
-                                    }
-                                    break;
+                                        break;
 
-                                case "LightningTurret":
-                                    {
-                                        if (CurrentProfile.LightningTurret == true && Resources >= new LightningTurret(Vector2.Zero).ResourceCost)
+                                    case "CannonTurret":
                                         {
-                                            SelectedTrap = null;
-                                            SelectedTurret = TurretType.Lightning;
+                                            if (CurrentProfile.CannonTurret == true && Resources >= new CannonTurret(Vector2.Zero).ResourceCost)
+                                            {
+                                                SelectedTrap = null;
+                                                SelectedTurret = TurretType.Cannon;
+                                            }
                                         }
-                                    }
-                                    break;
+                                        break;
 
-                                case "ClusterTurret":
-                                    {
-                                        if (CurrentProfile.ClusterTurret == true && Resources >= new ClusterTurret(Vector2.Zero).ResourceCost)
+                                    case "SawBladeTrap":
                                         {
-                                            SelectedTrap = null;
-                                            SelectedTurret = TurretType.Cluster;
+                                            if (CurrentProfile.SawBladeTrap == true && Resources >= new SawBladeTrap(Vector2.Zero).ResourceCost)
+                                            {
+                                                SelectedTrap = TrapType.SawBlade;
+                                                SelectedTurret = null;
+                                            }
                                         }
-                                    }
-                                    break;
+                                        break;
+
+                                    case "FlameThrowerTurret":
+                                        {
+                                            if (CurrentProfile.FlameThrowerTurret == true && Resources >= new FlameThrowerTurret(Vector2.Zero).ResourceCost)
+                                            {
+                                                SelectedTrap = null;
+                                                SelectedTurret = TurretType.FlameThrower;
+                                            }
+                                        }
+                                        break;
+
+                                    case "LightningTurret":
+                                        {
+                                            if (CurrentProfile.LightningTurret == true && Resources >= new LightningTurret(Vector2.Zero).ResourceCost)
+                                            {
+                                                SelectedTrap = null;
+                                                SelectedTurret = TurretType.Lightning;
+                                            }
+                                        }
+                                        break;
+
+                                    case "ClusterTurret":
+                                        {
+                                            if (CurrentProfile.ClusterTurret == true && Resources >= new ClusterTurret(Vector2.Zero).ResourceCost)
+                                            {
+                                                SelectedTrap = null;
+                                                SelectedTurret = TurretType.Cluster;
+                                            }
+                                        }
+                                        break;
+                                }
                             }
-                        }
-                        else
+                            else
+                            {
+                                SelectedTrap = null;
+                                SelectedTurret = null;
+                            }
+                        });
+
+                        switch (Index)
                         {
-                            SelectedTrap = null;
-                            SelectedTurret = null;
+                            default:
+                                CheckLayout();
+                                ReadyToPlace = true;
+                                break;
                         }
-                    });
-
-                    switch (Index)
-                    {
-                        default:
-                            CheckLayout();
-                            ReadyToPlace = true;
-                            break;
                     }
-                }
-                #endregion
+                    #endregion
 
-                #region Change Icon Colour if it's unavailable
-                Index2 = SelectButtonList.IndexOf(button);
+                    #region Change Icon Colour if it's unavailable
+                    Index2 = SelectButtonList.IndexOf(button);
 
-                if (Index2 <= CurrentProfile.Buttons.Count - 1)
-                {
-                    switch (CurrentProfile.Buttons[Index2])
+                    if (Index2 <= CurrentProfile.Buttons.Count - 1)
                     {
-                        case "FireTrap":
-                            {
-                                if (Resources < new FireTrap(Vector2.Zero).ResourceCost)
+                        switch (CurrentProfile.Buttons[Index2])
+                        {
+                            case "FireTrap":
                                 {
-                                    button.IconColor = Color.Gray;
+                                    if (Resources < new FireTrap(Vector2.Zero).ResourceCost)
+                                    {
+                                        button.CurrentIconColor = Color.Gray;
+                                    }
+                                    else
+                                    {
+                                        button.CurrentIconColor = Color.White;
+                                    }
                                 }
-                                else
-                                {
-                                    button.IconColor = Color.White;
-                                }
-                            }
-                            break;
+                                break;
 
-                        case "MachineGunTurret":
-                            {
-                                if (Resources < new MachineGunTurret(new Vector2(0, 0)).ResourceCost)
+                            case "MachineGunTurret":
                                 {
-                                    button.IconColor = Color.Gray;
+                                    if (Resources < new MachineGunTurret(new Vector2(0, 0)).ResourceCost)
+                                    {
+                                        button.CurrentIconColor = Color.Gray;
+                                    }
+                                    else
+                                    {
+                                        button.CurrentIconColor = Color.White;
+                                    }
                                 }
-                                else
-                                {
-                                    button.IconColor = Color.White;
-                                }
-                            }
-                            break;
+                                break;
+                        }
                     }
+                    #endregion
                 }
-                #endregion
-
             }
         }
 
         private void MenuButtonsUpdate()
         {
-            #region Handling Main Menu Button Presses
-            if (GameState == GameState.Menu && DialogVisible == false)
+            if (this.IsActive == true)
             {
-                int Index;
-
-                foreach (Button button in MainMenuButtonList)
+                #region Handling Main Menu Button Presses
+                if (GameState == GameState.Menu && DialogVisible == false)
                 {
-                    button.Update();
+                    int Index;
 
-                    if (button.JustClicked == true)
+                    foreach (Button button in MainMenuButtonList)
                     {
-                        Index = MainMenuButtonList.IndexOf(button);
-                        MenuClick.Play();
+                        button.Update();
 
-                        switch (Index)
+                        if (button.JustClicked == true)
                         {
-                            case 0:
-                                GameState = GameState.ProfileSelect;
-                                SetProfileNames();                                
-                                break;
+                            Index = MainMenuButtonList.IndexOf(button);
+                            MenuClick.Play();
 
-                            case 1:
+                            switch (Index)
+                            {
+                                case 0:
+                                    GameState = GameState.ProfileSelect;                                   
+                                    SetProfileNames();
+                                    break;
 
-                                break;
+                                case 1:
 
-                            case 2:
-                                GameState = GameState.Options;
-                                MenuSFXVolume = CurrentSettings.SFXVolume * 10;
-                                MenuMusicVolume = CurrentSettings.MusicVolume * 10;                                
-                                break;
+                                    break;
 
-                            case 3:
+                                case 2:
+                                    GameState = GameState.Options;
+                                    MenuSFXVolume = CurrentSettings.SFXVolume * 10;
+                                    MenuMusicVolume = CurrentSettings.MusicVolume * 10;
+                                    break;
 
-                                break;
+                                case 3:
 
-                            case 4:
-                                ExitDialog = new DialogBox(new Vector2(1280 / 2, 720 / 2), "Yes", "Do you want to exit?", "No");
-                                ExitDialog.LoadContent(SecondaryContent);
-                                DialogVisible = true;                                
-                                break;
-                        }
+                                    break;
 
-                        
-                    }
-                }
-            }
-            else
-            {
-                foreach (Button button in MainMenuButtonList)
-                {
-                    button.CurrentButtonState = ButtonSpriteState.Released;
-                }
-            }
-            #endregion
+                                case 4:
+                                    ExitDialog = new DialogBox(new Vector2(1280 / 2, 720 / 2), "Exit", "Do you want to exit?", "Cancel");
+                                    ExitDialog.LoadContent(SecondaryContent);
+                                    DialogVisible = true;
+                                    break;
+                            }
 
-            #region Handling Pause Menu Button Presses
-            if (GameState == GameState.Paused && DialogVisible == false)
-            {
-                int Index;
 
-                foreach (Button button in PauseButtonList)
-                {
-                    button.Update();
-
-                    if (button.JustClicked == true)
-                    {
-                        MenuClick.Play();
-
-                        Index = PauseButtonList.IndexOf(button);
-
-                        switch (Index)
-                        {
-                            case 0:
-                                GameState = GameState.Playing;
-                                break;
-
-                            case 1:
-
-                                break;
-
-                            case 2:
-                                MainMenuDialog = new DialogBox(new Vector2(1280 / 2, 720 / 2), "Yes", "Are you sure you want to return to the main menu? All progress will be lost.", "No");
-                                MainMenuDialog.LoadContent(SecondaryContent);
-                                DialogVisible = true;
-                                break;
-
-                            case 3:
-                                ProfileMenuDialog = new DialogBox(new Vector2(1280 / 2, 720 / 2), "Yes", "Are you sure you want to return to your profile menu? All progress will be lost.", "No");
-                                ProfileMenuDialog.LoadContent(SecondaryContent);
-                                DialogVisible = true;
-                                break;
-
-                            case 4:
-                                ExitDialog = new DialogBox(new Vector2(1280 / 2, 720 / 2), "Yes", "Do you want to exit?", "No");
-                                ExitDialog.LoadContent(SecondaryContent);
-                                DialogVisible = true;
-                                break;
                         }
                     }
                 }
-            }
-            #endregion
-
-            #region Handling Profile Management Button Presses
-            if (GameState == GameState.ProfileManagement)
-            {
-                ProfileManagementPlay.Update();
-                ProfileManagementBack.Update();
-                RightClickClearSelected();
-
-                #region Play Button
-                if (ProfileManagementPlay.JustClicked == true)
+                else
                 {
-                    if (CurrentProfile != null)
+                    foreach (Button button in MainMenuButtonList)
                     {
-                        if (CurrentProfile.Buttons.All(String => String == null))
-                        {
-                            NoWeaponsDialog = new DialogBox(new Vector2(1280 / 2, 720 / 2), "OK", "You have no weapons to use!", "");
-                            NoWeaponsDialog.LoadContent(SecondaryContent);
-                            DialogVisible = true;
-                        }
-                        else
-                        {
-                            SelectedTrap = null;
-                            SelectedTurret = null;
-                            LevelNumber = CurrentProfile.LevelNumber;
-                            LoadLevel(LevelNumber);
-                            LoadUpgrades();
-                            StorageDevice.BeginShowSelector(this.SaveProfile, null);
-                            GameState = GameState.Loading;
-                            LoadingThread = new Thread(LoadGameContent);
-                            LoadingThread.Start();
-                            IsLoading = false;
-                        }
-                    }                    
+                        button.CurrentButtonState = ButtonSpriteState.Released;
+                    }
                 }
                 #endregion
 
-                #region Back Button
-                if (ProfileManagementBack.JustClicked == true)
+                #region Handling Pause Menu Button Presses
+                if (GameState == GameState.Paused && DialogVisible == false)
                 {
-                    SetProfileNames();
-                    SelectedTrap = null;
-                    SelectedTurret = null;
-                    StorageDevice.BeginShowSelector(this.SaveProfile, null);
-                    GameState = GameState.ProfileSelect;
+                    int Index;
+
+                    foreach (Button button in PauseButtonList)
+                    {
+                        button.Update();
+
+                        if (button.JustClicked == true)
+                        {
+                            MenuClick.Play();
+
+                            Index = PauseButtonList.IndexOf(button);
+
+                            switch (Index)
+                            {
+                                case 0:
+                                    GameState = GameState.Playing;
+                                    break;
+
+                                case 1:
+
+                                    break;
+
+                                case 2:
+                                    MainMenuDialog = new DialogBox(new Vector2(1280 / 2, 720 / 2), "Yes", "Are you sure you want to return to the main menu? All progress will be lost.", "No");
+                                    MainMenuDialog.LoadContent(SecondaryContent);
+                                    DialogVisible = true;
+                                    break;
+
+                                case 3:
+                                    ProfileMenuDialog = new DialogBox(new Vector2(1280 / 2, 720 / 2), "Yes", "Are you sure you want to return to your profile menu? All progress will be lost.", "No");
+                                    ProfileMenuDialog.LoadContent(SecondaryContent);
+                                    DialogVisible = true;
+                                    break;
+
+                                case 4:
+                                    ExitDialog = new DialogBox(new Vector2(1280 / 2, 720 / 2), "Exit", "Do you want to exit? All progress will be lost.", "Cancel");
+                                    ExitDialog.LoadContent(SecondaryContent);
+                                    DialogVisible = true;
+                                    break;
+                            }
+                        }
+                    }
                 }
                 #endregion
 
-                #region Select Weapon Buttons 
-                //(i.e. The buttons that show which weapons are available and let the player select one)
-
-                if (SelectWeaponList.Any(Button => Button.DestinationRectangle.Contains(new Point(Mouse.GetState().X, Mouse.GetState().Y))))
+                #region Handling Profile Management Button Presses
+                if (GameState == GameState.ProfileManagement)
                 {
-                    Button MousedButton = SelectWeaponList.Find(Button => Button.DestinationRectangle.Contains(new Point(Mouse.GetState().X, Mouse.GetState().Y)));
-                    
-                    switch (SelectWeaponList.IndexOf(MousedButton))
+                    ProfileManagementPlay.Update();
+                    ProfileManagementBack.Update();
+                    RightClickClearSelected();
+
+                    #region Play Button
+                    if (ProfileManagementPlay.JustClicked == true)
                     {
-                        default:
-                            WeaponInformation = new InformationBox("Complete more levels to unlock this weapon");
-                            break;
-
-                        case 0:
-                            if (CurrentProfile.MachineGunTurret == true)                            
-                                 WeaponInformation = new InformationBox("Machine gun turret is unlocked.");
-                            else
-                                 WeaponInformation = new InformationBox("Complete more levels to unlock this weapon");
-                            break;
-
-                        case 1:
-                            if (CurrentProfile.LightningTurret == true)                            
-                                 WeaponInformation = new InformationBox("Lightning turret is unlocked.");
-                            else
-                                 WeaponInformation = new InformationBox("Complete more levels to unlock this weapon");
-                            break;
-
-                        case 2:
-                            if (CurrentProfile.FireTrap == true)                            
-                                 WeaponInformation = new InformationBox("Fire trap is unlocked.");
-                            else
-                                 WeaponInformation = new InformationBox("Complete more levels to unlock this weapon");
-                            break;
-                    }
-
-                    if (WeaponInformation != null)
-                    WeaponInformation.LoadContent(SecondaryContent);
-                }
-
-                if (SelectWeaponList.All(Button => !Button.DestinationRectangle.Contains(new Point(Mouse.GetState().X, Mouse.GetState().Y))))
-                {
-                    WeaponInformation = null;
-
-                }
-
-                foreach (Button button in SelectWeaponList)
-                {
-                    if (button.Position.X > 40 && button.Position.X < 1280-50-40)
-                    button.Update();
-
-                    #region Check which weapon has been selected and if it can be selected
-                    if (button.JustClicked == true)
-                    {
-                        switch (SelectWeaponList.IndexOf(button))
+                        if (CurrentProfile != null)
                         {
-                            case 0:
-                                if (CurrentProfile.MachineGunTurret == true)
-                                {
-                                    SelectedTrap = null;
-                                    SelectedTurret = TurretType.MachineGun;
-                                }
-                                break;
-
-                            case 1:
-                                if (CurrentProfile.LightningTurret == true)
-                                {
-                                    SelectedTrap = null;
-                                    SelectedTurret = TurretType.Lightning;
-                                }
-                                break;
-
-                            case 2:
-                                if (CurrentProfile.FireTrap == true)
-                                {
-                                    SelectedTrap = TrapType.Fire;
-                                    SelectedTurret = null;
-                                }
-                                break;
+                            if (CurrentProfile.Buttons.All(String => String == null))
+                            {
+                                NoWeaponsDialog = new DialogBox(new Vector2(1280 / 2, 720 / 2), "OK", "You have no weapons to use!", "");
+                                NoWeaponsDialog.LoadContent(SecondaryContent);
+                                DialogVisible = true;
+                            }
+                            else
+                            {
+                                SelectedTrap = null;
+                                SelectedTurret = null;
+                                LevelNumber = CurrentProfile.LevelNumber;
+                                LoadLevel(LevelNumber);
+                                LoadUpgrades();
+                                StorageDevice.BeginShowSelector(this.SaveProfile, null);
+                                GameState = GameState.Loading;
+                                LoadingThread = new Thread(LoadGameContent);
+                                LoadingThread.Start();
+                                IsLoading = false;
+                            }
                         }
                     }
                     #endregion
 
-                    #region Change the icon depending if the player has access to that weapon
-                    for (int i = 0; i < SelectWeaponList.Count; i++)
+                    #region Back Button
+                    if (ProfileManagementBack.JustClicked == true)
                     {
-                        if (SelectWeaponList[i].IconName == "Icons/LockIcon")
-                        switch (i)
-                        {
-                            case 0:
-                                if (CurrentProfile.MachineGunTurret == true)
-                                {
-                                    SelectWeaponList[i].IconName = "Icons/MachineGunTurretIcon";
-                                    SelectWeaponList[i].LoadContent(SecondaryContent);
-                                }
-                                break;
-
-                            case 1:
-                                if (CurrentProfile.LightningTurret == true)
-                                {
-                                    SelectWeaponList[i].IconName = "Icons/MachineGunTurretIcon";
-                                    SelectWeaponList[i].LoadContent(SecondaryContent);
-                                }
-                                break;
-
-                            case 2:
-                                if (CurrentProfile.FireTrap == true)
-                                {
-                                    SelectWeaponList[i].IconName = "Icons/FireTrapIcon";
-                                    SelectWeaponList[i].LoadContent(SecondaryContent);
-                                }
-                                break;
-                        }
-                    }
-                    #endregion
-                }
-                    
-                #endregion
-
-                #region Place Weapon Buttons
-                foreach (Button button in PlaceWeaponList)
-                {
-                    button.Update();
-
-                    if (button.JustClicked == true)
-                    {
-                        if (SelectedTurret == null && SelectedTrap == null)
-                        {
-                            switch (CurrentProfile.Buttons[PlaceWeaponList.IndexOf(button)])
-                            {
-                                case "MachineGunTurret":
-                                    SelectedTurret = TurretType.MachineGun;
-                                    SelectedTrap = null;
-                                    CurrentProfile.Buttons[PlaceWeaponList.IndexOf(button)] = null;
-                                    PlaceWeaponList[PlaceWeaponList.IndexOf(button)].IconName = null;
-                                    PlaceWeaponList[PlaceWeaponList.IndexOf(button)].LoadContent(SecondaryContent);
-                                    break;
-
-                                case "FireTrap":
-                                    SelectedTurret = null;
-                                    SelectedTrap = TrapType.Fire;
-                                    CurrentProfile.Buttons[PlaceWeaponList.IndexOf(button)] = null;
-                                    PlaceWeaponList[PlaceWeaponList.IndexOf(button)].IconName = null;
-                                    PlaceWeaponList[PlaceWeaponList.IndexOf(button)].LoadContent(SecondaryContent);
-                                    break;
-                            }
-                            return;
-                        }
-
-                        switch (SelectedTurret)
-                        {
-                            case TurretType.MachineGun:
-                                CurrentProfile.Buttons[PlaceWeaponList.IndexOf(button)] = "MachineGunTurret";
-                                PlaceWeaponList[PlaceWeaponList.IndexOf(button)].IconName = "Icons/MachineGunTurretIcon";
-                                PlaceWeaponList[PlaceWeaponList.IndexOf(button)].LoadContent(SecondaryContent);
-                                SelectedTurret = null;
-                                SelectedTrap = null;
-                                break;
-                        }
-
-                        switch (SelectedTrap)
-                        {
-                            case TrapType.Fire:
-                                CurrentProfile.Buttons[PlaceWeaponList.IndexOf(button)] = "FireTrap";
-                                PlaceWeaponList[PlaceWeaponList.IndexOf(button)].IconName = "Icons/FireTrapIcon";
-                                PlaceWeaponList[PlaceWeaponList.IndexOf(button)].LoadContent(SecondaryContent);
-                                SelectedTurret = null;
-                                SelectedTrap = null;
-                                break;
-                        }
-                    }
-
-                    if (button.JustRightClicked == true)
-                    {
-                        CurrentProfile.Buttons[PlaceWeaponList.IndexOf(button)] = null;
-                        button.IconName = null;
-                        button.LoadContent(SecondaryContent);
-                    }
-                }
-                #endregion
-
-                SelectWeaponLeft.Update();
-                SelectWeaponRight.Update();
-
-                if (SelectWeaponLeft.JustClicked == true)
-                {
-                    if (SelectWeaponList[SelectWeaponList.Count - 1].Position.X > 1280 - 40 - 50)
-                    {
-                        foreach (Button button in SelectWeaponList)
-                        {
-                            if (button.Position.X != button.Position.X - 92)
-                            {
-                                button.Position.X -= 92;
-                                button.IconPosition.X -= 92;
-                            }
-                        }
-                    }
-                }
-
-                if (SelectWeaponRight.JustClicked == true)
-                {
-                    if (SelectWeaponList[0].Position.X < 96)
-                    {
-                        foreach (Button button in SelectWeaponList)
-                        {
-                            if (button.Position.X != button.Position.X + 92)
-                            {
-                                button.Position.X += 92;
-                                button.IconPosition.X += 92;
-                            }
-                        }
-                    }
-                }
-            }
-            #endregion
-
-            #region Handling Profile Select Menu Button Presses
-            if (GameState == GameState.ProfileSelect && DialogVisible == false)
-            {
-                int Index;
-
-                foreach (Button button in ProfileButtonList)
-                {
-                    button.Update();
-
-                    if (button.JustClicked == true)
-                    {
-
-                        MenuClick.Play();
-
-                        Index = ProfileButtonList.IndexOf(button);                       
-                        
-                        switch (Index)
-                        {
-                            case 0:
-                                ProfileNumber = 1;
-                                FileName = "Profile1.sav";
-                                StorageDevice.BeginShowSelector(this.HandleProfile, null);
-                                break;
-
-                            case 1:
-                                ProfileNumber = 2;
-                                FileName = "Profile2.sav";
-                                StorageDevice.BeginShowSelector(this.HandleProfile, null);
-                                break;
-
-                            case 2:
-                                ProfileNumber = 3;
-                                FileName = "Profile3.sav";
-                                StorageDevice.BeginShowSelector(this.HandleProfile, null);
-                                break;
-
-                            case 3:
-                                ProfileNumber = 4;
-                                FileName = "Profile4.sav";
-                                StorageDevice.BeginShowSelector(this.HandleProfile, null);
-                                break;
-
-                            case 4:
-                                ProfileNumber = 5;
-                                FileName = "Profile5.sav";
-                                StorageDevice.BeginShowSelector(this.HandleProfile, null);
-                                break;
-
-                            case 5:
-                                ProfileNumber = 6;
-                                FileName = "Profile6.sav";
-                                StorageDevice.BeginShowSelector(this.HandleProfile, null);
-                                break;
-                        }
-                    }
-                }
-
-                foreach (Button button in ProfileDeleteList)
-                {
-                    button.Update();
-
-                    if (button.JustClicked == true)
-                    {
-                        Index = ProfileDeleteList.IndexOf(button);
-
-                        switch (Index)
-                        {
-                            case 0:
-                                FileName = "Profile1.sav";
-                                StorageDevice.BeginShowSelector(this.CheckFileDelete, null);
-                                break;
-
-                            case 1:
-                                FileName = "Profile2.sav";
-                                StorageDevice.BeginShowSelector(this.CheckFileDelete, null);
-                                break;
-
-                            case 2:
-                                FileName = "Profile3.sav";
-                                StorageDevice.BeginShowSelector(this.CheckFileDelete, null);
-                                break;
-
-                            case 3:
-                                FileName = "Profile4.sav";
-                                StorageDevice.BeginShowSelector(this.CheckFileDelete, null);
-                                break;
-                        }
-                    }
-                }
-
-                ProfileBackButton.Update();
-
-                if (ProfileBackButton.JustClicked == true)
-                {
-                    MenuClick.Play();
-
-                    GameState = GameState.Menu;
-                }
-            }
-            #endregion                       
-
-            #region Handling Options Button Presses
-            if (GameState == GameState.Options)
-            {
-                OptionsBack.Update();
-
-                OptionsSFXUp.Update();
-                OptionsSFXDown.Update();
-
-                OptionsMusicUp.Update();
-                OptionsMusicDown.Update();
-
-                if (OptionsBack.JustClicked == true)
-                {
-                    MenuClick.Play();
-                    SaveSettings();
-                    GameState = GameState.Menu;
-                }
-
-                if (OptionsSFXUp.JustClicked == true)
-                {
-                    if (MenuSFXVolume < 10)
-                    {
-                        MenuSFXVolume++;
-                        CurrentSettings.SFXVolume = MenuSFXVolume / 10;
-                        SoundEffect.MasterVolume = CurrentSettings.SFXVolume;
-                        MenuClick.Play();
-                    }
-                }
-
-                if (OptionsSFXDown.JustClicked == true)
-                {
-                    if (MenuSFXVolume > 0)
-                    {
-                        MenuSFXVolume--;
-                        CurrentSettings.SFXVolume = MenuSFXVolume / 10;
-                        SoundEffect.MasterVolume = CurrentSettings.SFXVolume;
-                        MenuClick.Play();
-                    }
-                }
-
-                if (OptionsMusicUp.JustClicked == true)
-                {
-                    if (MenuMusicVolume < 10)
-                    {
-                        MenuMusicVolume++;
-                        CurrentSettings.MusicVolume = MenuMusicVolume / 10;
-                        MediaPlayer.Volume = CurrentSettings.MusicVolume;
-                        MenuClick.Play();
-                    }
-                }
-
-                if (OptionsMusicDown.JustClicked == true)
-                {
-                    if (MenuMusicVolume > 0)
-                    {
-                        MenuMusicVolume--;
-                        CurrentSettings.MusicVolume = MenuMusicVolume / 10;
-                        MediaPlayer.Volume = CurrentSettings.MusicVolume;
-                        MenuClick.Play();
-                    }
-                }
-            }
-            #endregion
-
-            #region Handling GetName Button Presses
-            if (GameState == GameState.GettingName)
-            {
-                GetNameBack.Update();
-                GetNameOK.Update();
-                NameInput.Update();
-                NameInput.Active = true;
-
-                if (GetNameBack.JustClicked == true)
-                {
-                    MenuClick.Play();
-                    NameInput.TypePosition = 0;
-                    NameInput.RealString = "";
-                    GameState = GameState.ProfileSelect;
-                }
-
-                if ((GetNameOK.JustClicked == true) ||
-                    (CurrentKeyboardState.IsKeyUp(Keys.Enter) && PreviousKeyboardState.IsKeyDown(Keys.Enter)) &&
-                    (NameInput.RealString.Length >= 3))
-                {
-                    MenuClick.Play();
-                    AddNewProfile();
-                }
-            }
-            #endregion
-
-            #region Handling DialogBox Button Presses
-            if (ExitDialog != null)
-            {
-                ExitDialog.Update();
-
-                if (ExitDialog.LeftButton.JustClicked == true)
-                {
-                    MenuClick.Play();
-
-                    if (GameState == GameState.Paused)
+                        SetProfileNames();
+                        SelectedTrap = null;
+                        SelectedTurret = null;
                         StorageDevice.BeginShowSelector(this.SaveProfile, null);
+                        GameState = GameState.ProfileSelect;
+                        //CurrentProfile = null;
+                    }
+                    #endregion
 
-                    this.Exit();
+                    #region Select Weapon Buttons
+                    //(i.e. The buttons that show which weapons are available and let the player select one)
+                    //#region Change color if weapon has already been placed.
+                    //foreach (Button button in SelectWeaponList)
+                    //{
+                    //    switch (SelectWeaponList.IndexOf(button))
+                    //    {
+                    //        case 0:
+                    //            if (CurrentProfile.Buttons.Contains("MachineGunTurret"))
+                    //                SelectWeaponList[SelectWeaponList.IndexOf(button)].CurrentIconColor = Color.Gray;
+                    //            else
+                    //                SelectWeaponList[SelectWeaponList.IndexOf(button)].CurrentIconColor = Color.White;
+                    //            break;
+
+                    //        case 1:
+                    //            if (CurrentProfile.Buttons.Contains("LightningTurret"))
+                    //                SelectWeaponList[SelectWeaponList.IndexOf(button)].CurrentIconColor = Color.Gray;
+                    //            else
+                    //                SelectWeaponList[SelectWeaponList.IndexOf(button)].CurrentIconColor = Color.White;
+                    //            break;
+
+                    //        case 2:
+                    //            if (CurrentProfile.Buttons.Contains("FireTrap"))
+                    //                SelectWeaponList[SelectWeaponList.IndexOf(button)].CurrentIconColor = Color.Gray;
+                    //            else
+                    //                SelectWeaponList[SelectWeaponList.IndexOf(button)].CurrentIconColor = Color.White;
+                    //            break;
+                    //    }
+                    //}
+                    //#endregion
+
+                    if (SelectWeaponList.Any(Button => Button.DestinationRectangle.Contains(new Point(Mouse.GetState().X, Mouse.GetState().Y))))
+                    {
+                        Button MousedButton = SelectWeaponList.Find(Button => Button.DestinationRectangle.Contains(new Point(Mouse.GetState().X, Mouse.GetState().Y)));
+
+                        if (MousedButton != null)
+                        if (MousedButton.Active == true && 
+                            MousedButton.DestinationRectangle.Left > SelectWeaponLeft.DestinationRectangle.Right && 
+                            MousedButton.DestinationRectangle.Right < SelectWeaponRight.DestinationRectangle.Left && 
+                            WeaponInformation == null)
+                        {
+                            switch (SelectWeaponList.IndexOf(MousedButton))
+                            {
+                                default:
+                                    WeaponInformation = new InformationBox("Complete more levels to unlock this weapon");
+                                    break;
+
+                                case 0:
+                                    if (CurrentProfile.MachineGunTurret == true)
+                                        WeaponInformation = new InformationBox("Machine gun turret is unlocked.");
+                                    else
+                                        WeaponInformation = new InformationBox("Complete more levels to unlock this weapon");
+                                    break;
+
+                                case 1:
+                                    if (CurrentProfile.LightningTurret == true)
+                                        WeaponInformation = new InformationBox("Lightning turret is unlocked.");
+                                    else
+                                        WeaponInformation = new InformationBox("Complete more levels to unlock this weapon");
+                                    break;
+
+                                case 2:
+                                    if (CurrentProfile.FireTrap == true)
+                                        WeaponInformation = new InformationBox("Fire trap is unlocked.");
+                                    else
+                                        WeaponInformation = new InformationBox("Complete more levels to unlock this weapon");
+                                    break;
+                            }
+                        }
+
+                        if (WeaponInformation != null && WeaponInformation.Loaded == false)
+                            WeaponInformation.LoadContent(SecondaryContent);
+                    }
+
+                    if (SelectWeaponList.All(Button => !Button.DestinationRectangle.Contains(new Point(Mouse.GetState().X, Mouse.GetState().Y))))
+                    {
+                        WeaponInformation = null;
+                    }
+
+                    foreach (Button button in SelectWeaponList)
+                    {
+                        //if (button.CurrentPosition.X > 40 && button.CurrentPosition.X < 1280 - 50 - 40)                        
+                            button.Update();
+
+                            if (button.DestinationRectangle.Left > SelectWeaponLeft.DestinationRectangle.Right &&
+                                button.DestinationRectangle.Right < SelectWeaponRight.DestinationRectangle.Left)
+                                button.Active = true;
+                            else
+                                button.Active = false;
+
+                        #region Check which weapon has been selected and if it can be selected
+                        if (button.JustClicked == true)
+                        {
+                            switch (SelectWeaponList.IndexOf(button))
+                            {
+                                case 0:
+                                    if (CurrentProfile.MachineGunTurret == true && !CurrentProfile.Buttons.Contains("MachineGunTurret"))
+                                    {
+                                        SelectedTrap = null;
+                                        SelectedTurret = TurretType.MachineGun;
+                                    }
+                                    break;
+
+                                case 1:
+                                    if (CurrentProfile.LightningTurret == true && !CurrentProfile.Buttons.Contains("LightningTurret"))
+                                    {
+                                        SelectedTrap = null;
+                                        SelectedTurret = TurretType.Lightning;
+                                    }
+                                    break;
+
+                                case 2:
+                                    if (CurrentProfile.FireTrap == true && !CurrentProfile.Buttons.Contains("FireTrap"))
+                                    {
+                                        SelectedTrap = TrapType.Fire;
+                                        SelectedTurret = null;
+                                    }
+                                    break;
+                            }
+                        }
+                        #endregion
+
+                        #region Change the icon depending if the player has access to that weapon
+                        for (int i = 0; i < SelectWeaponList.Count; i++)
+                        {
+                            if (SelectWeaponList[i].IconName == "Icons/LockIcon")
+                                switch (i)
+                                {
+                                    case 0:
+                                        if (CurrentProfile.MachineGunTurret == true)
+                                        {
+                                            SelectWeaponList[i].IconName = "Icons/MachineGunTurretIcon";
+                                            SelectWeaponList[i].LoadContent(SecondaryContent);
+                                        }
+                                        break;
+
+                                    case 1:
+                                        if (CurrentProfile.LightningTurret == true)
+                                        {
+                                            SelectWeaponList[i].IconName = "Icons/MachineGunTurretIcon";
+                                            SelectWeaponList[i].LoadContent(SecondaryContent);
+                                        }
+                                        break;
+
+                                    case 2:
+                                        if (CurrentProfile.FireTrap == true)
+                                        {
+                                            SelectWeaponList[i].IconName = "Icons/FireTrapIcon";
+                                            SelectWeaponList[i].LoadContent(SecondaryContent);
+                                        }
+                                        break;
+                                }
+                        }
+                        #endregion
+                    }
+
+                    #endregion
+
+                    #region Place Weapon Buttons
+                    foreach (Button button in PlaceWeaponList)
+                    {
+                        button.Update();
+
+                        if (button.JustClicked == true)
+                        {
+                            if (SelectedTurret == null && SelectedTrap == null)
+                            {
+                                switch (CurrentProfile.Buttons[PlaceWeaponList.IndexOf(button)])
+                                {
+                                    case "MachineGunTurret":
+                                        SelectedTurret = TurretType.MachineGun;
+                                        SelectedTrap = null;
+                                        CurrentProfile.Buttons[PlaceWeaponList.IndexOf(button)] = null;
+                                        PlaceWeaponList[PlaceWeaponList.IndexOf(button)].IconName = null;
+                                        PlaceWeaponList[PlaceWeaponList.IndexOf(button)].LoadContent(SecondaryContent);
+                                        break;
+
+                                    case "FireTrap":
+                                        SelectedTurret = null;
+                                        SelectedTrap = TrapType.Fire;
+                                        CurrentProfile.Buttons[PlaceWeaponList.IndexOf(button)] = null;
+                                        PlaceWeaponList[PlaceWeaponList.IndexOf(button)].IconName = null;
+                                        PlaceWeaponList[PlaceWeaponList.IndexOf(button)].LoadContent(SecondaryContent);
+                                        break;
+                                }
+                                return;
+                            }
+
+                            switch (SelectedTurret)
+                            {
+                                case TurretType.MachineGun:
+                                    CurrentProfile.Buttons[PlaceWeaponList.IndexOf(button)] = "MachineGunTurret";
+                                    PlaceWeaponList[PlaceWeaponList.IndexOf(button)].IconName = "Icons/MachineGunTurretIcon";
+                                    PlaceWeaponList[PlaceWeaponList.IndexOf(button)].LoadContent(SecondaryContent);
+                                    SelectedTurret = null;
+                                    SelectedTrap = null;
+                                    break;
+                            }
+
+                            switch (SelectedTrap)
+                            {
+                                case TrapType.Fire:
+                                    CurrentProfile.Buttons[PlaceWeaponList.IndexOf(button)] = "FireTrap";
+                                    PlaceWeaponList[PlaceWeaponList.IndexOf(button)].IconName = "Icons/FireTrapIcon";
+                                    PlaceWeaponList[PlaceWeaponList.IndexOf(button)].LoadContent(SecondaryContent);
+                                    SelectedTurret = null;
+                                    SelectedTrap = null;
+                                    break;
+                            }
+                        }
+
+                        if (button.JustRightClicked == true)
+                        {
+                            CurrentProfile.Buttons[PlaceWeaponList.IndexOf(button)] = null;
+                            button.IconName = null;
+                            button.LoadContent(SecondaryContent);
+                        }
+                    }
+                    #endregion
+
+                    #region Move weapons left
+                    SelectWeaponLeft.Update();
+
+                    if (SelectWeaponLeft.JustClicked == true)
+                    {
+                        foreach (Button button in SelectWeaponList)
+                        {
+                            button.NextPosition.X -= 92;
+                            button.IconNextPosition.X -= 92;
+                        }
+                    }
+                    #endregion
+
+                    #region Move weapons right
+                    SelectWeaponRight.Update();
+
+                    if (SelectWeaponRight.JustClicked == true)
+                    {
+                        foreach (Button button in SelectWeaponList)
+                        {
+                            button.NextPosition.X += 92;
+                            button.IconNextPosition.X += 92;
+                        }
+                    }
+                    #endregion
                 }
+                #endregion
 
-                if (ExitDialog.RightButton.JustClicked == true)
+                #region Handling Profile Select Menu Button Presses
+                if (GameState == GameState.ProfileSelect && DialogVisible == false)
                 {
-                    MenuClick.Play();
-                    DialogVisible = false;
-                    ExitDialog = null;
+                    int Index;
+
+                    foreach (Button button in ProfileButtonList)
+                    {
+                        button.Update();
+
+                        if (button.JustClicked == true)
+                        {
+
+                            MenuClick.Play();
+
+                            Index = ProfileButtonList.IndexOf(button);
+
+                            switch (Index)
+                            {
+                                case 0:
+                                    ProfileNumber = 1;
+                                    FileName = "Profile1.sav";
+                                    StorageDevice.BeginShowSelector(this.HandleProfile, null);
+                                    break;
+
+                                case 1:
+                                    ProfileNumber = 2;
+                                    FileName = "Profile2.sav";
+                                    StorageDevice.BeginShowSelector(this.HandleProfile, null);
+                                    break;
+
+                                case 2:
+                                    ProfileNumber = 3;
+                                    FileName = "Profile3.sav";
+                                    StorageDevice.BeginShowSelector(this.HandleProfile, null);
+                                    break;
+
+                                case 3:
+                                    ProfileNumber = 4;
+                                    FileName = "Profile4.sav";
+                                    StorageDevice.BeginShowSelector(this.HandleProfile, null);
+                                    break;
+
+                                case 4:
+                                    ProfileNumber = 5;
+                                    FileName = "Profile5.sav";
+                                    StorageDevice.BeginShowSelector(this.HandleProfile, null);
+                                    break;
+
+                                case 5:
+                                    ProfileNumber = 6;
+                                    FileName = "Profile6.sav";
+                                    StorageDevice.BeginShowSelector(this.HandleProfile, null);
+                                    break;
+                            }
+                        }
+                    }
+
+                    foreach (Button button in ProfileDeleteList)
+                    {
+                        button.Update();
+
+                        if (button.JustClicked == true)
+                        {
+                            Index = ProfileDeleteList.IndexOf(button);
+
+                            switch (Index)
+                            {
+                                case 0:
+                                    FileName = "Profile1.sav";
+                                    StorageDevice.BeginShowSelector(this.CheckFileDelete, null);
+                                    break;
+
+                                case 1:
+                                    FileName = "Profile2.sav";
+                                    StorageDevice.BeginShowSelector(this.CheckFileDelete, null);
+                                    break;
+
+                                case 2:
+                                    FileName = "Profile3.sav";
+                                    StorageDevice.BeginShowSelector(this.CheckFileDelete, null);
+                                    break;
+
+                                case 3:
+                                    FileName = "Profile4.sav";
+                                    StorageDevice.BeginShowSelector(this.CheckFileDelete, null);
+                                    break;
+                            }
+                        }
+                    }
+
+                    ProfileBackButton.Update();
+
+                    if (ProfileBackButton.JustClicked == true)
+                    {
+                        MenuClick.Play();
+                        GameState = GameState.Menu;
+                    }
                 }
+                #endregion
+
+                #region Handling Options Button Presses
+                if (GameState == GameState.Options)
+                {
+                    OptionsBack.Update();
+
+                    OptionsSFXUp.Update();
+                    OptionsSFXDown.Update();
+
+                    OptionsMusicUp.Update();
+                    OptionsMusicDown.Update();
+
+                    if (OptionsBack.JustClicked == true)
+                    {
+                        MenuClick.Play();
+                        SaveSettings();
+                        GameState = GameState.Menu;
+                    }
+
+                    if (OptionsSFXUp.JustClicked == true)
+                    {
+                        if (MenuSFXVolume < 10)
+                        {
+                            MenuSFXVolume++;
+                            CurrentSettings.SFXVolume = MenuSFXVolume / 10;
+                            SoundEffect.MasterVolume = CurrentSettings.SFXVolume;
+                            MenuClick.Play();
+                        }
+                    }
+
+                    if (OptionsSFXDown.JustClicked == true)
+                    {
+                        if (MenuSFXVolume > 0)
+                        {
+                            MenuSFXVolume--;
+                            CurrentSettings.SFXVolume = MenuSFXVolume / 10;
+                            SoundEffect.MasterVolume = CurrentSettings.SFXVolume;
+                            MenuClick.Play();
+                        }
+                    }
+
+                    if (OptionsMusicUp.JustClicked == true)
+                    {
+                        if (MenuMusicVolume < 10)
+                        {
+                            MenuMusicVolume++;
+                            CurrentSettings.MusicVolume = MenuMusicVolume / 10;
+                            MediaPlayer.Volume = CurrentSettings.MusicVolume;
+                            MenuClick.Play();
+                        }
+                    }
+
+                    if (OptionsMusicDown.JustClicked == true)
+                    {
+                        if (MenuMusicVolume > 0)
+                        {
+                            MenuMusicVolume--;
+                            CurrentSettings.MusicVolume = MenuMusicVolume / 10;
+                            MediaPlayer.Volume = CurrentSettings.MusicVolume;
+                            MenuClick.Play();
+                        }
+                    }
+                }
+                #endregion
+
+                #region Handling GetName Button Presses
+                if (GameState == GameState.GettingName)
+                {
+                    GetNameBack.Update();
+                    GetNameOK.Update();
+                    NameInput.Update();
+                    NameInput.Active = true;
+
+                    if (GetNameBack.JustClicked == true)
+                    {
+                        MenuClick.Play();
+                        NameInput.TypePosition = 0;
+                        NameInput.RealString = "";
+                        GameState = GameState.ProfileSelect;
+                    }
+
+                    if ((GetNameOK.JustClicked == true) ||
+                        (CurrentKeyboardState.IsKeyUp(Keys.Enter) && PreviousKeyboardState.IsKeyDown(Keys.Enter)) &&
+                        (NameInput.RealString.Length >= 3))
+                    {
+                        MenuClick.Play();
+                        AddNewProfile();
+                    }
+                }
+                #endregion
+
+                #region Handling DialogBox Button Presses
+                if (ExitDialog != null)
+                {
+                    ExitDialog.Update();
+
+                    if (ExitDialog.LeftButton.JustClicked == true)
+                    {
+                        MenuClick.Play();
+
+                        if (GameState == GameState.Paused)
+                            StorageDevice.BeginShowSelector(this.SaveProfile, null);
+
+                        this.Exit();
+                    }
+
+                    if (ExitDialog.RightButton.JustClicked == true)
+                    {
+                        MenuClick.Play();
+                        DialogVisible = false;
+                        ExitDialog = null;
+                    }
+                }
+
+                if (DeleteProfileDialog != null)
+                {
+                    DeleteProfileDialog.Update();
+
+                    if (DeleteProfileDialog.LeftButton.JustClicked == true)
+                    {
+                        MenuClick.Play();
+                        StorageDevice.BeginShowSelector(this.DeleteProfile, null);
+                        SetProfileNames();
+                        DialogVisible = false;
+                        DeleteProfileDialog = null;
+                        return;
+                    }
+
+                    if (DeleteProfileDialog.RightButton.JustClicked == true)
+                    {
+                        MenuClick.Play();
+                        DialogVisible = false;
+                        DeleteProfileDialog = null;
+                    }
+                }
+
+                if (ProfileMenuDialog != null)
+                {
+                    ProfileMenuDialog.Update();
+
+                    if (ProfileMenuDialog.LeftButton.JustClicked == true)
+                    {
+                        MenuClick.Play();
+                        StorageDevice.BeginShowSelector(this.SaveProfile, null);
+                        DialogVisible = false;
+                        ProfileMenuDialog = null;
+                        ResetUpgrades();
+                        UnloadGameContent();
+                        GameState = GameState.ProfileManagement;
+                        return;
+                    }
+
+                    if (ProfileMenuDialog.RightButton.JustClicked == true)
+                    {
+                        MenuClick.Play();
+                        DialogVisible = false;
+                        ProfileMenuDialog = null;
+                    }
+                }
+
+                if (MainMenuDialog != null)
+                {
+                    MainMenuDialog.Update();
+
+                    if (MainMenuDialog.LeftButton.JustClicked == true)
+                    {
+                        MenuClick.Play();
+                        StorageDevice.BeginShowSelector(this.SaveProfile, null);
+                        CurrentProfile = null;
+                        ResetUpgrades();
+                        UnloadGameContent();
+                        DialogVisible = false;
+                        MainMenuDialog = null;
+                        GameState = GameState.Menu;
+                        return;
+                    }
+
+                    if (MainMenuDialog.RightButton.JustClicked == true)
+                    {
+                        MenuClick.Play();
+                        DialogVisible = false;
+                        MainMenuDialog = null;
+                    }
+                }
+
+                if (NoWeaponsDialog != null)
+                {
+                    NoWeaponsDialog.Update();
+
+                    if (NoWeaponsDialog.LeftButton.JustClicked == true)
+                    {
+                        MenuClick.Play();
+                        DialogVisible = false;
+                        NoWeaponsDialog = null;
+                    }
+                }
+                #endregion
             }
-
-            if (DeleteProfileDialog != null)
-            {
-                DeleteProfileDialog.Update();
-
-                if (DeleteProfileDialog.LeftButton.JustClicked == true)
-                {
-                    MenuClick.Play();
-                    StorageDevice.BeginShowSelector(this.DeleteProfile, null);
-                    SetProfileNames();
-                    DialogVisible = false;
-                    DeleteProfileDialog = null;
-                    return;
-                }
-
-                if (DeleteProfileDialog.RightButton.JustClicked == true)
-                {
-                    MenuClick.Play();
-                    DialogVisible = false;
-                    DeleteProfileDialog = null;
-                }
-            }
-
-            if (ProfileMenuDialog != null)
-            {
-                ProfileMenuDialog.Update();
-
-                if (ProfileMenuDialog.LeftButton.JustClicked == true)
-                {
-                    MenuClick.Play();
-                    StorageDevice.BeginShowSelector(this.SaveProfile, null);
-                    DialogVisible = false;
-                    ProfileMenuDialog = null;
-                    ResetUpgrades();
-                    UnloadGameContent();
-                    GameState = GameState.ProfileManagement;
-                    return;
-                }
-
-                if (ProfileMenuDialog.RightButton.JustClicked == true)
-                {
-                    MenuClick.Play();
-                    DialogVisible = false;
-                    ProfileMenuDialog = null;
-                }
-            }
-
-            if (MainMenuDialog != null)
-            {
-                MainMenuDialog.Update();
-
-                if (MainMenuDialog.LeftButton.JustClicked == true)
-                {
-                    MenuClick.Play();
-                    StorageDevice.BeginShowSelector(this.SaveProfile, null);
-                    CurrentProfile = null;
-                    ResetUpgrades();
-                    UnloadGameContent();
-                    DialogVisible = false;
-                    MainMenuDialog = null;
-                    GameState = GameState.Menu;
-                    return;
-                }
-
-                if (MainMenuDialog.RightButton.JustClicked == true)
-                {
-                    MenuClick.Play();
-                    DialogVisible = false;
-                    MainMenuDialog = null;
-                }
-            }
-
-            if (NoWeaponsDialog != null)
-            {
-                NoWeaponsDialog.Update();
-
-                if (NoWeaponsDialog.LeftButton.JustClicked == true)
-                {
-                    MenuClick.Play();
-                    DialogVisible = false;
-                    NoWeaponsDialog = null;
-                }
-            }
-            #endregion
         }
         #endregion
 
@@ -2230,7 +2319,24 @@ namespace TowerDefensePrototype
                         invader.Gravity = 0.2f;
                     }
                 }
-                #endregion
+                #endregion                
+
+                RangedInvader rangedInvader = invader as RangedInvader;
+
+                if (rangedInvader != null)
+                {
+                    switch (rangedInvader.InvaderType)
+                    {
+                        case InvaderType.Archer:
+                            var value = Vector2.Distance(rangedInvader.Position, new Vector2(Tower.DestinationRectangle.Left, Tower.DestinationRectangle.Bottom));
+
+                            if (value < rangedInvader.Range.Y + Random.Next(0,30))
+                            {
+                                invader.CurrentMoveVector = Vector2.Zero;
+                            }
+                            break;
+                    }
+                }
             }
 
             #region This controls what happens when an explosion happens near the invader
@@ -2294,7 +2400,7 @@ namespace TowerDefensePrototype
 
                     if (invader.CanAttack == true)
                         Tower.TakeDamage(invader.AttackPower);
-                }
+                }                                
             }
         }
 
@@ -2333,6 +2439,20 @@ namespace TowerDefensePrototype
                     switch (rangedInvader.InvaderType)
                     {
                         case InvaderType.Spider:
+                            {
+                                HeavyProjectile heavyProjectile = new AcidProjectile(
+                                new Vector2(rangedInvader.DestinationRectangle.Center.X, rangedInvader.DestinationRectangle.Center.Y),
+                                Random.Next((int)(rangedInvader.PowerRange.X), (int)(rangedInvader.PowerRange.Y)),
+                                -MathHelper.ToRadians(Random.Next((int)(rangedInvader.AngleRange.X), (int)(rangedInvader.AngleRange.Y))),
+                                0.2f, rangedInvader.RangedAttackPower);
+
+                                heavyProjectile.YRange = new Vector2(invader.Bottom, invader.Bottom);
+                                heavyProjectile.LoadContent(Content);
+                                InvaderHeavyProjectileList.Add(heavyProjectile);
+                            }
+                            break;
+
+                        case InvaderType.Archer:
                             {
                                 HeavyProjectile heavyProjectile = new AcidProjectile(
                                 new Vector2(rangedInvader.DestinationRectangle.Center.X, rangedInvader.DestinationRectangle.Center.Y),
@@ -2651,8 +2771,8 @@ namespace TowerDefensePrototype
 
                     if (turret.Active == true &&
                         turret.SelectBox.Contains(new Point(Mouse.GetState().X, Mouse.GetState().Y)) &&
-                        CurrentMouseState.RightButton == ButtonState.Released &&
-                        PreviousMouseState.RightButton == ButtonState.Pressed &&
+                        CurrentMouseState.MiddleButton == ButtonState.Released &&
+                        PreviousMouseState.MiddleButton == ButtonState.Pressed &&
                         turret.CurrentHealth == turret.Health)
                     {
                         Resources += turret.ResourceCost;
@@ -3509,60 +3629,68 @@ namespace TowerDefensePrototype
                         switch (HitTrap.TrapType)
                         {
                             default:
+                                //CurrentProjectile = null;
                                 //This ended up as null before defining CollisionEnd... Broke game. Not sure why. Needs to be fixed.
+
+                                //OK, so I think I've fixed it now. Keep an eye out for it though.
+                                //Bug happened when shooting through a trap and then the projectile didn't hit the ground
+                                //because the turret was placed in the lowest slot.
                                 var DistToGround = CurrentProjectile.Ray.Intersects(Ground.BoundingBox);
+
+                                if (DistToGround == null)
+                                    DistToGround = 1280;
 
                                 CollisionEnd = new Vector2(turret.BarrelRectangle.X + (CurrentProjectile.Ray.Direction.X * (float)DistToGround),
                                                            turret.BarrelRectangle.Y + (CurrentProjectile.Ray.Direction.Y * (float)DistToGround));
 
                                 if (CurrentProjectile.LightProjectileType == LightProjectileType.MachineGun)
+                                {
+                                    GroundImpact.Play();
+
+                                    if (Random.NextDouble() > 0.92)
                                     {
-                                        GroundImpact.Play();
+                                        Double test;
+                                        test = Random.NextDouble();
 
-                                        if (Random.NextDouble() > 0.92)
+                                        if (test < .33)
                                         {
-                                            Double test;
-                                            test = Random.NextDouble();
-
-                                            if (test < .33)
+                                            Ricochet1.Play();
+                                        }
+                                        else
+                                            if (test > .33 && test < .66)
                                             {
-                                                Ricochet1.Play();
+                                                Ricochet2.Play();
                                             }
                                             else
-                                                if (test > .33 && test < .66)
+                                                if (test > 66)
                                                 {
-                                                    Ricochet2.Play();
+                                                    Ricochet3.Play();
                                                 }
-                                                else
-                                                    if (test > 66)
-                                                    {
-                                                        Ricochet3.Play();
-                                                    }
-                                        }
+                                    }
 
-                                        Trail = new BulletTrail(turret.BarrelEnd, CollisionEnd);
-                                        Trail.LoadContent(Content);
-                                        TrailList.Add(Trail);
+                                    Trail = new BulletTrail(turret.BarrelEnd, CollisionEnd);
+                                    Trail.LoadContent(Content);
+                                    TrailList.Add(Trail);
 
-                                        Emitter DebrisEmitter = new Emitter("Particles/Splodge", new Vector2(CollisionEnd.X, CollisionEnd.Y),
-                                            new Vector2(60, 120), new Vector2(2, 4), new Vector2(20, 40), 2f, true, new Vector2(0, 360), new Vector2(1, 3),
-                                            new Vector2(0.01f, 0.03f), Color.DarkSlateGray, Color.SaddleBrown, 0.2f, 0.1f, 2, 2, true, new Vector2(CollisionEnd.Y + 8, CollisionEnd.Y + 8));
-                                        EmitterList.Add(DebrisEmitter);
-                                        EmitterList[EmitterList.IndexOf(DebrisEmitter)].LoadContent(Content);
+                                    Emitter DebrisEmitter = new Emitter("Particles/Splodge", new Vector2(CollisionEnd.X, CollisionEnd.Y),
+                                        new Vector2(60, 120), new Vector2(2, 4), new Vector2(20, 40), 2f, true, new Vector2(0, 360), new Vector2(1, 3),
+                                        new Vector2(0.01f, 0.03f), Color.DarkSlateGray, Color.SaddleBrown, 0.2f, 0.1f, 2, 2, true, new Vector2(CollisionEnd.Y + 8, CollisionEnd.Y + 8));
+                                    EmitterList.Add(DebrisEmitter);
+                                    EmitterList[EmitterList.IndexOf(DebrisEmitter)].LoadContent(Content);
 
-                                        Emitter SmokeEmitter = new Emitter("Particles/Smoke", new Vector2(CollisionEnd.X, CollisionEnd.Y - 4),
-                                            new Vector2(90, 90), new Vector2(0.5f, 1f), new Vector2(20, 30), 1f, true, new Vector2(0, 0),
-                                            new Vector2(-2, 2), new Vector2(0.5f, 1f), DirtColor, DirtColor2, 0f, 0.02f, 10, 1, false, new Vector2(0, 720), false);
-                                        EmitterList.Add(SmokeEmitter);
-                                        EmitterList[EmitterList.IndexOf(SmokeEmitter)].LoadContent(Content);
+                                    Emitter SmokeEmitter = new Emitter("Particles/Smoke", new Vector2(CollisionEnd.X, CollisionEnd.Y - 4),
+                                        new Vector2(90, 90), new Vector2(0.5f, 1f), new Vector2(20, 30), 1f, true, new Vector2(0, 0),
+                                        new Vector2(-2, 2), new Vector2(0.5f, 1f), DirtColor, DirtColor2, 0f, 0.02f, 10, 1, false, new Vector2(0, 720), false);
+                                    EmitterList.Add(SmokeEmitter);
+                                    EmitterList[EmitterList.IndexOf(SmokeEmitter)].LoadContent(Content);
 
-                                        Emitter SparkEmitter = new Emitter("Particles/GlowBall", new Vector2(CollisionEnd.X, CollisionEnd.Y),
-                                            new Vector2(0, 0), new Vector2(0, 0), new Vector2(2, 5), 1f, true, new Vector2(0, 0),
-                                            new Vector2(0, 0), new Vector2(0.25f, 0.25f), FireColor, FireColor2, 0f, 0.1f, 500, 1,
-                                            false, new Vector2(0, 720));
-                                        AlphaEmitterList.Add(SparkEmitter);
-                                        AlphaEmitterList[AlphaEmitterList.IndexOf(SparkEmitter)].LoadContent(Content);
-
+                                    Emitter SparkEmitter = new Emitter("Particles/GlowBall", new Vector2(CollisionEnd.X, CollisionEnd.Y),
+                                        new Vector2(0, 0), new Vector2(0, 0), new Vector2(2, 5), 1f, true, new Vector2(0, 0),
+                                        new Vector2(0, 0), new Vector2(0.25f, 0.25f), FireColor, FireColor2, 0f, 0.1f, 500, 1,
+                                        false, new Vector2(0, 720));
+                                    AlphaEmitterList.Add(SparkEmitter);
+                                    AlphaEmitterList[AlphaEmitterList.IndexOf(SparkEmitter)].LoadContent(Content);
+                                
                                     }
 
                                 if (CurrentProjectile.LightProjectileType == LightProjectileType.Lightning)
@@ -3993,10 +4121,10 @@ namespace TowerDefensePrototype
             {
                 trap.Update(gameTime);
 
-                #region Remove trap if right-clicked
+                #region Remove trap if middle-clicked
                 if (trap.DestinationRectangle.Contains(new Point(Mouse.GetState().X, Mouse.GetState().Y)) &&
-                    CurrentMouseState.RightButton == ButtonState.Released &&
-                    PreviousMouseState.RightButton == ButtonState.Pressed)
+                    CurrentMouseState.MiddleButton == ButtonState.Released &&
+                    PreviousMouseState.MiddleButton == ButtonState.Pressed)
                 {
                     if (trap.Active == true && trap.CurrentHP == trap.MaxHP && trap.CurrentDetonateLimit == trap.DetonateLimit)
                     {
@@ -4117,19 +4245,6 @@ namespace TowerDefensePrototype
                 if (TrapList[i].Active == false)
                     TrapList.RemoveAt(i);
             }
-
-            //foreach (Trap trap in TrapList)
-            //{
-            //    switch (trap.TrapType)
-            //    {
-            //        case TrapType.Fire:
-            //            switch (trap.CurrentDetonateLimit)
-            //            {
-
-            //            }
-            //            break;
-            //    }
-            //}
         }
 
         private void TrapCollision()
@@ -4149,6 +4264,7 @@ namespace TowerDefensePrototype
 
                         switch (HitTrap.TrapType)
                         {
+                            #region Fire Trap
                             case TrapType.Fire:                                
                             switch (HitTrap.CurrentDetonateLimit)
                                 {
@@ -4173,7 +4289,9 @@ namespace TowerDefensePrototype
                                         break;
                                 }
                                 break;
+                            #endregion
 
+                            #region Sawblade trap
                             case TrapType.SawBlade:
                                 switch (invader.InvaderType)
                                 {
@@ -4193,6 +4311,7 @@ namespace TowerDefensePrototype
                                         break;
                                 }
                                 break;
+                            #endregion
                         }
                     }
                 }
@@ -4222,6 +4341,7 @@ namespace TowerDefensePrototype
                 if (container.FileExists(FileName))
                 {
                     StorageDevice.BeginShowSelector(this.LoadProfile, null);
+
                     GameState = GameState.ProfileManagement;
 
                     foreach (Button button in PlaceWeaponList)
@@ -4263,7 +4383,7 @@ namespace TowerDefensePrototype
                 result.AsyncWaitHandle.WaitOne();
 
                 StorageContainer container = Device.EndOpenContainer(r);
-
+                
                 if (container.FileExists(FileName))
                     container.DeleteFile(FileName);
 
@@ -4314,9 +4434,33 @@ namespace TowerDefensePrototype
 
                 Stream stream = container.CreateFile(FileName);
 
-                XmlSerializer serializer = new XmlSerializer(typeof(Profile));
+                using (var memoryStream = new MemoryStream())
+                {   
+                    formatter.Serialize(memoryStream, CurrentProfile);
+                    memoryStream.Seek(0, SeekOrigin.Begin);
 
-                serializer.Serialize(stream, CurrentProfile);
+                    var bytes = new byte[memoryStream.Length];
+                    memoryStream.Read(bytes, 0, (int)memoryStream.Length);
+
+                    byte[] keyArray;
+                    string key = "5rg9rt48u23498129u0123jijrdfn48031n";
+
+                    MD5CryptoServiceProvider hashmd5 = new MD5CryptoServiceProvider();
+                    keyArray = hashmd5.ComputeHash(UTF8Encoding.UTF8.GetBytes(key));
+                    hashmd5.Clear();
+
+                    TripleDESCryptoServiceProvider tdes = new TripleDESCryptoServiceProvider();
+                    tdes.Key = keyArray;
+                    tdes.Mode = CipherMode.ECB;
+                    tdes.Padding = PaddingMode.PKCS7;
+
+                    ICryptoTransform cTransform = tdes.CreateEncryptor();
+                    byte[] resultArray = cTransform.TransformFinalBlock(bytes, 0, bytes.Length);
+                    tdes.Clear();
+
+                    var encryptedBytes = resultArray;
+                    stream.Write(encryptedBytes, 0, encryptedBytes.Length);
+                }
 
                 stream.Close();
 
@@ -4339,15 +4483,32 @@ namespace TowerDefensePrototype
 
             OpenFile = container.OpenFile(FileName, FileMode.Open);
 
-            XmlSerializer serializer = new XmlSerializer(typeof(Profile));
+            byte[] toDecryptArray = new byte[OpenFile.Length];
+            OpenFile.Read(toDecryptArray, 0, (int)OpenFile.Length);
 
-            CurrentProfile = (Profile)serializer.Deserialize(OpenFile);
+            byte[] keyArray;
+            string key = "5rg9rt48u23498129u0123jijrdfn48031n";
 
-            //ProfileWeaponList = CurrentProfile.Buttons;
-            //for (int i = 0; i < CurrentProfile.Buttons.Count; i++)
-            //{
-            //    ProfileWeaponList[i] = CurrentProfile.Buttons[i];
-            //}            
+            MD5CryptoServiceProvider hashmd5 = new MD5CryptoServiceProvider();
+            keyArray = hashmd5.ComputeHash(UTF8Encoding.UTF8.GetBytes(key));
+            hashmd5.Clear();
+
+            TripleDESCryptoServiceProvider tdes = new TripleDESCryptoServiceProvider();
+            tdes.Key = keyArray;
+            tdes.Mode = CipherMode.ECB;
+            tdes.Padding = PaddingMode.PKCS7;
+
+            ICryptoTransform cTransform = tdes.CreateDecryptor();
+            byte[] resultArray = cTransform.TransformFinalBlock(toDecryptArray, 0, (int)toDecryptArray.Length);
+            tdes.Clear();
+
+            var thing = UTF8Encoding.UTF8.GetString(resultArray);
+
+            Stream stream = new MemoryStream(resultArray);
+
+            var Profile = formatter.Deserialize(stream);
+            CurrentProfile = (Profile)Profile;
+
 
             OpenFile.Close();  
 
@@ -4373,9 +4534,33 @@ namespace TowerDefensePrototype
 
                 Stream stream = container.CreateFile(FileName);
 
-                XmlSerializer serializer = new XmlSerializer(typeof(Profile));
+                using (var memoryStream = new MemoryStream())
+                {
+                    formatter.Serialize(memoryStream, CurrentProfile);
+                    memoryStream.Seek(0, SeekOrigin.Begin);
 
-                serializer.Serialize(stream, CurrentProfile);
+                    var bytes = new byte[memoryStream.Length];
+                    memoryStream.Read(bytes, 0, (int)memoryStream.Length);
+
+                    byte[] keyArray;
+                    string key = "5rg9rt48u23498129u0123jijrdfn48031n";
+
+                    MD5CryptoServiceProvider hashmd5 = new MD5CryptoServiceProvider();
+                    keyArray = hashmd5.ComputeHash(UTF8Encoding.UTF8.GetBytes(key));
+                    hashmd5.Clear();
+
+                    TripleDESCryptoServiceProvider tdes = new TripleDESCryptoServiceProvider();
+                    tdes.Key = keyArray;
+                    tdes.Mode = CipherMode.ECB;
+                    tdes.Padding = PaddingMode.PKCS7;
+
+                    ICryptoTransform cTransform = tdes.CreateEncryptor();
+                    byte[] resultArray = cTransform.TransformFinalBlock(bytes, 0, bytes.Length);
+                    tdes.Clear();
+
+                    var encryptedBytes = resultArray;
+                    stream.Write(encryptedBytes, 0, encryptedBytes.Length);
+                }
 
                 stream.Close();
 
@@ -4423,9 +4608,33 @@ namespace TowerDefensePrototype
             {
                 OpenFile = container.OpenFile(FileName, FileMode.Open);
 
-                XmlSerializer serializer = new XmlSerializer(typeof(Profile));
+                byte[] toDecryptArray = new byte[OpenFile.Length];
+                OpenFile.Read(toDecryptArray, 0, (int)OpenFile.Length);
 
-                ThisProfile = (Profile)serializer.Deserialize(OpenFile);
+                byte[] keyArray;
+                string key = "5rg9rt48u23498129u0123jijrdfn48031n";
+
+                MD5CryptoServiceProvider hashmd5 = new MD5CryptoServiceProvider();
+                keyArray = hashmd5.ComputeHash(UTF8Encoding.UTF8.GetBytes(key));
+                hashmd5.Clear();
+
+                TripleDESCryptoServiceProvider tdes = new TripleDESCryptoServiceProvider();
+                tdes.Key = keyArray;
+                tdes.Mode = CipherMode.ECB;
+                tdes.Padding = PaddingMode.PKCS7;
+
+                ICryptoTransform cTransform = tdes.CreateDecryptor();
+                byte[] resultArray = cTransform.TransformFinalBlock(toDecryptArray, 0, (int)toDecryptArray.Length);
+                tdes.Clear();
+
+                var thing = UTF8Encoding.UTF8.GetString(resultArray);
+
+                Stream stream = new MemoryStream(resultArray);
+
+                var Profile = formatter.Deserialize(stream);
+                ThisProfile = (Profile)Profile;
+
+
                 OpenFile.Close();
 
                 container.Dispose();
@@ -4467,9 +4676,32 @@ namespace TowerDefensePrototype
 
                 OpenFile = container.OpenFile(FileName, FileMode.Open);
 
-                XmlSerializer serializer = new XmlSerializer(typeof(Profile));
 
-                ThisProfile = (Profile)serializer.Deserialize(OpenFile);
+                byte[] toDecryptArray = new byte[OpenFile.Length];
+                OpenFile.Read(toDecryptArray, 0, (int)OpenFile.Length);
+
+                byte[] keyArray;
+                string key = "5rg9rt48u23498129u0123jijrdfn48031n";
+
+                MD5CryptoServiceProvider hashmd5 = new MD5CryptoServiceProvider();
+                keyArray = hashmd5.ComputeHash(UTF8Encoding.UTF8.GetBytes(key));
+                hashmd5.Clear();
+
+                TripleDESCryptoServiceProvider tdes = new TripleDESCryptoServiceProvider();
+                tdes.Key = keyArray;
+                tdes.Mode = CipherMode.ECB;
+                tdes.Padding = PaddingMode.PKCS7;
+
+                ICryptoTransform cTransform = tdes.CreateDecryptor();
+                byte[] resultArray = cTransform.TransformFinalBlock(toDecryptArray, 0, (int)toDecryptArray.Length);
+                tdes.Clear();
+
+                var thing = UTF8Encoding.UTF8.GetString(resultArray);
+
+                Stream stream = new MemoryStream(resultArray);
+
+                var Profile = formatter.Deserialize(stream);
+                ThisProfile = (Profile)Profile;
 
                 OpenFile.Close();
 
@@ -4495,7 +4727,6 @@ namespace TowerDefensePrototype
             }
 
             List<Upgrade> TempList2 = new List<Upgrade>();
-            //TempList2.Add(new Upgrade1());
 
             CurrentProfile = new Profile()
             {
@@ -4504,13 +4735,13 @@ namespace TowerDefensePrototype
 
                 Points = 10,
 
-                CannonTurret = true,
+                CannonTurret = false,
                 MachineGunTurret = true,
                 CatapultTrap = false,
                 FlameThrowerTurret = false,
                 ClusterTurret = false,
 
-                FireTrap = true,
+                FireTrap = false,
                 SpikesTrap = false,
                 LightningTurret = false,
                 SawBladeTrap = false,
@@ -4541,6 +4772,8 @@ namespace TowerDefensePrototype
             if (GameState == GameState.Playing && IsLoading == false)
             {
                 CurrentInvaderTime += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+                
+                if (CurrentInvaderIndex > CurrentWave.InvaderList.Count -1 && InvaderList.Count == 0)
                 CurrentWaveTime += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
 
                 if (CurrentInvaderTime >= CurrentWave.InvaderTime)
@@ -4576,15 +4809,21 @@ namespace TowerDefensePrototype
                     InvaderList.Count == 0 &&
                     CurrentLevel.WaveList.All(Wave => Wave.InvaderList.All(Invader => Invader == null)))
                 {
-                    IsLoading = false;
-                    CurrentProfile.LevelNumber++;
-                    StorageDevice.BeginShowSelector(this.SaveProfile, null);
-                    ResetUpgrades();
-                    UnloadGameContent();
-                    MaxWaves = CurrentLevel.WaveList.Count;
-                    CurrentWaveNumber = 1;
-                    CurrentWaveIndex = 0;
-                    GameState = GameState.ProfileManagement;
+                    VictoryTime += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+                    Victory = true;
+
+                    if (VictoryTime >= 5000)
+                    {
+                        IsLoading = false;
+                        CurrentProfile.LevelNumber++;
+                        StorageDevice.BeginShowSelector(this.SaveProfile, null);
+                        ResetUpgrades();
+                        UnloadGameContent();
+                        MaxWaves = CurrentLevel.WaveList.Count;
+                        CurrentWaveNumber = 1;
+                        CurrentWaveIndex = 0;
+                        GameState = GameState.ProfileManagement;
+                    }
                 }
             }
         }
@@ -4592,6 +4831,8 @@ namespace TowerDefensePrototype
         //Handle levels
         public void LoadLevel(int number)
         {
+            Victory = false;
+            CurrentWaveNumber = 0;
             //CurrentLevel = Content.Load<Level>("Levels/Level" + number);
             switch (LevelNumber)
             {

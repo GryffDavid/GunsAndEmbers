@@ -16,9 +16,9 @@ namespace TowerDefensePrototype
         public Rectangle DestinationRectangle;
         public float MaxHP, CurrentHP, Slots, MaxShield, CurrentShield;
         public bool ShieldOn;
-        public double CurrentTime, Time;
+        public double CurrentShieldTime, ShieldTime;
         
-        public Tower(string assetName, Vector2 position, int totalHitpoints, int maxShield, int slots)
+        public Tower(string assetName, Vector2 position, int totalHitpoints, int maxShield, int slots, float shieldTime)
         {
             AssetName = assetName;
             Position = position;
@@ -27,6 +27,7 @@ namespace TowerDefensePrototype
             Slots = slots;
             CurrentShield = maxShield;
             MaxShield = maxShield;
+            ShieldTime = shieldTime;
             ShieldOn = true;
         }
 
@@ -40,19 +41,19 @@ namespace TowerDefensePrototype
         {
             if (ShieldOn == false)
             {
-                CurrentTime += gameTime.ElapsedGameTime.TotalMilliseconds;
+                CurrentShieldTime += gameTime.ElapsedGameTime.TotalMilliseconds;
             }
 
-            if (ShieldOn == false && CurrentTime >= 3000)
+            if (ShieldOn == false && CurrentShieldTime >= ShieldTime)
             {
                 CurrentShield += 0.05f;
                 CurrentShield = MathHelper.Clamp(CurrentShield, 0, MaxShield);
             }
 
-            if (ShieldOn == false && CurrentTime >= 3000 && CurrentShield == MaxShield)
+            if (ShieldOn == false && CurrentShieldTime >= ShieldTime && CurrentShield == MaxShield)
             {
                 ShieldOn = true;
-                CurrentTime = 0;
+                CurrentShieldTime = 0;
             }
         }
 

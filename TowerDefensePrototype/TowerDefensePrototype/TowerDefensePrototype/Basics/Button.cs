@@ -15,10 +15,10 @@ namespace TowerDefensePrototype
     public class Button
     {
         public string AssetName, IconName, Text, FontName;
-        public Vector2 FrameSize, Scale, Position, CursorPosition, IconPosition;
+        public Vector2 FrameSize, Scale, CurrentPosition, CursorPosition, IconPosition, NextPosition, IconNextPosition;
         public Rectangle DestinationRectangle, SourceRectangle;
 
-        Color Color, TextColor;
+        public Color Color, TextColor;
         Texture2D ButtonStrip, IconTexture;       
         Rectangle IconRectangle;
         SpriteFont Font;        
@@ -30,7 +30,7 @@ namespace TowerDefensePrototype
         int CurrentFrame;
         public bool Active, CanBeRightClicked, JustClicked, JustRightClicked;
         public bool ButtonActive;
-        public Color IconColor;
+        public Color CurrentIconColor;
 
         string Alignment;
 
@@ -40,7 +40,9 @@ namespace TowerDefensePrototype
             ButtonActive = true;
 
             AssetName = assetName;
-            Position = position;
+
+            CurrentPosition = position;
+            NextPosition = position;
 
             IconName = iconName;
 
@@ -76,7 +78,7 @@ namespace TowerDefensePrototype
 
             CurrentButtonState = ButtonSpriteState.Released;
 
-            IconColor = Color.White;
+            CurrentIconColor = Color.White;
         }
 
         public void LoadContent(ContentManager contentManager)
@@ -86,12 +88,13 @@ namespace TowerDefensePrototype
                 ButtonStrip = contentManager.Load<Texture2D>(AssetName);
 
                 FrameSize = new Vector2((int)(ButtonStrip.Width / 3f), ButtonStrip.Height);
-                DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, (int)(FrameSize.X * Scale.X), (int)(FrameSize.Y * Scale.Y));
+                DestinationRectangle = new Rectangle((int)CurrentPosition.X, (int)CurrentPosition.Y, (int)(FrameSize.X * Scale.X), (int)(FrameSize.Y * Scale.Y));
 
                 if (IconName != null)
                 {
                     IconTexture = contentManager.Load<Texture2D>(IconName);
-                    IconPosition = new Vector2(Position.X + (DestinationRectangle.Width - IconTexture.Width) / 2, Position.Y + (DestinationRectangle.Height - IconTexture.Height) / 2);
+                    IconPosition = new Vector2(CurrentPosition.X + (DestinationRectangle.Width - IconTexture.Width) / 2, CurrentPosition.Y + (DestinationRectangle.Height - IconTexture.Height) / 2);
+                    IconNextPosition = IconPosition;
                     IconRectangle = new Rectangle((int)IconPosition.X, (int)IconPosition.Y, IconTexture.Width, IconTexture.Height);
                 }
 
@@ -108,7 +111,13 @@ namespace TowerDefensePrototype
 
             CursorPosition = new Vector2(CurrentMouseState.X, CurrentMouseState.Y);
 
-            DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, (int)(FrameSize.X * Scale.X), (int)(FrameSize.Y * Scale.Y));
+            if (IconNextPosition != IconPosition)
+                IconPosition = Vector2.Lerp(IconPosition, IconNextPosition, 0.08f);
+
+            if (NextPosition != CurrentPosition)
+                CurrentPosition = Vector2.Lerp(CurrentPosition, NextPosition, 0.08f);
+
+            DestinationRectangle = new Rectangle((int)CurrentPosition.X, (int)CurrentPosition.Y, (int)(FrameSize.X * Scale.X), (int)(FrameSize.Y * Scale.Y));
 
             if (IconName != null)
             IconRectangle = new Rectangle((int)IconPosition.X, (int)IconPosition.Y, IconTexture.Width, IconTexture.Height);
@@ -274,11 +283,11 @@ namespace TowerDefensePrototype
                 if (IconName != null)
                 {
                     if (CurrentButtonState != ButtonSpriteState.Pressed)                    
-                        spriteBatch.Draw(IconTexture, IconRectangle, null, IconColor, MathHelper.ToRadians(0), Vector2.Zero, 
+                        spriteBatch.Draw(IconTexture, IconRectangle, null, CurrentIconColor, MathHelper.ToRadians(0), Vector2.Zero, 
                             SpriteEffects.None, 0.5f);
                     else
                         spriteBatch.Draw(IconTexture, new Rectangle(IconRectangle.X + 2, IconRectangle.Y + 2, IconRectangle.Width,
-                            IconRectangle.Height), null, IconColor, MathHelper.ToRadians(0), Vector2.Zero, SpriteEffects.None, 0.5f);              
+                            IconRectangle.Height), null, CurrentIconColor, MathHelper.ToRadians(0), Vector2.Zero, SpriteEffects.None, 0.5f);              
                 }
 
                 switch (CurrentButtonState)
@@ -356,7 +365,7 @@ namespace TowerDefensePrototype
         {
             Color[] retrievedColor = new Color[1];
             Rectangle Rect;
-            Rect =  new Rectangle((int)((1 / Scale.X) * (Mouse.GetState().X - Position.X)), (int)((1 / Scale.Y) * (Mouse.GetState().Y - Position.Y)), 1, 1);
+            Rect =  new Rectangle((int)((1 / Scale.X) * (Mouse.GetState().X - CurrentPosition.X)), (int)((1 / Scale.Y) * (Mouse.GetState().Y - CurrentPosition.Y)), 1, 1);
 
             if (CurrentMousePosition == MousePosition.Inside && 
                 new Rectangle(0, 0, 1280, 720).Contains(new Point(Mouse.GetState().X, Mouse.GetState().Y)))
@@ -365,7 +374,7 @@ namespace TowerDefensePrototype
                 {
                     //Vector2 pos = new Vector2((1 / Scale.X) * (Mouse.GetState().X - Position.X), (1 / Scale.Y) * (Mouse.GetState().Y - Position.Y));
                     //Rectangle testRect = new Rectangle((int)((1 / Scale.X) * (Mouse.GetState().X - Position.X)), (int)((1 / Scale.Y) * (Mouse.GetState().Y - Position.Y)), 1, 1);
-                    if (Rect != new Rectangle((int)((1 / Scale.X) * (Mouse.GetState().X - Position.X)), (int)((1 / Scale.Y) * (Mouse.GetState().Y - Position.Y)), 1, 1))
+                    if (Rect != new Rectangle((int)((1 / Scale.X) * (Mouse.GetState().X - CurrentPosition.X)), (int)((1 / Scale.Y) * (Mouse.GetState().Y - CurrentPosition.Y)), 1, 1))
                         return Color.White;
                     else
                         ButtonStrip.GetData<Color>(0, Rect, retrievedColor, 0, 1);

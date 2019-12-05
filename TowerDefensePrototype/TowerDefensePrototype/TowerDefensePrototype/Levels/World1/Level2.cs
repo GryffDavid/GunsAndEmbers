@@ -14,43 +14,29 @@ namespace TowerDefensePrototype
             WorldType = "Basic";
             WaveList = new List<Wave>();
 
-            Wave Wave1 = new Wave(false, 1000, 25000,
+            Wave Wave1 = new Wave(false, 800, 5000,
+                new Soldier(new Vector2(1300, 400)),
+                new Soldier(new Vector2(1300, 400)),
+                new Spider(new Vector2(1300, 400)),
+                new Soldier(new Vector2(1300, 400)),
+                new Soldier(new Vector2(1300, 400)),
+                new Spider(new Vector2(1300, 400)),
+                new Soldier(new Vector2(1300, 400)),
+                new Soldier(new Vector2(1300, 400)),
+                new Spider(new Vector2(1300, 400)),
+                new Soldier(new Vector2(1300, 400)),
+                new Soldier(new Vector2(1300, 400)),
+                new Soldier(new Vector2(1300, 400)),
+                new Soldier(new Vector2(1300, 400)),
+                new Soldier(new Vector2(1300, 400)),
+                new Spider(new Vector2(1300, 400)),
                 new Spider(new Vector2(1300, 400)),
                 new Spider(new Vector2(1300, 400)),
                 new Spider(new Vector2(1300, 400)),
                 new Spider(new Vector2(1300, 400)),
                 new Spider(new Vector2(1300, 400)));
 
-            Wave Wave2 = new Wave(false, 800, 6000,
-                new Soldier(new Vector2(1300, 400)),
-                new Soldier(new Vector2(1300, 400)),
-                new Soldier(new Vector2(1300, 400)),
-                new Soldier(new Vector2(1300, 400)),
-                new Soldier(new Vector2(1300, 400)),
-                new Soldier(new Vector2(1300, 400)),
-                new Soldier(new Vector2(1300, 400)),
-                new Soldier(new Vector2(1300, 400)),
-                new Soldier(new Vector2(1300, 400)),
-                new Soldier(new Vector2(1300, 400)),
-                new Soldier(new Vector2(1300, 400)),
-                new Soldier(new Vector2(1300, 400)),
-                new Soldier(new Vector2(1300, 400)),
-                new Soldier(new Vector2(1300, 400)),
-                new Soldier(new Vector2(1300, 400)),
-                new Soldier(new Vector2(1300, 400)),
-                new Soldier(new Vector2(1300, 400)),
-                new Soldier(new Vector2(1300, 400)),
-                new Soldier(new Vector2(1300, 400)),
-                new Soldier(new Vector2(1300, 400)),
-                new Soldier(new Vector2(1300, 400)),
-                new Soldier(new Vector2(1300, 400)),
-                new Soldier(new Vector2(1300, 400)),
-                new Soldier(new Vector2(1300, 400)),
-                new Soldier(new Vector2(1300, 400)),
-                new Soldier(new Vector2(1300, 400)));
-
             WaveList.Add(Wave1);
-            WaveList.Add(Wave2);
         }
     }
 }

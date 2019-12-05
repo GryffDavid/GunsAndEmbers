@@ -7,9 +7,7 @@ using System.Xml.Serialization;
 
 namespace TowerDefensePrototype
 {
-    [XmlInclude(typeof(Upgrade1))]
-    [XmlInclude(typeof(Upgrade2))]
-
+    [Serializable]
     public class Upgrade
     {
         public int GatlingSpeed;
