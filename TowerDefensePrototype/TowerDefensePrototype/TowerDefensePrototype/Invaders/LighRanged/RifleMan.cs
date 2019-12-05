@@ -20,16 +20,13 @@ namespace TowerDefensePrototype
             ResourceMinMax = new Vector2(8, 20);
             InvaderType = InvaderType.RifleMan;
             YRange = new Vector2(700, 900);            
-            InvaderState = AnimationState_Invader.Walk;
-
-            RangedDamageStruct = new InvaderRangedStruct()
-            {
-                AngleRange = new Vector2(170, 190),
-                Damage = 10,
-                MaxFireDelay = 250,
-                CurrentFireDelay = 0,
-                DistanceRange = new Vector2(600, 800)
-            };
+            InvaderAnimationState = AnimationState_Invader.Walk;
+            
+            AngleRange = new Vector2(170, 190);
+            RangedDamage = 10;
+            MaxFireDelay = 250;
+            CurrentFireDelay = 0;
+            DistanceRange = new Vector2(600, 800);
         }
 
         public override void Update(GameTime gameTime, Vector2 cursorPosition)

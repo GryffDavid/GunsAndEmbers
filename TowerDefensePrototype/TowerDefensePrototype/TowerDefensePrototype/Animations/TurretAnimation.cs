@@ -7,6 +7,6 @@ namespace TowerDefensePrototype
 {
     public class TurretAnimation : Animation
     {
-        public TurretState CurrentTurretState;
+        public TurretAnimationState CurrentTurretState;
     }
 }

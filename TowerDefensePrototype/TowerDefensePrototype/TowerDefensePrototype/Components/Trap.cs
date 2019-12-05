@@ -8,6 +8,19 @@ using Microsoft.Xna.Framework.Content;
 
 namespace TowerDefensePrototype
 {
+    public enum TrapType
+    {
+        Wall,
+        Spikes,
+        Catapult,
+        Fire, Ice,
+        Barrel,
+        SawBlade,
+        Line,
+        Trigger
+    };
+    public enum TrapAnimationState { Untriggered, Triggering, Active, Resetting };
+
     public abstract class Trap : Drawable
     {
         //public Texture2D CurrentTexture;
@@ -34,8 +47,8 @@ namespace TowerDefensePrototype
         public TrapAnimation CurrentAnimation;
         public List<TrapAnimation> AnimationList;
 
-        private TrapState _TrapState;
-        public TrapState TrapState
+        private TrapAnimationState _TrapState;
+        public TrapAnimationState TrapState
         {
             get { return _TrapState; }
             set
@@ -46,7 +59,7 @@ namespace TowerDefensePrototype
                 {
                     CurrentAnimation = AnimationList.Find(Animation => Animation.CurrentTrapState == value);
 
-                    if (CurrentAnimation.CurrentTrapState == TrapState.Untriggered)
+                    if (CurrentAnimation.CurrentTrapState == TrapAnimationState.Untriggered)
                         CurrentAnimation.CurrentFrame = Random.Next(0, CurrentAnimation.TotalFrames);
 
                     CurrentAnimation.CurrentFrameDelay = 0;

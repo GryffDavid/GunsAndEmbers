@@ -10,58 +10,53 @@ namespace TowerDefensePrototype
 {
     abstract class HeavyRangedInvader : Invader
     {
-        //public bool InRange = false;
-        public InvaderRangedStruct RangedDamageStruct;
+        #region For drawing barrel animations
         public InvaderAnimation BarrelAnimation;
         public VertexPositionColorTexture[] barrelVertices = new VertexPositionColorTexture[4];        
         public Rectangle BarrelDestinationRectangle;
         public Vector2 BarrelPivot, BasePivot, BarrelEnd;
-        public float CurrentAngle = 0;
-        public float EndAngle; //EndAngle - the angle the invader needs to be at before launching
         public int[] barrelIndices = new int[6];
-        
-        public List<HeavyProjectile> FiredProjectiles = new List<HeavyProjectile>();//List of projectiles the invader has fired and are still active
+        #endregion
+
+        public float CurrentAngle = 0;
+        public float EndAngle;
+
+        public int TotalHits = 0;
+
+        public int HitGround = 0;
+        public int HitTower = 0;
+        public int HitShield = 0;
+        public int HitTurret = 0;
+        public int HitTrap = 0;
 
         public override void Initialize()
         {
-            RangedDamageStruct.MinDistance = Random.Next((int)RangedDamageStruct.DistanceRange.X,
-                                                         (int)RangedDamageStruct.DistanceRange.Y);
+            MinTowerRange = Random.Next((int)DistanceRange.X,
+                                   (int)DistanceRange.Y);
             base.Initialize();
         }
 
         public override void Update(GameTime gameTime, Vector2 cursorPosition)
-        {
-            if (RangedDamageStruct.DistToTower <= RangedDamageStruct.MinDistance)
-            {
-                Velocity.X = 0;
-                RangedDamageStruct.InRange = true;
-            }
+        {            
+            //if (DistToTower <= MinRange)
+            //{
+            //    //Whether the invader stops or not should be based on their MicroBehaviour
+            //    Velocity.X = 0;
+            //    InRange = true;
+            //}
 
-            if (CurrentAngle != EndAngle)
-            {
-                //If it isn't finished adjusting, change the angle and prevent it from shooting
-                CurrentAngle = MathHelper.Lerp(CurrentAngle, EndAngle, 0.2f);
-                CanAttack = false;                
-            }
-
+            #region Update Barrel Animation
             if (BarrelAnimation != null)
             {
                 BarrelAnimation.Update(gameTime);
-
                 BarrelDestinationRectangle = new Rectangle((int)BasePivot.X, (int)BasePivot.Y,
                                                            (int)(BarrelAnimation.FrameSize.X),
                                                            (int)(BarrelAnimation.FrameSize.Y));
-
-                //CurrentAngle += 0.1f;
             }
-
-            FiredProjectiles.RemoveAll(Projectile => Projectile.Active == false && Projectile.EmitterList.All(Emitter => Emitter.AddMore == false));
-
-            //Vector2 BarrelCenter = new Vector2(BarrelDestinationRectangle.X + (float)Math.Cos(CurrentAngle - 90) * (BarrelPivot.Y - BarrelDestinationRectangle.Height / 2),
-            //                                   BarrelDestinationRectangle.Y + (float)Math.Sin(CurrentAngle - 90) * (BarrelPivot.Y - BarrelDestinationRectangle.Height / 2));
-
+            
             BarrelEnd = new Vector2(BarrelDestinationRectangle.Center.X - (float)Math.Cos(CurrentAngle) * (BarrelPivot.X),
                                     BarrelDestinationRectangle.Center.Y - (float)Math.Sin(CurrentAngle) * (BarrelPivot.X));
+            #endregion
 
             base.Update(gameTime, cursorPosition);
         }
@@ -112,7 +107,7 @@ namespace TowerDefensePrototype
                 Matrix view = effect.View;
 
                 effect.View = Matrix.CreateTranslation(new Vector3(-Position.X - BarrelPivot.X, -Position.Y - BarrelPivot.Y, 0)) *
-                              Matrix.CreateRotationZ(MathHelper.ToRadians(CurrentAngle)) *
+                              Matrix.CreateRotationZ(CurrentAngle) *
                               Matrix.CreateTranslation(new Vector3(Position.X + BarrelPivot.X, Position.Y + BarrelPivot.Y, 0));
 
                 foreach (EffectPass pass in effect.CurrentTechnique.Passes)
@@ -129,32 +124,21 @@ namespace TowerDefensePrototype
 
         public void UpdateFireDelay(GameTime gameTime)
         {
-            if (RangedDamageStruct != null)
+            //This should only be called if the invader is actually ALLOWED to fire
+            //i.e. They can't fire when moving, can't fire when facing the wrong way etc.
+
+            if (CurrentFireDelay < MaxFireDelay)
+                CurrentFireDelay += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+
+            if (CurrentFireDelay >= MaxFireDelay)
             {
-                RangedDamageStruct.CurrentFireDelay += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
-
-                if (RangedDamageStruct.CurrentFireDelay >= RangedDamageStruct.MaxFireDelay)
-                {
-                    CanAttack = true;
-                    RangedDamageStruct.CurrentFireDelay = 0;
-                }
-                else
-                {
-                    CanAttack = false;
-                }
+                CanAttack = true;
+                CurrentFireDelay = 0;
             }
-        }
-
-        public void ChangeTrajectory(string ObjectName)
-        {
-            //Change the invader trajectory based on the input
-            if (HitObject.GetType() == typeof(Shield) && 
-                CurrentMacroBehaviour == MacroBehaviour.AttackTraps)
+            else
             {
-                EndAngle -= Random.Next(10, 25);
-            }
-
-            CanAttack = false;
+                CanAttack = false;
+            }            
         }
     }
 }

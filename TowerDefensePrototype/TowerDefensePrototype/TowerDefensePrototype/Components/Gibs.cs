@@ -21,12 +21,12 @@ namespace TowerDefensePrototype.Basics
             //= 1 Limb
         }
 
-        public void Update(GameTime gameTime)
+        public override void Update(GameTime gameTime)
         {
 
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public override void Draw(SpriteBatch spriteBatch)
         {
 
         }

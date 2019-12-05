@@ -8,6 +8,22 @@ using Microsoft.Xna.Framework.Content;
 
 namespace TowerDefensePrototype
 {
+    public enum HeavyProjectileType
+    {
+        CannonBall,
+        FlameThrower,
+        Arrow,
+        Acid,
+        Torpedo,
+        ClusterBomb,
+        ClusterBombShell,
+        FelProjectile,
+        Boomerang,
+        Grenade,
+        GasGrenade,
+        FireGrenade
+    };
+    
     public abstract class HeavyProjectile : Drawable
     {
         public class Stick

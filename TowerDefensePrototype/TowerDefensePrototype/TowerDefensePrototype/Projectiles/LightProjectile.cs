@@ -8,6 +8,18 @@ using Microsoft.Xna.Framework.Content;
 
 namespace TowerDefensePrototype
 {
+    public enum LightProjectileType
+    {
+        MachineGun,
+        Freeze,
+        Lightning,
+        Laser,
+        Pulse,
+        Shotgun,
+        PersistentBeam,
+        InvaderHealBeam
+    };
+
     public abstract class LightProjectile
     {
         public Ray Ray;

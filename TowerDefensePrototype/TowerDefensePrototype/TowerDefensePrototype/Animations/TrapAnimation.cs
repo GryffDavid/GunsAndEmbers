@@ -7,6 +7,6 @@ namespace TowerDefensePrototype
 {
     public class TrapAnimation : Animation
     {
-        public TrapState CurrentTrapState;
+        public TrapAnimationState CurrentTrapState;
     }
 }

@@ -82,13 +82,12 @@ namespace TowerDefensePrototype
 
                 float Percentage = CurrentTime / MaxTime;
                 //LightDecay = (int)(Radius * Math.Sin(Math.PI * Percentage));
-                LightDecay = (int)(Radius - (Radius * Percentage));
+                //LightDecay = (int)(Radius - (Radius * Percentage));
                 //LightDecay = (int)(Radius * Percentage);
-                Position.Z = 8 * Percentage;
+                Position.Z -= 0.5f * Percentage;
                 //Position.Y -= 0.25f * Percentage;
-                Power = 0.15f * Percentage;
-
-
+                Power = 0.015f;// *Percentage;
+                
                 if (CurrentTime >= MaxTime)
                 {
                     Active = false;

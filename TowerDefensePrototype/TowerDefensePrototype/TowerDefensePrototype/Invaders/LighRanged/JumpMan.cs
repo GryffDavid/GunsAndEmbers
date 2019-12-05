@@ -20,7 +20,7 @@ namespace TowerDefensePrototype
             ResourceMinMax = new Vector2(8, 20);
             InvaderType = InvaderType.JumpMan;
             YRange = new Vector2(700, 900);
-            InvaderState = AnimationState_Invader.Walk;
+            InvaderAnimationState = AnimationState_Invader.Walk;
         }
 
         public override void Update(GameTime gameTime, Vector2 cursorPosition)

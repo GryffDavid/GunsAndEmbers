@@ -37,16 +37,13 @@ namespace TowerDefensePrototype
             YRange = new Vector2(100, 350);
             Airborne = true;
             InAir = true;
-            InvaderState = AnimationState_Invader.Walk;
+            InvaderAnimationState = AnimationState_Invader.Walk;
 
-            RangedDamageStruct = new InvaderRangedStruct()
-            {
-                AngleRange = new Vector2(170, 190),
-                Damage = 10,
-                MaxFireDelay = 250,
-                CurrentFireDelay = 0,
-                DistanceRange = new Vector2(600, 800)
-            };
+            AngleRange = new Vector2(170, 190);
+            RangedDamage = 10;
+            MaxFireDelay = 250;
+            CurrentFireDelay = 0;
+            DistanceRange = new Vector2(600, 800);
         }
 
         public override void Update(GameTime gameTime, Vector2 cursorPosition)

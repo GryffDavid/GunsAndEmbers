@@ -8,6 +8,8 @@ using Microsoft.Xna.Framework.Content;
 
 namespace TowerDefensePrototype
 {
+    public enum SpecialType { AirStrike };
+
     public class SpecialAbility
     {
         public SpecialType SpecialType;

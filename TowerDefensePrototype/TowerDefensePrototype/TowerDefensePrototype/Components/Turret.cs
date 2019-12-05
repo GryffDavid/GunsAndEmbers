@@ -9,6 +9,25 @@ using Microsoft.Xna.Framework.Input;
 
 namespace TowerDefensePrototype
 {
+    public enum TurretType
+    {
+        MachineGun,
+        Cannon,
+        FlameThrower,
+        Lightning,
+        Cluster,
+        FelCannon,
+        Beam,
+        Freeze,
+        Boomerang,
+        Grenade,
+        GasGrenade,
+        Shotgun,
+        PersistentBeam
+    };
+    public enum TurretAnimationState { Overheated, ReadyToFire };
+    public enum TurretFireType { FullAuto, SemiAuto, Single, Beam };
+
     public abstract class Turret : Drawable
     {
         public event EventHandler<EventArgs> TurretClickHappened;

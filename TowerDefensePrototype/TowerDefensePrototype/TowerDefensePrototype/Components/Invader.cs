@@ -9,10 +9,98 @@ using Microsoft.Xna.Framework.Audio;
 
 namespace TowerDefensePrototype
 {
+    #region Invader Enums
     public enum AnimationState_Invader { Walk, Stand, Melee, Shoot };
+
+
+    public enum InvaderFireType { Burst };
+
+
+    public enum InvaderType
+    {
+        Soldier,
+        BatteringRam,
+        Airship,
+        Archer,
+        Tank,
+        Spider,
+        Slime,
+        SuicideBomber,
+        FireElemental,
+        StationaryCannon,
+        HealDrone,
+        JumpMan,
+        RifleMan
+    };
+
+    public enum MacroBehaviour
+    {
+        AttackTower,
+        AttackTraps,
+        AttackTurrets
+    };
+
+    public enum MicroBehaviour
+    {
+        MovingForwards,
+        MovingBackwards,
+        Stationary,
+        AdjustTrajectory,
+        Attack
+    };
+
+
+    public class DamageOverTimeStruct
+    {
+        public float Damage, //How much damage is done each interval
+                     InitialDamage, //The first burst of damage done to the invader on contact
+                     MaxDelay, //How long the effect lasts for in total
+                     CurrentDelay,
+                     MaxInterval, //How long between regular damage being done
+                     CurrentInterval;
+
+        public Color Color; //The colour the invader turns while this DOT is active
+    };
+
+    public class SlowStruct
+    {
+        public float MaxDelay, CurrentDelay, SpeedPercentage;
+        public float PreviousSpeed; //The speed value before the invader was slowed
+    };
+
+    public class FreezeStruct
+    {
+        public float MaxDelay, CurrentDelay;
+    };
+
+    public class InvaderMeleeStruct
+    {
+        public float Damage;
+        public float CurrentAttackDelay, MaxAttackDelay;
+    };
+    #endregion
 
     public abstract class Invader : Drawable
     {
+        #region Variables used for invaders
+        #region For Ranged Invaders
+        public InvaderFireType FireType; //Whether the invader fires a single projectile, fires a burst or fires a beam etc.
+        public Vector2 DistanceRange; //How far away from the tower the invader will be before stopping to fire
+        public Vector2 AngleRange; //The angle that the projectile is fired at.
+        public Vector2 LaunchVelocityRange; //The range of speeds that the invader can use to launch a heavy projectile
+
+        public bool InTowerRange = false;
+        public bool InTrapRange = false;
+        public float DistToTower = 1920;
+        public float DistToTrap, TrapPosition;
+        public float MinTowerRange, MinTrapRange;
+
+        public float RangedDamage; //How much damage the projectile does
+        public float LaunchVelocity; //How fast the heavy projectile is travelling when launched
+        public float CurrentFireDelay, MaxFireDelay; //How many milliseconds between shots
+        public int CurrentBurstShots, MaxBurstShots; //How many shots are fired in a row before a longer recharge is needed
+        #endregion
+
         #region Vertex declarations
         public VertexPositionColorTexture[] shadowVertices = new VertexPositionColorTexture[4];
         public int[] shadowIndices = new int[6];
@@ -22,6 +110,27 @@ namespace TowerDefensePrototype
 
         public VertexPositionColorTexture[] normalVertices = new VertexPositionColorTexture[4];
         public int[] normalIndices = new int[6];
+        #endregion
+
+        #region Movement Related Variables
+        public SlowStruct CurrentSlow;
+        public FreezeStruct CurrentFreeze;
+        public float Speed, SlowSpeed;
+        public Vector2 Direction = new Vector2(-1f, 0);
+        public Vector2 Position, Velocity;
+        public SpriteEffects Orientation = SpriteEffects.None;
+        #endregion
+
+        #region Boolean variables
+        public bool VulnerableToTurret = true;
+        public bool VulnerableToTrap = true;
+        public bool IsBeingHealed = false;
+        public bool IsTargeted = false;
+        public bool Airborne = false;
+        public bool Solid = false; //Whether this invader stops heavy projectiles or not
+        public new bool Active = true;
+
+        public bool CanAttack, Burning, Frozen, Slow, InAir;
         #endregion
 
         private bool _HitByBeam;
@@ -54,6 +163,26 @@ namespace TowerDefensePrototype
             }
         }
 
+        private AnimationState_Invader _InvaderAnimationState;
+        public AnimationState_Invader InvaderAnimationState
+        {
+            get { return _InvaderAnimationState; }
+            set
+            {
+                _InvaderAnimationState = value;
+
+                if (AnimationList != null)
+                {
+                    CurrentAnimation = AnimationList.Find(Animation => Animation.CurrentInvaderState == value);
+
+                    if (CurrentAnimation.CurrentInvaderState == AnimationState_Invader.Stand)
+                        CurrentAnimation.CurrentFrame = 0;// Random.Next(0, CurrentAnimation.TotalFrames);
+
+                    CurrentAnimation.CurrentFrameDelay = 0;
+                }
+            }
+        }
+
         private MacroBehaviour _CurrentMacroBehaviour;
         public MacroBehaviour CurrentMacroBehaviour
         {
@@ -65,8 +194,8 @@ namespace TowerDefensePrototype
         public MicroBehaviour CurrentMicroBehaviour
         {
             get { return _CurrentMicroBehaviour; }
-            set 
-            { 
+            set
+            {
                 _CurrentMicroBehaviour = value;
 
                 //switch (_CurrentMicroBehaviour)
@@ -82,28 +211,17 @@ namespace TowerDefensePrototype
             }
         }
 
-        int Intelligence;
-
-        private AnimationState_Invader _InvaderState;
-        public AnimationState_Invader InvaderState
+        private object _HitObject;
+        public object HitObject
         {
-            get { return _InvaderState; }
+            get { return _HitObject; }
             set
             {
-                _InvaderState = value;
-
-                if (AnimationList != null)
-                {
-                    CurrentAnimation = AnimationList.Find(Animation => Animation.CurrentInvaderState == value);
-
-                    if (CurrentAnimation.CurrentInvaderState == AnimationState_Invader.Stand)
-                        CurrentAnimation.CurrentFrame = 0;// Random.Next(0, CurrentAnimation.TotalFrames);
-
-                    CurrentAnimation.CurrentFrameDelay = 0;
-                }
+                _HitObject = value;
             }
         }
-        
+
+        public DamageOverTimeStruct CurrentDOT;
 
         public InvaderType InvaderType;
         public InvaderAnimation CurrentAnimation;
@@ -112,7 +230,7 @@ namespace TowerDefensePrototype
         public DamageType DamageVulnerability;
         public UIOutline InvaderOutline;
         public UIBar HealthBar;
-        public SoundEffectInstance MoveLoop;        
+        public SoundEffectInstance MoveLoop;
 
         public Texture2D Shadow, IceBlock;
         public Rectangle DestinationRectangle;
@@ -127,45 +245,16 @@ namespace TowerDefensePrototype
         public static Random Random = new Random();
 
         //Could be handled by structs - like damage, slow, freeze etc.
-        public double BeamDelay, CurrentBeamDelay, 
+        public double BeamDelay, CurrentBeamDelay,
                       HealDelay, CurrentHealDelay;
+        #endregion
 
-        public DamageOverTimeStruct CurrentDOT;
-
-        public bool VulnerableToTurret = true;
-        public bool VulnerableToTrap = true;
-        public bool IsBeingHealed = false;
-        public bool IsTargeted = false;
-        public bool Airborne = false;
-        public bool Solid = false; //Whether this invader stops heavy projectiles or not
-        public new bool Active = true;
-
-        public bool CanAttack, Burning, Frozen, Slow, InAir;
-
-
-        //Movement related variables
-        public SlowStruct CurrentSlow;
-        public FreezeStruct CurrentFreeze;
-        public float Speed, SlowSpeed;
-        public Vector2 Direction = new Vector2(-1f, 0);
-        public Vector2 Position, Velocity;
-        public SpriteEffects Orientation = SpriteEffects.None;
-
-        private object _HitObject;
-        public object HitObject
-        {
-            get { return _HitObject; }
-            set
-            {
-                _HitObject = value;
-            }
-        }
-        
         public virtual void Initialize()
         {
+            CurrentHP = MaxHP;
             MaxY = Random.Next((int)YRange.X, (int)YRange.Y);
             ResourceValue = Random.Next((int)ResourceMinMax.X, (int)ResourceMinMax.Y);
-            
+
             if (Airborne == true)
             {
                 Position.Y = MaxY;
@@ -260,6 +349,17 @@ namespace TowerDefensePrototype
             {
                 Velocity.Y += Gravity * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
 
+                if (Velocity.X != 0 && InvaderAnimationState != AnimationState_Invader.Walk)
+                {
+                    InvaderAnimationState = AnimationState_Invader.Walk;
+                }
+
+                if (Velocity.X == 0 && InvaderAnimationState != AnimationState_Invader.Stand && Frozen == false)
+                {
+                    InvaderAnimationState = AnimationState_Invader.Stand;
+                }
+
+                #region Update position and vertices
                 if (Velocity != Vector2.Zero)
                 {
                     Position += Velocity * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
@@ -274,21 +374,14 @@ namespace TowerDefensePrototype
                     normalVertices[2].Position = invaderVertices[2].Position;
                     normalVertices[3].Position = invaderVertices[3].Position;
                 }
-                
-                if (Velocity.X != 0 && InvaderState != AnimationState_Invader.Walk)
-                {
-                    InvaderState = AnimationState_Invader.Walk;
-                }
+                #endregion
 
-                if (Velocity.X == 0 && InvaderState != AnimationState_Invader.Stand && Frozen == false)
-                {
-                    InvaderState = AnimationState_Invader.Stand;
-                }
-
+                #region Draw the invader White if it's not frozen, burning etc.
                 if (Frozen == false && Burning == false && HitByBeam == false)
                 {
                     Color = Color.White;
                 }
+                #endregion
 
                 #region This controls how the invader behaves when it's frozen
                 if (CurrentFreeze != null)
@@ -314,7 +407,7 @@ namespace TowerDefensePrototype
                 #region This controls how the invader behaves when it's slow
                 if (CurrentSlow != null)
                 {
-                    
+
                     if (Slow == true)
                     {
                         CurrentSlow.CurrentDelay += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
@@ -329,10 +422,6 @@ namespace TowerDefensePrototype
                     }
                 }
                 #endregion
-                
-
-
-                
 
                 if (CurrentAnimation != null)
                 {
@@ -365,7 +454,7 @@ namespace TowerDefensePrototype
                     }
                 }
                 #endregion
-                
+
                 #region This makes sure that the invader can't take damage if it's off screen (i.e. before it's visible to the player)
                 if (Position.X > 1920)
                 {
@@ -378,7 +467,7 @@ namespace TowerDefensePrototype
                     VulnerableToTrap = true;
                 }
                 #endregion
-                
+
                 #region This controls how the invader takes damage when it's burning
                 if (CurrentDOT != null)
                 {
@@ -453,6 +542,22 @@ namespace TowerDefensePrototype
                 }
                 #endregion
 
+                if (Airborne == false)
+                {
+                    if ((BoundingBox.Max.Y + Velocity.Y) > MaxY)
+                    {
+                        Velocity.Y = 0;
+                        Gravity = 0;
+                        Position = new Vector2(Position.X, MaxY - DestinationRectangle.Height);
+                        InAir = false;
+                    }
+
+                    if (BoundingBox.Max.Y < MaxY)
+                    {
+                        Gravity = 0.2f;
+                    }
+                }
+
                 if (HitByBeam == true)
                 {
                     Color = Color.Black;
@@ -482,7 +587,7 @@ namespace TowerDefensePrototype
                 effect.TextureEnabled = true;
                 effect.VertexColorEnabled = true;
                 effect.Texture = CurrentAnimation.Texture;
-                                
+
                 if (InAir == false)
                 {
                     #region Draw initial shadow
@@ -654,7 +759,6 @@ namespace TowerDefensePrototype
 
         public override void DrawSpriteDepth(GraphicsDevice graphics, Effect effect)
         {
-            //Draw the same sprite as the color map, but with the depth effect applied
             if (Active == true)
             {
                 effect.Parameters["Texture"].SetValue(CurrentAnimation.Texture);
@@ -670,7 +774,6 @@ namespace TowerDefensePrototype
 
         public override void DrawSpriteNormal(GraphicsDevice graphics, BasicEffect effect)
         {
-            //Draw the lower half of the sprite with a basic effect applied
             if (Active == true)
             {
                 #region Draw the sprite normal map
@@ -688,7 +791,7 @@ namespace TowerDefensePrototype
                 }
                 #endregion
 
-                #region Draw the ice block normal map 
+                #region Draw the ice block normal map
 
                 #endregion
             }
@@ -716,7 +819,7 @@ namespace TowerDefensePrototype
                 }
             }
         }
-        
+
         public void TurretDamage(int change)
         {
             if (Active == true)
@@ -744,14 +847,14 @@ namespace TowerDefensePrototype
                 CurrentDOT = dotStruct;
                 DOTColor = color;
             }
-        }        
+        }
 
         public void MakeSlow(SlowStruct slowStruct)
         {
             Slow = true;
             CurrentSlow = slowStruct;
             SlowSpeed = slowStruct.SpeedPercentage;
-        }        
+        }
 
         public void Freeze(FreezeStruct freeze, Color frozenColor)
         {
@@ -762,7 +865,7 @@ namespace TowerDefensePrototype
                 CurrentFreeze = freeze;
             }
         }
-        
+
         public void Trajectory(Vector2 velocity)
         {
             if (velocity.Y < 0)
