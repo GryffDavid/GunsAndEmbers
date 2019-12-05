@@ -90,6 +90,8 @@ namespace TowerDefensePrototype
     }
     #endregion
     
+    
+
     public class Game1 : Game
     {
         #region Events
@@ -639,6 +641,8 @@ namespace TowerDefensePrototype
         LightProjectile CurrentBeam;
 
         #endregion
+
+        public static float _1Depth = 1f / 1080f;
 
         public Game1()
         {
@@ -3403,28 +3407,28 @@ namespace TowerDefensePrototype
 
                         Vertices[0] = new VertexPositionColorTexture()
                         {
-                            Color = drawableColor,
+                            Color = Color.Fuchsia,
                             Position = drawable.CollisionBox.Min,
                             TextureCoordinate = new Vector2(0, 0)
                         };
 
                         Vertices[1] = new VertexPositionColorTexture()
                         {
-                            Color = drawableColor,
+                            Color = Color.Fuchsia,
                             Position = new Vector3(drawable.CollisionBox.Max.X, drawable.CollisionBox.Min.Y, 0),
                             TextureCoordinate = new Vector2(1, 0)
                         };
 
                         Vertices[2] = new VertexPositionColorTexture()
                         {
-                            Color = drawableColor,
+                            Color = Color.Fuchsia,
                             Position = drawable.CollisionBox.Max,
                             TextureCoordinate = new Vector2(1, 1)
                         };
 
                         Vertices[3] = new VertexPositionColorTexture()
                         {
-                            Color = drawableColor,
+                            Color = Color.Fuchsia,
                             Position = new Vector3(drawable.CollisionBox.Min.X, drawable.CollisionBox.Max.Y, 0),
                             TextureCoordinate = new Vector2(0, 1)
                         };
@@ -3690,6 +3694,72 @@ namespace TowerDefensePrototype
                             pass.Apply();
                             GraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.LineStrip, Vertices, 0, 2, Indices, 0, 1, VertexPositionColorTexture.VertexDeclaration);
                         }
+                    }
+                }
+                #endregion
+
+                #region Draw Invader Target Rays
+                if (BoundingBoxes == true)
+                {
+                    foreach (Invader invader in InvaderList)
+                    {
+                        #region Targetting invader
+                        if (invader.TargetInvader != null)
+                        {
+                            VertexPositionColor[] Vertices = new VertexPositionColor[2];
+                            int[] Indices = new int[2];
+
+                            Vertices[0] = new VertexPositionColor()
+                            {
+                                Color = Color.LimeGreen,
+                                Position = new Vector3(invader.Center.X, invader.Center.Y, 0)
+                            };
+
+                            Vertices[1] = new VertexPositionColor()
+                            {
+                                Color = Color.LimeGreen,
+                                Position = new Vector3(invader.TargetInvader.Center.X, invader.TargetInvader.Center.Y, 0)
+                            };
+
+                            Indices[0] = 0;
+                            Indices[1] = 1;
+
+                            foreach (EffectPass pass in BasicEffect2.CurrentTechnique.Passes)
+                            {
+                                pass.Apply();
+                                GraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.LineStrip, Vertices, 0, 2, Indices, 0, 1, VertexPositionColorTexture.VertexDeclaration);
+                            }
+                        } 
+                        #endregion
+
+                        #region Targetting trap
+                        if (invader.TargetTrap != null)
+                        {
+                            VertexPositionColor[] Vertices = new VertexPositionColor[2];
+                            int[] Indices = new int[2];
+
+                            Vertices[0] = new VertexPositionColor()
+                            {
+                                Color = Color.Red,
+                                Position = new Vector3(invader.Center.X, invader.Center.Y, 0)
+                            };
+
+                            Vertices[1] = new VertexPositionColor()
+                            {
+                                Color = Color.Red,
+                                Position = new Vector3(invader.TargetTrap.Center.X, invader.TargetTrap.Center.Y, 0)
+                            };
+
+                            Indices[0] = 0;
+                            Indices[1] = 1;
+
+                            foreach (EffectPass pass in BasicEffect2.CurrentTechnique.Passes)
+                            {
+                                pass.Apply();
+                                GraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.LineStrip, Vertices, 0, 2, Indices, 0, 1, VertexPositionColorTexture.VertexDeclaration);
+                            }
+                        } 
+                        #endregion
                     }
                 }
                 #endregion
@@ -6105,12 +6175,14 @@ namespace TowerDefensePrototype
                         invader.Position = new Vector2(invader.Position.X, invader.MaxY - invader.DestinationRectangle.Height);
                         invader.InAir = false;
 
+                        #region Create effect when INVADER hits the GROUND
                         switch (invader.InvaderType)
                         {
                             default:
 
                                 break;
 
+                            #region BatteringRam
                             case InvaderType.BatteringRam:
                                 {
                                     Emitter DustEmitter = new Emitter(ToonDust3,
@@ -6127,8 +6199,10 @@ namespace TowerDefensePrototype
                                     BatteringRamDrop1.Play();
                                     Camera.Shake(10, 1f);
                                 }
-                                break;
-                        }
+                                break; 
+                            #endregion
+                        } 
+                        #endregion
                     }
 
                     if (invader.BoundingBox.Max.Y < invader.MaxY)
@@ -6453,83 +6527,70 @@ namespace TowerDefensePrototype
                             break; 
                         #endregion
 
+                        #region Jump Man
                         case InvaderType.JumpMan:
                             {
-                                if (invader.InAir == false)
-                                {
-                                    invader.Trajectory(new Vector2(-3, -8));
-                                    invader.Gravity = 0.2f;
-                                    invader.Airborne = false;
-                                    invader.InAir = true;
-                                }
+                                HeavyProjectile heavyProjectile = new CannonBall(invader, CannonBallProjectileSprite, ToonSmoke3,
+                                       new Vector2(heavyRangedInvader.Center.X, heavyRangedInvader.Center.Y),
+                                       Random.Next((int)(heavyRangedInvader.LaunchVelocityRange.X), (int)(heavyRangedInvader.LaunchVelocityRange.Y)),
+                                       (float)Math.PI + MathHelper.ToRadians(15), 0.2f, heavyRangedInvader.RangedDamage, 40,
+                                       new Vector2(MathHelper.Clamp(heavyRangedInvader.MaxY + 32, 690, 930), 930));
 
-                                if (invader.CurrentMicroBehaviour == MicroBehaviour.Attack)
-                                {
-                                    HeavyProjectile heavyProjectile = new CannonBall(invader, CannonBallProjectileSprite, ToonSmoke3,
-                                           new Vector2(heavyRangedInvader.Center.X, heavyRangedInvader.Center.Y),
-                                           Random.Next((int)(heavyRangedInvader.LaunchVelocityRange.X), (int)(heavyRangedInvader.LaunchVelocityRange.Y)),
-                                           (float)Math.PI + MathHelper.ToRadians(15), 0.2f, heavyRangedInvader.RangedDamage, 40,
-                                           new Vector2(MathHelper.Clamp(heavyRangedInvader.MaxY + 32, 690, 930), 930));
-
-                                    heavyProjectile.YRange = new Vector2(invader.MaxY, invader.MaxY);
-                                    HeavyProjectileList.Add(heavyProjectile);
-                                    AddDrawable(heavyProjectile);
-                                }
+                                heavyProjectile.YRange = new Vector2(invader.MaxY, invader.MaxY);
+                                HeavyProjectileList.Add(heavyProjectile);
+                                AddDrawable(heavyProjectile);                                
                             }
-                            break;
+                            break; 
+                        #endregion
 
+                        #region Flame Jet Trooper
                         case InvaderType.FlameJetTrooper:
                             {
-                                if (invader.InAir == false)
+                                //if (!YSortedEmitterList.Exists(Emitter => Emitter.Tether == invader && Emitter.TextureName == "FlameThrower"))
+                                //if (YSortedEmitterList.FindAll(Emitter => Emitter.Tether == invader && Emitter.TextureName == "FlameThrower").Count == 0)
+
+                                if (YSortedEmitterList.Count(Emitter => Emitter.Tether == invader && Emitter.TextureName == "FlameThrower") == 0)
                                 {
-                                    invader.Trajectory(new Vector2(-3, -8));
-                                    invader.Gravity = 0.2f;
-                                    invader.Airborne = false;
-                                    invader.InAir = true;
-                                }
-                                
-                                if (invader.CurrentMicroBehaviour == MicroBehaviour.Attack)
-                                {
-                                    if (YSortedEmitterList.All(Emitter => Emitter.Tether != invader))
+                                    Emitter Sparks1 = new Emitter(RoundSparkParticle, new Vector2(invader.Position.X + invader.CurrentAnimation.FrameSize.X - 10,
+                                            invader.Position.Y + invader.CurrentAnimation.FrameSize.Y / 2), new Vector2(-120f, -116f),
+                                            new Vector2(2.35f, 11.4f), new Vector2(900f, 1200f), 1f, false, new Vector2(-2f, 2f),
+                                            new Vector2(-1f, 1f), new Vector2(0.1f, 0.25f), new Color(255, 255, 128, 0),
+                                            new Color(255, 128, 0, 255), -0.032f, 0.03f, 18f, 70, true, new Vector2(invader.MaxY + 8, invader.MaxY + 32),
+                                            true, invader.MaxY / 1080f, true, true, new Vector2(0f, 0f), new Vector2(0f, 0f), 0f, true,
+                                            new Vector2(0.021f, 0f), false, false, 0f, false, false, true, null);
+
+                                    //Using the TextureName here so that I can cancel the FlameThrower effect later
+                                    //without removing other effects tethered to the invader
+                                    Sparks1.TextureName = "FlameThrower";
+                                    Sparks1.Tether = invader;
+                                    Sparks1.Emissive = true;
+                                    YSortedEmitterList.Add(Sparks1);
+
+                                    Emitter FireEmitter = new Emitter(ToonSmoke2, new Vector2(invader.Position.X + invader.CurrentAnimation.FrameSize.X - 10,
+                                                                                              invader.Position.Y + invader.CurrentAnimation.FrameSize.Y / 2),
+                                        new Vector2(-120f, -116f), new Vector2(6.85f, 9.9f),
+                                        new Vector2(1200f, 1500f), 1f, false, new Vector2(0f, 0f), new Vector2(-2f, 2f), new Vector2(0.07f, 0.09f),
+                                         new Color(255, 128, 0, 60), Color.Black,
+                                        -0.035f, -1f, 51f, 4, true, new Vector2(invader.MaxY + 8, invader.MaxY + 32), true, invader.MaxY / 1080f,
+                                        true, true, new Vector2(0f, 0f), new Vector2(0f, 0f), 0.283f, true,
+                                        new Vector2(0.021f, 0.036f), false, false, 0f, false, false, true, null);
+
+                                    if (heavyRangedInvader.TargetTrap != null)
                                     {
-                                        Emitter Sparks1 = new Emitter(RoundSparkParticle, new Vector2(invader.Position.X + invader.CurrentAnimation.FrameSize.X - 10,
-                                                invader.Position.Y + invader.CurrentAnimation.FrameSize.Y / 2), new Vector2(-120f, -116f),
-                                                new Vector2(2.35f, 11.4f), new Vector2(900f, 1200f), 1f, false, new Vector2(-2f, 2f),
-                                                new Vector2(-1f, 1f), new Vector2(0.1f, 0.25f), new Color(255, 255, 128, 0),
-                                                new Color(255, 128, 0, 255), -0.032f, 0.03f, 18f, 70, true, new Vector2(invader.MaxY + 8, invader.MaxY + 32),
-                                                true, invader.MaxY / 1080f, true, true, new Vector2(0f, 0f), new Vector2(0f, 0f), 0f, true,
-                                                new Vector2(0.036f, 0f), false, false, 0f, false, false, true, null);
-
-                                        //Using the TextureName here so that I can cancel the FlameThrower effect later
-                                        //without removing other effects tethered to the invader
-                                        Sparks1.TextureName = "FlameThrower";
-                                        Sparks1.Tether = invader;
-                                        Sparks1.Emissive = true;
-                                        YSortedEmitterList.Add(Sparks1);
-
-                                        Emitter FireEmitter = new Emitter(ToonSmoke2, new Vector2(invader.Position.X + invader.CurrentAnimation.FrameSize.X - 10,
-                                                                                                  invader.Position.Y + invader.CurrentAnimation.FrameSize.Y / 2),
-                                            new Vector2(-120f, -116f), new Vector2(6.85f, 9.9f),
-                                            new Vector2(1200f, 1500f), 1f, false, new Vector2(0f, 0f), new Vector2(-2f, 2f), new Vector2(0.07f, 0.09f),
-                                             new Color(255, 128, 0, 60), Color.Black,
-                                            -0.035f, -1f, 51f, 4, true, new Vector2(invader.MaxY + 8, invader.MaxY + 32), true, invader.MaxY / 1080f,
-                                            true , true, new Vector2(0f, 0f), new Vector2(0f, 0f), 0.283f, true,
-                                            new Vector2(0.021f, 0.036f), false, false, 0f, false, false, true, null);
-
-                                        FireEmitter.TextureName = "FlameThrower";
-                                        FireEmitter.Emissive = true;
-                                        FireEmitter.Tether = invader;
-                                        YSortedEmitterList.Add(FireEmitter);
-
-                                        AddDrawable(FireEmitter, Sparks1);
+                                        FireEmitter.DrawDepth = heavyRangedInvader.TargetTrap.DrawDepth + (Game1._1Depth);
+                                        FireEmitter.YRange = new Vector2(heavyRangedInvader.TargetTrap.Bottom - 2, heavyRangedInvader.TargetTrap.Bottom + 2);                             
                                     }
-                                    else
-                                    {
 
-                                    }
+                                    FireEmitter.TextureName = "FlameThrower";
+                                    FireEmitter.Emissive = true;
+                                    FireEmitter.Tether = invader;
+                                    YSortedEmitterList.Add(FireEmitter);
+
+                                    AddDrawable(FireEmitter, Sparks1);
                                 }
                             }
                             break;
+                        #endregion
                     }
                 }
                 #endregion

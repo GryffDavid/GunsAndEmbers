@@ -26,7 +26,7 @@ namespace TowerDefensePrototype
             InvaderType = InvaderType.JumpMan;
             //InAir = false;
             //Airborne = false;
-            CanAttack = true;
+            //CanAttack = true;
 
             InvaderAnimationState = AnimationState_Invader.Walk;
             CurrentMacroBehaviour = MacroBehaviour.AttackTower;
@@ -67,6 +67,7 @@ namespace TowerDefensePrototype
 
             switch (JumpManBehaviour)
             {
+                #region Hovering
                 case SpecificBehaviour.Hovering:
                     {
                         if (Position.Y > HoverRange.X &&
@@ -81,6 +82,7 @@ namespace TowerDefensePrototype
                         }
                     }
                     break;
+                #endregion
             }
 
             if (CurrentBehaviourDelay > MaxBehaviourDelay)
@@ -116,16 +118,15 @@ namespace TowerDefensePrototype
                                     {
                                         if (DistToTower <= MinTowerRange)
                                         {
-                                            ////When the invader gets in range. It chooses the final firing angle
-                                            //if (InTowerRange == false)
-                                            //{
-                                            //    float nextAngle = Random.Next((int)AngleRange.X, (int)AngleRange.Y);
-                                            //    EndAngle = MathHelper.ToRadians(nextAngle);
-                                            //    Speed = 0.75f;
-                                            //}
-
                                             InTowerRange = true;
-                                            //CurrentMicroBehaviour = MicroBehaviour.AdjustTrajectory;
+
+                                            if (InAir == false)
+                                            {
+                                                Trajectory(new Vector2(-3, -8));
+                                                Gravity = 0.2f;
+                                                Airborne = false;
+                                                InAir = true;
+                                            }
                                         }
                                     }
                                     break;

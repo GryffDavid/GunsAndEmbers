@@ -163,19 +163,6 @@ namespace TowerDefensePrototype
                 }
                 #endregion
 
-                #region If the target reaches full health, disengage healing
-                if (TargetInvader.CurrentHP >= TargetInvader.MaxHP)
-                {
-                    TargetInvader.IsBeingHealed = false;
-                    TargetInvader.IsTargeted = false;
-                    TargettingInvader = false;
-                    IsHealing = false;
-
-                    CurrentHeight = (float)Game1.RandomDouble(YRange.X, YRange.Y);
-                    Velocity.X = 0;
-                }
-                #endregion
-
                 #region The drone is close enough to the target to start healing
                 if (Vector2.Distance(TargetInvader.Center, Center) < 200 &&
                     TargetInvader.CurrentHP < TargetInvader.MaxHP)
@@ -198,6 +185,19 @@ namespace TowerDefensePrototype
                     TargettingInvader = false;
                     IsHealing = false;
                     BoltList.Clear();
+
+                    CurrentHeight = (float)Game1.RandomDouble(YRange.X, YRange.Y);
+                    Velocity.X = 0;
+                }
+                #endregion
+
+                #region If the target reaches full health, disengage healing
+                if (TargetInvader.CurrentHP >= TargetInvader.MaxHP)
+                {
+                    TargetInvader.IsBeingHealed = false;
+                    TargetInvader.IsTargeted = false;
+                    TargettingInvader = false;
+                    IsHealing = false;
 
                     CurrentHeight = (float)Game1.RandomDouble(YRange.X, YRange.Y);
                     Velocity.X = 0;

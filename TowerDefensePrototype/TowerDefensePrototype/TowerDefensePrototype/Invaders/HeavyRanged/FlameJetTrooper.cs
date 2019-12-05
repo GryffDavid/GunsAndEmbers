@@ -19,8 +19,10 @@ namespace TowerDefensePrototype
         SpecificBehaviour JumpManBehaviour = SpecificBehaviour.None;
 
         public Vector2 HoverRange = new Vector2(90, 110);
+        public Vector2 TrapDirection;
 
         public float FlameTime, CurrentFlameTime;
+        
 
         public FlameJetTrooper(Vector2 position, Vector2? yRange = null)
             : base(position, yRange)
@@ -30,7 +32,7 @@ namespace TowerDefensePrototype
             InvaderType = InvaderType.FlameJetTrooper;
             //InAir = false;
             //Airborne = false;
-            CanAttack = true;
+            //CanAttack = true;
 
             InvaderAnimationState = AnimationState_Invader.Walk;
             CurrentMacroBehaviour = MacroBehaviour.AttackTower;
@@ -43,7 +45,7 @@ namespace TowerDefensePrototype
 
             RangedAttackTiming = new RangedAttackTiming()
             {
-                MaxFireDelay = 400,
+                MaxFireDelay = 250,
                 CurrentFireDelay = 0
             };
 
@@ -53,6 +55,12 @@ namespace TowerDefensePrototype
             EndAngle = 0;
 
             FlameTime = 3500f;
+
+            //if (TrapList != null && TrapList.Count > 0)
+            //{
+            //    //Find the closest trap to target
+            //    TargetTrap = TrapList.OrderBy(Trap => Vector2.Distance(Position, Trap.Position)).FirstOrDefault(Trap => Trap.Solid == true);
+            //}
         }
 
         public override void Update(GameTime gameTime, Vector2 cursorPosition)
@@ -76,28 +84,44 @@ namespace TowerDefensePrototype
                 #region Hovering
                 case SpecificBehaviour.Hovering:
                     {
+                        if (TargetTrap != null)
+                        {
+                            TrapDirection = new Vector2(TargetTrap.Center.X, TargetTrap.Bottom) - Center;
+                            TrapDirection.Normalize();
+
+                            float Angle = (float)Math.Atan2(TrapDirection.Y, TrapDirection.X);// -(float)Math.PI / 2;
+
+                            EmitterList.ForEach(Emitter =>
+                                {
+                                    if (Emitter.Tether == this && Emitter.TextureName == "FlameThrower")
+                                    {
+                                        Emitter.AngleRange = new Vector2(MathHelper.ToDegrees(-Angle), MathHelper.ToDegrees(-Angle));
+                                    }
+                                });
+                        }
+
                         if (CurrentFlameTime < FlameTime)
                         {
                             CurrentFlameTime += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
                         }
 
-                        if (CurrentFlameTime >= FlameTime)
-                        {
-                            JumpManBehaviour = SpecificBehaviour.None;
-                            CurrentMicroBehaviour = MicroBehaviour.MovingForwards;
-                            Gravity = 0.2f;
-                            Airborne = false;
-                            CurrentFlameTime = 0;
+                        //if (CurrentFlameTime >= FlameTime)
+                        //{
+                        //    JumpManBehaviour = SpecificBehaviour.None;
+                        //    CurrentMicroBehaviour = MicroBehaviour.MovingForwards;
+                        //    Gravity = 0.2f;
+                        //    Airborne = false;
+                        //    CurrentFlameTime = 0;
 
-                            EmitterList.ForEach(Emitter =>
-                            {
-                                //Had to use the TextureName to make sure if an invader has another particle effect applied that
-                                //I don't cancel that out too. e.g. If the invader is already on fire/poisoned and uses the flamethrower
-                                //I don't want to also cancel out the particle effect that shows the fire/poison
-                                if (Emitter.Tether == this && Emitter.TextureName == "FlameThrower")
-                                    Emitter.AddMore = false;
-                            });
-                        }
+                        //    EmitterList.ForEach(Emitter =>
+                        //    {
+                        //        //Had to use the TextureName to make sure if an invader has another particle effect applied that
+                        //        //I don't cancel that out too. e.g. If the invader is already on fire/poisoned and uses the flamethrower
+                        //        //I don't want to also cancel out the particle effect that shows the fire/poison
+                        //        if (Emitter.Tether == this && Emitter.TextureName == "FlameThrower")
+                        //            Emitter.AddMore = false;
+                        //    });
+                        //}
 
                         if (Position.Y > HoverRange.X &&
                             Position.Y < HoverRange.Y)
@@ -140,23 +164,35 @@ namespace TowerDefensePrototype
                             }
                             #endregion
 
+                            if (TargetTrap == null)
+                            {
+                                if (TrapList != null && TrapList.Count > 0)
+                                {
+                                    //Find the closest trap to target
+                                    TargetTrap = TrapList.OrderBy(Trap => Vector2.Distance(Position, Trap.Position)).FirstOrDefault(Trap => MaxY > Trap.CollisionBox.Min.Y && MaxY < Trap.CollisionBox.Max.Y && Trap.Solid == true);
+                                }
+                            }
+
+                            if (TargetTrap != null)
+                            {
+                                TrapPosition = TargetTrap.BoundingBox.Min.X;
+                                DistToTrap = Position.X - TrapPosition;
+                            }
+
                             switch (CurrentMacroBehaviour)
                             {
                                 #region Attack Tower
                                 case MacroBehaviour.AttackTower:
                                     {
-                                        if (DistToTower <= MinTowerRange)
+                                        if (InTowerRange == true)
                                         {
-                                            ////When the invader gets in range. It chooses the final firing angle
-                                            //if (InTowerRange == false)
-                                            //{
-                                            //    float nextAngle = Random.Next((int)AngleRange.X, (int)AngleRange.Y);
-                                            //    EndAngle = MathHelper.ToRadians(nextAngle);
-                                            //    Speed = 0.75f;
-                                            //}
-
-                                            InTowerRange = true;
-                                            //CurrentMicroBehaviour = MicroBehaviour.AdjustTrajectory;
+                                            if (InAir == false)
+                                            {
+                                                Trajectory(new Vector2(-3, -8));
+                                                Gravity = 0.2f;
+                                                Airborne = false;
+                                                InAir = true;
+                                            }
                                         }
                                     }
                                     break;
