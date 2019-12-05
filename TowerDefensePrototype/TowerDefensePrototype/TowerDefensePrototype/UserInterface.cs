@@ -520,7 +520,7 @@ namespace TowerDefensePrototype
                     {
                         if (ProjectileList[i].Ray.Intersects(invader.BoundingBox) != null && ProjectileList[i].Active == true)
                         {
-                            invader.ChangeHP(-10);
+                            invader.ChangeHP(-100);
                             ProjectileList[i].Active = false;
                             ProjectileList.Clear();                                                    
                         }
