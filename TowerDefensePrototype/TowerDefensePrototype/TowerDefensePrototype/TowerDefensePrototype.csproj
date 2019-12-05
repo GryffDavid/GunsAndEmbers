@@ -140,9 +140,11 @@
     <Compile Include="Levels\World1\Level3.cs" />
     <Compile Include="Levels\World1\Level2.cs" />
     <Compile Include="Levels\World1\Level1.cs" />
+    <Compile Include="Projectiles\FelProjectile.cs" />
     <Compile Include="Projectiles\LightningProjectile.cs" />
     <Compile Include="Invaders\StationaryCannon.cs" />
     <Compile Include="Turrets\EnergyTurret.cs" />
+    <Compile Include="Turrets\FelCannon.cs" />
     <Compile Include="Upgrades\Upgrade2.cs" />
     <Compile Include="Invaders\Archer.cs" />
     <Compile Include="Invaders\FireElemental.cs" />
@@ -198,6 +200,7 @@
     <Compile Include="Turrets\LightningTurret.cs" />
     <Compile Include="Upgrades\Upgrade1.cs" />
     <Compile Include="Basics\Wave.cs" />
+    <Compile Include="Basics\WeaponBox.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Service References\aOtherStuff\Game.ico" />

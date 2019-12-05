@@ -31,7 +31,6 @@ Content\Icons\MachineGunTurretIcon.xnb
 Content\Icons\CannonTurretIcon.xnb
 Content\Icons\FlameThrowerTurretIcon.xnb
 Content\Backgrounds\TestBackground.xnb
-Content\Ground7.xnb
 Content\Invaders\SpiderSprite.xnb
 Content\Projectiles\AcidProjectileSprite.xnb
 Content\Invaders\Slime.xnb
@@ -79,14 +78,16 @@ Content\Traps\LandMineGreenSmall.xnb
 Content\Traps\LandMineRedSmall.xnb
 Content\Cursors\BombCursor.xnb
 Content\BackgroundTest2.xnb
-Content\Ground1.xnb
 Content\HealthBar\HealthBarForeground.xnb
 Content\HealthBar\ShieldBarForeground.xnb
 Content\HealthBar\Background.xnb
 Content\Particles\GlowBall.xnb
-Content\Shield.xnb
 Content\Backgrounds\Space2.xnb
 Content\Tower2.xnb
+Content\ShieldIcon.xnb
+Content\Ground1.xnb
+Content\WeaponBox.xnb
+Content\Buttons\Button3.xnb
 Content\Fonts\BoxFont1.xnb
 Content\Fonts\HUDFont.xnb
 Content\Fonts\ButtonFont.xnb
@@ -110,3 +111,6 @@ Content\Sounds\Ricochet2.xnb
 Content\Sounds\Ricochet3.xnb
 Content\Sounds\Splat1.xnb
 Content\Sounds\Splat2.xnb
+Content\Sounds\MenuPing.xnb
+Content\Sounds\MenuWoosh.xnb
+Content\Sounds\MenuMusic1.xnb

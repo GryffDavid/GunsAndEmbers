@@ -16,8 +16,7 @@ namespace TowerDefensePrototype
         SpriteFont Font;
         String Text;
         Vector2 Offset;
-        Vector2 ActualSize, TextPosition;
-        Rectangle DestinationRectangle;
+        Vector2 ActualSize;
         Color Color;
         public bool Loaded;
 
