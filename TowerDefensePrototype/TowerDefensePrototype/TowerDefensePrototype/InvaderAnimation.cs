@@ -5,26 +5,28 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using System.Diagnostics;
 
 namespace TowerDefensePrototype
 {
-    public class Animation
+    public class InvaderAnimation
     {
         public Texture2D Texture;
         public Vector2 FrameSize;
-        public Rectangle SourceRectangle;
+        public Rectangle DiffuseSourceRectangle, NormalSourceRectangle;
         public int TotalFrames;
         public int CurrentFrame = 0;
         public double FrameDelay, CurrentFrameDelay;
         public bool Animated = false;
-        public bool Looping = false;        
+        public bool Looping = false;
+        public InvaderState CurrentInvaderState;
 
-        public Vector2 GetFrameSize()
+        public Vector2 GetInvaderFrameSize()
         {
-            FrameSize = new Vector2(Texture.Width / TotalFrames, Texture.Height);
+            FrameSize = new Vector2(Texture.Width / TotalFrames, Texture.Height/2);
             return FrameSize;
         }
-
+        
         public void Update(GameTime gameTime)
         {
             if (Animated == true)
@@ -47,7 +49,8 @@ namespace TowerDefensePrototype
                 }
             }
 
-            SourceRectangle = new Rectangle((int)(CurrentFrame * FrameSize.X), 0, (int)FrameSize.X, (int)FrameSize.Y);
+            DiffuseSourceRectangle = new Rectangle((int)(CurrentFrame * FrameSize.X), 0, (int)FrameSize.X, (int)FrameSize.Y);
+            NormalSourceRectangle = new Rectangle((int)(CurrentFrame * FrameSize.X), (int)FrameSize.Y, (int)FrameSize.X, (int)FrameSize.Y);
         }
     }
 }

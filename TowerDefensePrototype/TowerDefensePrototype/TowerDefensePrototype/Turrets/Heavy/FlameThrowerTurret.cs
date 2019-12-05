@@ -28,7 +28,7 @@ namespace TowerDefensePrototype
             CoolValue = 0.5f;
             ShotHeat = 10;
 
-            CurrentAnimation = new Animation()
+            CurrentAnimation = new InvaderAnimation()
             {
                 TotalFrames = 6
             };

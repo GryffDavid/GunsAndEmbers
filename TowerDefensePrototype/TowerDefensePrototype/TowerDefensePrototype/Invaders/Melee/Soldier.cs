@@ -28,7 +28,7 @@ namespace TowerDefensePrototype
             YRange = new Vector2(700, 900);
             Airborne = false;
 
-            CurrentInvaderState = InvaderState.Walking;
+            InvaderState = InvaderState.Walk;
 
             //DustEmitter = new Emitter("Particles/Smoke", new Vector2(DestinationRectangle.Center.X, DestinationRectangle.Bottom - 8),
             //                                   new Vector2(60, 60), new Vector2(0.5f, 1f), new Vector2(20, 30), 0.5f, true, new Vector2(0, 0),
@@ -45,38 +45,17 @@ namespace TowerDefensePrototype
 
         public override void Update(GameTime gameTime, Vector2 cursorPosition)
         {
-            if (Velocity.X != 0)
-            {
-                CurrentInvaderState = InvaderState.Walking;
-            }
-            else
-            {
-                CurrentInvaderState = InvaderState.Standing;
-            }
+            //if (Velocity.X < 0)
+            //{
+            //    CurrentInvaderState = InvaderState.Walk;
+            //}
 
-            if (CurrentInvaderState != PreviousInvaderState || PreviousInvaderState == null)
-            {                
-                switch (CurrentInvaderState)
-                {
-                    case InvaderState.Walking:
-                        CurrentTexture = TextureList[0];
-                        CurrentAnimation = new Animation() { Texture = CurrentTexture, TotalFrames = 4, FrameDelay = 150 };
-                        CurrentAnimation.Looping = true;
-                        CurrentAnimation.Animated = true;
-                        break;
-
-                    case InvaderState.Standing:
-                        CurrentTexture = TextureList[1];
-                        CurrentAnimation = new Animation() { Texture = CurrentTexture, TotalFrames = 2, FrameDelay = 300 };
-                        CurrentAnimation.Looping = true;
-                        CurrentAnimation.Animated = true;
-                        break;
-                }
-
- 
-                CurrentAnimation.GetFrameSize();
-                CurrentFrame = Random.Next(0, CurrentAnimation.TotalFrames);
-            }
+            //switch (InvaderState)
+            //{
+            //    case InvaderState.Walk:
+            //        CurrentAnimation = AnimationList[0];
+            //        break;
+            //}
 
             base.Update(gameTime, cursorPosition);
         }

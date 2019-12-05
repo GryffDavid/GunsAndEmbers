@@ -12,8 +12,6 @@ namespace TowerDefensePrototype
         public Texture2D ShellTexture;
         static Random Random = new Random();
 
-        public bool Active = true;
-
         float CurrentTime, MaxTime;
         float Transparency;
 
@@ -21,6 +19,8 @@ namespace TowerDefensePrototype
                 
         public ShellCasing(Vector2 position, Vector2 velocity, Texture2D shellTexture)
         {
+            Active = true;
+
             CurrentTime = 0;
             MaxTime = 8000;
 

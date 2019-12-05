@@ -29,43 +29,12 @@ namespace TowerDefensePrototype
             YRange = new Vector2(700, 900);
             Airborne = false;
 
-            CurrentInvaderState = InvaderState.Walking;
+            InvaderState = InvaderState.Walk;
         }
 
         public void Update(GameTime gameTime)
         {
-            if (Velocity.X != 0)
-            {
-                CurrentInvaderState = InvaderState.Walking;
-            }
-            else
-            {
-                CurrentInvaderState = InvaderState.Standing;
-            }
 
-            if (CurrentInvaderState != PreviousInvaderState || PreviousInvaderState == null)
-            {
-                switch (CurrentInvaderState)
-                {
-                    case InvaderState.Walking:
-                        CurrentTexture = TextureList[0];
-                        CurrentAnimation = new Animation() { Texture = CurrentTexture, TotalFrames = 4, FrameDelay = 150 };
-                        CurrentAnimation.Looping = true;
-                        CurrentAnimation.Animated = true;
-                        break;
-
-                    case InvaderState.Standing:
-                        CurrentTexture = TextureList[1];
-                        CurrentAnimation = new Animation() { Texture = CurrentTexture, TotalFrames = 2, FrameDelay = 300 };
-                        CurrentAnimation.Looping = true;
-                        CurrentAnimation.Animated = true;
-                        break;
-                }
-
-
-                CurrentAnimation.GetFrameSize();
-                CurrentFrame = Random.Next(0, CurrentAnimation.TotalFrames);
-            }
         }
 
         public override void TrapDamage(Trap trap)

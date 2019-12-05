@@ -7,15 +7,15 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace TowerDefensePrototype
 {
-    public class Particle
+    public class Particle : Drawable
     {
         public Texture2D Texture;
         public Vector2 CurrentPosition, Direction, Velocity, YRange, Origin, StartingPosition, Friction;
         public Rectangle DestinationRectangle;
         public float Angle, Speed, CurrentHP, MaxHP, CurrentTransparency, MaxTransparency, CurrentScale, MaxScale, MaxY;
-        public float RotationIncrement, CurrentRotation, Gravity, FadeDelay, CurrentFadeDelay, DrawDepth;
+        public float RotationIncrement, CurrentRotation, Gravity, FadeDelay, CurrentFadeDelay;
         public Color CurrentColor, EndColor, StartColor;
-        public bool Active, Fade, BouncedOnGround, CanBounce, Shrink, StopBounce, HardBounce, Shadow, RotateVelocity, SortDepth;
+        public bool Fade, BouncedOnGround, CanBounce, Shrink, StopBounce, HardBounce, Shadow, RotateVelocity, SortDepth;
         static Random Random = new Random();
         public SpriteEffects Orientation;
         Color Color = Color.White;
@@ -252,7 +252,7 @@ namespace TowerDefensePrototype
             RadRotation = MathHelper.ToRadians(CurrentRotation);
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public override void Draw(SpriteBatch spriteBatch)
         {
             if (Active == true)
             {

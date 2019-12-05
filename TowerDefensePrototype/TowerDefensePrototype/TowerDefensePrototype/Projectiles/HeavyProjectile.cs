@@ -13,8 +13,8 @@ namespace TowerDefensePrototype
         public Texture2D Texture;
         public List<Emitter> EmitterList;
         public Vector2 Velocity, Position, YRange, Scale, Origin, Direction;
-        public float Angle, Speed, Gravity, CurrentRotation, CurrentTransparency, MaxY, DrawDepth;
-        public bool Active, Rotate, Fade, Shadow;
+        public float Angle, Speed, Gravity, CurrentRotation, CurrentTransparency, MaxY;
+        public bool Rotate, Fade, Shadow;
         public Color CurrentColor;
         public HeavyProjectileType HeavyProjectileType;
         public Rectangle DestinationRectangle, CollisionRectangle;
@@ -91,6 +91,7 @@ namespace TowerDefensePrototype
 
         public void Initialize()
         {
+            Active = true;
             CurrentTransparency = 0;
             MaxY = Random.Next((int)YRange.X, (int)YRange.Y);
             Constraints = new Rectangle(0, 0, 1920, (int)MaxY);

@@ -27,7 +27,7 @@ namespace TowerDefensePrototype
             InvaderType = InvaderType.FireElemental;
             YRange = new Vector2(700, 900);
 
-            CurrentAnimation = new Animation()
+            CurrentAnimation = new InvaderAnimation()
             {
                 TotalFrames = 1,
                 FrameDelay = 500

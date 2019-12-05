@@ -28,7 +28,7 @@ namespace TowerDefensePrototype
 
             TurretFireType = TurretFireType.SemiAuto;
 
-            CurrentAnimation = new Animation()
+            CurrentAnimation = new InvaderAnimation()
             {
                 TotalFrames = 6
             };

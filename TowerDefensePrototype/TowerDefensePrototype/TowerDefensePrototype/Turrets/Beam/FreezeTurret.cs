@@ -23,7 +23,7 @@ namespace TowerDefensePrototype
             Looping = false;
             ResourceCost = 200;
 
-            CurrentAnimation = new Animation()
+            CurrentAnimation = new InvaderAnimation()
             {
                 TotalFrames = 6
             };

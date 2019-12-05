@@ -30,7 +30,7 @@ namespace TowerDefensePrototype
             Range = 500;
             TurretFireType = TurretFireType.FullAuto;
 
-            CurrentAnimation = new Animation()
+            CurrentAnimation = new InvaderAnimation()
             {
                 TotalFrames = 6
             };
@@ -65,14 +65,15 @@ namespace TowerDefensePrototype
 
             if (Active == true)
             {
+                spriteBatch.Draw(TurretBarrel, BarrelRectangle, SourceRectangle, Color, Rotation, BarrelPivot, SpriteEffects.None, 0.89f);
+
+                spriteBatch.Draw(TurretBase, BaseRectangle, null, Color, 0, BasePivot, SpriteEffects.None, 0.90f);
+
                 if (AmmoBelt != null)
                 {
                     AmmoBelt.Draw(spriteBatch);
                 }
 
-                spriteBatch.Draw(TurretBarrel, BarrelRectangle, SourceRectangle, Color, Rotation, BarrelPivot, SpriteEffects.None, 0.89f);
-
-                spriteBatch.Draw(TurretBase, BaseRectangle, null, Color, 0, BasePivot, SpriteEffects.None, 0.90f);
             }
         }
     }

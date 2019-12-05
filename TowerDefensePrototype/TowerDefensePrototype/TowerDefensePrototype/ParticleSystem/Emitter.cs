@@ -8,16 +8,16 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace TowerDefensePrototype
 {
-    public class Emitter
+    public class Emitter : Drawable
     {
         public Vector2 Position, AngleRange;
         public List<Particle> ParticleList;
         public Texture2D Texture;
         public Vector2 ScaleRange, HPRange, RotationIncrementRange, SpeedRange, StartingRotationRange, EmitterDirection, EmitterVelocity, YRange, Friction;
         public float Transparency, Gravity, ActiveSeconds, Interval, MaxY, EmitterSpeed,
-                     EmitterAngle, EmitterGravity, FadeDelay, DrawDepth, StartingInterval;
+                     EmitterAngle, EmitterGravity, FadeDelay, StartingInterval;
         public Color StartColor, EndColor;
-        public bool Active, Fade, CanBounce, AddMore, Shrink, StopBounce, HardBounce, BouncedOnGround, 
+        public bool Fade, CanBounce, AddMore, Shrink, StopBounce, HardBounce, BouncedOnGround, 
                     RotateVelocity, FlipHor, FlipVer, ReduceDensity, SortParticles;
         public string TextureName;
         public int Burst;
@@ -412,27 +412,34 @@ namespace TowerDefensePrototype
                 }
             }
 
-            //for (int i = 0; i < ParticleList.Count; i++)
-            //{
-            //    if (ParticleList[i].Active == false)
-            //        ParticleList.RemoveAt(i);
-            //}
-
-            ParticleList.RemoveAll(Particle => Particle.Active == false);
-
             foreach (Particle particle in ParticleList)
             {
                 particle.Update(gameTime);
             }
-            
+            ParticleList.RemoveAll(Particle => Particle.Active == false);
+
+            ////MIGHT BE BETTER TO USE THIS
+            //for (int i = 0; i < ParticleList.Count; i++)
+            //{
+            //    ParticleList[i].Update(gameTime);
+
+            //    if (ParticleList[i].Active == false)
+            //        ParticleList.RemoveAt(i);
+            //}            
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public override void Draw(SpriteBatch spriteBatch)
         {
             foreach (Particle particle in ParticleList)
             {
                 particle.Draw(spriteBatch);
             }
+
+            //MIGHT BE BETTER TO USE THIS
+            //for (int i = 0; i < ParticleList.Count; i++)
+            //{
+            //    ParticleList[i].Draw(spriteBatch);
+            //}
         }
 
         public double DoubleRange(double one, double two)

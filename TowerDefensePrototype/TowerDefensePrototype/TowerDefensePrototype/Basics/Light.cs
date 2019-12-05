@@ -11,56 +11,25 @@ namespace TowerDefensePrototype
     public class Light
     {
         public Texture2D LightTexture;
-        public Color LightColor;
-        public Vector2 LightPosition, Scale;
-        public string TextureName;
-        public float DrawDepth;
-        public Trap TrapAnchor;
+        public float Range;
+        public float Radius;
 
-        public Light(string textureName, Vector2 position, Vector2 scale, Color color)
+        public Vector3 Position;
+        public Color Color;
+        public float Power;
+        public int LightDecay;
+        public bool Active;
+        public float Depth;
+
+        public Light()
         {
-            TextureName = textureName;
-            LightPosition = position;
-            LightColor = color;
-            Scale = scale;
+            Range = 500;
+            Radius = 250;
         }
 
-        public Light(Texture2D texture, Vector2 position, Vector2 scale, Color color)
+        public void Update()
         {
-            LightTexture = texture;
-            LightPosition = position;
-            LightColor = color;
-            Scale = scale;
-            DrawDepth = (LightPosition.Y) / 1080f;
-        }
-
-        public Light(Texture2D texture, Vector2 position, Vector2 scale, Color color, float drawDepth, Trap trapAnchor)
-        {
-            LightTexture = texture;
-            LightPosition = position;
-            LightColor = color;
-            Scale = scale;
-            DrawDepth = drawDepth;
-            TrapAnchor = trapAnchor;
-        }
-
-        public void LoadContent(ContentManager contentManager)
-        {
-            LightTexture = contentManager.Load<Texture2D>(TextureName);
-        }
-
-        public void Update(GameTime gameTime)
-        {
-
-        }
-
-        public void Draw(SpriteBatch spriteBatch)
-        {
-            spriteBatch.Draw(LightTexture, 
-                new Rectangle(
-                    (int)LightPosition.X, (int)LightPosition.Y, 
-                    (int)(LightTexture.Width*Scale.X), (int)(LightTexture.Height*Scale.Y)),
-                null, LightColor, 0, new Vector2(LightTexture.Width / 2, LightTexture.Height / 2), SpriteEffects.None, DrawDepth);
+            Depth = (Position.Y / 1080f);
         }
     }
 }

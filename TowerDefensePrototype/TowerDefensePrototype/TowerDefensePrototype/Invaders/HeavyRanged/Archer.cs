@@ -30,7 +30,7 @@ namespace TowerDefensePrototype
             AngleRange = new Vector2(110, 160);
             PowerRange = new Vector2(9, 12);
 
-            CurrentAnimation = new Animation()
+            CurrentAnimation = new InvaderAnimation()
             {
                 TotalFrames = 1,
                 FrameDelay = 250

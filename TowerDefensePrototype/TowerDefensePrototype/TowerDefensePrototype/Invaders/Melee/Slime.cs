@@ -26,7 +26,7 @@ namespace TowerDefensePrototype
             InvaderType = InvaderType.Slime;
             YRange = new Vector2(700, 900);
 
-            CurrentAnimation = new Animation() 
+            CurrentAnimation = new InvaderAnimation() 
             {
                 TotalFrames = 1, 
                 FrameDelay = 120 

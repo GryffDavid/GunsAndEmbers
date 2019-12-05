@@ -10,7 +10,7 @@ namespace TowerDefensePrototype
 {
     abstract class HeavyRangedInvader : Invader
     {
-        public Animation BarrelAnimation;
+        public InvaderAnimation BarrelAnimation;
         public Rectangle BarrelDestinationRectangle;
         public int RangedAttackPower;
         public Vector2 AngleRange, DistanceRange, PowerRange, BarrelPivot, BasePivot, BarrelEnd;

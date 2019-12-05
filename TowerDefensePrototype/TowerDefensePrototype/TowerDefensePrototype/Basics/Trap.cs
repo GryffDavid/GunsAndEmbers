@@ -10,19 +10,19 @@ namespace TowerDefensePrototype
 {
     public enum TrapState { Untriggered, Triggering, Active, Resetting };
 
-    public abstract class Trap
+    public abstract class Trap : Drawable
     {
         public Texture2D CurrentTexture;
         public List<Texture2D> TextureList;
-        public Animation CurrentAnimation;
+        public InvaderAnimation CurrentAnimation;
         public Rectangle DestinationRectangle, SourceRectangle;
         public BoundingBox BoundingBox;
         public TrapType TrapType;
         public List<Emitter> TrapEmitterList = new List<Emitter>();
         public Vector2 Position, FrameSize;
         public Vector2 Scale = new Vector2(1, 1);
-        public bool Active, Solid, CanTrigger, Affected;
-        public float MaxHP, CurrentHP, DetonateDelay, CurrentDetonateDelay, AffectedTime, CurrentAffectedTime, Bottom, DrawDepth;
+        public bool Solid, CanTrigger, Affected;
+        public float MaxHP, CurrentHP, DetonateDelay, CurrentDetonateDelay, AffectedTime, CurrentAffectedTime, Bottom;
         public int ResourceCost, DetonateLimit, CurrentDetonateLimit, CurrentFrame;
         public double CurrentFrameDelay;
         public static Random Random = new Random();
@@ -65,6 +65,7 @@ namespace TowerDefensePrototype
                 DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, (int)FrameSize.X, (int)FrameSize.Y);
             }
 
+            DrawDepth = (float)(DestinationRectangle.Bottom / 1080f);
             Affected = false;
         }
 
@@ -165,7 +166,7 @@ namespace TowerDefensePrototype
             }
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public override void Draw(SpriteBatch spriteBatch)
         {
             if (TrapEmitterList.Count > 0)
             {
@@ -184,14 +185,17 @@ namespace TowerDefensePrototype
 
         public void DrawBars(GraphicsDevice graphicsDevice, BasicEffect basicEffect)
         {
-            foreach (EffectPass pass in basicEffect.CurrentTechnique.Passes)
+            if (Active == true)
             {
-                pass.Apply();
+                foreach (EffectPass pass in basicEffect.CurrentTechnique.Passes)
+                {
+                    pass.Apply();
 
-                if (DetonateDelay > 0)
-                    TimingBar.Draw(graphicsDevice);
-                    
-                HealthBar.Draw(graphicsDevice);
+                    if (DetonateDelay > 0)
+                        TimingBar.Draw(graphicsDevice);
+
+                    HealthBar.Draw(graphicsDevice);
+                }
             }
         }
     }

@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace TowerDefensePrototype
 {
-    public class VerletObject
+    public class VerletObject : Drawable
     {
         float Bounce = 0.6f;
         float Gravity = 0.03f;
@@ -64,7 +64,7 @@ namespace TowerDefensePrototype
             }
         }
 
-        public virtual void Draw(SpriteBatch spriteBatch)
+        public override void Draw(SpriteBatch spriteBatch)
         {
 
         }

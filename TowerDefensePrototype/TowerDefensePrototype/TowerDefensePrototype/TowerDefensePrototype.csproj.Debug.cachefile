@@ -140,6 +140,7 @@ Content\Invaders\HealDrone\HealDrone.xnb
 Content\JetSprite3.xnb
 Content\SmallLight.xnb
 Content\BaseLight.xnb
+Content\tileNormal.xnb
 Content\Sounds\Menu\MenuClick.xnb
 Content\Sounds\FireTrapStart.xnb
 Content\Sounds\Menu\MenuAmbiance.xnb
@@ -171,4 +172,8 @@ Content\Shaders\BackgroundEffect.xnb
 Content\Shaders\ButtonBlurEffect.xnb
 Content\Shaders\CrepuscularRaysEffect.xnb
 Content\Shaders\AlphaTest.xnb
+Content\DepthEffect.xnb
+Content\LightCombinedEffect.xnb
+Content\LightEffect.xnb
+Content\ShadowBlur.xnb
 Content\StoryDialogue\StoryDialogue1.xnb

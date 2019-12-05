@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace TowerDefensePrototype
 {
-    public abstract class Turret
+    public abstract class Turret : Drawable
     {
         public Texture2D TurretBase, TurretBarrel;
         public Vector2 Direction, Position, MousePosition, BarrelPivot, BasePivot, 
@@ -26,7 +26,7 @@ namespace TowerDefensePrototype
         static Random Random = new Random();
         public TurretType TurretType;
         public Color Color;        
-        public Animation CurrentAnimation;
+        public InvaderAnimation CurrentAnimation;
         public List<Emitter> EmitterList = new List<Emitter>();
         public DamageType DamageType;
         public UIBar TimingBar, HealthBar;
@@ -267,7 +267,7 @@ namespace TowerDefensePrototype
             PreviousMouseState = CurrentMouseState;
         }
 
-        public virtual void Draw(SpriteBatch spriteBatch)
+        public override void Draw(SpriteBatch spriteBatch)
         {
         //    ///
         //    //Draw stylized health bars with quads instead.

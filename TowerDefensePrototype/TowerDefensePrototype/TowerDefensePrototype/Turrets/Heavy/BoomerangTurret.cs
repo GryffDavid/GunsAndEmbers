@@ -24,7 +24,7 @@ namespace TowerDefensePrototype
             MaxHealth = 500;
             ResourceCost = 600;
 
-            CurrentAnimation = new Animation()
+            CurrentAnimation = new InvaderAnimation()
             {
                 TotalFrames = 6
             };

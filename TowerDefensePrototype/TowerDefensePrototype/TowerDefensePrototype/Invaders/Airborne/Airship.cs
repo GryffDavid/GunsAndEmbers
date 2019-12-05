@@ -31,7 +31,7 @@ namespace TowerDefensePrototype
             PowerRange = new Vector2(9, 12);
             Airborne = true;
 
-            CurrentAnimation = new Animation()
+            CurrentAnimation = new InvaderAnimation()
             {
                 TotalFrames = 1,
                 FrameDelay = 500

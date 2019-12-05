@@ -46,13 +46,7 @@ namespace TowerDefensePrototype
             Airborne = true;
             InAir = true;
 
-            CurrentInvaderState = InvaderState.Walking;
-
-            CurrentAnimation = new Animation()
-            {
-                TotalFrames = 1,
-                FrameDelay = 500
-            };
+            InvaderState = InvaderState.Walk;
         }
 
         public override void Update(GameTime gameTime, Vector2 cursorPosition)
@@ -64,37 +58,7 @@ namespace TowerDefensePrototype
 
             BoltList.RemoveAll(Bolt => Bolt.Alpha <= 0);
 
-            if (Velocity.X != 0)
-            {
-                CurrentInvaderState = InvaderState.Walking;
-            }
-            else
-            {
-                CurrentInvaderState = InvaderState.Standing;
-            }
-
-            if (CurrentInvaderState != PreviousInvaderState || PreviousInvaderState == null)
-            {
-                switch (CurrentInvaderState)
-                {
-                    case InvaderState.Walking:
-                        CurrentTexture = TextureList[0];
-                        CurrentAnimation = new Animation() { Texture = CurrentTexture, TotalFrames = 1, FrameDelay = 150 };
-                        CurrentAnimation.Looping = false;
-                        CurrentAnimation.Animated = false;
-                        break;
-
-                    case InvaderState.Standing:
-                        CurrentTexture = TextureList[0];
-                        CurrentAnimation = new Animation() { Texture = CurrentTexture, TotalFrames = 1, FrameDelay = 300 };
-                        CurrentAnimation.Looping = false;
-                        CurrentAnimation.Animated = false;
-                        break;
-                }
-
-                CurrentAnimation.GetFrameSize();
-                CurrentFrame = Random.Next(0, CurrentAnimation.TotalFrames);
-            }
+            
 
             base.Update(gameTime, cursorPosition);
         }
