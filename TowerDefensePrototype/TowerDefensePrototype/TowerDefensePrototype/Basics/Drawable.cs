@@ -126,6 +126,7 @@ namespace TowerDefensePrototype
                 graphics.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, vertices, 0, 4, indices, 0, 2);
             }
         }
+
         
 
         /// <summary>
@@ -159,6 +160,11 @@ namespace TowerDefensePrototype
 
         }
 
+        public virtual void Draw(GraphicsDevice graphics, BasicEffect effect, Effect shadowEffect, Effect particleEffect)
+        {
+
+        }
+
 
         /// <summary>
         /// Draw the depth of the sprite - reduce to single byte value to draw grey
@@ -173,6 +179,29 @@ namespace TowerDefensePrototype
         public virtual void DrawSpriteNormal(GraphicsDevice graphics, BasicEffect basicEffect)
         {
             
+        }
+
+        public virtual void DrawSpriteOcclusion(GraphicsDevice graphics, BasicEffect effect)
+        {
+            effect.TextureEnabled = true;
+            effect.VertexColorEnabled = true;
+            effect.Texture = Texture;
+
+            for (int i = 0; i < 4; i++)
+            {
+                vertices[i].Color = Color.Black;
+            }
+
+            foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+            {
+                pass.Apply();
+                graphics.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, vertices, 0, 4, indices, 0, 2, VertexPositionColorTexture.VertexDeclaration);
+            }
+
+            for (int i = 0; i < 4; i++)
+            {
+                vertices[i].Color = Color;
+            }
         }
     }
 }

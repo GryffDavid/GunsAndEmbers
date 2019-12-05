@@ -104,6 +104,9 @@ namespace TowerDefensePrototype
 
         public int ShotsFired = 0;
 
+        //This is intended to be used to let invaders prioritize based on the most/least effective (or used) turret
+        public float TotalDamageDone = 0;
+
         private ButtonState _LeftButtonState;
         public ButtonState LeftButtonState
         {

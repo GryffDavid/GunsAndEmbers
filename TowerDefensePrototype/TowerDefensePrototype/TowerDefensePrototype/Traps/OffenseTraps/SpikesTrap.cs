@@ -16,18 +16,49 @@ namespace TowerDefensePrototype
             get { return _ResourceCost; }
         }
 
+        public float ActiveTime, CurrentActiveTime;
+
         public SpikesTrap(Vector2 position)
             : base(position)
         {
             Solid = false;
+            OnGround = true;
+            MaxHP = 100;
             TrapType = TrapType.Spikes;
-            MaxHP = 50;
-            DetonateDelay = 2000;
-            DetonateLimit = 8;
+            DetonateLimit = -1;
+            ActiveTime = 3000f;
+            CurrentActiveTime = 0;
+            ChanceToFear = 0.05f;
+
+            NormalDamage = 20.0f;
         }
 
         public override void Update(GameTime gameTime)
         {
+            switch (TrapState)
+            {
+                default:
+                    OnGround = false;
+                    Solid = true;
+                    break;
+
+                case TrapAnimationState.Untriggered:
+                    OnGround = true;
+                    DrawDepth = 0f;
+                    Solid = false;
+                    break;
+
+                case TrapAnimationState.Triggering:
+                    OnGround = false;
+                    Solid = true;
+                    break;
+
+                case TrapAnimationState.Resetting:
+                    OnGround = false;
+                    Solid = true;
+                    break;
+            }
+
             base.Update(gameTime);
         }
     }

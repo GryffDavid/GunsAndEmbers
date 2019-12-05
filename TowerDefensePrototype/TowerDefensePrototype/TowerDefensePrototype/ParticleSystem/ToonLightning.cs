@@ -21,7 +21,7 @@ namespace TowerDefensePrototype
             public float Angle, Width;
         }
 
-        new Color Color = Color.White * 0.9f;
+        public Color Color = Color.White * 0.9f;
 
         public Vector2 LengthRange;
 
@@ -34,7 +34,7 @@ namespace TowerDefensePrototype
 
         public List<Node> NodeList = new List<Node>();
 
-        public ToonLightning(int segments, int width, Vector2 startPoint, Vector2 endPoint, Vector2 lenRang)
+        public ToonLightning(int segments, int width, Vector2 startPoint, Vector2 endPoint, Vector2 lenRang, Color color)
         {
             Active = true;
             LengthRange = lenRang;
@@ -46,6 +46,8 @@ namespace TowerDefensePrototype
 
             EndPosition = endPoint;
             StartPosition = startPoint;
+
+            Color = color;
 
             for (int i = 0; i < TotalLength / 2; i++)
             {

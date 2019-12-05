@@ -32,8 +32,6 @@ namespace TowerDefensePrototype
     
     public abstract class HeavyProjectile : Drawable
     {
-        
-
         #region For Verlet Physics
         public class Stick
         {
@@ -131,7 +129,7 @@ namespace TowerDefensePrototype
 
             MaxY = Random.Next((int)YRange.X, (int)YRange.Y);
             PreviousMaxY = MaxY;
-            DrawDepth = MaxY / 1080;
+            DrawDepth = MaxY / 1080f;
 
             if (blastRadius.HasValue)
                 BlastRadius = blastRadius.Value;
@@ -384,7 +382,7 @@ namespace TowerDefensePrototype
             }
         }
 
-        public override void Draw(GraphicsDevice graphics, BasicEffect effect, Effect shadowEffect, SpriteBatch spriteBatch)
+        public override void Draw(GraphicsDevice graphics, BasicEffect effect, Effect shadowEffect, Effect particleEffect)
         {
             if (Active == true)
             {
@@ -427,10 +425,71 @@ namespace TowerDefensePrototype
 
             foreach (Emitter emitter in EmitterList)
             {
-                emitter.Draw(spriteBatch);
+                emitter.Draw(graphics, particleEffect);
             }
 
-            base.Draw(graphics, effect, shadowEffect, spriteBatch);
+            base.Draw(graphics, effect, shadowEffect, particleEffect);
+        }
+
+        public override void DrawSpriteDepth(GraphicsDevice graphics, Effect effect)
+        {
+            if (Active == true)
+            {
+                effect.Parameters["Texture"].SetValue(Texture);
+                effect.Parameters["depth"].SetValue(DrawDepth);
+                effect.Parameters["World"].SetValue(Matrix.CreateTranslation(new Vector3(-Position.X - Origin.X, -Position.Y - Origin.Y, 0)) *
+                                                    Matrix.CreateRotationZ(CurrentRotation) *
+                                                    Matrix.CreateTranslation(new Vector3(Position.X, Position.Y, 0)));
+                
+                foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+                {
+                    pass.Apply();
+                    graphics.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, projectileVertices, 0, 4, projectileIndices, 0, 2, VertexPositionColorTexture.VertexDeclaration);
+                }
+            }
+
+            foreach (Emitter emitter in EmitterList)
+            {
+                emitter.DrawSpriteDepth(graphics, effect);
+            }
+        }
+
+        public override void DrawSpriteOcclusion(GraphicsDevice graphics, BasicEffect effect)
+        {
+            if (Active == true)
+            {
+                effect.TextureEnabled = true;
+                effect.VertexColorEnabled = true;
+                effect.Texture = Texture;
+                effect.World = Matrix.CreateTranslation(new Vector3(-Position.X - Origin.X, -Position.Y - Origin.Y, 0)) *
+                               Matrix.CreateRotationZ(CurrentRotation) *
+                               Matrix.CreateTranslation(new Vector3(Position.X, Position.Y, 0));
+
+                for (int i = 0; i < 4; i++)
+                {
+                    projectileVertices[i].Color = Color.Black;
+                }
+
+                foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+                {
+                    pass.Apply();
+                    graphics.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, projectileVertices, 0, 4, projectileIndices, 0, 2, VertexPositionColorTexture.VertexDeclaration);
+                }
+
+                for (int i = 0; i < 4; i++)
+                {
+                    projectileVertices[i].Color = Color;
+                }
+
+                effect.World = Matrix.CreateTranslation(new Vector3(0, 0, 0));
+            }
+
+            foreach (Emitter emitter in EmitterList)
+            {
+                emitter.DrawSpriteOcclusion(graphics, effect);
+            }
+
+            //base.DrawSpriteOcclusion(graphics, effect);
         }
 
         public void UpdateNodes()

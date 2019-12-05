@@ -379,6 +379,10 @@ namespace TowerDefensePrototype
             //If the particle does not have a rotation increment, it should inherit its World Matrix from the emitter
             //This should stop each particle having to change the world value for the effect
 
+            //*****************************************************************
+            //NOTE: THE TEXTURE PARAMETER IS NOW SET IN THE BASE DRAWABLE CLASS
+            //*****************************************************************
+
             effect.Parameters["World"].SetValue(Matrix.CreateTranslation(new Vector3(-CurrentPosition.X, -CurrentPosition.Y, 0)) *
                                                 Matrix.CreateRotationZ(RadRotation) *
                                                 Matrix.CreateTranslation(new Vector3(CurrentPosition.X, CurrentPosition.Y, 0)));
@@ -394,6 +398,27 @@ namespace TowerDefensePrototype
             //    graphics.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, vertices, 0, 4, indices, 0, 2, VertexPositionColorTexture.VertexDeclaration);
             //}
 
+        }
+
+        public override void DrawSpriteDepth(GraphicsDevice graphics, Effect effect)
+        {
+            effect.Parameters["World"].SetValue(Matrix.CreateTranslation(new Vector3(-CurrentPosition.X, -CurrentPosition.Y, 0)) *
+                                                Matrix.CreateRotationZ(RadRotation) *
+                                                Matrix.CreateTranslation(new Vector3(CurrentPosition.X, CurrentPosition.Y, 0)));
+
+            effect.Parameters["Texture"].SetValue(Texture);
+            effect.Parameters["depth"].SetValue(DrawDepth);
+
+            foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+            {
+                pass.Apply();
+                graphics.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, vertices, 0, 4, indices, 0, 2, VertexPositionColorTexture.VertexDeclaration);
+            }
+        }
+
+        public override void DrawSpriteOcclusion(GraphicsDevice graphics, BasicEffect effect)
+        {
+            base.DrawSpriteOcclusion(graphics, effect);
         }
 
         public Vector2[] GetTexCoords(SpriteEffects orientation)

@@ -517,7 +517,24 @@ namespace TowerDefensePrototype
             {
                 particle.Draw(graphics, effect);
             }
+        }
 
+        public override void DrawSpriteDepth(GraphicsDevice graphics, Effect effect)
+        {
+            foreach (Particle particle in ParticleList)
+            {
+                particle.DrawSpriteDepth(graphics, effect);
+            }
+        }
+
+        public override void DrawSpriteOcclusion(GraphicsDevice graphics, BasicEffect effect)
+        {
+
+            foreach (Particle particle in ParticleList)
+            {
+                particle.DrawSpriteOcclusion(graphics, effect);
+            }
+            base.DrawSpriteOcclusion(graphics, effect);
         }
 
         public double DoubleRange(double one, double two)

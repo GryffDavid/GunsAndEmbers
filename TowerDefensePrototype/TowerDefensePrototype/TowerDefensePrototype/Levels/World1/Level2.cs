@@ -38,6 +38,28 @@ namespace TowerDefensePrototype
                 new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
                 new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
                 new Soldier(new Vector2(2050, 600), new Vector2(700, 850))
+
+                //new HarpoonCannon(new Vector2(2050, 600), new Vector2(700, 850)),
+                //new HarpoonCannon(new Vector2(2050, 600), new Vector2(700, 850)),
+                //new HarpoonCannon(new Vector2(2050, 600), new Vector2(700, 850)),
+                //new HarpoonCannon(new Vector2(2050, 600), new Vector2(700, 850)),
+                //new HarpoonCannon(new Vector2(2050, 600), new Vector2(700, 850)),
+
+                //    //2000,
+
+                //    //new BatteringRam(new Vector2(2050, 600), new Vector2(700, 850)),
+                ////new BatteringRam(new Vector2(2050, 600), new Vector2(700, 850)),
+
+                //    5000,
+
+                //new HealDrone(new Vector2(2050, 600), new Vector2(700, 850)),
+                //new HealDrone(new Vector2(2050, 600), new Vector2(700, 850)),
+                //new HealDrone(new Vector2(2050, 600), new Vector2(700, 850)),
+                //new HealDrone(new Vector2(2050, 600), new Vector2(700, 850)),
+                //new HealDrone(new Vector2(2050, 600), new Vector2(700, 850)),
+                //new HealDrone(new Vector2(2050, 600), new Vector2(700, 850)),
+                //new HealDrone(new Vector2(2050, 600), new Vector2(700, 850))//,
+
                  );            
             #endregion
 
@@ -66,7 +88,28 @@ namespace TowerDefensePrototype
                 new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
                 new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
                 new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                new Soldier(new Vector2(2050, 600), new Vector2(700, 850))
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+
+                new HarpoonCannon(new Vector2(2050, 600), new Vector2(700, 850)),
+                new HarpoonCannon(new Vector2(2050, 600), new Vector2(700, 850)),
+                new HarpoonCannon(new Vector2(2050, 600), new Vector2(700, 850)),
+                new HarpoonCannon(new Vector2(2050, 600), new Vector2(700, 850)),
+                new HarpoonCannon(new Vector2(2050, 600), new Vector2(700, 850)),
+
+                    //2000,
+
+                    //new BatteringRam(new Vector2(2050, 600), new Vector2(700, 850)),
+                //new BatteringRam(new Vector2(2050, 600), new Vector2(700, 850)),
+
+                    5000,
+
+                new HealDrone(new Vector2(2050, 600), new Vector2(700, 850)),
+                new HealDrone(new Vector2(2050, 600), new Vector2(700, 850)),
+                new HealDrone(new Vector2(2050, 600), new Vector2(700, 850)),
+                new HealDrone(new Vector2(2050, 600), new Vector2(700, 850)),
+                new HealDrone(new Vector2(2050, 600), new Vector2(700, 850)),
+                new HealDrone(new Vector2(2050, 600), new Vector2(700, 850)),
+                new HealDrone(new Vector2(2050, 600), new Vector2(700, 850))//,
                  );
             #endregion
 

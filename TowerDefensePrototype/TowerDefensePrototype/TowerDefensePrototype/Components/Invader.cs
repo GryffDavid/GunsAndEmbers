@@ -170,6 +170,7 @@ namespace TowerDefensePrototype
         public static Tower Tower;
         public static List<Emitter> EmitterList;
         public static List<Drawable> DrawableList;
+        public static List<Light> LightList;
 
         #region Vertex declarations
         public VertexPositionColorTexture[] shadowVertices = new VertexPositionColorTexture[4];
@@ -783,8 +784,8 @@ namespace TowerDefensePrototype
 
                 if (InAir == false)
                 {
-                    #region Draw invader shadows
-                    //foreach (Light light in lightList)
+                    //#region Draw invader shadows                    
+                    //foreach (Light light in LightList)
                     //{
                     //    double dist = Math.Sqrt(Math.Pow(0.45f * (DestinationRectangle.Center.X - light.Position.X), 2) + Math.Pow(DestinationRectangle.Bottom - light.Position.Y, 2));
 
@@ -792,20 +793,20 @@ namespace TowerDefensePrototype
 
                     //    lightDistance = (float)dist;
 
-                    //    if (lightDistance < light.Range)
+                    //    if (lightDistance < light.Size)
                     //    {
                     //        Vector2 direction = new Vector2(DestinationRectangle.Center.X, DestinationRectangle.Bottom) - new Vector2(light.Position.X, light.Position.Y);
                     //        direction.Normalize();
 
-                           
-                    //        ShadowHeightMod = lightDistance / (light.Range / 10);
+
+                    //        ShadowHeightMod = lightDistance / (light.Size / 10);
                     //        ShadowHeight = MathHelper.Clamp(CurrentAnimation.FrameSize.Y * ShadowHeightMod, 16, 64);
                     //        float width = MathHelper.Clamp(CurrentAnimation.FrameSize.Y * ShadowHeightMod, 16, 92);
 
-                    //        ShadowColor = Color.Lerp(Color.Lerp(Color.Black, Color.Transparent, 0f), Color.Transparent, lightDistance / light.Radius);
-                    //        foreach (Light light3 in lightList.FindAll(Light2 => Vector2.Distance(ShadowPosition, new Vector2(Light2.Position.X, Light2.Position.Y)) < light.Radius && Light2 != light).ToList())
+                    //        ShadowColor = Color.Lerp(Color.Lerp(Color.Black, Color.Transparent, 0f), Color.Transparent, lightDistance / light.Size);
+                    //        foreach (Light light3 in LightList.FindAll(Light2 => Vector2.Distance(ShadowPosition, new Vector2(Light2.Position.X, Light2.Position.Y)) < light.Size && Light2 != light).ToList())
                     //        {
-                    //            ShadowColor *= MathHelper.Clamp(Vector2.Distance(new Vector2(light3.Position.X, light3.Position.Y), ShadowPosition) / light3.Radius, 0.8f, 1f);
+                    //            ShadowColor *= MathHelper.Clamp(Vector2.Distance(new Vector2(light3.Position.X, light3.Position.Y), ShadowPosition) / light3.Size, 0.8f, 1f);
                     //        }
 
                     //        shadowVertices[0] = new VertexPositionColorTexture()
@@ -866,7 +867,7 @@ namespace TowerDefensePrototype
                     //        }
                     //    }
                     //}
-                    #endregion
+                    //#endregion
                 }
 
                 #region Draw invader sprite

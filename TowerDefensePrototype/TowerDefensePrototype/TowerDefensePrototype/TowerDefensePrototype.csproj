@@ -133,6 +133,11 @@
     <Compile Include="LevelDialogue\Level1Dialogue.cs" />
     <Compile Include="Basics\LevelDialogue.cs" />
     <Compile Include="Levels\World1\Level2.cs" />
+    <Compile Include="Lighting\CrepuscularLight.cs" />
+    <Compile Include="Lighting\Light.cs" />
+    <Compile Include="Lighting\Occluder.cs" />
+    <Compile Include="Lighting\PolygonShadow.cs" />
+    <Compile Include="Lighting\Solid.cs" />
     <Compile Include="ParticleSystem\Corpse.cs" />
     <Compile Include="ParticleSystem\ExplosionEffect.cs" />
     <Compile Include="ParticleSystem\JetEngine.cs" />

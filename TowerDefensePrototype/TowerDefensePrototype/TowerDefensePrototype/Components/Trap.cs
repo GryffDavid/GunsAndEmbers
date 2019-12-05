@@ -154,6 +154,11 @@ namespace TowerDefensePrototype
             //}
             //#endregion
 
+            vertices[0].TextureCoordinate = CurrentAnimation.dTopLeftTexCooord;
+            vertices[1].TextureCoordinate = CurrentAnimation.dTopRightTexCoord;
+            vertices[2].TextureCoordinate = CurrentAnimation.dBottomRightTexCoord;
+            vertices[3].TextureCoordinate = CurrentAnimation.dBottomLeftTexCoord;
+
             #region Handle the timing between detonations and detonate limits
             if (CurrentDetonateDelay < DetonateDelay)
                 CurrentDetonateDelay += gameTime.ElapsedGameTime.Milliseconds;
@@ -182,9 +187,43 @@ namespace TowerDefensePrototype
             TimingBar.Update((float)DetonateDelay, (float)CurrentDetonateDelay);
             HealthBar.Update((float)MaxHP, (float)CurrentHP);
 
-            BoundingBox = new BoundingBox(new Vector3(Position.X, Position.Y, 0),
-                                          new Vector3(Position.X + CurrentAnimation.FrameSize.X, 
-                                                      Position.Y + CurrentAnimation.FrameSize.Y, 0));
+            switch (TrapType)
+            {
+                default:
+                    {
+                        BoundingBox = new BoundingBox(new Vector3(Position.X, Position.Y, 0),
+                                             new Vector3(Position.X + CurrentAnimation.FrameSize.X,
+                                                         Position.Y + CurrentAnimation.FrameSize.Y, 0));
+                    }
+                    break;
+
+                case TrapType.Spikes:
+                    {
+                        BoundingBox = new BoundingBox(new Vector3(Position.X + 6, Position.Y, 0),
+                                             new Vector3(Position.X + CurrentAnimation.FrameSize.X - 30,
+                                                         Position.Y + CurrentAnimation.FrameSize.Y, 0));
+                    }
+                    break;
+            }
+
+            //BoundingBox = new BoundingBox(new Vector3(Position.X, Position.Y, 0),
+            //                              new Vector3(Position.X + CurrentAnimation.FrameSize.X, 
+            //                                          Position.Y + CurrentAnimation.FrameSize.Y, 0));
+
+            //switch (TrapType)
+            //{
+            //    default:
+            //        CollisionBox = new BoundingBox(new Vector3(Position.X, Position.Y + CurrentAnimation.FrameSize.Y - ZDepth, 0),
+            //                               new Vector3(Position.X + CurrentAnimation.FrameSize.X,
+            //                                           Position.Y + CurrentAnimation.FrameSize.Y, 0));
+            //        break;
+
+            //    case TrapType.Spikes:
+            //        CollisionBox = new BoundingBox(new Vector3(Position.X + 6, Position.Y + CurrentAnimation.FrameSize.Y - ZDepth, 0),
+            //                               new Vector3(Position.X + CurrentAnimation.FrameSize.X - 6,
+            //                                           Position.Y + CurrentAnimation.FrameSize.Y, 0));
+            //        break;
+            //}
 
             CollisionBox = new BoundingBox(new Vector3(Position.X, Position.Y + CurrentAnimation.FrameSize.Y - ZDepth, 0),
                                            new Vector3(Position.X + CurrentAnimation.FrameSize.X,
@@ -386,6 +425,7 @@ namespace TowerDefensePrototype
             //Draw the same sprite as the color map, but with the depth effect applied
             if (Active == true)
             {
+                effect.Parameters["World"].SetValue(Matrix.CreateTranslation(new Vector3(0, 0, 0)));
                 effect.Parameters["Texture"].SetValue(CurrentAnimation.Texture);
                 effect.Parameters["depth"].SetValue(DrawDepth);
 
