@@ -26,7 +26,7 @@ namespace TowerDefensePrototype
             ResourceCost = 600;
             BlastRadius = 270;
             MaxHealth = 200;
-            LaunchVelocity = 12;
+            LaunchVelocity = 16;
 
             TurretFireType = TurretFireType.SemiAuto;
             

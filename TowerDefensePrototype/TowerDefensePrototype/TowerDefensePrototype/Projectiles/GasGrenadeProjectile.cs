@@ -9,13 +9,13 @@ using Microsoft.Xna.Framework.Content;
 namespace TowerDefensePrototype
 {
     //This should rather implement verlet intergration for the physics calculations. It'll look far better
-    class GrenadeProjectile : TimerHeavyProjectile
+    class GasGrenadeProjectile : TimerHeavyProjectile
     {
-        public GrenadeProjectile(float maxTime, Texture2D texture, Texture2D particleTexture, Vector2 position, 
+        public GasGrenadeProjectile(float maxTime, Texture2D texture, Texture2D particleTexture, Vector2 position, 
                                  float speed, float angle, float gravity, float damage, Vector2? yrange = null) 
             : base(maxTime, texture, position, speed, angle, gravity, damage, yrange)
         {
-            HeavyProjectileType = HeavyProjectileType.Grenade;
+            HeavyProjectileType = HeavyProjectileType.GasGrenade;
 
             Rotate = true;
             Fade = false;

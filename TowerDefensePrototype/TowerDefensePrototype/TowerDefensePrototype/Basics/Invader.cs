@@ -26,12 +26,13 @@ namespace TowerDefensePrototype
         public abstract void TrapDamage(Trap trap);
         public static Random Random = new Random();
         public double BurnDelay, CurrentBurnDelay,
-                      BurnInterval, CurrentBurnInterval, 
+                      BurnInterval, CurrentBurnInterval,
                       FreezeDelay, CurrentFreezeDelay,
                       SlowDelay, CurrentSlowDelay,
+                      BeamDelay, CurrentBeamDelay,
                       CurrentFrameDelay;
         public bool Active, VulnerableToTurret, VulnerableToTrap, CanAttack, 
-                    Burning, Frozen, Slow, Airborne;     
+                    Burning, Frozen, Slow, Airborne, HitByBeam;
   
         public InvaderType InvaderType;
         public Animation CurrentAnimation;
@@ -59,7 +60,7 @@ namespace TowerDefensePrototype
         public void Initialize()
         {
             Behaviour = RandomOrientation(InvaderBehaviour.AttackTower, InvaderBehaviour.AttackTraps);
-
+            HitByBeam = false;
             VulnerableToTurret = true;
             VulnerableToTrap = true;
             Color = Color.White;
@@ -230,6 +231,16 @@ namespace TowerDefensePrototype
 
                 BoundingBox = new BoundingBox(new Vector3(Position.X, Position.Y, 0), 
                                               new Vector3(Position.X + FrameSize.X, Position.Y + FrameSize.Y, 0));
+
+                if (HitByBeam == true)
+                {
+                    //Color = Color.Purple;
+                    CurrentBeamDelay += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+                }
+                //else
+                //{
+                //    Color = Color.White;
+                //}
 
                 Bottom = DestinationRectangle.Bottom;
                 DrawDepth = Bottom / 1080;

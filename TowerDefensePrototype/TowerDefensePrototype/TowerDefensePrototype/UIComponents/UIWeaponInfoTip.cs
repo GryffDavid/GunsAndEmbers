@@ -141,8 +141,24 @@ namespace TowerDefensePrototype
                         WeaponName = "Grenade Launcher";
                         break;
 
+                    case TurretType.GasGrenade:
+                        WeaponName = "Gas Grenade Launcher";
+                        break;
+
                     case TurretType.Beam:
                         WeaponName = "Beam Cannon";
+                        break;
+
+                    case TurretType.Boomerang:
+                        WeaponName = "Boomerang";
+                        break;
+
+                    case TurretType.FelCannon:
+                        WeaponName = "Fel Cannon";
+                        break;
+
+                    case TurretType.PersistentBeam:
+                        WeaponName = "Persistent Beam";
                         break;
                 }
 

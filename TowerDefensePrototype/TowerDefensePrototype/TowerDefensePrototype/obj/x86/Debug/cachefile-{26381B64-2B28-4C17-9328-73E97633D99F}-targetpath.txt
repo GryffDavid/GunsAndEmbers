@@ -133,6 +133,7 @@ Content\Buttons\ShortButtonRight.xnb
 Content\PowerUpDeliveryPod.xnb
 Content\PowerUpDeliveryFin.xnb
 Content\MysteryEmployer.xnb
+Content\Projectiles\Grenade.xnb
 Content\Sounds\MenuClick.xnb
 Content\Sounds\FireTrapStart.xnb
 Content\Sounds\MenuAmbiance.xnb

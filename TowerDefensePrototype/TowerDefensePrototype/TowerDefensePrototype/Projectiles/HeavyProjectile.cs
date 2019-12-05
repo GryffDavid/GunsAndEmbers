@@ -8,13 +8,13 @@ using Microsoft.Xna.Framework.Content;
 
 namespace TowerDefensePrototype
 {
-    public abstract class HeavyProjectile
+    public abstract class HeavyProjectile : VerletProjectile
     {
         public Texture2D Texture;
         public List<Emitter> EmitterList;
         public Vector2 Velocity, Position, YRange, Scale, Origin, Direction;
         public float Angle, Speed, Gravity, CurrentRotation, CurrentTransparency, MaxY, DrawDepth;
-        public bool Active, Rotate, Fade, CanBounce, BouncedOnGround, StopBounce, HardBounce, Shadow;
+        public bool Active, Rotate, Fade, Shadow;
         public Color CurrentColor;
         public HeavyProjectileType HeavyProjectileType;
         public Rectangle DestinationRectangle, CollisionRectangle;
@@ -27,7 +27,7 @@ namespace TowerDefensePrototype
 
         //}
 
-        public HeavyProjectile(Texture2D texture, Vector2 position, float speed, float angle, float gravity, float damage, 
+        public HeavyProjectile(Texture2D texture, Vector2 position, float speed, float angle, float gravity, float damage,
                                Vector2? yrange = null, float? blastRadius = null)
         {
             Active = true;
@@ -37,7 +37,9 @@ namespace TowerDefensePrototype
             Gravity = gravity;
             Position = position;
             Damage = damage;
-            
+
+            MaxY = 890;
+
             Velocity.X = (float)(Math.Cos(angle) * speed);
             Velocity.Y = (float)(Math.Sin(angle) * speed);
 
@@ -50,35 +52,81 @@ namespace TowerDefensePrototype
                 YRange = yrange.Value;
             }
 
+            //if (rotate == null)
+            //{
+            //    Rotate = true;
+            //}
+            //else
+            //{
+            //    Rotate = rotate.Value;
+            //}
+
             if (blastRadius.HasValue)
                 BlastRadius = blastRadius.Value;
+
+            Node1 = new Node()
+            {
+                CurrentPosition = Position,
+                PreviousPosition = Position - Velocity,
+                Pinned = false
+            };
+
+            Node2 = new Node()
+            {
+                CurrentPosition = new Vector2(Position.X - (float)Math.Cos(Angle) * (Texture.Width),
+                                              Position.Y - (float)Math.Sin(Angle) * (Texture.Width)),
+                PreviousPosition = new Vector2(Position.X - (float)Math.Cos(Angle) * (Texture.Width),
+                                              Position.Y - (float)Math.Sin(Angle) * (Texture.Width)) - Velocity,
+                Pinned = false
+            };
+
+            Sticks = new Stick()
+            {
+                Length = Texture.Width,
+                Rotate = true,
+                Point1 = Node2,
+                Point2 = Node1
+            };
         }
 
         public void Initialize()
         {
             CurrentTransparency = 0;
             MaxY = Random.Next((int)YRange.X, (int)YRange.Y);
+            Constraints = new Rectangle(0, 0, 1920, (int)MaxY);
             Scale = new Vector2(1, 1);
             Origin = new Vector2(Texture.Width / 2, Texture.Height / 2);
             Shadow = true;
             DrawDepth = MaxY / 1080;
         }
 
-        public virtual void Update(GameTime gameTime)
-        {         
+        public override void Update(GameTime gameTime)
+        {
             if (Active == true)
             {
-                Position += Velocity * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
-                Velocity.Y += Gravity * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
+                //Position += Velocity * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
+                //Velocity.Y += Gravity * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
+
+                //foreach (Emitter emitter in EmitterList)
+                //{
+                //    emitter.Position = Position;
+                //}
+                DestinationRectangle = new Rectangle((int)Sticks.Point1.CurrentPosition.X, 
+                                                     (int)Sticks.Point1.CurrentPosition.Y,
+                                                     Texture.Width, Texture.Height);
+
+                CollisionRectangle = new Rectangle((int)Sticks.Point1.CurrentPosition.X,
+                                                   (int)Sticks.Point1.CurrentPosition.Y,
+                                                   Texture.Width, Texture.Height);
 
                 foreach (Emitter emitter in EmitterList)
                 {
-                    emitter.Position = Position;
+                    emitter.Position = Node2.CurrentPosition;
                 }
-            }
 
-            if (Rotate == true)
-                CurrentRotation = (float)Math.Atan2(Velocity.Y, Velocity.X);
+                //Position = Node2.CurrentPosition;// +new Vector2(0, 1);
+                Position = Node1.CurrentPosition;
+            }
 
             foreach (Emitter emitter in EmitterList)
             {
@@ -90,141 +138,39 @@ namespace TowerDefensePrototype
                 CurrentTransparency += 0.1f;
             }
 
-            if (CanBounce == true)
-                if (Position.Y >= MaxY && BouncedOnGround == false)
-                {
-                    if (HardBounce == true)
-                        Position.Y -= Velocity.Y * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
-
-                    Velocity.Y = (-Velocity.Y / 3) * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
-                    Velocity.X = (Velocity.X / 3) * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
-                    //RotationIncrement = RotationIncrement * 3;
-                    BouncedOnGround = true;
-                }
-
-            if (StopBounce == true &&
-                BouncedOnGround == true &&
-                Position.Y > MaxY)
-            {
-                Velocity.Y = (-Velocity.Y / 2) * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
-
-                Velocity.X *= 0.9f * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
-
-                //RotationIncrement = MathHelper.Lerp(RotationIncrement, 0, 0.2f);
-
-                if (Velocity.Y < 0.2f && Velocity.Y > 0)
-                {
-                    Velocity.Y = 0;
-                }
-
-                if (Velocity.Y > -0.2f && Velocity.Y < 0)
-                {
-                    Velocity.Y = 0;
-                }
-
-                if (Velocity.X < 0.2f && Velocity.X > 0)
-                {
-                    Velocity.X = 0;
-                }
-
-                if (Velocity.X > -0.2f && Velocity.X < 0)
-                {
-                    Velocity.X = 0;
-                }
-            }
-
-
-            if (Velocity.Y == 0)
-            {
-                if (CurrentRotation < 0)
-                    CurrentRotation += 360;
-
-                if (CurrentRotation > 270 && CurrentRotation <= 360)
-                {
-                    if (MathHelper.Distance(CurrentRotation, 360) >= 45)
-                        CurrentRotation = MathHelper.Lerp(CurrentRotation, 360, 0.5f * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
-                    else
-                        CurrentRotation = MathHelper.Lerp(CurrentRotation, 360, 0.2f * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
-                }
-
-                if (CurrentRotation > 180 && CurrentRotation <= 270)
-                {
-                    if (MathHelper.Distance(CurrentRotation, 180) >= 45)
-                        CurrentRotation = MathHelper.Lerp(CurrentRotation, 180, 0.5f * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
-                    else
-                        CurrentRotation = MathHelper.Lerp(CurrentRotation, 180, 0.2f * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
-                }
-
-                if (CurrentRotation > 90 && CurrentRotation <= 180)
-                {
-                    if (MathHelper.Distance(CurrentRotation, 180) >= 45)
-                        CurrentRotation = MathHelper.Lerp(CurrentRotation, 180, 0.5f * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
-                    else
-                        CurrentRotation = MathHelper.Lerp(CurrentRotation, 180, 0.2f * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
-                }
-
-                if (CurrentRotation >= 0 && CurrentRotation <= 90)
-                {
-                    if (MathHelper.Distance(CurrentRotation, 0) >= 45)
-                        CurrentRotation = MathHelper.Lerp(CurrentRotation, 0, 0.5f * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
-                    else
-                        CurrentRotation = MathHelper.Lerp(CurrentRotation, 0, 0.2f * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
-                }
-            }
+            base.Update(gameTime);
         }
 
-        public void Draw(SpriteBatch spriteBatch)
-        {           
+        public override void Draw(SpriteBatch spriteBatch)
+        {
             if (Active == true)
             {
-                CurrentColor = Color.Lerp(Color.White, Color.Transparent, CurrentTransparency);
-                DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, Texture.Width*(int)Scale.X, Texture.Height*(int)Scale.Y);
-                CollisionRectangle = new Rectangle(DestinationRectangle.X, DestinationRectangle.Y, DestinationRectangle.Width / 2, DestinationRectangle.Height / 2);
-                spriteBatch.Draw(Texture, DestinationRectangle, null, CurrentColor, CurrentRotation,
-                    new Vector2(Origin.X, Origin.Y), SpriteEffects.None, DrawDepth);                
+                //foreach (Stick stick in Sticks)
+                //{
+                Vector2 dir = Sticks.Point2.CurrentPosition - Sticks.Point1.CurrentPosition;
+                    float rot = (float)Math.Atan2(dir.Y, dir.X);
 
-                if (Shadow == true)
-                {
-                    //This makes the scale change depending on distance to ground
-                    float PercentToGround = (100 / MaxY) * (Position.Y - MaxY);
-                    float ClampedGroundPercent = MathHelper.Clamp((100 - PercentToGround) / 100, 1f, 2f);
-                    Vector2 ShadowScale = new Vector2(ClampedGroundPercent * Scale.X, ClampedGroundPercent * Scale.Y);
+                    spriteBatch.Draw(Texture, new Rectangle(
+                        (int)Sticks.Point1.CurrentPosition.X, (int)Sticks.Point1.CurrentPosition.Y,
+                        Texture.Width, Texture.Height),
+                        null, Color.White, rot, new Vector2(0, Texture.Height / 2), SpriteEffects.None, 0);
+                //}
 
-                    //This makes the scale change depending on perspective distance from foreground
-                    float PercentToFore = (100 / (YRange.Y - YRange.X)) * (YRange.Y - MaxY);
-                    float ClampedForePercent = MathHelper.Clamp((115 - PercentToFore) / 100, 0.3f, 0.7f);
+                //spriteBatch.Draw(Texture, new Rectangle(
+                //       (int)Nodes[0].CurrentPosition.X, (int)Nodes[0].CurrentPosition.Y,
+                //       Texture.Width/2, Texture.Height/2),
+                //       null, Color.Red, 0, new Vector2(0, Texture.Height / 2), SpriteEffects.None, 0);
 
-                    //Multiply both values to get distance and perspective based shadow
-                    ShadowScale = ShadowScale * ClampedForePercent;
-
-                    Color ShadowColor = Color.Lerp(Color.Transparent, Color.Black, 0.02f);
-
-                    spriteBatch.Draw(Texture,
-                        new Rectangle((int)Position.X, (int)MaxY + 4, (int)(Texture.Width * ShadowScale.X), (int)(Texture.Height * ShadowScale.Y)),
-                        null, ShadowColor, CurrentRotation, Origin, SpriteEffects.None, (DestinationRectangle.Bottom / 1080));
-
-                    //spriteBatch.Draw(Texture,
-                    //   new Rectangle((int)Position.X, (int)MaxY + 4, (int)(Texture.Width * ShadowScale.X / 1.7f), (int)(Texture.Height * ShadowScale.Y / 1.7f)),
-                    //   null, ShadowColor, CurrentRotation, Origin, SpriteEffects.None, (DestinationRectangle.Bottom / 1080));
-
-                    //spriteBatch.Draw(Texture,
-                    //   new Rectangle((int)Position.X, (int)MaxY + 4, (int)(Texture.Width * ShadowScale.X / 1.5f), (int)(Texture.Height * ShadowScale.Y / 1.5f)),
-                    //   null, ShadowColor, CurrentRotation, Origin, SpriteEffects.None, (DestinationRectangle.Bottom / 1080));
-
-                    //spriteBatch.Draw(Texture,
-                    //   new Rectangle((int)Position.X, (int)MaxY + 4, (int)(Texture.Width * ShadowScale.X / 1.3f), (int)(Texture.Height * ShadowScale.Y / 1.3f)),
-                    //   null, ShadowColor, CurrentRotation, Origin, SpriteEffects.None, (DestinationRectangle.Bottom / 1080));
-
-                    //spriteBatch.Draw(Texture,
-                    //   new Rectangle((int)Position.X, (int)MaxY + 4, (int)(Texture.Width * ShadowScale.X), (int)(Texture.Height * ShadowScale.Y)),
-                    //   null, ShadowColor, CurrentRotation, Origin, SpriteEffects.None, (DestinationRectangle.Bottom / 1080));
-                }
+                //spriteBatch.Draw(Texture, new Rectangle(
+                //       (int)Nodes[1].CurrentPosition.X, (int)Nodes[1].CurrentPosition.Y,
+                //       Texture.Width / 2, Texture.Height / 2),
+                //       null, Color.Green, 0, new Vector2(0, Texture.Height / 2), SpriteEffects.None, 0);
             }
 
             foreach (Emitter emitter in EmitterList)
             {
                 emitter.Draw(spriteBatch);
             }
-        }       
+        }
     }
 }

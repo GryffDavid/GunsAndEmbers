@@ -114,11 +114,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Basics\BulletTrail.cs" />
+    <Compile Include="Basics\Gibs.cs" />
     <Compile Include="Basics\Powerup.cs" />
     <Compile Include="Basics\StoryDialogueBox.cs" />
+    <Compile Include="Basics\VerletProjectile.cs" />
     <Compile Include="ParticleSystem\AmmoBelt.cs" />
     <Compile Include="ParticleSystem\ShellCasing.cs" />
     <Compile Include="Basics\VerletObject.cs" />
+    <Compile Include="Projectiles\GasGrenadeProjectile.cs" />
+    <Compile Include="Turrets\GasGrenadeTurret.cs" />
     <Compile Include="UIComponents\CooldownButton.cs" />
     <Compile Include="Basics\GrassBlade.cs" />
     <Compile Include="Basics\TexturedQuad.cs" />

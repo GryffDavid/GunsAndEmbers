@@ -46,7 +46,13 @@ namespace TowerDefensePrototype
             {
                 UpdateNodes(gameTime);
 
-                for (int i = 0; i < 20; i++)
+                //for (int i = 0; i < 20; i++)
+                //{
+                //    ConstrainNodes(gameTime);
+                //    UpdateSticks(gameTime);
+                //}
+
+                for (int i = 0; i < 10; i++)
                 {
                     ConstrainNodes(gameTime);
                     UpdateSticks(gameTime);
@@ -97,42 +103,10 @@ namespace TowerDefensePrototype
                         stick.Point1.CurrentPosition -= (directioon * (currentLength - stick.Length) / 2);
                 }
             }
-
-            //foreach (Stick stick in Sticks)
-            //{
-            //    Vector2 Direction = stick.Point2.CurrentPosition - stick.Point1.CurrentPosition;
-            //    float Dist = Vector2.Distance(stick.Point1.CurrentPosition, stick.Point2.CurrentPosition);
-            //    float Diff = stick.Length - Dist;
-            //    float percent = Diff / Dist / 2;
-            //    Vector2 Offset = Direction * percent;
-
-            //    if (stick.Point1.Pinned == false)
-            //        stick.Point1.CurrentPosition -= Offset;
-
-            //    if (stick.Point2.Pinned == false)
-            //        stick.Point2.CurrentPosition += Offset;
-            //}
-
-            //foreach (Stick stick in Sticks2)
-            //{
-            //    Vector2 Direction = stick.Point2.CurrentPosition - stick.Point1.CurrentPosition;
-            //    float Dist = Vector2.Distance(stick.Point1.CurrentPosition, stick.Point2.CurrentPosition);
-            //    float Diff = stick.Length - Dist;
-            //    float percent = Diff / Dist / 2;
-            //    Vector2 Offset = Direction * percent;
-
-            //    if (stick.Point1.Pinned == false)
-            //        stick.Point1.CurrentPosition -= Offset;
-
-            //    if (stick.Point2.Pinned == false)
-            //        stick.Point2.CurrentPosition += Offset;
-            //}
         }
 
         public void ConstrainNodes(GameTime gameTime)
         {
-            //Bounce = 0.7f * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
-
             foreach (Node node in Nodes)
             {
                 if (node.Pinned == false)
@@ -212,7 +186,7 @@ namespace TowerDefensePrototype
                     else
                     {
                         Friction = 0.999f;
-                    } 
+                    }
                 }
             }
 
