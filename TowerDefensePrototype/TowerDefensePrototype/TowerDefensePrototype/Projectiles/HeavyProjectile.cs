@@ -22,14 +22,19 @@ namespace TowerDefensePrototype
         public float Damage, BlastRadius;
         static Random Random = new Random();
 
+        public HeavyProjectile()
+        {
+
+        }
+
         public void LoadContent(ContentManager contentManager)
         {
-            Texture = contentManager.Load<Texture2D>(TextureName);
+            //Texture = contentManager.Load<Texture2D>(TextureName);
 
-            foreach (Emitter emitter in EmitterList)
-            {
-                emitter.LoadContent(contentManager);
-            }
+            //foreach (Emitter emitter in EmitterList)
+            //{
+            //    emitter.LoadContent(contentManager);
+            //}
 
             CurrentTransparency = 0;
 

@@ -44,7 +44,6 @@ namespace TowerDefensePrototype
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            
             spriteBatch.Draw(Segment, Source, null, Color, Angle, MiddleOrigin, MiddleScale, SpriteEffects.FlipHorizontally, 0f);
             spriteBatch.Draw(Cap, Source, null, Color, Angle, CapOrigin, ThicknessScale, SpriteEffects.None, 0f);
             spriteBatch.Draw(Cap, Destination, null, Color, Angle + MathHelper.Pi, CapOrigin, ThicknessScale, SpriteEffects.None, 0f);

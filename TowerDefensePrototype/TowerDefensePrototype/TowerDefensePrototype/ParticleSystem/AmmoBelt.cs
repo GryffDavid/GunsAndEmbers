@@ -50,7 +50,6 @@ namespace TowerDefensePrototype
                 });
             }
 
-
             for (int i = 0; i < Nodes.Count - 1; i++)
             {
                 Sticks.Add(new Stick()
@@ -80,6 +79,9 @@ namespace TowerDefensePrototype
                     Length = ShellTexture.Width / 2
                 });
             }
+
+
+
         }
 
         public override void Update(GameTime gameTime)

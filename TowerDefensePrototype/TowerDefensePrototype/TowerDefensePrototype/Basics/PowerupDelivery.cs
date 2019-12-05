@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace TowerDefensePrototype
 {
-    class PowerupDelivery
+    class PowerupDelivery // : Trap
     {
         //Lands from the sky. Dropped in. Has to be shot by the player to be picked up.
         //Provides a bonus of some sort.
@@ -35,7 +35,7 @@ namespace TowerDefensePrototype
         //List<Fin> FinList = new List<Fin>();
 
         public PowerupDelivery(Texture2D shellTexture, Vector2 position, Texture2D trailTexture, Texture2D finTexture)
-        {
+        {            
             MaxHP = 30;
             CurrentHP = MaxHP;
             Position = position;
@@ -99,9 +99,10 @@ namespace TowerDefensePrototype
             Position += Velocity * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
 
             BoundingBox = new BoundingBox() 
-            { 
-                Min = new Vector3(Position.X, Position.Y, 0), 
-                Max = new Vector3(Position.X + Texture.Width, Position.Y + Texture.Height, 0) 
+            {
+                Min = new Vector3(Position.X - ((float)Math.Cos(Rotation) * (Texture.Height + Texture.Height/2)),
+                                  Position.Y - ((float)Math.Sin(Rotation) * (Texture.Width - FinTexture.Width)), 0), 
+                Max = new Vector3(Position.X, Position.Y, 0) 
             };
 
             if (HealthBar != null)
@@ -174,6 +175,14 @@ namespace TowerDefensePrototype
         {
             spriteBatch.Draw(Texture, new Rectangle((int)Position.X, (int)Position.Y, Texture.Width, Texture.Height),
                              null, Color.White, Rotation, new Vector2(Texture.Width, Texture.Height / 2), SpriteEffects.None, (MaxY - 5) / 1080);
+
+            //Rectangle boundingRect = new Rectangle(
+            //                    (int)(BoundingBox.Min.X), (int)(BoundingBox.Min.Y),
+            //                    (int)(BoundingBox.Max.X - BoundingBox.Min.X),
+            //                    (int)(BoundingBox.Max.Y - BoundingBox.Min.Y));
+
+            //spriteBatch.Draw(Texture, boundingRect, new Rectangle((int)(48), (int)(18), 2,2), 
+            //                 Color.Black, 0, new Vector2(0, 0), SpriteEffects.None, (MaxY - 5) / 1080);
 
 
             spriteBatch.Draw(Fin1.FinTexture,

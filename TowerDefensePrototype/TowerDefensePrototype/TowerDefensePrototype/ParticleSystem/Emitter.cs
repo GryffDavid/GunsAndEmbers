@@ -392,11 +392,13 @@ namespace TowerDefensePrototype
                 }
             }
 
-            for (int i = 0; i < ParticleList.Count; i++)
-            {
-                if (ParticleList[i].Active == false)
-                    ParticleList.RemoveAt(i);
-            }
+            //for (int i = 0; i < ParticleList.Count; i++)
+            //{
+            //    if (ParticleList[i].Active == false)
+            //        ParticleList.RemoveAt(i);
+            //}
+
+            ParticleList.RemoveAll(Particle => Particle.Active == false);
 
             foreach (Particle particle in ParticleList)
             {
