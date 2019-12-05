@@ -22,7 +22,7 @@ namespace TowerDefensePrototype
             ResourceMinMax = new Vector2(50, 100);
             CurrentAttackDelay = 0;
             AttackDelay = 3000;
-            AttackPower = 1;
+            TowerAttackPower = 1;
             CurrentFrame = 0;
             InvaderType = InvaderType.FireElemental;
             YRange = new Vector2(700, 900);
@@ -42,9 +42,20 @@ namespace TowerDefensePrototype
             base.Update(gameTime);
         }
 
-        public override void TrapDamage(TrapType trapType)
+        public override void TrapDamage(Trap trap)
         {
-
+            if (VulnerableToTrap == true)
+            {
+                switch (trap.TrapType)
+                {
+                    default:
+                        CurrentHP -= trap.NormalDamage;
+                        DamageOverTime(trap.InvaderDOT, trap.InvaderDOT.Color);
+                        Freeze(trap.InvaderFreeze, trap.InvaderDOT.Color);
+                        MakeSlow(trap.InvaderSlow);
+                        break;
+                }
+            }
         }
     }
 }

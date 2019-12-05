@@ -13,7 +13,7 @@ namespace TowerDefensePrototype
         public int RangedAttackPower;
         public Vector2 AngleRange, Range, PowerRange;
 
-        public override void TrapDamage(TrapType trapType)
+        public override void TrapDamage(Trap trap)
         {
             throw new NotImplementedException();
         }

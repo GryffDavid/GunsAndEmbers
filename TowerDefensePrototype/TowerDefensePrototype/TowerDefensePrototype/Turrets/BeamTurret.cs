@@ -23,6 +23,8 @@ namespace TowerDefensePrototype
             Looping = false;
             ResourceCost = 200;
 
+            TurretFireType = TurretFireType.SemiAuto;
+
             CurrentAnimation = new Animation()
             {
                 TotalFrames = 6

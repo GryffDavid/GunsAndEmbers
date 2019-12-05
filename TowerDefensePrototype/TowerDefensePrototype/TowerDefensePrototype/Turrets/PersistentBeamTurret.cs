@@ -27,6 +27,9 @@ namespace TowerDefensePrototype
             CoolValue = 0.25f;
             ShotHeat = 1f;
 
+            TurretFireType = TurretFireType.Beam;
+
+
             CurrentAnimation = new Animation()
             {
                 TotalFrames = 6

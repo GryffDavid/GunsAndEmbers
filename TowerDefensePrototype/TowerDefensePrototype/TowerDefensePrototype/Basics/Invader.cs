@@ -20,9 +20,10 @@ namespace TowerDefensePrototype
         public Color Color, BurnColor, FrozenColor, AcidColor;
         public BoundingBox BoundingBox;
         public Double AttackDelay, CurrentAttackDelay;
-        public float MaxHP, CurrentHP, PreviousHP, MaxY, Gravity, Bottom, BurnDamage, Speed, SlowSpeed, DrawDepth;
-        public int ResourceValue, AttackPower, CurrentFrame;
-        public abstract void TrapDamage(TrapType trapType);
+        public float MaxHP, CurrentHP, PreviousHP, MaxY, Gravity, Bottom, BurnDamage, Speed, SlowSpeed, DrawDepth,
+                     TrapAttackPower, TowerAttackPower, TurretAttackPower;
+        public int ResourceValue, CurrentFrame;
+        public abstract void TrapDamage(Trap trap);
         public static Random Random = new Random();
         public double BurnDelay, CurrentBurnDelay,
                       BurnInterval, CurrentBurnInterval, 
@@ -38,6 +39,7 @@ namespace TowerDefensePrototype
         public Emitter FireEmitter;
         public InvaderState CurrentInvaderState;
         public InvaderState? PreviousInvaderState = null;
+        public InvaderBehaviour Behaviour = InvaderBehaviour.AttackTraps;
 
         public void Initialize()
         {
@@ -59,8 +61,6 @@ namespace TowerDefensePrototype
 
                 CurrentAttackDelay += gameTime.ElapsedGameTime.TotalMilliseconds;                
                 VulnerableToTurret = true;
-
-                
 
                 //This disables the invader if it has 0 health left
                 if (CurrentHP <= 0)
@@ -252,33 +252,34 @@ namespace TowerDefensePrototype
         //    Velocity = velocity;
         //}
 
-        public void Freeze(float milliseconds, Color frozenColor)
+        public void Freeze(FreezeStruct freeze, Color frozenColor)
         {
             if (Frozen == false)
             {
                 FrozenColor = frozenColor;
                 Frozen = true;
-                FreezeDelay = milliseconds;
+                FreezeDelay = freeze.Milliseconds;
             }
         }
 
-        public void DamageOverTime(float milliseconds, float damage, float interval, Color color)
+        public void DamageOverTime(DamageOverTimeStruct dotStruct, Color color)
         {
             if (Burning == false)
             {
                 Burning = true;
-                BurnDelay = milliseconds;
-                BurnDamage = damage;
-                BurnInterval = interval;
+                CurrentHP -= dotStruct.InitialDamage;
+                BurnDelay = dotStruct.Milliseconds;
+                BurnDamage = dotStruct.Damage;
+                BurnInterval = dotStruct.Interval;
                 BurnColor = color;
             }
         }
 
-        public void MakeSlow(float milliseconds, float speed)
+        public void MakeSlow(SlowStruct slowStruct)
         {
             Slow = true;
-            SlowDelay = milliseconds;
-            SlowSpeed = speed;
+            SlowDelay = slowStruct.Milliseconds;
+            SlowSpeed = slowStruct.SpeedPercentage;
         }
     }
 }

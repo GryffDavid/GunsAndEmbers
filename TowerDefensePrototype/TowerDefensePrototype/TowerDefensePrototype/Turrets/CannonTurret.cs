@@ -26,7 +26,10 @@ namespace TowerDefensePrototype
             ResourceCost = 600;
             BlastRadius = 270;
             MaxHealth = 200;
+            LaunchVelocity = 12;
 
+            TurretFireType = TurretFireType.Single;
+            
             CurrentAnimation = new Animation()
             {
                 TotalFrames = 6

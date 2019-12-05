@@ -14,7 +14,7 @@ namespace TowerDefensePrototype
         public Vector2 AngleRange, Range;
         public float MaxBurstDelay, CurrentBurstDelay;
 
-        public override void TrapDamage(TrapType trapType)
+        public override void TrapDamage(Trap trap)
         {
             throw new NotImplementedException();
         }

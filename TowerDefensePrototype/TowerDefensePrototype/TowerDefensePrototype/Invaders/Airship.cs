@@ -21,7 +21,7 @@ namespace TowerDefensePrototype
             ResourceMinMax = new Vector2(1, 5);
             CurrentAttackDelay = 0;
             AttackDelay = 1500;
-            AttackPower = 4;
+            TowerAttackPower = 4;
             InvaderType = InvaderType.Airship;
             CurrentFrame = 0;
             YRange = new Vector2(60, 150);
@@ -43,7 +43,7 @@ namespace TowerDefensePrototype
             base.Update(gameTime);
         }
 
-        public override void TrapDamage(TrapType trapType)
+        public override void TrapDamage(Trap trap)
         {            
             throw new NotImplementedException();
         }

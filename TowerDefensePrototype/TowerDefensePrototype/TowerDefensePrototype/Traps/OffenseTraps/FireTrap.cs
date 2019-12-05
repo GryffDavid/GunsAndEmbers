@@ -21,6 +21,23 @@ namespace TowerDefensePrototype
             DetonateLimit = 5;
             AffectedTime = 300;
             ResourceCost = 200;
+
+            NormalDamage = 0;
+
+            InvaderDOT = new DamageOverTimeStruct()
+            {
+                InitialDamage = 10,
+                Damage = 1,
+                Milliseconds = 3000,
+                Interval = 300,
+                Color = Color.Orange
+            };
+
+            //InvaderSlow = new SlowStruct()
+            //{
+            //    Milliseconds = 3000,
+            //    SpeedPercentage = 0.5f
+            //};
         }
     }
 }

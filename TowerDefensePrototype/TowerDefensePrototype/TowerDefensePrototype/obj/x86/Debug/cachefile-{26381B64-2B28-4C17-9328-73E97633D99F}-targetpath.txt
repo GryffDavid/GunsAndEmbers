@@ -123,6 +123,7 @@ Content\Fonts\RobotoLight20_2.xnb
 Content\Fonts\RobotoRegular20_5.xnb
 Content\Icons\CurrencyIcon.xnb
 Content\Icons\DamageTypeIcons\FireDamageIcon.xnb
+Content\Particles\MachineBullet.xnb
 Content\Fonts\DefaultFont.xnb
 Content\Fonts\ButtonFont.xnb
 Content\Fonts\TooltipFont.xnb

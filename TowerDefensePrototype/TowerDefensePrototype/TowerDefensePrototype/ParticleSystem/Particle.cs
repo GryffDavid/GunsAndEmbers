@@ -125,11 +125,11 @@ namespace TowerDefensePrototype
                 if (CurrentPosition.Y >= MaxY && BouncedOnGround == false)
                 {
                     if (HardBounce == true)
-                        CurrentPosition.Y -= Velocity.Y;// *((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
+                        CurrentPosition.Y -= Velocity.Y;
 
-                    Velocity.Y = (-Velocity.Y / 3);// *((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
-                    Velocity.X = (Velocity.X / 3);// *((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
-                    RotationIncrement = (RotationIncrement * 3);// *((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
+                    Velocity.Y = (-Velocity.Y / 3);
+                    Velocity.X = (Velocity.X / 3);
+                    RotationIncrement = (RotationIncrement * 3);
                     BouncedOnGround = true;
                 }
 
@@ -137,9 +137,9 @@ namespace TowerDefensePrototype
                 BouncedOnGround == true &&
                 CurrentPosition.Y > MaxY)
             {
-                Velocity.Y = (-Velocity.Y / 2);// *((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
+                Velocity.Y = (-Velocity.Y / 2);
 
-                Velocity.X *= 0.9f;// *((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
+                Velocity.X *= 0.9f;
 
                 RotationIncrement = MathHelper.Lerp(RotationIncrement, 0, 0.2f * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
 
@@ -219,8 +219,6 @@ namespace TowerDefensePrototype
 
             if (Fade == true && FadeDelay == 0)
             {
-                //CurrentTransparency = MathHelper.Lerp(PercentageHP, CurrentTransparency, PercentageHP * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
-
                 CurrentTransparency = MaxTransparency * (PercentageHP / 100);                
             }
 
@@ -232,14 +230,9 @@ namespace TowerDefensePrototype
 
             if (Shrink == true)
             {
-                //Scale = MathHelper.Lerp(Scale, (Scale * (PercentageHP)), PercentageHP * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
                 CurrentScale = MaxScale * (PercentageHP / 100);
             }
 
-            
-
-            //CurrentColor = Color.Lerp(CurrentColor, EndColor, (PercentageHP / (CurrentHP * 0.5f)) * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
-            //double PercentHP = (100 / MaxHP) * CurrentHP;
             CurrentColor = Color.Lerp(EndColor, StartColor, PercentageHP/100);            
         }
 

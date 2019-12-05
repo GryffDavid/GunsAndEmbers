@@ -14,14 +14,15 @@ namespace TowerDefensePrototype
         {
             Active = true;
             Direction = new Vector2(-1f, 0);
-            Speed = 1;
+            Speed = 1f;
             Position = position;
             CurrentHP = 20;
             MaxHP = 15;
             ResourceMinMax = new Vector2(8, 20);
             CurrentAttackDelay = 0;
             AttackDelay = 1500;
-            AttackPower = 24;
+            TowerAttackPower = 24;
+            TrapAttackPower = 6;
             CurrentFrame = 0;            
             InvaderType = InvaderType.Soldier;
             YRange = new Vector2(700, 900);
@@ -76,36 +77,17 @@ namespace TowerDefensePrototype
             base.Update(gameTime);
         }
 
-        public override void TrapDamage(TrapType trapType)
+        public override void TrapDamage(Trap trap)
         {
             if (VulnerableToTrap == true)
             {
-                switch (trapType)
+                switch (trap.TrapType)
                 {
-                    case TrapType.Fire:
-                        CurrentHP -= 7;
-                        DamageOverTime(3000, 1, 300, Color.Orange);
-                        break;
-
-                    case TrapType.Spikes:
-                        CurrentHP -= 10;
-                        break;
-
-                    case TrapType.Catapult:
-                        //Trajectory(new Vector2(5, -10));
-                        Velocity = new Vector2(5, -10);
-                        break;
-
-                    case TrapType.Ice:
-                        Freeze(4000, Color.LightBlue);
-                        break;
-
-                    case TrapType.Tar:
-                        MakeSlow(4000, 80);
-                        break;
-
-                    case TrapType.SawBlade:
-                        CurrentHP -= 12;
+                    default:
+                        CurrentHP -= trap.NormalDamage;
+                        DamageOverTime(trap.InvaderDOT, trap.InvaderDOT.Color);
+                        Freeze(trap.InvaderFreeze, trap.InvaderDOT.Color);
+                        MakeSlow(trap.InvaderSlow);
                         break;
                 }
             }

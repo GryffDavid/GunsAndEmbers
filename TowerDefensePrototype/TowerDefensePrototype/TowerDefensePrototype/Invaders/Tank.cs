@@ -21,7 +21,7 @@ namespace TowerDefensePrototype
             ResourceMinMax = new Vector2(5, 20);
             CurrentAttackDelay = 0;
             AttackDelay = 1500;
-            AttackPower = 30;            
+            TowerAttackPower = 30;            
             CurrentFrame = 0;
             InvaderType = InvaderType.Tank;
             Scale = new Vector2(1f, 1f);
@@ -35,31 +35,17 @@ namespace TowerDefensePrototype
             };
         }
 
-        public override void TrapDamage(TrapType trapType)
+        public override void TrapDamage(Trap trap)
         {
             if (VulnerableToTrap == true)
             {
-                switch (trapType)
+                switch (trap.TrapType)
                 {
-                    case TrapType.Fire:
-                        CurrentHP -= 10;
-                        DamageOverTime(3000, 2, 300, Color.Red);
-                        break;
-
-                    case TrapType.Spikes:
-
-                        break;
-
-                    case TrapType.Catapult:
-
-                        break;
-
-                    case TrapType.Ice:
-                        Freeze(4000, Color.LightBlue);
-                        break;
-
-                    case TrapType.Tar:
-
+                    default:
+                        CurrentHP -= trap.NormalDamage;
+                        DamageOverTime(trap.InvaderDOT, trap.InvaderDOT.Color);
+                        Freeze(trap.InvaderFreeze, trap.InvaderDOT.Color);
+                        MakeSlow(trap.InvaderSlow);
                         break;
                 }
             }

@@ -177,6 +177,7 @@ namespace TowerDefensePrototype
         public void Update(float maxValue, float currentValue)
         {
             CurrentValue = currentValue;
+            MaxValue = maxValue;
 
             if (PreviousValue != CurrentValue)
             {

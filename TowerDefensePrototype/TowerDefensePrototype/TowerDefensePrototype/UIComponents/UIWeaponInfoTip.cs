@@ -43,7 +43,11 @@ namespace TowerDefensePrototype
         int WeaponCost;
         int WeaponDamage;
 
-        public UIWeaponInfoTip(Vector2 position, Turret turret = null, TrapType? trap = null)
+        int Bar1Value, Bar2Value, Bar3Value, Bar4Value, Bar5Value;
+
+        int Charges;
+
+        public UIWeaponInfoTip(Vector2 position, Turret turret = null, Trap trap = null)
         {
             Visible = false;
             Position = position;
@@ -59,8 +63,11 @@ namespace TowerDefensePrototype
             #endregion
 
             WeaponName = "Weapon";
-            
+            WeaponTip = "Place this";
+
             //Set up the values that the weapon info will show based on what the trap/turret is
+            SetUpBars();
+
             if (turret != null)
             {
                 #region Default turret bar names
@@ -74,22 +81,46 @@ namespace TowerDefensePrototype
                 WeaponCost = TurretCost(turret.TurretType);
                 WeaponType = "Turret";
                 WeaponTip = "Fire this";
+                WeaponDamage = turret.Damage;
+
                 switch (turret.TurretType)
                 {
                     case TurretType.Cannon:
+                        WeaponName = "Cannon";
                         WeaponTip = "Arc into a crowd to maximise effectiveness. Blah blah blah. Blah bleh blurgh. Blah blah blah. Blah bleh blurgh.";
-                        WeaponType = "Heavy arcing projectile";
+                        WeaponType = "Heavy arcing projectile";     
+                        
+                        BarText1 = "Rate of Fire";
+                        UIBar1.Update(300, 7.5f);
+
+                        BarText2 = "Blast Radius";
+                        UIBar2.Update(1080, turret.BlastRadius);
+
+                        BarText3 = "Velocity";
+                        UIBar3.Update(40, turret.LaunchVelocity);
                         break;
 
                     case TurretType.MachineGun:
+                        WeaponName = "Machine Gun";
                         WeaponTip = "Place on lower turret slots for devestation at close range";
                         WeaponType = "Machine Gun";
+
+                        BarText1 = "Rate of Fire";
+                        UIBar1.Update(300, 240);
                         break;
 
                     case TurretType.Lightning:
+                        WeaponName = "Lightning Cannon";
                         WeaponType = "Beam";
+                        Charges = turret.Charges;
                         break;
                 }
+
+                Bar1Value = (int)(100f / (float)UIBar1.MaxValue * (float)UIBar1.CurrentValue);
+                Bar2Value = (int)(100f / (float)UIBar2.MaxValue * (float)UIBar2.CurrentValue);
+                Bar3Value = (int)(100f / (float)UIBar3.MaxValue * (float)UIBar3.CurrentValue);
+                Bar4Value = (int)(100f / (float)UIBar4.MaxValue * (float)UIBar4.CurrentValue);
+                Bar5Value = (int)(100f / (float)UIBar5.MaxValue * (float)UIBar5.CurrentValue);
             }
 
             if (trap != null)
@@ -102,16 +133,17 @@ namespace TowerDefensePrototype
                 BarText5 = "Reload";
                 #endregion
 
-                WeaponCost = TrapCost(trap.Value);
+                WeaponCost = TrapCost(trap.TrapType);
+                WeaponName = "TRAP";
                 WeaponType = "Trap";
                 WeaponTip = "Place this";
                 DamageType = DamageType.Kinetic;
 
-                switch (trap.Value)
+                switch (trap.TrapType)
                 {
                     case TrapType.Fire:
                         WeaponName = "Immolation Trap";
-                        DamageType = DamageType.Fire;;
+                        DamageType = DamageType.Fire;
                         break;
 
                     case TrapType.SawBlade:
@@ -135,32 +167,34 @@ namespace TowerDefensePrototype
             }
 
             UpdateQuads();
-            SetUpBars();
-            
+            //SetUpBars();            
         }
 
         public void SetUpBars()
         {
             UIBar1 = new UIBar(new Vector2(Position.X + 105, Position.Y - BoxSize.Y + 60),
-                                   new Vector2(BoxSize.X - 125, 15), Color.White, false);
+                                   new Vector2(BoxSize.X - 135, 15), Color.White, false);
+            UIBar1.Update(100, 99);
+
 
             UIBar2 = new UIBar(new Vector2(Position.X + 105, Position.Y - BoxSize.Y + 85),
-                                   new Vector2(BoxSize.X - 125, 15), Color.White, false);
+                                   new Vector2(BoxSize.X - 135, 15), Color.White, false);
+            UIBar2.Update(100, 99);
+
 
             UIBar3 = new UIBar(new Vector2(Position.X + 105, Position.Y - BoxSize.Y + 110),
-                                   new Vector2(BoxSize.X - 125, 15), Color.White, false);
+                                   new Vector2(BoxSize.X - 135, 15), Color.White, false);
+            UIBar3.Update(100, 99);
+
 
             UIBar4 = new UIBar(new Vector2(Position.X + 105, Position.Y - BoxSize.Y + 135),
-                                   new Vector2(BoxSize.X - 125, 15), Color.White, false);
+                                   new Vector2(BoxSize.X - 135, 15), Color.White, false);
+            UIBar4.Update(100, 100);
+
 
             UIBar5 = new UIBar(new Vector2(Position.X + 105, Position.Y - BoxSize.Y + 160),
-                                   new Vector2(BoxSize.X - 125, 15), Color.White, false);
-
-            UIBar1.Update(10, 2);
-            UIBar2.Update(10, 3);
-            UIBar3.Update(10, 6);
-            UIBar4.Update(10, 8);
-            UIBar5.Update(10, 4);
+                                   new Vector2(BoxSize.X - 135, 15), Color.White, false);
+            UIBar5.Update(100, 100);
         }
 
         public void LoadContent(ContentManager contentManager)
@@ -215,7 +249,7 @@ namespace TowerDefensePrototype
                     Color.White, 0, new Vector2(0, 0), 0.7f, SpriteEffects.None, 0);
 
                 //Draw the weapon damage
-                spriteBatch.DrawString(RobotoBold40_2, "248", new Vector2(Position.X + 30, Position.Y - BoxSize.Y + 2),
+                spriteBatch.DrawString(RobotoBold40_2, WeaponDamage.ToString(), new Vector2(Position.X + 30, Position.Y - BoxSize.Y + 2),
                     Color.DodgerBlue, 0, new Vector2(0, 0), 1f, SpriteEffects.None, 0);
 
                 //Draw the weapon tip, e.g. "Fire into a closely packed crowed for maximum carnage"
@@ -239,27 +273,63 @@ namespace TowerDefensePrototype
                 spriteBatch.DrawString(RobotoRegular20_0, WeaponCost.ToString(), new Vector2(Position.X + 35, Position.Y - 78),
                     Color.White, 0, new Vector2(0, 0), 1f, SpriteEffects.None, 0);
 
-                #region Draw the names of the bars
+                #region Draw the names and values of the bars
+                #region Bar 1
+                //Name
                 Vector2 rateOfFireSize = RobotoRegular20_0.MeasureString(BarText1);
                 spriteBatch.DrawString(RobotoRegular20_0, BarText1, new Vector2(Position.X + 100, Position.Y - BoxSize.Y + 60),
                     Color.White, 0, new Vector2(rateOfFireSize.X, 0), 0.8f, SpriteEffects.None, 0);
 
+                //Value
+                Vector2 rateOfFireValueSize = RobotoRegular20_0.MeasureString(Bar1Value.ToString());
+                spriteBatch.DrawString(RobotoRegular20_0, Bar1Value.ToString(), new Vector2(Position.X + 250 - 25, Position.Y - BoxSize.Y + 60),
+                    Color.White, 0, new Vector2(0, 0), 0.8f, SpriteEffects.None, 0);
+                #endregion
+
+                #region Bar 2
                 Vector2 impactSize = RobotoRegular20_0.MeasureString(BarText2);
                 spriteBatch.DrawString(RobotoRegular20_0, BarText2, new Vector2(Position.X + 100, Position.Y - BoxSize.Y + 85),
                     Color.White, 0, new Vector2(impactSize.X, 0), 0.8f, SpriteEffects.None, 0);
 
+                Vector2 impactValueSize = RobotoRegular20_0.MeasureString(Bar2Value.ToString());
+                spriteBatch.DrawString(RobotoRegular20_0, Bar2Value.ToString(), new Vector2(Position.X + 250 - 25, Position.Y - BoxSize.Y + 85),
+                    Color.White, 0, new Vector2(0, 0), 0.8f, SpriteEffects.None, 0);
+                #endregion
+
+                #region Bar 3
                 Vector2 rangeSize = RobotoRegular20_0.MeasureString(BarText3);
                 spriteBatch.DrawString(RobotoRegular20_0, BarText3, new Vector2(Position.X + 100, Position.Y - BoxSize.Y + 110),
                     Color.White, 0, new Vector2(rangeSize.X, 0), 0.8f, SpriteEffects.None, 0);
 
+                Vector2 rangeValueSize = RobotoRegular20_0.MeasureString(Bar3Value.ToString());
+                spriteBatch.DrawString(RobotoRegular20_0, Bar3Value.ToString(), new Vector2(Position.X + 250 - 25, Position.Y - BoxSize.Y + 110),
+                    Color.White, 0, new Vector2(0, 0), 0.8f, SpriteEffects.None, 0);
+                #endregion
+
+                #region Bar 4
                 Vector2 ResponseSize = RobotoRegular20_0.MeasureString(BarText4);
                 spriteBatch.DrawString(RobotoRegular20_0, BarText4, new Vector2(Position.X + 100, Position.Y - BoxSize.Y + 135),
                     Color.White, 0, new Vector2(ResponseSize.X, 0), 0.8f, SpriteEffects.None, 0);
 
+                Vector2 ResponseValueSize = RobotoRegular20_0.MeasureString(Bar4Value.ToString());
+                spriteBatch.DrawString(RobotoRegular20_0, Bar4Value.ToString(), new Vector2(Position.X + 250 - 25, Position.Y - BoxSize.Y + 135),
+                    Color.White, 0, new Vector2(0, 0), 0.8f, SpriteEffects.None, 0);
+                #endregion
+
+                #region Bar 5
                 Vector2 reloadSize = RobotoRegular20_0.MeasureString(BarText5);
                 spriteBatch.DrawString(RobotoRegular20_0, BarText5, new Vector2(Position.X + 100, Position.Y - BoxSize.Y + 160),
                     Color.White, 0, new Vector2(reloadSize.X, 0), 0.8f, SpriteEffects.None, 0);
+
+                Vector2 reloadValueSize = RobotoRegular20_0.MeasureString(Bar5Value.ToString());
+                spriteBatch.DrawString(RobotoRegular20_0, Bar5Value.ToString(), new Vector2(Position.X + 250 - 25, Position.Y - BoxSize.Y + 160),
+                    Color.White, 0, new Vector2(0, 0), 0.8f, SpriteEffects.None, 0);
                 #endregion
+                #endregion
+
+                Vector2 chargesSize = RobotoRegular20_0.MeasureString(Charges.ToString());
+                spriteBatch.DrawString(RobotoRegular20_0, Charges.ToString(), new Vector2(Position.X + 250 - 5, Position.Y - BoxSize.Y + 175),
+                    Color.White, 0, new Vector2(chargesSize.X, 0), 0.8f, SpriteEffects.None, 0);
 
                 foreach (EffectPass pass in basicEffect.CurrentTechnique.Passes)
                 {

@@ -114,6 +114,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Basics\BulletTrail.cs" />
+    <Compile Include="ParticleSystem\AmmoBelt.cs" />
+    <Compile Include="ParticleSystem\ShellCasing.cs" />
+    <Compile Include="Basics\VerletObject.cs" />
     <Compile Include="UIComponents\CooldownButton.cs" />
     <Compile Include="Basics\GrassBlade.cs" />
     <Compile Include="Basics\TexturedQuad.cs" />

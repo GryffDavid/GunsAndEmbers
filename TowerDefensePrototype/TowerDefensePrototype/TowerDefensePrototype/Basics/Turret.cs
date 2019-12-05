@@ -17,8 +17,8 @@ namespace TowerDefensePrototype
         public Rectangle BaseRectangle, BarrelRectangle, SelectBox, SourceRectangle;
         MouseState CurrentMouseState, PreviousMouseState;
         public float Rotation, MaxHealth, CurrentHealth, FireRotation, CurrentHeat, MaxHeat,
-                     CurrentHeatTime, MaxHeatTime, CoolValue, ShotHeat, BlastRadius, AngleOffset, 
-                     MaxAngleOffset, MinAngleOffset;
+                     CurrentHeatTime, MaxHeatTime, CoolValue, ShotHeat, BlastRadius, AngleOffset,
+                     MaxAngleOffset, MinAngleOffset, LaunchVelocity;
         public bool Selected, Active, JustClicked, CanShoot, Animated, Looping, Overheated;
         public double FireDelay, CurrentFrameTime;
         public double ElapsedTime = 0;
@@ -30,6 +30,25 @@ namespace TowerDefensePrototype
         public List<Emitter> EmitterList = new List<Emitter>();
         public DamageType DamageType;
         public UIBar TimingBar, HealthBar;
+
+        //Chance to Effect - i.e. fire, slow, freeze etc.
+        public float ChanceToEffect;
+
+        //Type of fire: Full-auto, semi-auto, reload
+        public TurretFireType TurretFireType;
+
+        //Shots per magazine: Number of shots before turrets need to be reloaded
+        public int MagazineCapacity;
+
+        //Range: Pixel-distance before damage drops off
+        public int Range;
+
+        //Total number of times the turret can be fired before needing to be replaced.
+        //This is meant for powerful weapons like the lightning turret which are slightly OP
+        public int Charges;
+
+        //Responsiveness: The LERP value that determines how fast the turret can move from one direction to another
+        public float Responsiveness;
 
         public void Initialize(ContentManager contentManager)
         {
@@ -225,7 +244,6 @@ namespace TowerDefensePrototype
 
         public virtual void Draw(SpriteBatch spriteBatch)
         {
-
         //    ///
         //    //Draw stylized health bars with quads instead.
         //    ///

@@ -26,7 +26,9 @@ namespace TowerDefensePrototype
             CurrentAnimation = new Animation()
             {
                 TotalFrames = 0
-            };            
+            };
+
+            Charges = 6;
         }
 
         public override void Draw(SpriteBatch spriteBatch)

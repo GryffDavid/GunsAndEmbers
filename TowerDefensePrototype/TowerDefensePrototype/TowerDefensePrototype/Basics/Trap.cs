@@ -28,6 +28,12 @@ namespace TowerDefensePrototype
         public static Random Random = new Random();
         public UIBar TimingBar, HealthBar;
         
+        //What the traps can do to the invaders upon collision
+        public DamageOverTimeStruct InvaderDOT;
+        public SlowStruct InvaderSlow;
+        public FreezeStruct InvaderFreeze;
+        public float NormalDamage;
+
         public virtual void Initialize()
         {
             Active = true;
@@ -105,6 +111,9 @@ namespace TowerDefensePrototype
             //    CurrentFrameDelay = 0;
             //    CurrentFrame = Random.Next(0, CurrentAnimation.TotalFrames);
             //}
+
+            //This is so that if the animation bugs out I can know which trap is the problem.
+            TrapType traptype = TrapType;
 
             if (CurrentAnimation != null)
             {
