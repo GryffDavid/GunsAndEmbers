@@ -31,8 +31,8 @@ namespace TowerDefensePrototype
                       SlowDelay, CurrentSlowDelay,
                       BeamDelay, CurrentBeamDelay,
                       CurrentFrameDelay;
-        public bool Active, VulnerableToTurret, VulnerableToTrap, CanAttack, 
-                    Burning, Frozen, Slow, Airborne, HitByBeam;
+        public bool Active, VulnerableToTurret, VulnerableToTrap, CanAttack,
+                    Burning, Frozen, Slow, Airborne, HitByBeam, InAir;
   
         public InvaderType InvaderType;
         public Animation CurrentAnimation;
@@ -63,9 +63,16 @@ namespace TowerDefensePrototype
             HitByBeam = false;
             VulnerableToTurret = true;
             VulnerableToTrap = true;
+            InAir = false;
             Color = Color.White;
             MaxY = Random.Next((int)YRange.X, (int)YRange.Y);
             ResourceValue = Random.Next((int)ResourceMinMax.X, (int)ResourceMinMax.Y);
+
+            if (this.GetType().BaseType.Name == "HeavyRangedInvader")
+            {
+                HeavyRangedInvader rangedInvader = this as HeavyRangedInvader;
+                rangedInvader.MinDistance = Random.Next((int)rangedInvader.DistanceRange.X, (int)rangedInvader.DistanceRange.Y);
+            }
             //FrameSize = new Vector2(CurrentTexture.Width / CurrentAnimation.TotalFrames, CurrentTexture.Height);
             Velocity = Direction * Speed;
             //InvaderOutline = new UIOutline(Position, new Vector2(DestinationRectangle.Width, DestinationRectangle.Height), null, null, this);
@@ -140,7 +147,9 @@ namespace TowerDefensePrototype
                     Burning = false;
                     CurrentBurnInterval = 0;
                     CurrentBurnDelay = 0;
-                    FireEmitter.AddMore = false;
+
+                    if (FireEmitter != null)
+                        FireEmitter.AddMore = false;
                 }
 
                 if (Burning == true)
@@ -190,13 +199,13 @@ namespace TowerDefensePrototype
                 #region This animates the invader, but only if it's not frozen
                 CurrentFrameDelay += gameTime.ElapsedGameTime.TotalMilliseconds;
 
-                if (CurrentFrameDelay > CurrentAnimation.FrameDelay)
+                if (CurrentFrameDelay > CurrentAnimation.FrameDelay && CurrentAnimation.TotalFrames > 1)
                 {
                     if (Frozen == false)
                     {
                         CurrentFrame++;
 
-                        if (CurrentFrame == CurrentAnimation.TotalFrames)
+                        if (CurrentFrame >= CurrentAnimation.TotalFrames)
                         {
                             CurrentFrame = 0;
                         }
@@ -249,7 +258,7 @@ namespace TowerDefensePrototype
             }
         }
 
-        public void Draw(SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, BasicEffect basicEffect)
+        public virtual void Draw(SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, BasicEffect basicEffect)
         {
             if (Active == true)
             {
@@ -303,10 +312,13 @@ namespace TowerDefensePrototype
             }
         }
 
-        //public void Trajectory(Vector2 velocity)
-        //{
-        //    Velocity = velocity;
-        //}
+        public void Trajectory(Vector2 velocity)
+        {
+            if (velocity.Y < 0)
+                InAir = true;
+
+            Velocity = velocity;
+        }
 
         public void Freeze(FreezeStruct freeze, Color frozenColor)
         {

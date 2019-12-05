@@ -15,8 +15,8 @@ namespace TowerDefensePrototype
         Vector2 Position, Change;
         public bool Active;
         Color OriginalColor, Color;
-
-        float CurrentTime, MaxTime;
+        static Random Random = new Random();
+        float CurrentTime, MaxTime, Angle;
 
         public NumberChange(SpriteFont spriteFont, Vector2 position, Vector2 change, int number)
         {
@@ -26,6 +26,7 @@ namespace TowerDefensePrototype
             Change = change;
             Number = number;
             MaxTime = 500;
+            Angle = (float)RandomDouble(-120, -60);
 
             if (number < 0)
             {
@@ -35,11 +36,16 @@ namespace TowerDefensePrototype
             {
                 OriginalColor = new Color(255, 255, 255, 255);
             }
+
+            Change = 5 * new Vector2((float)Math.Cos(MathHelper.ToRadians(Angle)), (float)Math.Sin(MathHelper.ToRadians(Angle)));
+
         }
 
         public void Update(GameTime gameTime)
         {
-            Position += Change * (float)(gameTime.ElapsedGameTime.TotalSeconds * 60);
+            Change.Y += 0.2f * (float)(gameTime.ElapsedGameTime.TotalSeconds * 60);
+
+            Position += Change *(float)(gameTime.ElapsedGameTime.TotalSeconds * 60);
 
             CurrentTime += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
 
@@ -55,6 +61,11 @@ namespace TowerDefensePrototype
         public void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.DrawString(SpriteFont, Number.ToString(), Position, Color);
+        }
+
+        public double RandomDouble(double a, double b)
+        {
+            return a + Random.NextDouble() * (b - a);
         }
     }
 }

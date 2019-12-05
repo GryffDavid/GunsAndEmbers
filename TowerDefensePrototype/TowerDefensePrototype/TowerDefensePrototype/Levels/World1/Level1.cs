@@ -19,7 +19,8 @@ namespace TowerDefensePrototype
             Resources = 1300;
 
             Wave Wave1 = new Wave(true, 2050, 3000,
-                 new Soldier(new Vector2(2050, 600)),
+            //     new Soldier(new Vector2(2050, 600)),
+                 new StationaryCannon(new Vector2(2050, 600))
                  //new Soldier(new Vector2(2050, 600)),
                  //new Soldier(new Vector2(2050, 600)),
                  //new Soldier(new Vector2(2050, 600)),
@@ -39,7 +40,8 @@ namespace TowerDefensePrototype
                  //new Soldier(new Vector2(2050, 600)),
                  //new Soldier(new Vector2(2050, 600)),
                  //new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)));
+                 //new Soldier(new Vector2(2050, 600))
+                 );
 
             Wave Wave3 = new Wave(true, 200, 1000,
                  new Soldier(new Vector2(2050, 600)),

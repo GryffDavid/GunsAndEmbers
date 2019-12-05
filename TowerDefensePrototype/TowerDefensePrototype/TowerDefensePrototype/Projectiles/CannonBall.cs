@@ -45,7 +45,7 @@ namespace TowerDefensePrototype
                     //Change the speed of the smoke particle based on it's distance to 64 pixels from origin
                     particle.Velocity.X = (float)(Math.Cos(Angle) * Speed);
                     particle.Velocity.Y = (float)(Math.Sin(Angle) * Speed);
-                    particle.Friction = 0.5f;
+                    particle.Friction = new Vector2(0.5f, 0.5f);
                     particle.Shrink = true;
                     //particle.Gravity = -0.1f;
                 }

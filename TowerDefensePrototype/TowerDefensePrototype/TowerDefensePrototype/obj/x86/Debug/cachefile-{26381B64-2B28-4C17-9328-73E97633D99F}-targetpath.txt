@@ -125,7 +125,6 @@ Content\Icons\DamageTypeIcons\FireDamageIcon.xnb
 Content\Particles\MachineBullet.xnb
 Content\Backgrounds\MenuBackground.xnb
 Content\Fonts\RobotoRegular40_2.xnb
-Content\Fonts\RobotoRegular20_2(2).xnb
 Content\ShortButtonLeft.xnb
 Content\ShortButtonRight.xnb
 Content\Buttons\ShortButtonLeft.xnb
@@ -134,6 +133,9 @@ Content\PowerUpDeliveryPod.xnb
 Content\PowerUpDeliveryFin.xnb
 Content\MysteryEmployer.xnb
 Content\Projectiles\Grenade.xnb
+Content\Invaders\StationaryCannon\StationaryCannonBarrel.xnb
+Content\Invaders\StationaryCannon\StationaryCannonBase.xnb
+Content\Fonts\RobotoRegular20_2(2).xnb
 Content\Sounds\MenuClick.xnb
 Content\Sounds\FireTrapStart.xnb
 Content\Sounds\MenuAmbiance.xnb
@@ -153,7 +155,6 @@ Content\Sounds\Splat1.xnb
 Content\Sounds\Splat2.xnb
 Content\Sounds\MenuPing.xnb
 Content\Sounds\MenuWoosh.xnb
-Content\Sounds\MenuMusic1.xnb
 Content\Sounds\Implosion.xnb
 Content\Sounds\Implosion2.xnb
 Content\Sounds\TurretOverheat.xnb

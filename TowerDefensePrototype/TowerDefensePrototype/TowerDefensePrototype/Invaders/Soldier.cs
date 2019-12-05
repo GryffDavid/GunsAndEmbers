@@ -71,7 +71,7 @@ namespace TowerDefensePrototype
 
                 FrameSize = new Vector2(CurrentTexture.Width / CurrentAnimation.TotalFrames, CurrentTexture.Height);
                 CurrentFrameDelay = 0;
-                CurrentFrame = Random.Next(1, CurrentAnimation.TotalFrames);
+                CurrentFrame = Random.Next(0, CurrentAnimation.TotalFrames);
             }
 
             base.Update(gameTime, cursorPosition);

@@ -26,7 +26,7 @@ namespace TowerDefensePrototype
             InvaderType = InvaderType.Archer;
             YRange = new Vector2(700, 900);
             RangedAttackPower = 7;
-            Range = new Vector2(200, 600);
+            DistanceRange = new Vector2(200, 600);
             AngleRange = new Vector2(110, 160);
             PowerRange = new Vector2(9, 12);
 

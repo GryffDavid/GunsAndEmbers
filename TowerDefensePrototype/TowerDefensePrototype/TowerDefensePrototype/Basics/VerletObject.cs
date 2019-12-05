@@ -70,6 +70,51 @@ namespace TowerDefensePrototype
 
         public void UpdateSticks(GameTime gameTime)
         {
+            //foreach (Stick stick in Sticks)
+            //{
+            //    Vector2 Direction = stick.Point2.CurrentPosition - stick.Point1.CurrentPosition;
+            //    Direction.Normalize();
+
+            //    float Dist = Vector2.Distance(stick.Point1.CurrentPosition, stick.Point2.CurrentPosition);
+            //    float Diff = stick.Length - Dist;
+
+            //    float percent = Diff / Dist / 2;
+            //    Vector2 Offset = Direction * percent;
+
+            //    if (stick.Point1.Pinned == false)
+            //    {
+            //        stick.Point1.CurrentPosition -= Offset;
+            //    }
+
+            //    if (stick.Point2.Pinned == false)
+            //    {
+            //        stick.Point2.CurrentPosition += Offset;
+            //    }
+            //}
+
+            //foreach (Stick stick in Sticks2)
+            //{
+            //    Vector2 Direction = stick.Point2.CurrentPosition - stick.Point1.CurrentPosition;
+            //    Direction.Normalize();
+
+            //    float Dist = Vector2.Distance(stick.Point1.CurrentPosition, stick.Point2.CurrentPosition);
+            //    float Diff = stick.Length - Dist;
+
+            //    float percent = Diff / Dist / 2;
+            //    Vector2 Offset = Direction * percent;
+
+            //    if (stick.Point1.Pinned == false)
+            //    {
+            //        stick.Point1.CurrentPosition -= Offset;
+            //    }
+
+            //    if (stick.Point2.Pinned == false)
+            //    {
+            //        stick.Point2.CurrentPosition += Offset;
+            //    }
+            //}
+
+
             foreach (Stick stick in Sticks)
             {
                 float currentLength = Vector2.Distance(stick.Point1.CurrentPosition, stick.Point2.CurrentPosition);

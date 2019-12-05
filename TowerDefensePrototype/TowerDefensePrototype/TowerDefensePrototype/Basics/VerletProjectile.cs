@@ -243,37 +243,45 @@ namespace TowerDefensePrototype
 
         public void UpdateSticks()
         {
-            //foreach (Sticks Sticks in Stickss)
+            Vector2 currentDir = Sticks.Point2.CurrentPosition - Sticks.Point1.CurrentPosition;
+            currentDir.Normalize();
+            Sticks.Center = Sticks.Point1.CurrentPosition + currentDir * Sticks.Length / 2;
+
+            Vector2 previousDir = Sticks.Point2.PreviousPosition - Sticks.Point1.PreviousPosition;
+            previousDir.Normalize();
+            Sticks.PreviousCenter = Sticks.Point1.PreviousPosition + previousDir * Sticks.Length / 2;
+
+            Sticks.Direction = Sticks.Center - Sticks.PreviousCenter;
+            Sticks.Direction.Normalize();
+
+            float currentLength = Vector2.Distance(Sticks.Point1.CurrentPosition, Sticks.Point2.CurrentPosition);
+
+            if (currentLength != Sticks.Length)
             {
                 Vector2 Direction = Sticks.Point2.CurrentPosition - Sticks.Point1.CurrentPosition;
                 Direction.Normalize();
 
-                Vector2 currentDir = Sticks.Point2.CurrentPosition - Sticks.Point1.CurrentPosition;
-                currentDir.Normalize();
-                Sticks.Center = Sticks.Point1.CurrentPosition + currentDir * Sticks.Length / 2;
+                if (Sticks.Point2.Pinned == false)
+                    Sticks.Point2.CurrentPosition -= (Direction * (currentLength - Sticks.Length) / 2);
 
-                Vector2 previousDir = Sticks.Point2.PreviousPosition - Sticks.Point1.PreviousPosition;
-                previousDir.Normalize();
-                Sticks.PreviousCenter = Sticks.Point1.PreviousPosition + previousDir * Sticks.Length / 2;
-
-                Sticks.Direction = Sticks.Center - Sticks.PreviousCenter;
-                Sticks.Direction.Normalize();
-
-                float Dist = Vector2.Distance(Sticks.Point1.CurrentPosition, Sticks.Point2.CurrentPosition);
-                float Diff = Sticks.Length - Dist;
-
-                //if (Math.Abs(Diff) > 5)
-                //{
-                    float percent = Diff / Dist / 2;
-                    Vector2 Offset = Direction * percent;
-
-                    if (Sticks.Point1.Pinned == false)
-                        Sticks.Point1.CurrentPosition -= Offset;
-
-                    if (Sticks.Point2.Pinned == false)
-                        Sticks.Point2.CurrentPosition += Offset;
-                //}
+                if (Sticks.Point1.Pinned == false)
+                    Sticks.Point1.CurrentPosition += (Direction * (currentLength - Sticks.Length) / 2);
             }
+
+            //float Dist = Vector2.Distance(Sticks.Point1.CurrentPosition, Sticks.Point2.CurrentPosition);
+            //float Diff = Sticks.Length - Dist;
+
+            ////if (Math.Abs(Diff) > 5)
+            ////{
+            //    float percent = Diff / Dist / 2;
+            //    Vector2 Offset = Direction * percent;
+
+            //    if (Sticks.Point1.Pinned == false)
+            //        Sticks.Point1.CurrentPosition -= Offset;
+
+            //    if (Sticks.Point2.Pinned == false)
+            //        Sticks.Point2.CurrentPosition += Offset;
+            ////}            
         }    
     }
 }

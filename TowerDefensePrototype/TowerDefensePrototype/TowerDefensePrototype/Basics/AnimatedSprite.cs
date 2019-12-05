@@ -39,6 +39,27 @@ namespace TowerDefensePrototype
             Active = true;
         }
 
+        public AnimatedSprite(Texture2D asset, Vector2 position, Vector2 frameSize, int frameCount, int frameTime, Color color, Vector2 scale, bool looping)
+        {
+            Color = color;
+            FrameSize = frameSize;
+            FrameCount = frameCount;
+            FrameTime = frameTime;
+            Scale = scale;
+
+            Looping = looping;
+            Position = position;
+
+            //AssetName = assetName;
+            SpriteStrip = asset;
+
+            ElapsedTime = 0;
+            CurrentFrame = 0;
+
+            Active = true;
+        }
+
+
         public void LoadContent(ContentManager contentManager)
         {
             SpriteStrip = contentManager.Load<Texture2D>(AssetName);
@@ -47,25 +68,25 @@ namespace TowerDefensePrototype
         public void Update(GameTime gameTime)
         {
             if (Active == false)
-                return;
-
-            ElapsedTime += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
-
-            if (ElapsedTime > FrameTime)
             {
-                CurrentFrame++;
+                ElapsedTime += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
 
-                if (CurrentFrame == FrameCount)
+                if (ElapsedTime > FrameTime)
                 {
-                    CurrentFrame = 0;
+                    CurrentFrame++;
 
-                    if (Looping == false)
+                    if (CurrentFrame == FrameCount)
                     {
-                        Active = false;
-                    }
-                }
+                        CurrentFrame = 0;
 
-                ElapsedTime = 0;
+                        if (Looping == false)
+                        {
+                            Active = false;
+                        }
+                    }
+
+                    ElapsedTime = 0;
+                }
             }
 
             SourceRectangle = new Rectangle(CurrentFrame * (int)FrameSize.X, 0, (int)FrameSize.X, (int)FrameSize.Y);

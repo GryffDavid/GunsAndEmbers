@@ -10,12 +10,12 @@ namespace TowerDefensePrototype
     public class Particle
     {
         public Texture2D Texture;
-        public Vector2 CurrentPosition, Direction, Velocity, YRange, Origin, StartingPosition;
+        public Vector2 CurrentPosition, Direction, Velocity, YRange, Origin, StartingPosition, Friction;
         public Rectangle DestinationRectangle;
         public float Angle, Speed, CurrentHP, MaxHP, CurrentTransparency, MaxTransparency, CurrentScale, MaxScale, MaxY;
-        public float RotationIncrement, CurrentRotation, Gravity, Friction, FadeDelay, CurrentFadeDelay, DrawDepth;
+        public float RotationIncrement, CurrentRotation, Gravity, FadeDelay, CurrentFadeDelay, DrawDepth;
         public Color CurrentColor, EndColor, StartColor;
-        public bool Active, Fade, BouncedOnGround, CanBounce, Shrink, StopBounce, HardBounce, Shadow, RotateVelocity;
+        public bool Active, Fade, BouncedOnGround, CanBounce, Shrink, StopBounce, HardBounce, Shadow, RotateVelocity, SortDepth;
         static Random Random = new Random();
         public SpriteEffects Orientation;
 
@@ -23,7 +23,7 @@ namespace TowerDefensePrototype
             float startingTransparency, bool fade, float startingRotation, float rotationChange,
             float scale, Color startColor, Color endColor, float gravity, bool canBounce, float maxY, bool shrink,
             float? drawDepth = null, bool? stopBounce = false, bool? hardBounce = true, bool? shadow = false, 
-            bool? rotateVelocity = false, float? friction = null, SpriteEffects? orientation = SpriteEffects.None, float? fadeDelay = null)
+            bool? rotateVelocity = false, Vector2? friction = null, SpriteEffects? orientation = SpriteEffects.None, float? fadeDelay = null, bool? sortDepth = false)
         {
             Active = true;
             Texture = texture;
@@ -82,7 +82,9 @@ namespace TowerDefensePrototype
             if (friction != null)
                 Friction = friction.Value;
             else
-                Friction = 0;     
+                Friction = new Vector2(0, 0);
+
+            SortDepth = sortDepth.Value;
 
             Origin = new Vector2(Texture.Width / 2, Texture.Height / 2);
         }
@@ -164,9 +166,14 @@ namespace TowerDefensePrototype
                 }
             }
 
-            if (Friction != 0)
-                Velocity = Vector2.Lerp(Velocity, new Vector2(0, 0), Friction * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
-
+            if (Friction != new Vector2(0, 0))
+            {
+                //Velocity = new Vector2(MathHelper.Lerp(Velocity.X, 0, Friction.X), MathHelper.Lerp(Velocity.Y, 0, Friction.Y));
+                //Velocity = 
+                //Velocity = Vector2.Lerp(Velocity, new Vector2(0, 0), Friction * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
+                Velocity.Y = MathHelper.Lerp(Velocity.Y, 0, Friction.Y * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
+                Velocity.X = MathHelper.Lerp(Velocity.X, 0, Friction.X * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
+            }
             //if (Velocity.X > 0)
             //{
             //    Velocity.X -= Friction;
@@ -219,18 +226,23 @@ namespace TowerDefensePrototype
 
             if (Fade == true && FadeDelay == 0)
             {
-                CurrentTransparency = MaxTransparency * (PercentageHP / 100);                
+                CurrentTransparency = MaxTransparency * (PercentageHP / 100.0f);                
             }
 
             if (Fade == true && FadeDelay != 0)
             {
                 if (CurrentFadeDelay > FadeDelay)
-                    CurrentTransparency = MaxTransparency * (PercentageHP / 100);   
+                    CurrentTransparency = MaxTransparency * (PercentageHP / 100.0f);   
             }
 
             if (Shrink == true)
             {
-                CurrentScale = MaxScale * (PercentageHP / 100);
+                CurrentScale = MaxScale * (PercentageHP / 100.0f);
+            }
+
+            if (SortDepth == true)
+            {
+                DrawDepth = DestinationRectangle.Center.Y / 1080.0f;
             }
 
             CurrentColor = Color.Lerp(EndColor, StartColor, PercentageHP/100);            
@@ -243,43 +255,43 @@ namespace TowerDefensePrototype
                 spriteBatch.Draw(Texture, DestinationRectangle, null, Color.Lerp(Color.Transparent, CurrentColor, CurrentTransparency),
                                  MathHelper.ToRadians(CurrentRotation), Origin, Orientation, DrawDepth);
 
-                if (Shadow == true)
-                {
-                    float PercentToGround = (100 / (500 - MaxY)) * (CurrentPosition.Y - MaxY);
-                    float SizeScale = (2 * PercentToGround) / 100;
-                    float ColorScale = (150 - PercentToGround) / 100;
+                //if (Shadow == true)
+                //{
+                //    float PercentToGround = (100 / (500 - MaxY)) * (CurrentPosition.Y - MaxY);
+                //    float SizeScale = (2 * PercentToGround) / 100;
+                //    float ColorScale = (150 - PercentToGround) / 100;
 
-                    ColorScale = MathHelper.Clamp(ColorScale, 0.005f, 1f);
-                    SizeScale = MathHelper.Clamp(SizeScale, 1f, 2f);
+                //    ColorScale = MathHelper.Clamp(ColorScale, 0.005f, 1f);
+                //    SizeScale = MathHelper.Clamp(SizeScale, 1f, 2f);
 
-                    Vector2 ShadowScale = new Vector2(SizeScale * CurrentScale, SizeScale * CurrentScale);
-                    Color ShadowColor = Color.Lerp(Color.Transparent, Color.Black, ColorScale * 0.05f);
+                //    Vector2 ShadowScale = new Vector2(SizeScale * CurrentScale, SizeScale * CurrentScale);
+                //    Color ShadowColor = Color.Lerp(Color.Transparent, Color.Black, ColorScale * 0.05f);
 
-                    spriteBatch.Draw(Texture,
-                        new Rectangle((int)CurrentPosition.X, (int)MaxY + 4, (int)(Texture.Width * ShadowScale.X), (int)(Texture.Height * ShadowScale.Y)),
-                        null, Color.Lerp(Color.Transparent, ShadowColor, CurrentTransparency),
-                        MathHelper.ToRadians(CurrentRotation), Origin, SpriteEffects.None, (DestinationRectangle.Bottom / 1080));
+                //    spriteBatch.Draw(Texture,
+                //        new Rectangle((int)CurrentPosition.X, (int)MaxY + 4, (int)(Texture.Width * ShadowScale.X), (int)(Texture.Height * ShadowScale.Y)),
+                //        null, Color.Lerp(Color.Transparent, ShadowColor, CurrentTransparency),
+                //        MathHelper.ToRadians(CurrentRotation), Origin, SpriteEffects.None, (DestinationRectangle.Bottom / 1080));
 
-                    //spriteBatch.Draw(Texture,
-                    //    new Rectangle((int)CurrentPosition.X, (int)MaxY + 4, (int)(Texture.Width * ShadowScale.X / 1.7f), (int)(Texture.Height * ShadowScale.Y / 1.5f)),
-                    //    null, Color.Lerp(Color.Transparent, ShadowColor, CurrentTransparency),
-                    //    MathHelper.ToRadians(CurrentRotation), Origin, SpriteEffects.None, (DestinationRectangle.Bottom / 1080));
+                //    //spriteBatch.Draw(Texture,
+                //    //    new Rectangle((int)CurrentPosition.X, (int)MaxY + 4, (int)(Texture.Width * ShadowScale.X / 1.7f), (int)(Texture.Height * ShadowScale.Y / 1.5f)),
+                //    //    null, Color.Lerp(Color.Transparent, ShadowColor, CurrentTransparency),
+                //    //    MathHelper.ToRadians(CurrentRotation), Origin, SpriteEffects.None, (DestinationRectangle.Bottom / 1080));
 
-                    //spriteBatch.Draw(Texture,
-                    //    new Rectangle((int)CurrentPosition.X, (int)MaxY + 4, (int)(Texture.Width * ShadowScale.X / 1.5f), (int)(Texture.Height * ShadowScale.Y / 1.5f)),
-                    //    null, Color.Lerp(Color.Transparent, ShadowColor, CurrentTransparency),
-                    //    MathHelper.ToRadians(CurrentRotation), Origin, SpriteEffects.None, (DestinationRectangle.Bottom / 1080));
+                //    //spriteBatch.Draw(Texture,
+                //    //    new Rectangle((int)CurrentPosition.X, (int)MaxY + 4, (int)(Texture.Width * ShadowScale.X / 1.5f), (int)(Texture.Height * ShadowScale.Y / 1.5f)),
+                //    //    null, Color.Lerp(Color.Transparent, ShadowColor, CurrentTransparency),
+                //    //    MathHelper.ToRadians(CurrentRotation), Origin, SpriteEffects.None, (DestinationRectangle.Bottom / 1080));
 
-                    //spriteBatch.Draw(Texture,
-                    //    new Rectangle((int)CurrentPosition.X, (int)MaxY + 4, (int)(Texture.Width * ShadowScale.X / 1.3f), (int)(Texture.Height * ShadowScale.Y / 1.5f)),
-                    //    null, Color.Lerp(Color.Transparent, ShadowColor, CurrentTransparency),
-                    //    MathHelper.ToRadians(CurrentRotation), Origin, SpriteEffects.None, (DestinationRectangle.Bottom / 1080));
+                //    //spriteBatch.Draw(Texture,
+                //    //    new Rectangle((int)CurrentPosition.X, (int)MaxY + 4, (int)(Texture.Width * ShadowScale.X / 1.3f), (int)(Texture.Height * ShadowScale.Y / 1.5f)),
+                //    //    null, Color.Lerp(Color.Transparent, ShadowColor, CurrentTransparency),
+                //    //    MathHelper.ToRadians(CurrentRotation), Origin, SpriteEffects.None, (DestinationRectangle.Bottom / 1080));
 
-                    //spriteBatch.Draw(Texture,
-                    //    new Rectangle((int)CurrentPosition.X, (int)MaxY + 4, (int)(Texture.Width * ShadowScale.X), (int)(Texture.Height * ShadowScale.Y)),
-                    //    null, Color.Lerp(Color.Transparent, ShadowColor, CurrentTransparency),
-                    //    MathHelper.ToRadians(CurrentRotation), Origin, SpriteEffects.None, (DestinationRectangle.Bottom / 1080));
-                }
+                //    //spriteBatch.Draw(Texture,
+                //    //    new Rectangle((int)CurrentPosition.X, (int)MaxY + 4, (int)(Texture.Width * ShadowScale.X), (int)(Texture.Height * ShadowScale.Y)),
+                //    //    null, Color.Lerp(Color.Transparent, ShadowColor, CurrentTransparency),
+                //    //    MathHelper.ToRadians(CurrentRotation), Origin, SpriteEffects.None, (DestinationRectangle.Bottom / 1080));
+                //}
             }
         }
     }
