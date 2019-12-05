@@ -13,17 +13,15 @@ namespace TowerDefensePrototype
         public Vector2 CurrentPosition, Direction, Velocity, YRange, Origin, StartingPosition;
         public Rectangle DestinationRectangle;
         public float Angle, Speed, CurrentHP, MaxHP, CurrentTransparency, Scale, MaxY;
-        public float RotationIncrement, CurrentRotation, Gravity, DrawDepth, Friction;
+        public float RotationIncrement, CurrentRotation, Gravity, DrawDepth;
         public Color CurrentColor, EndColor, StartColor;
         public bool Active, Fade, BouncedOnGround, CanBounce, Shrink, StopBounce, HardBounce, Shadow, RotateVelocity;
         static Random Random = new Random();
-        public SpriteEffects Orientation;
 
         public Particle(Texture2D texture, Vector2 position, float angle, float speed, float maxHP,
             float startingTransparency, bool fade, float startingRotation, float rotationChange,
             float scale, Color startColor, Color endColor, float gravity, bool canBounce, float maxY, bool shrink,
-            float? drawDepth = null, bool? stopBounce = false, bool? hardBounce = true, bool? shadow = false, 
-            bool? rotateVelocity = false, float? friction = null, SpriteEffects? orientation = SpriteEffects.None)
+            float? drawDepth = null, bool? stopBounce = false, bool? hardBounce = true, bool? shadow = false, bool? rotateVelocity = false)
         {
             Active = true;
             Texture = texture;
@@ -70,13 +68,6 @@ namespace TowerDefensePrototype
 
             Shadow = shadow.Value;
 
-            Orientation = orientation.Value;
-
-            if (friction != null)
-                Friction = friction.Value;
-            else
-                Friction = 0;     
-
             Origin = new Vector2(Texture.Width / 2, Texture.Height / 2);
         }
 
@@ -92,7 +83,7 @@ namespace TowerDefensePrototype
 
             if (Active == true)
             {
-                CurrentRotation += RotationIncrement *((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
+                CurrentRotation += RotationIncrement * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
                 CurrentRotation = CurrentRotation % 360;
                 CurrentPosition += Velocity * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
                 Velocity.Y += Gravity * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
@@ -148,17 +139,7 @@ namespace TowerDefensePrototype
                 }
             }
 
-            if (Velocity.X > 0)
-            {
-                Velocity.X -= Friction;
-            }
-
-            if (Velocity.X < 0)
-            {
-                Velocity.X += Friction;
-            }
-
-            if (Velocity.Y == 0 && CanBounce == true)
+            if (Velocity.Y == 0)
             {
                 if (CurrentRotation < 0)
                     CurrentRotation += 360;
@@ -221,7 +202,7 @@ namespace TowerDefensePrototype
             if (Active == true)
             {
                 spriteBatch.Draw(Texture, DestinationRectangle, null, Color.Lerp(Color.Transparent, CurrentColor, CurrentTransparency),
-                                 MathHelper.ToRadians(CurrentRotation), Origin, Orientation, DrawDepth);
+                                 MathHelper.ToRadians(CurrentRotation), Origin, SpriteEffects.None, DrawDepth);
             }
         }
 

@@ -20,6 +20,7 @@ namespace TowerDefensePrototype
             DetonateLimit = 5;
             AffectedTime = 300;
             ResourceCost = 200;
+            Animated = false;
         }
     }
 }

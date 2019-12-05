@@ -18,7 +18,8 @@ namespace TowerDefensePrototype
             TrapType = TrapType.SawBlade;
             DetonateDelay = 2000;
             DetonateLimit = 5;
-            AffectedTime = 300;
+            AffectedTime = 300;            
+            Animated = false;
         }
     }
 }

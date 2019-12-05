@@ -40,9 +40,8 @@ namespace TowerDefensePrototype
             Color ParticleColor2 = Color.DarkGray;
 
             EmitterList.Add(new Emitter("Particles/Smoke", new Vector2(Position.X + 16, Position.Y + 8), new Vector2(90, 180), 
-                new Vector2(0, 0), new Vector2(40, 60), 0.2f, true, new Vector2(0, 360), new Vector2(-0.5f, 0.5f), 
-                new Vector2(0.25f, 0.5f), ParticleColor1, ParticleColor2, -0.00f, -1, 10, 1, false, new Vector2(0, 720), null, null,
-                null, null, null, null, null, null, null, true, true));
+                new Vector2(1.5f, 2), new Vector2(15, 20), 0.2f, true, new Vector2(0, 360), new Vector2(-2, 2), 
+                new Vector2(0.25f, 0.5f), ParticleColor1, ParticleColor2, 0.0f, -1, 20, 1, false, new Vector2(0, 720)));
 
             Damage = damage;
         }

@@ -14,22 +14,20 @@ namespace TowerDefensePrototype
         public List<Particle> ParticleList;
         public Texture2D Texture;
         public Vector2 ScaleRange, HPRange, RotationIncrementRange, SpeedRange, StartingRotationRange, EmitterDirection, EmitterVelocity;
-        public float Transparency, Gravity, ActiveSeconds, Interval, MaxY, DrawDepth, EmitterSpeed,
-                     EmitterAngle, EmitterGravity, Friction;
+        public float Transparency, Gravity, ActiveSeconds, Interval, MaxY, DrawDepth, EmitterSpeed, 
+                     EmitterAngle, EmitterGravity;
         public Color StartColor, EndColor;
-        public bool Active, Fade, CanBounce, AddMore, Shrink, StopBounce, HardBounce, BouncedOnGround, RotateVelocity, FlipHor, FlipVer;
+        public bool Active, Fade, CanBounce, AddMore, Shrink, StopBounce, HardBounce, BouncedOnGround, RotateVelocity;
         public string TextureName;
         public int Burst;
         static Random Random = new Random();
         public double IntervalTime, CurrentTime;
-        public SpriteEffects Orientation = SpriteEffects.None;
 
         public Emitter(String textureName, Vector2 position, Vector2 angleRange, Vector2 speedRange, Vector2 hpRange,
             float startingTransparency, bool fade, Vector2 startingRotationRange, Vector2 rotationIncrement, Vector2 scaleRange,
             Color startColor, Color endColor, float gravity, float activeSeconds, float interval, int burst, bool canBounce,
-            Vector2 yrange, bool? shrink = null, float? drawDepth = null, bool? stopBounce = null, bool? hardBounce = null, 
-            Vector2? emitterSpeed = null, Vector2? emitterAngle = null, float? emitterGravity = null, 
-            bool? rotateVelocity = null, float? friction = null, bool? flipHor = null, bool? flipVer = null)
+            Vector2 yrange, bool? shrink = null, float? drawDepth = null, bool? stopBounce = null, bool? hardBounce = null, Vector2? emitterSpeed = null,
+            Vector2? emitterAngle = null, float? emitterGravity = null, bool? rotateVelocity = null)
         {
             Active = true;
             TextureName = textureName;
@@ -73,16 +71,6 @@ namespace TowerDefensePrototype
                 HardBounce = hardBounce.Value;
 
 
-            if (flipVer == null)
-                FlipVer = false;
-            else
-                FlipVer = flipVer.Value;
-            
-            if (flipHor == null)
-                FlipHor = false;
-            else
-                FlipHor = flipHor.Value;
-
 
             if (emitterSpeed != null)
                 EmitterSpeed = (float)DoubleRange(emitterSpeed.Value.X, emitterSpeed.Value.Y);
@@ -111,11 +99,6 @@ namespace TowerDefensePrototype
             else
                 RotateVelocity = false;
 
-            if (friction != null)
-                Friction = friction.Value;
-            else
-                Friction = 0;     
-
             MaxY = Random.Next((int)yrange.X, (int)yrange.Y);
             AddMore = true;
         }
@@ -123,9 +106,8 @@ namespace TowerDefensePrototype
         public Emitter(Texture2D texture, Vector2 position, Vector2 angleRange, Vector2 speedRange, Vector2 hpRange,
            float startingTransparency, bool fade, Vector2 startingRotationRange, Vector2 rotationIncrement, Vector2 scaleRange,
            Color startColor, Color endColor, float gravity, float activeSeconds, float interval, int burst, bool canBounce,
-           Vector2 yrange, bool? shrink = null, float? drawDepth = null, bool? stopBounce = null, bool? hardBounce = null, 
-           Vector2? emitterSpeed = null, Vector2? emitterAngle = null, float? emitterGravity = null, bool? rotateVelocity = null, 
-            float? friction = null, bool? flipHor = null, bool? flipVer = null)
+           Vector2 yrange, bool? shrink = null, float? drawDepth = null, bool? stopBounce = null, bool? hardBounce = null, Vector2? emitterSpeed = null,
+           Vector2? emitterAngle = null, float? emitterGravity = null, bool? rotateVelocity = null)
         {
             Active = true;
             Texture = texture;
@@ -149,6 +131,8 @@ namespace TowerDefensePrototype
             CanBounce = canBounce;
 
 
+
+
             if (shrink == null)
                 Shrink = false;
             else
@@ -170,10 +154,6 @@ namespace TowerDefensePrototype
                 HardBounce = hardBounce.Value;
 
 
-            if (friction != null)
-                Friction = friction.Value;
-            else
-                Friction = 0;     
 
 
             if (emitterSpeed != null)
@@ -236,7 +216,7 @@ namespace TowerDefensePrototype
                     {
                         AddMore = false;
                     }
-                }                
+                }
 
                 if (EmitterSpeed != 0)
                 {
@@ -284,21 +264,6 @@ namespace TowerDefensePrototype
                     }
                 }
 
-                if (FlipHor == true && FlipVer == false)
-                {
-                    Orientation = RandomOrientation(SpriteEffects.None, SpriteEffects.FlipHorizontally);
-                }
-
-                if (FlipHor == false && FlipVer == true)
-                {
-                    Orientation = RandomOrientation(SpriteEffects.None, SpriteEffects.FlipVertically);
-                }
-
-                if (FlipHor == true && FlipVer == true)
-                {
-                    Orientation = RandomOrientation(SpriteEffects.None, SpriteEffects.FlipVertically, SpriteEffects.FlipHorizontally);
-                }
-
                 if (Burst < 2)
                 {
                     float angle, hp, scale, rotation, speed, startingRotation;
@@ -314,8 +279,7 @@ namespace TowerDefensePrototype
                     if (IntervalTime > Interval && AddMore == true)
                     {
                         Particle NewParticle = new Particle(Texture, Position, angle, speed, hp, Transparency, Fade, startingRotation,
-                                                            rotation, scale, StartColor, EndColor, Gravity, CanBounce, MaxY, Shrink, 
-                                                            DrawDepth, StopBounce, HardBounce, false, RotateVelocity, Friction, Orientation);
+                            rotation, scale, StartColor, EndColor, Gravity, CanBounce, MaxY, Shrink, DrawDepth, StopBounce, HardBounce);
                         ParticleList.Add(NewParticle);
                         IntervalTime = 0;
                     }
@@ -337,8 +301,7 @@ namespace TowerDefensePrototype
                             speed = (float)DoubleRange(SpeedRange.X, SpeedRange.Y);
                             startingRotation = (float)DoubleRange(StartingRotationRange.X, StartingRotationRange.Y);
                             ParticleList.Add(new Particle(Texture, Position, angle, speed, hp, Transparency, Fade, startingRotation,
-                                                          rotation, scale, StartColor, EndColor, Gravity, CanBounce, MaxY, Shrink, 
-                                                          DrawDepth, StopBounce, HardBounce, false, RotateVelocity, Friction, Orientation));
+                                rotation, scale, StartColor, EndColor, Gravity, CanBounce, MaxY, Shrink, DrawDepth, StopBounce, HardBounce, false, RotateVelocity));
                         }
                         IntervalTime = 0;
                     }
@@ -368,18 +331,6 @@ namespace TowerDefensePrototype
         public double DoubleRange(double one, double two)
         {
             return one + Random.NextDouble() * (two - one);
-        }
-
-        private SpriteEffects RandomOrientation(params SpriteEffects[] Orientations)
-        {
-            List<SpriteEffects> OrientationList = new List<SpriteEffects>();
-
-            foreach (SpriteEffects orientation in Orientations)
-            {
-                OrientationList.Add(orientation);
-            }
-
-            return OrientationList[Random.Next(0, OrientationList.Count)];
         }
     }
 }

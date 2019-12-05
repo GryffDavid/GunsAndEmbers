@@ -157,11 +157,11 @@ namespace TowerDefensePrototype
                 CollisionRectangle = new Rectangle(DestinationRectangle.X, DestinationRectangle.Y, DestinationRectangle.Width / 2, DestinationRectangle.Height / 2);
                 spriteBatch.Draw(Texture, DestinationRectangle, null, CurrentColor, CurrentRotation,
                     new Vector2(Origin.X, Origin.Y), SpriteEffects.None, MaxY / 1080);
-            }
 
-            foreach (Emitter emitter in EmitterList)
-            {
-                emitter.Draw(spriteBatch);
+                foreach (Emitter emitter in EmitterList)
+                {
+                    emitter.Draw(spriteBatch);
+                }
             }
         }
 

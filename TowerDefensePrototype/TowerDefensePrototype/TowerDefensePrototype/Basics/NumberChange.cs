@@ -25,7 +25,7 @@ namespace TowerDefensePrototype
             Position = position;
             Change = change;
             Number = number;
-            Color = new Color(255, 255, 255, 255);
+            Color = Color.DarkRed;
         }
 
         public void Update(GameTime gameTime)
