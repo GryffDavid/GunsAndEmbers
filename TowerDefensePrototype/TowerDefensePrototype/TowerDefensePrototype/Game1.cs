@@ -7469,9 +7469,10 @@ namespace TowerDefensePrototype
         public void OnLightProjectileFired(object source, LightProjectileEventArgs e)
         {
             LightProjectile projectile = e.Projectile;
-            Trap sourceTrap = source as Trap;
+
             LightRangedInvader sourceInvader = source as LightRangedInvader;
             Turret sourceTurret = source as Turret;
+            Trap sourceTrap = source as Trap;
 
             CurrentProjectile = projectile;
 
@@ -7590,24 +7591,21 @@ namespace TowerDefensePrototype
 
 
             #region INVADER hit by a projectile
-            Action<object, Invader, Vector2> InvaderEffect = (object sourceObject, Invader hitInvader, Vector2 collisionEnd) =>
+            Action<Invader, Vector2> InvaderEffect = (Invader hitInvader, Vector2 collisionEnd) =>
             {
-                Turret Turret = sourceObject as Turret;
-                Trap Trap = sourceObject as Trap;
-
                 #region The turret has a limited range
-                float InvaderDist = Vector2.Distance(Turret.BarrelEnd, collisionEnd);
+                float InvaderDist = Vector2.Distance(sourceTurret.BarrelEnd, collisionEnd);
 
-                if (Turret.Range != 0)
+                if (sourceTurret.Range != 0)
                 {
                     #region The invader is in range
-                    if (InvaderDist <= Turret.Range)
+                    if (InvaderDist <= sourceTurret.Range)
                     {
-                        switch (Turret.TurretFireType)
+                        switch (sourceTurret.TurretFireType)
                         {
                             default:
-                                Turret.TotalDamageDone += Turret.Damage;
-                                hitInvader.TurretDamage(-Turret.Damage);
+                                sourceTurret.TotalDamageDone += sourceTurret.Damage;
+                                hitInvader.TurretDamage(-sourceTurret.Damage);
                                 break;
 
                             //case TurretFireType.Beam:
@@ -7626,13 +7624,13 @@ namespace TowerDefensePrototype
                     else
                     #region The invader is out of range - reduce the damage accordingly
                     {
-                        float OverRange = InvaderDist - Turret.Range;
-                        float DamageReduction = Math.Min((100 / (2 * Turret.Range)) * OverRange, 50);
-                        float FinalDamage = ((100 - DamageReduction) / 100) * Turret.Damage;
-                        switch (Turret.TurretFireType)
+                        float OverRange = InvaderDist - sourceTurret.Range;
+                        float DamageReduction = Math.Min((100 / (2 * sourceTurret.Range)) * OverRange, 50);
+                        float FinalDamage = ((100 - DamageReduction) / 100) * sourceTurret.Damage;
+                        switch (sourceTurret.TurretFireType)
                         {
                             default:
-                                Turret.TotalDamageDone += FinalDamage;
+                                sourceTurret.TotalDamageDone += FinalDamage;
                                 hitInvader.TurretDamage((int)-FinalDamage);
                                 break;
 
@@ -7653,11 +7651,11 @@ namespace TowerDefensePrototype
                 #endregion
                 else
                 {
-                    switch (Turret.TurretFireType)
+                    switch (sourceTurret.TurretFireType)
                     {
                         default:
-                            Turret.TotalDamageDone += Turret.Damage;
-                            hitInvader.TurretDamage(-Turret.Damage);
+                            sourceTurret.TotalDamageDone += sourceTurret.Damage;
+                            hitInvader.TurretDamage(-sourceTurret.Damage);
                             break;
 
                         //case TurretFireType.Beam:
@@ -7673,7 +7671,7 @@ namespace TowerDefensePrototype
                     }
                 }
 
-                switch (Turret.TurretType)
+                switch (sourceTurret.TurretType)
                 {
                     #region Freeze
                     case TurretType.Freeze:
@@ -7835,15 +7833,12 @@ namespace TowerDefensePrototype
             #endregion
             
             #region TRAP hit by a projectile
-            Action<Vector2, object, Trap> TrapEffect = (Vector2 collisionEnd, object sourceObject, Trap Trap) =>
+            Action<Vector2, Trap> TrapEffect = (Vector2 collisionEnd, Trap Trap) =>
             {
-                Turret turret = sourceObject as Turret;
-                Invader invader = sourceObject as Invader;
-
                 #region Source of projectile was a TURRET
-                if (turret != null)
+                if (sourceTurret != null)
                 {
-                    switch (turret.TurretType)
+                    switch (sourceTurret.TurretType)
                     {
                         default:
                             switch (Trap.TrapType)
@@ -7861,7 +7856,7 @@ namespace TowerDefensePrototype
                                                            MathHelper.ToDegrees(-(float)Math.Atan2(CurrentProjectile.Ray.Direction.Y, CurrentProjectile.Ray.Direction.X)) - 180 + (float)RandomDouble(0, 45)),
                                                new Vector2(1.8f, 3f), new Vector2(1120, 1600), 1f, false, new Vector2(0, 360),
                                                new Vector2(0.5f, 1f), new Vector2(0.02f, 0.05f), Color.Gray, Color.Gray, 0.03f, 0.02f, 5, 1, true,
-                                               new Vector2(0, 1080), true, (Trap.DestinationRectangle.Bottom + 8)/1080f,
+                                               new Vector2(0, 1080), true, (Trap.DestinationRectangle.Bottom + 8) / 1080f,
                                                null, null, null, null, null, null, new Vector2(0.08f, 0.08f), true, true);
                                         YSortedEmitterList.Add(DustEmitter);
 
@@ -7883,7 +7878,7 @@ namespace TowerDefensePrototype
 
                                 #region Barrel
                                 case TrapType.Barrel:
-                                    Trap.CurrentHP -= turret.Damage;
+                                    Trap.CurrentHP -= sourceTurret.Damage;
                                     break;
                                 #endregion
                             }
@@ -7893,9 +7888,9 @@ namespace TowerDefensePrototype
                 #endregion
 
                 #region Source of projectile was an INVADER
-                if (invader != null)
+                if (sourceInvader != null)
                 {
-                    switch (invader.InvaderType)
+                    switch (sourceInvader.InvaderType)
                     {
                         default:
                             Trap.CurrentHP -= projectile.Damage;
@@ -7957,9 +7952,13 @@ namespace TowerDefensePrototype
             #endregion
 
             #region GROUND hit by a projectile
-            Action<Vector2, Vector2, LightProjectileType> GroundEffect = (Vector2 CollisionStart, Vector2 CollisionEnd, LightProjectileType LightProjectileType) =>
+            Action<Vector2, Vector2> GroundEffect = (Vector2 CollisionStart, Vector2 CollisionEnd) =>
             {
-                switch (LightProjectileType)
+                //LEAVING IT RELYING ON PROJECTILE TYPE FOR NOW ALTHOUGH SWITCHING TO BASED ON SOURCE TYPE MIGHT BE BETTER
+                //IT WOULD ALLOW FOR MORE VARIATION - e.g. MACHINE GUN TURRET AND MACHINE GUN INVADER MAY HAVE DIFFERENT PROJECTILE
+                //SIZE AND MANUFACTURING SO THE EFFECT CREATED MAY BE SLIGHTLY DIFFERENT
+
+                switch (projectile.LightProjectileType)
                 {
                     #region MachineGun
                     case LightProjectileType.MachineGun:
@@ -8056,10 +8055,10 @@ namespace TowerDefensePrototype
             #endregion
 
             #region SHIELD hit by a projectile
-            Action<Vector2, object, Shield> ShieldEffect = (Vector2 CollisionEnd, object sourceObject, Shield shield) =>
+            Action<Vector2, Shield> ShieldEffect = (Vector2 CollisionEnd, Shield shield) =>
             {
                 #region INVADER fired
-                if (sourceObject.GetType().BaseType == typeof(LightRangedInvader))
+                if (sourceInvader != null)
                 {
                     Tower.TakeDamage(projectile.Damage);
 
@@ -8104,7 +8103,7 @@ namespace TowerDefensePrototype
                 #endregion
 
                 #region TURRET fired
-                if (sourceObject.GetType().BaseType == typeof(Turret))
+                if (sourceTurret != null)
                 {
                     if ((shield.Tether as Invader) != null)
                     {
@@ -8141,19 +8140,20 @@ namespace TowerDefensePrototype
             #endregion
 
             #region TURRET hit by a projectile
-            Action<Vector2, object, Trap> TurretEffect = (Vector2 CollisionEnd, object sourceObject, Trap Trap) =>
+            Action<Vector2, Trap> TurretEffect = (Vector2 CollisionEnd, Trap Trap) =>
             {
 
             };
             #endregion
 
             #region TOWER hit by a projectile
-            Action<Vector2, object> TowerEffect = (Vector2 collisionEnd, object sourceObject) =>
+            Action<Vector2> TowerEffect = (Vector2 collisionEnd) =>
             {
                 Tower.TakeDamage(projectile.Damage);
 
                 switch (projectile.LightProjectileType)
                 {
+                    #region MachineGun
                     case LightProjectileType.MachineGun:
                         {
                             Emitter BOOMEmitter = SnapPing(collisionEnd);
@@ -8183,7 +8183,8 @@ namespace TowerDefensePrototype
                             YSortedEmitterList.Add(hitEmitter);
                             AddDrawable(DustEmitter, hitEmitter, BOOMEmitter);
                         }
-                        break;
+                        break; 
+                    #endregion
                 }
             };
             #endregion
@@ -8191,11 +8192,12 @@ namespace TowerDefensePrototype
     
 
             #region Check what the projectile actually hit - trap, invader, ground, nothing etc.
-            Action<object> CheckCollision = (object projectileSource) =>
+            Action CheckCollision = () =>
             {
                 CurrentProjectile = projectile;
                 Vector2 sourcePosition = projectile.Position;
                 Vector2 CollisionEnd;
+                Drawable hitObject;
 
                 List<Drawable> Intersections = DrawableList.FindAll(Drawable => Drawable.BoundingBox.Intersects(CurrentProjectile.Ray) != null);
                 List<Drawable> SphereIntersections = DrawableList.FindAll(Drawable => Drawable.BoundingSphere.Intersects(CurrentProjectile.Ray) != null);
@@ -8203,11 +8205,13 @@ namespace TowerDefensePrototype
                 SphereIntersections.RemoveAll(Drawable => Drawable.GetType() == typeof(Shield) && (Drawable as Shield).ShieldOn == false);
                 Intersections.RemoveAll(Drawable => Drawable.GetType().BaseType == typeof(Trap) && (Drawable as Trap).Solid == false);
 
-                Intersections.RemoveAll(Drawable => 
-                                        Drawable.GetType().BaseType == typeof(Trap) && 
-                                        (Drawable as Trap).TrapType == TrapType.Wall &&
-                                        (CursorPosition.Y < (Drawable as Trap).CollisionBox.Min.Y ||
-                                         CursorPosition.Y > (Drawable as Trap).CollisionBox.Max.Y));
+                #region WALL traps are only hit if the cursor is at the correct depth
+                Intersections.RemoveAll(Drawable =>
+                                Drawable.GetType().BaseType == typeof(Trap) &&
+                                (Drawable as Trap).TrapType == TrapType.Wall &&
+                                (CursorPosition.Y < (Drawable as Trap).CollisionBox.Min.Y ||
+                                 CursorPosition.Y > (Drawable as Trap).CollisionBox.Max.Y)); 
+                #endregion
 
                 #region Make sure TURRETS can't shoot themselves or other TURRETS
                 if (sourceTurret != null)
@@ -8231,20 +8235,19 @@ namespace TowerDefensePrototype
                 } 
                 #endregion
 
-                #region What object was hit first
+                #region Check if the collision was with a BOX or a SPHERE
                 Drawable HitBox = Intersections.OrderBy(Collision => Collision.BoundingBox.Intersects(CurrentProjectile.Ray)).FirstOrDefault();
                 Drawable HitSphere = SphereIntersections.OrderBy(Collision => Collision.BoundingSphere.Intersects(CurrentProjectile.Ray)).FirstOrDefault();
-                float? boxDist = 5000;
-                float? sphereDist = 5000;
+
+                float? boxDist = float.PositiveInfinity;
+                float? sphereDist = float.PositiveInfinity;
 
                 if (HitSphere != null)
                     sphereDist = HitSphere.BoundingSphere.Intersects(CurrentProjectile.Ray);
 
                 if (HitBox != null)
                     boxDist = HitBox.BoundingBox.Intersects(CurrentProjectile.Ray);
-
-                Drawable hitObject;
-
+                
                 if (sphereDist < boxDist)
                 {
                     hitObject = HitSphere;
@@ -8260,16 +8263,7 @@ namespace TowerDefensePrototype
                 Trap HitTrap = hitObject as Trap;
                 PowerupDelivery HitPowerupDelivery = hitObject as PowerupDelivery;
                 Shield HitShield = hitObject as Shield;
-
-                //if (HitTrap != null && HitTrap.TrapType == TrapType.Wall)
-                //{
-                //    if (CursorPosition.Y < HitTrap.CollisionBox.Min.Y ||
-                //        CursorPosition.Y > HitTrap.CollisionBox.Max.Y)
-                //    {
-                //        HitTrap = null;
-                //    }
-                //}
-
+                
                 if (hitObject == null)
                 {
                     float? DistToGround = CurrentProjectile.Ray.Intersects(Ground.BoundingBox);
@@ -8283,7 +8277,7 @@ namespace TowerDefensePrototype
                                                        Random.Next(-16, 16) + sourcePosition.Y + (CurrentProjectile.Ray.Direction.Y * (float)DistToGround));
 
                             CreateEffect(sourcePosition, CollisionEnd, CurrentProjectile.LightProjectileType);
-                            GroundEffect(sourcePosition, CollisionEnd, CurrentProjectile.LightProjectileType);
+                            GroundEffect(sourcePosition, CollisionEnd);
                         }
                         else
                         {
@@ -8322,7 +8316,7 @@ namespace TowerDefensePrototype
                         if (DistanceList.Min() == DistToGround)
                         {
                             CreateEffect(sourcePosition, CollisionEnd, CurrentProjectile.LightProjectileType);
-                            GroundEffect(sourcePosition, CollisionEnd, CurrentProjectile.LightProjectileType);
+                            GroundEffect(sourcePosition, CollisionEnd);
                             sourceInvader.HitObject = Ground;                            
                         } 
                         #endregion
@@ -8331,7 +8325,7 @@ namespace TowerDefensePrototype
                         if (DistanceList.Min() == DistToShield)
                         {
                             CreateEffect(sourcePosition, CollisionEnd, CurrentProjectile.LightProjectileType);
-                            ShieldEffect(CollisionEnd, source, Tower.Shield);
+                            ShieldEffect(CollisionEnd, Tower.Shield);
                             sourceInvader.HitObject = Tower.Shield;
                         } 
                         #endregion
@@ -8340,7 +8334,7 @@ namespace TowerDefensePrototype
                         if (DistanceList.Min() == DistToTower)
                         {
                             CreateEffect(sourcePosition, CollisionEnd, CurrentProjectile.LightProjectileType);
-                            TowerEffect(CollisionEnd, source);
+                            TowerEffect(CollisionEnd);
                             sourceInvader.HitObject = Tower;
                             //Tower.TakeDamage(CurrentProjectile.Damage);
                         }
@@ -8383,7 +8377,7 @@ namespace TowerDefensePrototype
                     if (HitTrap != null)
                     {
                         CreateEffect(sourcePosition, CollisionEnd, CurrentProjectile.LightProjectileType);
-                        //TrapEffect(CollisionEnd, projectileSource, HitTrap);
+                        TrapEffect(CollisionEnd, HitTrap);
 
                         if (sourceInvader != null)
                             sourceInvader.HitObject = HitTrap;
@@ -8394,7 +8388,7 @@ namespace TowerDefensePrototype
                     if (HitInvader != null)
                     {
                         CreateEffect(sourcePosition, CollisionEnd, CurrentProjectile.LightProjectileType);
-                        InvaderEffect(sourceTurret, HitInvader, CollisionEnd);
+                        InvaderEffect(HitInvader, CollisionEnd);
                     }
                     #endregion
 
@@ -8411,7 +8405,7 @@ namespace TowerDefensePrototype
                                 CollisionEnd = new Vector2(sourcePosition.X + (CurrentProjectile.Ray.Direction.X * (float)DistToShield),
                                                            sourcePosition.Y + (CurrentProjectile.Ray.Direction.Y * (float)DistToShield));
 
-                                ShieldEffect(CollisionEnd, source, Tower.Shield);
+                                ShieldEffect(CollisionEnd, Tower.Shield);
                                 sourceInvader.HitObject = HitTurret;
                             }
                         }
@@ -8437,14 +8431,14 @@ namespace TowerDefensePrototype
                     if (HitShield != null)
                     {
                         CreateEffect(sourcePosition, CollisionEnd, CurrentProjectile.LightProjectileType);
-                        ShieldEffect(CollisionEnd, source, HitShield);
+                        ShieldEffect(CollisionEnd, HitShield);
                     }
                     #endregion
                 }
             };
             #endregion
              
-            CheckCollision(source);
+            CheckCollision();
 
             CurrentProjectile = null;
             projectile = null;
@@ -10605,13 +10599,13 @@ namespace TowerDefensePrototype
 
                     case TrapType.PopFrag:
                         {
-                            for (int i = 0; i < 10; i++)
-                            {
-                                float angle = (float)RandomDouble(0.0, 90.0);
+                            //for (int i = 0; i < 10; i++)
+                            //{
+                            //    float angle = (float)RandomDouble(0.0, 90.0);
 
-                                Vector2 Direction = new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
-                                CreateLightProjectile(new MachineGunProjectile(new Vector2(HitTrap.Center.X, HitTrap.Center.Y - 70), Direction), HitTrap);
-                            }
+                            //    Vector2 Direction = new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
+                            //    CreateLightProjectile(new MachineGunProjectile(new Vector2(HitTrap.Center.X, HitTrap.Center.Y - 70), Direction), HitTrap);
+                            //}
                         }
                         break;
                 }
