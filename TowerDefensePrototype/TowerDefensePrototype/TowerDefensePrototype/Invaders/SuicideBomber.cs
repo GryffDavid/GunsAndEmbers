@@ -14,11 +14,11 @@ namespace TowerDefensePrototype
         public SuicideBomber(Vector2 position)
         {
             Active = true;
-            MoveVector = new Vector2(-2, 0);
+            Direction = new Vector2(-2, 0);
             Position = position;
             CurrentHP = 100;
             MaxHP = 100;
-            MoveDelay = 15;
+            //MoveDelay = 15;
             ResourceMinMax = new Vector2(1, 5);
             CurrentAttackDelay = 0;
             AttackDelay = 500;
@@ -56,7 +56,7 @@ namespace TowerDefensePrototype
                         break;
 
                     case TrapType.Catapult:
-                        Trajectory(new Vector2(5, -10));
+                        //Trajectory(new Vector2(5, -10));
                         break;
 
                     case TrapType.Ice:

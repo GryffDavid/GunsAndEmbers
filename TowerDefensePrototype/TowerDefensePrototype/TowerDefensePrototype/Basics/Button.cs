@@ -132,7 +132,7 @@ namespace TowerDefensePrototype
             }
 
             if (Scale != NextScale)
-                Scale = Vector2.Lerp(Scale, NextScale, 10f * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
+                Scale = Vector2.Lerp(Scale, NextScale, 0.15f);
                                    
             DestinationRectangle = new Rectangle((int)CurrentPosition.X, (int)CurrentPosition.Y, (int)(FrameSize.X * Scale.X), (int)(FrameSize.Y * Scale.Y));
 

@@ -9,7 +9,6 @@ namespace TowerDefensePrototype
 {
     public class Animation
     {
-        public string AssetName;
         public int TotalFrames;
         public double FrameDelay;
         public Texture2D Texture;

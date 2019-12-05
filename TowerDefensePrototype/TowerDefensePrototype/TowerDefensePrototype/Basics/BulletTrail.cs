@@ -23,12 +23,13 @@ namespace TowerDefensePrototype
             Thickness = thickness;
             Alpha = 1f;
             AlphaMultiplier = 0.5f;
-            FadeOutRate = 0.004f;
-
+            FadeOutRate = 0.4f;
             Tangent = Destination - Source;
             Theta = (float)Math.Atan2(Tangent.Y, Tangent.X);
             const float ImageThickness = 8;
             ThicknessScale = Thickness / ImageThickness;
+            Color = Color.Lerp(Color, Color.Transparent, AlphaMultiplier);
+            Color.A = 255;
         }
 
         public void LoadContent(ContentManager contentManager)
@@ -37,14 +38,12 @@ namespace TowerDefensePrototype
         }
 
         public void Update(GameTime gameTime)
-        {
-            Alpha -= FadeOutRate;            
+        {            
+            Color = Color.Lerp(Color, Color.Transparent, FadeOutRate * (float)(gameTime.ElapsedGameTime.TotalSeconds * 60));
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            Color = Color * (Alpha * AlphaMultiplier);     
-
             spriteBatch.Draw(Segment, Source, null, Color, Theta, MiddleOrigin, MiddleScale, SpriteEffects.FlipHorizontally, 0f);
             spriteBatch.Draw(Cap, Source, null, Color, Theta, CapOrigin, ThicknessScale, SpriteEffects.None, 0f);
             spriteBatch.Draw(Cap, Destination, null, Color, Theta + MathHelper.Pi, CapOrigin, ThicknessScale, SpriteEffects.None, 0f);

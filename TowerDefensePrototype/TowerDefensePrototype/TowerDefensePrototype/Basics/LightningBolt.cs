@@ -59,7 +59,7 @@ namespace TowerDefensePrototype
             Cap = contentManager.Load<Texture2D>("Particles/Cap");
         }
         
-        public void Update()
+        public void Update(GameTime gameTime)
         {
             //Results = new List<Line>();
             //Segments = new List<Line>();
@@ -73,8 +73,8 @@ namespace TowerDefensePrototype
                 Positions.Clear();
                 CreateBolt(Source, Destination, 1);
             }
-            
-            Alpha -= FadeOutRate;
+
+            Alpha -= FadeOutRate * (float)(gameTime.ElapsedGameTime.TotalSeconds * 60);
         }
 
         public void Draw(SpriteBatch spriteBatch)

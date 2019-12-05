@@ -13,11 +13,11 @@ namespace TowerDefensePrototype
         public Slime(Vector2 position)
         {
             Active = true;
-            MoveVector = new Vector2(-1, 0);
+            Direction = new Vector2(-1, 0);
             Position = position;
             CurrentHP = 100;
             MaxHP = 100;
-            MoveDelay = 5;
+            //MoveDelay = 5;
             ResourceMinMax = new Vector2(1, 5);
             CurrentAttackDelay = 0;
             AttackDelay = 1500;
@@ -54,7 +54,7 @@ namespace TowerDefensePrototype
                         break;
 
                     case TrapType.Catapult:
-                        Trajectory(new Vector2(5, -10));
+                        //Trajectory(new Vector2(5, -10));
                         break;
 
                     case TrapType.Ice:

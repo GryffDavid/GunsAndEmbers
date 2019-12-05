@@ -18,7 +18,11 @@ namespace TowerDefensePrototype
             MaxHP = 50;
             DetonateDelay = 2000;
             DetonateLimit = 8;
-            Animated = false;
+        }
+
+        public override void Update(GameTime gameTime)
+        {
+            base.Update(gameTime);
         }
     }
 }

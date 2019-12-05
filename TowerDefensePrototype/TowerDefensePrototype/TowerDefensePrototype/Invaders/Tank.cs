@@ -13,11 +13,11 @@ namespace TowerDefensePrototype
         public Tank(Vector2 position)
         {
             Active = true;
-            MoveVector = new Vector2(-1, 0);
+            Direction = new Vector2(-1, 0);
             Position = position;
             CurrentHP = 800;
             MaxHP = 800;
-            MoveDelay = 40;
+            //MoveDelay = 40;
             ResourceMinMax = new Vector2(5, 20);
             CurrentAttackDelay = 0;
             AttackDelay = 1500;

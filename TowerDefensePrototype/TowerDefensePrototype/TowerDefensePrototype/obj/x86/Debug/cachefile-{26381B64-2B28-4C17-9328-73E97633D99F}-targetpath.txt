@@ -69,7 +69,7 @@ Content\Decal.xnb
 Content\SelectBox.xnb
 Content\Backgrounds\Sky.xnb
 Content\Backgrounds\Ground.xnb
-Content\Invaders\Soldier3.xnb
+Content\Invaders\Soldier\SoldierWalk.xnb
 Content\lightmask.xnb
 Content\Icons\TurretIcons\ShotgunTurretIcon.xnb
 Content\Traps\Trap.xnb
@@ -88,6 +88,9 @@ Content\Buttons\TriggerSwitch.xnb
 Content\Terrain\Shrub.xnb
 Content\Traps\TarTrap.xnb
 Content\Traps\SpikeTrap.xnb
+Content\Particles\RoundSpark.xnb
+Content\Invaders\Soldier\SoldierStand.xnb
+Content\Invaders\Soldier\SoldierMelee.xnb
 Content\Fonts\DefaultFont.xnb
 Content\Fonts\ButtonFont.xnb
 Content\Fonts\TooltipFont.xnb

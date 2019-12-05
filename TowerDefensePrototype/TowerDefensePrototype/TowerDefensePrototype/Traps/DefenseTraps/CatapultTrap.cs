@@ -18,7 +18,6 @@ namespace TowerDefensePrototype
             TrapType = TrapType.Catapult;
             DetonateDelay = 10000;
             DetonateLimit = -1;
-            Animated = false;
         }
     }
 }

@@ -25,12 +25,12 @@ namespace TowerDefensePrototype
             Position = position;
             Change = change;
             Number = number;
-            Color = Color.DarkRed;
+            Color = new Color(255, 255, 255, 255);
         }
 
         public void Update(GameTime gameTime)
         {
-            Position += Change;
+            Position += Change * (float)(gameTime.ElapsedGameTime.TotalSeconds * 60);
 
             CurrentTime += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
 
@@ -40,7 +40,7 @@ namespace TowerDefensePrototype
                 Active = false;
             }
 
-            Color = Color.Lerp(Color, Color.Transparent, 0.07f);
+            Color = Color.Lerp(Color, Color.Transparent, 0.05f * (float)(gameTime.ElapsedGameTime.TotalSeconds * 60));
         }
 
         public void Draw(SpriteBatch spriteBatch)

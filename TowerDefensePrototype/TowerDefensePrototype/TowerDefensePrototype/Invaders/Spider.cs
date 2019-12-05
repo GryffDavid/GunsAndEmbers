@@ -13,11 +13,11 @@ namespace TowerDefensePrototype
         public Spider(Vector2 position)
          {
             Active = true;
-            MoveVector = new Vector2(-1.75f, 0);
+            Direction = new Vector2(-1.75f, 0);
             Position = position;
             CurrentHP = 40;
             MaxHP = 40;
-            MoveDelay = 5;
+            //MoveDelay = 5;
             ResourceMinMax = new Vector2(1, 5);
             CurrentAttackDelay = 0;
             AttackDelay = 3000;
@@ -58,7 +58,7 @@ namespace TowerDefensePrototype
                         break;
 
                     case TrapType.Catapult:
-                        Trajectory(new Vector2(5, -10));
+                        //Trajectory(new Vector2(5, -10));
                         break;
 
                     case TrapType.Ice:

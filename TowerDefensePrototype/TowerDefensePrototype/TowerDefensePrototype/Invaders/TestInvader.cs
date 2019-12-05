@@ -13,11 +13,11 @@ namespace TowerDefensePrototype
         public TestInvader(Vector2 position)
         {
             Active = true;
-            MoveVector = new Vector2(-0.5f, 0);
+            Direction = new Vector2(-0.5f, 0);
             Position = position;
             CurrentHP = 40;
             MaxHP = 40;
-            MoveDelay = 10;
+            //MoveDelay = 10;
             ResourceMinMax = new Vector2(1, 5);
             YRange = new Vector2(700, 900);
             AttackPower = 1;
@@ -61,7 +61,7 @@ namespace TowerDefensePrototype
                         break;
 
                     case TrapType.Catapult:
-                        Trajectory(new Vector2(5, -10));
+                        //Trajectory(new Vector2(5, -10));
                         break;
 
                     case TrapType.Ice:

@@ -13,11 +13,11 @@ namespace TowerDefensePrototype
         public Airship(Vector2 position)
         {
             Active = true;            
-            MoveVector = new Vector2(-1, 0);
+            Direction = new Vector2(-1, 0);
             Position = position;
             MaxHP = 300;
             CurrentHP = MaxHP;
-            MoveDelay = 20;
+            //MoveDelay = 20;
             ResourceMinMax = new Vector2(1, 5);
             CurrentAttackDelay = 0;
             AttackDelay = 1500;
@@ -33,7 +33,6 @@ namespace TowerDefensePrototype
 
             CurrentAnimation = new Animation()
             {
-                AssetName = "Invaders/Invader",
                 TotalFrames = 1,
                 FrameDelay = 500
             };

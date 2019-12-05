@@ -13,14 +13,14 @@ namespace TowerDefensePrototype
             Number = 1;
             WorldType = "Basic";
             WaveList = new List<Wave>();
-            Resources = 1000;            
+            Resources = 1000;
 
-            Wave Wave1 = new Wave(true, 1000, 3000,
+            Wave Wave1 = new Wave(true, 2050, 3000,
                  new Soldier(new Vector2(2050, 600)),
                  new Soldier(new Vector2(2050, 600)),
                  new Soldier(new Vector2(2050, 600)),
                  new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),                 
+                 new Soldier(new Vector2(2050, 600)),
                  new Soldier(new Vector2(2050, 600)),
                  new Soldier(new Vector2(2050, 600)),
                  new Soldier(new Vector2(2050, 600)),

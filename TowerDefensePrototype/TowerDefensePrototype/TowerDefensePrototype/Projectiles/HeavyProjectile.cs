@@ -43,8 +43,8 @@ namespace TowerDefensePrototype
         {         
             if (Active == true)
             {
-                Position += Velocity * (float)gameTime.ElapsedGameTime.TotalSeconds;
-                Velocity.Y += Gravity * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                Position += Velocity * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
+                Velocity.Y += Gravity * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
 
                 foreach (Emitter emitter in EmitterList)
                 {
@@ -69,10 +69,10 @@ namespace TowerDefensePrototype
                 if (Position.Y >= MaxY && BouncedOnGround == false)
                 {
                     if (HardBounce == true)
-                        Position.Y -= Velocity.Y;
+                        Position.Y -= Velocity.Y * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
 
-                    Velocity.Y = -Velocity.Y / 3;
-                    Velocity.X = Velocity.X / 3;
+                    Velocity.Y = (-Velocity.Y / 3) * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
+                    Velocity.X = (Velocity.X / 3) * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
                     //RotationIncrement = RotationIncrement * 3;
                     BouncedOnGround = true;
                 }
@@ -81,9 +81,9 @@ namespace TowerDefensePrototype
                 BouncedOnGround == true &&
                 Position.Y > MaxY)
             {
-                Velocity.Y = -Velocity.Y / 2;
+                Velocity.Y = (-Velocity.Y / 2) * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
 
-                Velocity.X *= 0.9f;
+                Velocity.X *= 0.9f * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
 
                 //RotationIncrement = MathHelper.Lerp(RotationIncrement, 0, 0.2f);
 
@@ -117,33 +117,33 @@ namespace TowerDefensePrototype
                 if (CurrentRotation > 270 && CurrentRotation <= 360)
                 {
                     if (MathHelper.Distance(CurrentRotation, 360) >= 45)
-                        CurrentRotation = MathHelper.Lerp(CurrentRotation, 360, 0.5f);
+                        CurrentRotation = MathHelper.Lerp(CurrentRotation, 360, 0.5f * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
                     else
-                        CurrentRotation = MathHelper.Lerp(CurrentRotation, 360, 0.2f);
+                        CurrentRotation = MathHelper.Lerp(CurrentRotation, 360, 0.2f * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
                 }
 
                 if (CurrentRotation > 180 && CurrentRotation <= 270)
                 {
                     if (MathHelper.Distance(CurrentRotation, 180) >= 45)
-                        CurrentRotation = MathHelper.Lerp(CurrentRotation, 180, 0.5f);
+                        CurrentRotation = MathHelper.Lerp(CurrentRotation, 180, 0.5f * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
                     else
-                        CurrentRotation = MathHelper.Lerp(CurrentRotation, 180, 0.2f);
+                        CurrentRotation = MathHelper.Lerp(CurrentRotation, 180, 0.2f * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
                 }
 
                 if (CurrentRotation > 90 && CurrentRotation <= 180)
                 {
                     if (MathHelper.Distance(CurrentRotation, 180) >= 45)
-                        CurrentRotation = MathHelper.Lerp(CurrentRotation, 180, 0.5f);
+                        CurrentRotation = MathHelper.Lerp(CurrentRotation, 180, 0.5f * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
                     else
-                        CurrentRotation = MathHelper.Lerp(CurrentRotation, 180, 0.2f);
+                        CurrentRotation = MathHelper.Lerp(CurrentRotation, 180, 0.2f * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
                 }
 
                 if (CurrentRotation >= 0 && CurrentRotation <= 90)
                 {
                     if (MathHelper.Distance(CurrentRotation, 0) >= 45)
-                        CurrentRotation = MathHelper.Lerp(CurrentRotation, 0, 0.5f);
+                        CurrentRotation = MathHelper.Lerp(CurrentRotation, 0, 0.5f * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
                     else
-                        CurrentRotation = MathHelper.Lerp(CurrentRotation, 0, 0.2f);
+                        CurrentRotation = MathHelper.Lerp(CurrentRotation, 0, 0.2f * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
                 }
             }
         }
@@ -157,11 +157,11 @@ namespace TowerDefensePrototype
                 CollisionRectangle = new Rectangle(DestinationRectangle.X, DestinationRectangle.Y, DestinationRectangle.Width / 2, DestinationRectangle.Height / 2);
                 spriteBatch.Draw(Texture, DestinationRectangle, null, CurrentColor, CurrentRotation,
                     new Vector2(Origin.X, Origin.Y), SpriteEffects.None, MaxY / 1080);
+            }
 
-                foreach (Emitter emitter in EmitterList)
-                {
-                    emitter.Draw(spriteBatch);
-                }
+            foreach (Emitter emitter in EmitterList)
+            {
+                emitter.Draw(spriteBatch);
             }
         }
 

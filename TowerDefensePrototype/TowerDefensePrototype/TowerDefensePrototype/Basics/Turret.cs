@@ -54,10 +54,15 @@ namespace TowerDefensePrototype
             CurrentHeat = 0;
 
             SelectBox = new Rectangle((int)Position.X - 32, (int)Position.Y - 32, 96, 96);
+
+            Direction = new Vector2(1, 1);
         }
 
         public void Update(GameTime gameTime, Vector2 cursorPosition)
         {
+            if (double.IsNaN(Rotation) == true)
+                Rotation = -20;
+
             MousePosition = cursorPosition;
 
             foreach (Emitter emitter in EmitterList)
@@ -67,8 +72,14 @@ namespace TowerDefensePrototype
 
             FireRotation = Rotation + MathHelper.ToRadians((float)(-AngleOffset + Random.NextDouble() * (AngleOffset - (-AngleOffset))));
 
+            if (double.IsNaN(Rotation) == true)
+                Rotation = -20;
+
             FireDirection.X = (float)Math.Cos(FireRotation);
             FireDirection.Y = (float)Math.Sin(FireRotation);
+
+            if (double.IsNaN(Rotation) == true)
+                Rotation = -20;
 
             if (Animated == true)
             {
@@ -152,6 +163,11 @@ namespace TowerDefensePrototype
                     BarrelEnd = new Vector2(BarrelCenter.X + (float)Math.Cos(Rotation) * (BarrelRectangle.Width - BarrelPivot.X),
                                             BarrelCenter.Y + (float)Math.Sin(Rotation) * (BarrelRectangle.Width - BarrelPivot.X));
 
+                    if (MousePosition - new Vector2(BarrelCenter.X, BarrelCenter.Y) == Vector2.Zero)
+                    {
+                        MousePosition += Vector2.One;
+                    }
+                    
                     Direction = MousePosition - new Vector2(BarrelCenter.X, BarrelCenter.Y);
                     Direction.Normalize();
 
@@ -159,18 +175,21 @@ namespace TowerDefensePrototype
                         Rotation = MathHelper.Lerp(Rotation, (float)Math.Atan2((double)Direction.Y, (double)Direction.X), 0.1f);
                     else
                         Rotation = MathHelper.Lerp(Rotation, MathHelper.ToRadians(40), 0.1f);
+                    
+                    if (double.IsNaN(Rotation) == true)
+                        Rotation = -20;
 
                     PreviousMouseState = CurrentMouseState;
                 }
                 else
                 {
-                    if (double.IsNaN(Rotation) == true)
-                        Rotation = -20;
-
                     if (Overheated == false)
                         Rotation = MathHelper.Lerp(Rotation, MathHelper.ToRadians(-20), 0.1f);
                     else
                         Rotation = MathHelper.Lerp(Rotation, MathHelper.ToRadians(40), 0.1f);
+
+                    if (double.IsNaN(Rotation) == true)
+                        Rotation = -20;
                 }
             }
 
@@ -283,6 +302,9 @@ namespace TowerDefensePrototype
         public void ChangeFireDirection()
         {
             FireRotation = Rotation + MathHelper.ToRadians((float)(-AngleOffset + Random.NextDouble() * (AngleOffset - (-AngleOffset))));
+            
+            if (double.IsNaN(Rotation) == true)
+                Rotation = -20;
 
             FireDirection.X = (float)Math.Cos(FireRotation);
             FireDirection.Y = (float)Math.Sin(FireRotation);
