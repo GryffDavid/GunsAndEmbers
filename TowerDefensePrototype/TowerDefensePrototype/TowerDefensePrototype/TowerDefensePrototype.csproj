@@ -174,7 +174,6 @@
     <Compile Include="UIComponents\UIWeaponInfoTip.cs" />
     <Compile Include="UIComponents\WaveCountDown.cs" />
     <Compile Include="UIComponents\NumberChange.cs" />
-    <Compile Include="Components\Light.cs" />
     <Compile Include="Levels\TutorialLevel.cs" />
     <Compile Include="Components\PowerupDelivery.cs" />
     <Compile Include="SpecialAbilities\AirStrikeSpecial.cs" />

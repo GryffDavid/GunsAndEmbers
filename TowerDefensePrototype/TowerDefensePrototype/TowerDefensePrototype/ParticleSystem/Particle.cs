@@ -10,14 +10,14 @@ namespace TowerDefensePrototype
     public class Particle : Drawable
     {
         public Texture2D Texture;
-        public Vector2 CurrentPosition, Direction, Velocity, YRange, Origin,
-                       StartingPosition, Friction,
-                       CurrentScale, MaxScale;
+        public Vector2 CurrentPosition, Direction, Velocity, YRange, Origin, StartingPosition, Friction;
         public Rectangle DestinationRectangle;
         public float Angle, Speed,
+                     MaxY,
                      RotationIncrement, CurrentRotation,
                      Gravity,
                      CurrentTime, MaxTime,
+                     CurrentScale, MaxScale,
                      CurrentTransparency, MaxTransparency,
                      CurrentFadeDelay, FadeDelay;
         float PercentageTime;
@@ -43,10 +43,10 @@ namespace TowerDefensePrototype
 
         public float RadRotation;
 
-        //THIS IS SO THAT SPARKS CAN BOUNCE OFF OF INVADERS - USE REF
+        //THIS IS SO THAT SPARKS CAN BOUNCE OFF OF INVADERS
         //List<Invader> InvaderList;
 
-        //THIS IS SO THAT SPARKS CAN BOUNCE OFF OF SOLID TRAPS - USE REF
+        //THIS IS SO THAT SPARKS CAN BOUNCE OFF OF SOLID TRAPS
         //List<Trap> TrapList;
 
         VertexPositionColorTexture[] ParticleVertices = new VertexPositionColorTexture[4];
@@ -55,9 +55,9 @@ namespace TowerDefensePrototype
 
         public Particle(Texture2D texture, Vector2 position, float angle, float speed, float maxTime,
             float startingTransparency, bool fade, float startingRotation, float rotationChange,
-            Vector2 scale, Color startColor, Color endColor, float gravity, bool canBounce, float maxY, bool shrink,
+            float scale, Color startColor, Color endColor, float gravity, bool canBounce, float maxY, bool shrink,
             float? drawDepth = null, bool? stopBounce = false, bool? hardBounce = true, bool? shadow = false,
-            bool? rotateVelocity = false, Vector2? friction = null, SpriteEffects? orientation = SpriteEffects.None, 
+            bool? rotateVelocity = false, Vector2? friction = null, SpriteEffects? orientation = SpriteEffects.None,
             float? fadeDelay = null, bool? sortDepth = false, bool? grow = false)
         {
             Active = true;
@@ -78,7 +78,7 @@ namespace TowerDefensePrototype
                 CurrentScale = scale;
 
             if (Grow == true)
-                CurrentScale = new Vector2(0f, 0f);
+                CurrentScale = 0f;
 
             MaxScale = scale;
             Fade = fade;
@@ -132,28 +132,28 @@ namespace TowerDefensePrototype
             ParticleVertices[0] = new VertexPositionColorTexture()
             {
                 Color = Color,
-                Position = new Vector3(CurrentPosition.X - (Texture.Width * CurrentScale.X) / 2, CurrentPosition.Y - (Texture.Height * CurrentScale.Y) / 2, 0),
+                Position = new Vector3(CurrentPosition.X - (Texture.Width * CurrentScale) / 2, CurrentPosition.Y - (Texture.Height * CurrentScale) / 2, 0),
                 TextureCoordinate = texCoords[0]
             };
 
             ParticleVertices[1] = new VertexPositionColorTexture()
             {
                 Color = Color,
-                Position = new Vector3(CurrentPosition.X + (Texture.Width * CurrentScale.X) / 2, CurrentPosition.Y - (Texture.Height * CurrentScale.Y) / 2, 0),
+                Position = new Vector3(CurrentPosition.X + (Texture.Width * CurrentScale) / 2, CurrentPosition.Y - (Texture.Height * CurrentScale) / 2, 0),
                 TextureCoordinate = texCoords[1]
             };
 
             ParticleVertices[2] = new VertexPositionColorTexture()
             {
                 Color = Color,
-                Position = new Vector3(CurrentPosition.X + (Texture.Width * CurrentScale.X) / 2, CurrentPosition.Y + (Texture.Height * CurrentScale.Y) / 2, 0),
+                Position = new Vector3(CurrentPosition.X + (Texture.Width * CurrentScale) / 2, CurrentPosition.Y + (Texture.Height * CurrentScale) / 2, 0),
                 TextureCoordinate = texCoords[2]
             };
 
             ParticleVertices[3] = new VertexPositionColorTexture()
             {
                 Color = Color,
-                Position = new Vector3(CurrentPosition.X - (Texture.Width * CurrentScale.X) / 2, CurrentPosition.Y + (Texture.Height * CurrentScale.Y) / 2, 0),
+                Position = new Vector3(CurrentPosition.X - (Texture.Width * CurrentScale) / 2, CurrentPosition.Y + (Texture.Height * CurrentScale) / 2, 0),
                 TextureCoordinate = texCoords[3]
             };
 
@@ -232,22 +232,15 @@ namespace TowerDefensePrototype
                 {
                     CurrentPosition += Velocity * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
 
-                    ParticleVertices[0].Position = new Vector3(CurrentPosition.X - (Texture.Width * CurrentScale.X) / 2,
-                                                               CurrentPosition.Y - (Texture.Height * CurrentScale.Y) / 2, 0);
-
-                    ParticleVertices[1].Position = new Vector3(CurrentPosition.X + (Texture.Width * CurrentScale.X) / 2,
-                                                               CurrentPosition.Y - (Texture.Height * CurrentScale.Y) / 2, 0);
-
-                    ParticleVertices[2].Position = new Vector3(CurrentPosition.X + (Texture.Width * CurrentScale.X) / 2,
-                                                               CurrentPosition.Y + (Texture.Height * CurrentScale.Y) / 2, 0);
-
-                    ParticleVertices[3].Position = new Vector3(CurrentPosition.X - (Texture.Width * CurrentScale.X) / 2,
-                                                               CurrentPosition.Y + (Texture.Height * CurrentScale.Y) / 2, 0);
+                    ParticleVertices[0].Position = new Vector3(CurrentPosition.X - (Texture.Width * CurrentScale) / 2, CurrentPosition.Y - (Texture.Height * CurrentScale) / 2, 0);
+                    ParticleVertices[1].Position = new Vector3(CurrentPosition.X + (Texture.Width * CurrentScale) / 2, CurrentPosition.Y - (Texture.Height * CurrentScale) / 2, 0);
+                    ParticleVertices[2].Position = new Vector3(CurrentPosition.X + (Texture.Width * CurrentScale) / 2, CurrentPosition.Y + (Texture.Height * CurrentScale) / 2, 0);
+                    ParticleVertices[3].Position = new Vector3(CurrentPosition.X - (Texture.Width * CurrentScale) / 2, CurrentPosition.Y + (Texture.Height * CurrentScale) / 2, 0);
                 }
 
                 Velocity.Y += Gravity * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
 
-                DestinationRectangle = new Rectangle((int)CurrentPosition.X, (int)CurrentPosition.Y, (int)(Texture.Width * CurrentScale.X), (int)(Texture.Height * CurrentScale.Y));
+                DestinationRectangle = new Rectangle((int)CurrentPosition.X, (int)CurrentPosition.Y, (int)(Texture.Width * CurrentScale), (int)(Texture.Height * CurrentScale));
                 #endregion
 
                 #region Handle bouncing

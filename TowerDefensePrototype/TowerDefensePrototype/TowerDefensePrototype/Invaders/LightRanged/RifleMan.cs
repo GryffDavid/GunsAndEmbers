@@ -164,6 +164,7 @@ namespace TowerDefensePrototype
                         break; 
                     #endregion
                 }
+
             base.Update(gameTime, cursorPosition);
         }
     }

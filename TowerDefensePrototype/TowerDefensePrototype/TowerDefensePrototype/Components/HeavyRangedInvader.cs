@@ -135,7 +135,7 @@ namespace TowerDefensePrototype
             base.Update(gameTime, cursorPosition);
         }
 
-        public override void Draw(GraphicsDevice graphics, BasicEffect effect, Effect shadowEffect, List<Light> lightList)
+        public override void Draw(GraphicsDevice graphics, BasicEffect effect, Effect shadowEffect)
         {
             if (BarrelAnimation != null && Active == true)
             {
@@ -193,7 +193,7 @@ namespace TowerDefensePrototype
                 effect.View = view;
             }
 
-            base.Draw(graphics, effect, shadowEffect, lightList);
+            base.Draw(graphics, effect, shadowEffect);
         }
 
         public void UpdateFireDelay(GameTime gameTime)

@@ -197,7 +197,7 @@ namespace TowerDefensePrototype
         }
 
 
-        public override void Draw(GraphicsDevice graphics, BasicEffect effect, Effect shadowEffect, List<Light> lightList)
+        public override void Draw(GraphicsDevice graphics, BasicEffect effect, Effect shadowEffect)
         {
             //Draw the colour map using a basic effect
             if (Active == true)

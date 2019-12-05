@@ -733,7 +733,7 @@ namespace TowerDefensePrototype
         }
 
 
-        public override void Draw(GraphicsDevice graphics, BasicEffect effect, Effect shadowEffect, List<Light> lightList)
+        public override void Draw(GraphicsDevice graphics, BasicEffect effect, Effect shadowEffect)
         {
             if (Active == true)
             {
@@ -743,94 +743,90 @@ namespace TowerDefensePrototype
 
                 if (InAir == false)
                 {
-                    #region Draw Initial Shadow
+                    //#region Draw invader shadows
+                    //foreach (Light light in lightList)
+                    //{
+                    //    double dist = Math.Sqrt(Math.Pow(0.45f * (DestinationRectangle.Center.X - light.Position.X), 2) + Math.Pow(DestinationRectangle.Bottom - light.Position.Y, 2));
 
-                    #endregion
+                    //    float lightDistance = Vector2.Distance(new Vector2(Center.X, DestinationRectangle.Bottom), new Vector2(light.Position.X, light.Position.Y));
 
-                    #region Draw invader shadows
-                    foreach (Light light in lightList)
-                    {
-                        double dist = Math.Sqrt(Math.Pow(0.45f * (DestinationRectangle.Center.X - light.Position.X), 2) + Math.Pow(DestinationRectangle.Bottom - light.Position.Y, 2));
+                    //    lightDistance = (float)dist;
 
-                        float lightDistance = Vector2.Distance(new Vector2(Center.X, DestinationRectangle.Bottom), new Vector2(light.Position.X, light.Position.Y));
-
-                        lightDistance = (float)dist;
-
-                        if (lightDistance < light.Range)
-                        {
-                            Vector2 direction = new Vector2(DestinationRectangle.Center.X, DestinationRectangle.Bottom) - new Vector2(light.Position.X, light.Position.Y);
-                            direction.Normalize();
+                    //    if (lightDistance < light.Range)
+                    //    {
+                    //        Vector2 direction = new Vector2(DestinationRectangle.Center.X, DestinationRectangle.Bottom) - new Vector2(light.Position.X, light.Position.Y);
+                    //        direction.Normalize();
 
                            
-                            ShadowHeightMod = lightDistance / (light.Range / 10);
-                            ShadowHeight = MathHelper.Clamp(CurrentAnimation.FrameSize.Y * ShadowHeightMod, 16, 64);
-                            float width = MathHelper.Clamp(CurrentAnimation.FrameSize.Y * ShadowHeightMod, 16, 92);
+                    //        ShadowHeightMod = lightDistance / (light.Range / 10);
+                    //        ShadowHeight = MathHelper.Clamp(CurrentAnimation.FrameSize.Y * ShadowHeightMod, 16, 64);
+                    //        float width = MathHelper.Clamp(CurrentAnimation.FrameSize.Y * ShadowHeightMod, 16, 92);
 
-                            ShadowColor = Color.Lerp(Color.Lerp(Color.Black, Color.Transparent, 0f), Color.Transparent, lightDistance / light.Radius);
-                            foreach (Light light3 in lightList.FindAll(Light2 => Vector2.Distance(ShadowPosition, new Vector2(Light2.Position.X, Light2.Position.Y)) < light.Radius && Light2 != light).ToList())
-                            {
-                                ShadowColor *= MathHelper.Clamp(Vector2.Distance(new Vector2(light3.Position.X, light3.Position.Y), ShadowPosition) / light3.Radius, 0.8f, 1f);
-                            }
+                    //        ShadowColor = Color.Lerp(Color.Lerp(Color.Black, Color.Transparent, 0f), Color.Transparent, lightDistance / light.Radius);
+                    //        foreach (Light light3 in lightList.FindAll(Light2 => Vector2.Distance(ShadowPosition, new Vector2(Light2.Position.X, Light2.Position.Y)) < light.Radius && Light2 != light).ToList())
+                    //        {
+                    //            ShadowColor *= MathHelper.Clamp(Vector2.Distance(new Vector2(light3.Position.X, light3.Position.Y), ShadowPosition) / light3.Radius, 0.8f, 1f);
+                    //        }
 
-                            shadowVertices[0] = new VertexPositionColorTexture()
-                            {
-                                Position = new Vector3(ShadowPosition.X, ShadowPosition.Y, 0),
-                                TextureCoordinate = CurrentAnimation.dBottomLeftTexCoord,
-                                Color = ShadowColor
-                            };
+                    //        shadowVertices[0] = new VertexPositionColorTexture()
+                    //        {
+                    //            Position = new Vector3(ShadowPosition.X, ShadowPosition.Y, 0),
+                    //            TextureCoordinate = CurrentAnimation.dBottomLeftTexCoord,
+                    //            Color = ShadowColor
+                    //        };
 
-                            shadowVertices[1] = new VertexPositionColorTexture()
-                            {
-                                Position = new Vector3(ShadowPosition.X + CurrentAnimation.FrameSize.X, ShadowPosition.Y, 0),
-                                TextureCoordinate = CurrentAnimation.dBottomRightTexCoord,
-                                Color = ShadowColor
-                            };
+                    //        shadowVertices[1] = new VertexPositionColorTexture()
+                    //        {
+                    //            Position = new Vector3(ShadowPosition.X + CurrentAnimation.FrameSize.X, ShadowPosition.Y, 0),
+                    //            TextureCoordinate = CurrentAnimation.dBottomRightTexCoord,
+                    //            Color = ShadowColor
+                    //        };
 
-                            shadowVertices[2] = new VertexPositionColorTexture()
-                            {
-                                Position = new Vector3(ShadowPosition.X + CurrentAnimation.FrameSize.X + (direction.X * width), ShadowPosition.Y + (direction.Y * ShadowHeight), 0),
-                                TextureCoordinate = CurrentAnimation.dTopRightTexCoord,
-                                Color = ShadowColor * 0.85f
-                            };
+                    //        shadowVertices[2] = new VertexPositionColorTexture()
+                    //        {
+                    //            Position = new Vector3(ShadowPosition.X + CurrentAnimation.FrameSize.X + (direction.X * width), ShadowPosition.Y + (direction.Y * ShadowHeight), 0),
+                    //            TextureCoordinate = CurrentAnimation.dTopRightTexCoord,
+                    //            Color = ShadowColor * 0.85f
+                    //        };
 
-                            shadowVertices[3] = new VertexPositionColorTexture()
-                            {
-                                Position = new Vector3(ShadowPosition.X + (direction.X * width), ShadowPosition.Y + (direction.Y * ShadowHeight), 0),
-                                TextureCoordinate = CurrentAnimation.dTopLeftTexCooord,
-                                Color = ShadowColor * 0.85f
-                            };
+                    //        shadowVertices[3] = new VertexPositionColorTexture()
+                    //        {
+                    //            Position = new Vector3(ShadowPosition.X + (direction.X * width), ShadowPosition.Y + (direction.Y * ShadowHeight), 0),
+                    //            TextureCoordinate = CurrentAnimation.dTopLeftTexCooord,
+                    //            Color = ShadowColor * 0.85f
+                    //        };
 
-                            //This stops backface culling when the shadow flips vertically
-                            if (direction.Y > 0)
-                            {
-                                shadowIndices[0] = 0;
-                                shadowIndices[1] = 1;
-                                shadowIndices[2] = 2;
-                                shadowIndices[3] = 2;
-                                shadowIndices[4] = 3;
-                                shadowIndices[5] = 0;
-                            }
-                            else
-                            {
-                                shadowIndices[0] = 3;
-                                shadowIndices[1] = 2;
-                                shadowIndices[2] = 1;
-                                shadowIndices[3] = 1;
-                                shadowIndices[4] = 0;
-                                shadowIndices[5] = 3;
-                            }
+                    //        //This stops backface culling when the shadow flips vertically
+                    //        if (direction.Y > 0)
+                    //        {
+                    //            shadowIndices[0] = 0;
+                    //            shadowIndices[1] = 1;
+                    //            shadowIndices[2] = 2;
+                    //            shadowIndices[3] = 2;
+                    //            shadowIndices[4] = 3;
+                    //            shadowIndices[5] = 0;
+                    //        }
+                    //        else
+                    //        {
+                    //            shadowIndices[0] = 3;
+                    //            shadowIndices[1] = 2;
+                    //            shadowIndices[2] = 1;
+                    //            shadowIndices[3] = 1;
+                    //            shadowIndices[4] = 0;
+                    //            shadowIndices[5] = 3;
+                    //        }
 
-                            shadowEffect.Parameters["Texture"].SetValue(CurrentAnimation.Texture);
-                            shadowEffect.Parameters["texSize"].SetValue(new Vector2(CurrentAnimation.Texture.Width, CurrentAnimation.Texture.Height));
+                    //        shadowEffect.Parameters["Texture"].SetValue(CurrentAnimation.Texture);
+                    //        shadowEffect.Parameters["texSize"].SetValue(new Vector2(CurrentAnimation.Texture.Width, CurrentAnimation.Texture.Height));
 
-                            foreach (EffectPass pass in shadowEffect.CurrentTechnique.Passes)
-                            {
-                                pass.Apply();
-                                graphics.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, shadowVertices, 0, 4, shadowIndices, 0, 2, VertexPositionColorTexture.VertexDeclaration);
-                            }
-                        }
-                    }
-                    #endregion
+                    //        foreach (EffectPass pass in shadowEffect.CurrentTechnique.Passes)
+                    //        {
+                    //            pass.Apply();
+                    //            graphics.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, shadowVertices, 0, 4, shadowIndices, 0, 2, VertexPositionColorTexture.VertexDeclaration);
+                    //        }
+                    //    }
+                    //}
+                    //#endregion
                 }
 
                 #region Draw invader sprite

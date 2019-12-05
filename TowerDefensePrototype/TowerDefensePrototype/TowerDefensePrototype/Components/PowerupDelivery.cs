@@ -55,7 +55,7 @@ namespace TowerDefensePrototype
 
             Emitter TrailEmitter = new Emitter(TrailTexture, new Vector2(Position.X + 16, Position.Y + 8), new Vector2(90, 180),
                 new Vector2(0, 0), new Vector2(10, 20), 0.4f, true, new Vector2(0, 360), new Vector2(-0.5f, 0.5f),
-                new Vector4(1f, 1f, 1f, 1f), Color.Lerp(Color.LightSkyBlue, Color.Transparent, 0.5f), Color.Lerp(Color.White, Color.Transparent, 0.5f), -0.00f, -1, 1, 1, false, new Vector2(0, 720), true, null,
+                new Vector2(1f, 1f), Color.Lerp(Color.LightSkyBlue, Color.Transparent, 0.5f), Color.Lerp(Color.White, Color.Transparent, 0.5f), -0.00f, -1, 1, 1, false, new Vector2(0, 720), true, null,
                 null, null, null, null, null, null, null, true, true, 0);
             EmitterList.Add(TrailEmitter);
 

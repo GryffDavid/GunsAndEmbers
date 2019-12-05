@@ -187,8 +187,8 @@ namespace TowerDefensePrototype
             //    QuadList[2].DrawQuad(graphicsDevice);
             //    graphicsDevice.DrawUserPrimitives<VertexPositionColor>(PrimitiveType.TriangleStrip, QuadList[2].Vertices, 0, 2, VertexPositionColor.VertexDeclaration);            
 
-            if (Pulsing == true)
-                graphicsDevice.DrawUserPrimitives<VertexPositionColor>(PrimitiveType.TriangleStrip, QuadList[3].Vertices, 0, 2, VertexPositionColor.VertexDeclaration);
+            //if (Pulsing == true)
+            //    graphicsDevice.DrawUserPrimitives<VertexPositionColor>(PrimitiveType.TriangleStrip, QuadList[3].Vertices, 0, 2, VertexPositionColor.VertexDeclaration);
 
         }
     }

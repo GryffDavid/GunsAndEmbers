@@ -27,7 +27,7 @@ namespace TowerDefensePrototype
 
             EmitterList.Add(new Emitter(particleTexture, new Vector2(Position.X + 16, Position.Y + 8), new Vector2(0, 0),
                 new Vector2(0, 0), new Vector2(640, 960), 0.75f, true, new Vector2(0, 0), new Vector2(0, 0),
-                new Vector4(0.1f, 0.1f, 0.1f, 0.1f), FireColor * 0.5f, Color.Black, -0.05f, -1, 25, 1, false, new Vector2(0, 720), true, DrawDepth,
+                new Vector2(0.1f, 0.1f), FireColor * 0.5f, Color.Black, -0.05f, -1, 25, 1, false, new Vector2(0, 720), true, DrawDepth,
                 null, null, null, null, null, null, null, true, true));
         }
     }

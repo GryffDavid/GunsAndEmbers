@@ -64,7 +64,7 @@ namespace TowerDefensePrototype
         /// <param name="effect">Basic Effect for drawing the actual sprite</param>
         /// <param name="shadowEffect">The shadow effect for blurring the shadow</param>
         /// <param name="lightList">The list of lights from which to cast shadows</param>
-        public virtual void Draw(GraphicsDevice graphics, BasicEffect effect, Effect shadowEffect, List<Light> lightList)
+        public virtual void Draw(GraphicsDevice graphics, BasicEffect effect, Effect shadowEffect)
         { 
 
         }
