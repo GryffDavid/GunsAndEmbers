@@ -16,7 +16,7 @@ namespace TowerDefensePrototype
             CanMove = true;
             MoveVector = new Vector2(-1, 0);
             Position = position;
-            AssetName = "Soldier";
+            AssetName = "SoldierStrip3342";
             CurrentHP = 50;
             MaxHP = 50;
             MoveDelay = 10;
@@ -24,8 +24,11 @@ namespace TowerDefensePrototype
             CurrentAttackDelay = 0;
             AttackDelay = 1500;
             AttackPower = 4;
-
-            InvaderType = TowerDefensePrototype.InvaderType.Soldier;
+            FrameSize = new Vector2(33, 42);
+            FrameDelay = 120;
+            TotalFrames = 4;
+            CurrentFrame = 0;
+            InvaderType = InvaderType.Soldier;
         }
 
         public override void Update(GameTime gameTime)

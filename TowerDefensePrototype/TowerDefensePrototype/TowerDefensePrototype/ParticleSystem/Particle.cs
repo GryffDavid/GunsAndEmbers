@@ -16,7 +16,7 @@ namespace TowerDefensePrototype
         public float RotationIncrement, CurrentRotation, Gravity;
         public Color CurrentColor, EndColor;
         public bool Active, Fade, BouncedOnGround, CanBounce, Shrink;
-        
+        float PercentageHP;        
 
         public Particle(Texture2D texture, Vector2 position, float angle, float speed, float maxHP,
             float startingTransparency, bool fade, float startingRotation, float rotationChange,
@@ -76,7 +76,7 @@ namespace TowerDefensePrototype
                 CurrentPosition += Velocity;
                 Velocity.Y += Gravity;
                 DestinationRectangle = new Rectangle((int)CurrentPosition.X, (int)CurrentPosition.Y, (int)(Texture.Width * Scale), (int)(Texture.Height * Scale));
-            }                      
+            }
 
             float PercentageHP = CurrentHP / MaxHP;
 
@@ -87,16 +87,16 @@ namespace TowerDefensePrototype
 
             if (Shrink == true)
             {
-                Scale = MathHelper.Lerp(0, Scale, PercentageHP);
+                Scale = MathHelper.Lerp(Scale, (Scale*(PercentageHP)), PercentageHP);
             }
 
             CurrentColor = Color.Lerp(CurrentColor, EndColor, PercentageHP / (CurrentHP * 0.5f));
         }
 
         public void Draw(SpriteBatch spriteBatch)
-        {
+        { 
             if (Active == true)
-            {                
+            {         
                 spriteBatch.Draw(Texture, DestinationRectangle, null, Color.Lerp(Color.Transparent, CurrentColor, CurrentTransparency), CurrentRotation, new Vector2(Texture.Width / 2, Texture.Height / 2), SpriteEffects.None, 0);
             }
         }

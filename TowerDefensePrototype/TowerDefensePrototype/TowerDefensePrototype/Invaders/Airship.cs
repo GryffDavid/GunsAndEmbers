@@ -24,8 +24,11 @@ namespace TowerDefensePrototype
             CurrentAttackDelay = 0;
             AttackDelay = 1500;
             AttackPower = 4;
-
             InvaderType = TowerDefensePrototype.InvaderType.Airship;
+            FrameSize = new Vector2(125, 73);
+            FrameDelay = 120;
+            TotalFrames = 1;
+            CurrentFrame = 0;
         }
 
         public override void Update(GameTime gameTime)
