@@ -625,6 +625,8 @@ namespace TowerDefensePrototype
         List<TutorialBox> TutorialBoxList = new List<TutorialBox>();
 
         Texture2D ShieldBoundingSphere;
+
+        AnimatedSprite ThinkingAnimation;
         #endregion
         
         public Game1()
@@ -975,6 +977,9 @@ namespace TowerDefensePrototype
 
 
                 #endregion
+
+                ThinkingAnimation = new AnimatedSprite("ThinkingAnimation", Vector2.Zero, new Vector2(24, 24), 6, 100, Color.White, new Vector2(1, 1), true);
+                ThinkingAnimation.LoadContent(Content);
 
                 #region Loading sprites
 
@@ -2391,6 +2396,11 @@ namespace TowerDefensePrototype
                             pass.Apply();
                             invader.HealthBar.Draw(GraphicsDevice);
                         }
+                    }
+
+                    if (invader.CurrentBehaviourDelay < invader.MaxBehaviourDelay)
+                    {
+                        invader.ThinkingAnimation.Draw(spriteBatch);
                     }
 
                     invader.InvaderOutline.Draw(spriteBatch);
@@ -9073,6 +9083,7 @@ namespace TowerDefensePrototype
 
                             nextInvader.IceBlock = IceBlock;
                             nextInvader.Shadow = Shadow;
+                            nextInvader.ThinkingAnimation = ThinkingAnimation;
 
                             //This gives the invaders a speed variation
                             //nextInvader.Direction.X *= Multiplier;

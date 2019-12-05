@@ -150,6 +150,10 @@ Content\Invaders\RifleMan\RifleManShoot.xnb
 Content\Invaders\RifleMan\RifleManStand.xnb
 Content\Invaders\RifleMan\RifleManWalk.xnb
 Content\ShieldBoundingBox.xnb
+Content\Icons\MouseLeftClickIcon.xnb
+Content\Icons\MouseMiddleClickIcon.xnb
+Content\Icons\MouseRightClickIcon.xnb
+Content\CircularBar.xnb
 Content\Sounds\Menu\MenuClick.xnb
 Content\Sounds\FireTrapStart.xnb
 Content\Sounds\Menu\MenuAmbiance.xnb
@@ -187,7 +191,4 @@ Content\ShadowBlur.xnb
 Content\EmissiveBlur.xnb
 Content\ParticleEffect.xnb
 Content\StoryDialogue\StoryDialogue1.xnb
-Content\Icons\MouseLeftClickIcon.xnb
-Content\Icons\MouseMiddleClickIcon.xnb
-Content\Icons\MouseRightClickIcon.xnb
-Content\CircularBar.xnb
+Content\ThinkingAnimation.xnb

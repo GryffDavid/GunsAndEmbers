@@ -80,6 +80,14 @@ namespace TowerDefensePrototype
     };
     #endregion
 
+    struct PreviousResult
+    {
+        MacroBehaviour MacroBehaviour;
+        MicroBehaviour MicroBehaviour;
+        int NumHits; //Number of relevant hits from the previous batch of projectiles
+        float FireAngle; //The angle most recently used when firing
+    }
+
     public abstract class Invader : Drawable
     {
         #region Variables used for invaders
@@ -167,8 +175,6 @@ namespace TowerDefensePrototype
             }
         }
 
-        //public double CurrentMacroChangeTime, MaxMacroChangeTime; //The time it takes for the MacroBehaviour to change
-        //public MacroBehaviour NextMacroBehaviour;// { get; set; }
         public MacroBehaviour PreviousMacroBehaviour;
         private MacroBehaviour _CurrentMacroBehaviour;
         public MacroBehaviour CurrentMacroBehaviour
@@ -181,8 +187,6 @@ namespace TowerDefensePrototype
             }
         }
 
-        //public double CurrentMicroChangeTime, MaxMicroChangeTime; //The time it takes for the MicroBehaviour to change
-        //public MicroBehaviour NextMicroBehaviour;// { get; set; }
         public MicroBehaviour PreviousMicroBehavior;
         private MicroBehaviour _CurrentMicroBehaviour;
         public MicroBehaviour CurrentMicroBehaviour
@@ -194,6 +198,9 @@ namespace TowerDefensePrototype
                 _CurrentMicroBehaviour = value;                
             }
         }
+
+        public double MaxBehaviourDelay = 1500;
+        public double CurrentBehaviourDelay;
 
         public object PreviousHitObject;
         private object _HitObject;
@@ -240,6 +247,8 @@ namespace TowerDefensePrototype
         public Vector2 CowardiceRange;
         public float Cowardice; //The chance that this invader will decide to rather back up to avoid damage after taking a big hit
                                 //0 means the invader will never, ever back up even after taking a heavy hit
+
+        public AnimatedSprite ThinkingAnimation;
         #endregion
 
         public virtual void Initialize()
@@ -247,7 +256,7 @@ namespace TowerDefensePrototype
             CurrentHP = MaxHP;
             MaxY = Random.Next((int)YRange.X, (int)YRange.Y);
             ResourceValue = Random.Next((int)ResourceMinMax.X, (int)ResourceMinMax.Y);
-
+            
             if (Airborne == true)
             {
                 Position.Y = MaxY;
@@ -357,35 +366,12 @@ namespace TowerDefensePrototype
                     InvaderAnimationState = AnimationState_Invader.Stand;
                 }
 
-                #region Update behaviours and behaviour delays
-                //#region Micro Behviour
-                //if (CurrentMicroChangeTime < MaxMicroChangeTime &&
-                //    CurrentMicroBehaviour != NextMicroBehaviour)
-                //{
-                //    CurrentMicroChangeTime += gameTime.ElapsedGameTime.TotalMilliseconds;
-                //}
-
-                //if (CurrentMicroChangeTime >= MaxMicroChangeTime)
-                //{
-                //    CurrentMicroBehaviour = NextMicroBehaviour;
-                //    CurrentMicroChangeTime = 0;
-                //}
-                //#endregion
-
-                //#region Macro Behaviour
-                //if (CurrentMacroChangeTime < MaxMacroChangeTime &&
-                //    CurrentMacroBehaviour != NextMacroBehaviour)
-                //{
-                //    CurrentMacroChangeTime += gameTime.ElapsedGameTime.TotalMilliseconds;
-                //}
-
-                //if (CurrentMacroChangeTime >= MaxMacroChangeTime)
-                //{
-                //    CurrentMacroBehaviour = NextMacroBehaviour;
-                //    CurrentMacroChangeTime = 0;
-                //}
-                //#endregion
-                #endregion
+                if (CurrentBehaviourDelay <= MaxBehaviourDelay)
+                {
+                    CurrentBehaviourDelay += gameTime.ElapsedGameTime.TotalMilliseconds;
+                    ThinkingAnimation.Position = new Vector2(Center.X - 12, DestinationRectangle.Top - 28);
+                    ThinkingAnimation.Update(gameTime);
+                }
 
                 #region Update position and vertices
                 if (Velocity != Vector2.Zero)
@@ -901,7 +887,5 @@ namespace TowerDefensePrototype
 
             Velocity = velocity;
         }
-
-       
     }
 }

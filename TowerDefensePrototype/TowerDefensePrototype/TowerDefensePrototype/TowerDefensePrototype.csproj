@@ -117,6 +117,7 @@
     <Compile Include="Animations\Animation.cs" />
     <Compile Include="Animations\InvaderAnimation.cs" />
     <Compile Include="Basics\Ballistics.cs" />
+    <Compile Include="Components\JetEngine.cs" />
     <Compile Include="Components\ResourceCounter.cs" />
     <Compile Include="Components\Shield.cs" />
     <Compile Include="Turrets\Light\SniperTurret.cs" />

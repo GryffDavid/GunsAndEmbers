@@ -10,12 +10,27 @@ namespace TowerDefensePrototype
 {
     class StationaryCannon : HeavyRangedInvader
     {
+        List<PreviousResult> PreviousResultsList = new List<PreviousResult>();
+
         int AttackTowerLoopCounter; //How many times the invader made the decision to 
                                     //try shoot the tower instead of the trap after it ran into a trap
 
         int BounceLoopCounter; //How many time the invader has bounced between two solid traps
 
         Trap RecentTrapCollision;
+
+
+        //Should keep track of previous operations. i.e. moving down meant the hit rate went up by a bit, keep moving down then.
+        //if moving up reduced the hit rate, move up etc. Keeping track of previous hits vs. previous operations means
+        //learning over time
+
+        //List<MicroBehaviour> PreviousMicroBehaviours = new List<MicroBehaviour>(); //Most recent Micro Behaviours
+        //List<MacroBehaviour> PreviousMacroBehaviours = new List<MacroBehaviour>(); //Most recent Macro Behaviours
+        //List<int> PreviousHits = new List<int>(); //Number of hits previously made
+        
+        //Moving forward 100 pixels to approach the tower more than 4 times without bumping into a trap
+        //or hitting the tower/shield with a projectile means that the movement range should be updated
+        //to moving more than 100 pixels
 
         public StationaryCannon(Vector2 position)
         {
@@ -35,7 +50,7 @@ namespace TowerDefensePrototype
             AngleRange = new Vector2(30, 60);
             TowerDistanceRange = new Vector2(750, 850);
             TrapDistanceRange = new Vector2(250, 350);
-            LaunchVelocityRange = new Vector2(10, 15);
+            LaunchVelocityRange = new Vector2(12, 17);
             MaxFireDelay = 1500;
             CurrentFireDelay = 0;
             RangedDamage = 10;
@@ -46,6 +61,7 @@ namespace TowerDefensePrototype
 
         public override void Update(GameTime gameTime, Vector2 cursorPosition)
         {
+            if (CurrentBehaviourDelay > MaxBehaviourDelay)
             switch (CurrentMicroBehaviour)
             {
                 #region Stationary
@@ -83,6 +99,7 @@ namespace TowerDefensePrototype
                                         #endregion
 
                                         CurrentMicroBehaviour = MicroBehaviour.MovingBackwards;
+                                        CurrentBehaviourDelay = 0;                                        
                                     }
                                     #endregion
 
@@ -240,6 +257,8 @@ namespace TowerDefensePrototype
                                         float nextAngle = Random.Next((int)10, (int)30);
                                         EndAngle = MathHelper.ToRadians(nextAngle);
                                         CurrentMicroBehaviour = MicroBehaviour.AdjustTrajectory;
+                                        CurrentBehaviourDelay = 0;
+                                        Velocity.X = 0;
                                     }
                                 }
                                 break;
@@ -430,6 +449,7 @@ namespace TowerDefensePrototype
                                                 CurrentMicroBehaviour = MicroBehaviour.AdjustTrajectory;
                                                 CurrentMacroBehaviour = MacroBehaviour.AttackTower;
                                                 ResetCollisions();
+                                                CurrentBehaviourDelay = 0;
                                                 break;
                                             }
                                             #endregion
@@ -441,6 +461,7 @@ namespace TowerDefensePrototype
                                             {
                                                 if (CurrentAngle < MathHelper.ToRadians(15))
                                                 {
+                                                    //INTELLIGENCE Cowardice/Intelligenc roll here to decide whether to adjust up or move closer
                                                     EndAngle = MathHelper.Clamp(CurrentAngle + MathHelper.ToRadians(Random.Next(5, 15)), 0, 15);
                                                 }
                                                 else
