@@ -1,4 +1,5 @@
 Content\ResourceFont.xnb
+Content\MenuFont.xnb
 Content\Blank.xnb
 Content\FireTrap.xnb
 Content\Soldier.xnb
@@ -15,7 +16,8 @@ Content\TrapButton.xnb
 Content\Ground.xnb
 Content\Projectile.xnb
 Content\DefaultCursor.xnb
-Content\TurretCrosshair.xnb
+Content\Crosshair.xnb
+Content\Splodge.xnb
 Content\Line.xnb
 Content\WhiteBlock.xnb
 Content\star.xnb
@@ -42,4 +44,3 @@ Content\Background3.xnb
 Content\MenuButtonStrip.xnb
 Content\LoadingScreen.xnb
 Content\PauseMenuBackground.xnb
-Content\MenuFont.xnb

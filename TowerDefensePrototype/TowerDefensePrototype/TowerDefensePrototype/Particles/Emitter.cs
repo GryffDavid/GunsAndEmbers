@@ -16,13 +16,13 @@ namespace TowerDefensePrototype
         public Vector2 ScaleRange, HPRange, RotationIncrementRange, SpeedRange, StartingRotationRange;
         public float Transparency, Gravity, ActiveSeconds, CurrentTime, Interval, IntervalTime;
         public Color StartColor, EndColor;
-        public bool Active, Fade;
+        public bool Active, Fade, CanBounce;
         public string TextureName;
         public int Burst;
         Random Random;
 
         public Emitter(String textureName, Vector2 position, Vector2 angleRange, Vector2 speedRange, Vector2 hpRange, float startingTransparency, bool fade, Vector2 startingRotationRange,
-            Vector2 rotationIncrement, Vector2 scaleRange, Color startColor, Color endColor, float gravity, float activeSeconds, float interval, int burst)
+            Vector2 rotationIncrement, Vector2 scaleRange, Color startColor, Color endColor, float gravity, float activeSeconds, float interval, int burst, bool canBounce)
         {
             Active = true;
             TextureName = textureName;
@@ -42,6 +42,7 @@ namespace TowerDefensePrototype
             ActiveSeconds = activeSeconds;;
             Interval = interval;
             Burst = burst;
+            CanBounce = canBounce;
             Random = new Random();
         }
 
@@ -83,7 +84,7 @@ namespace TowerDefensePrototype
 
                     if (IntervalTime > Interval)
                     {
-                        ParticleList.Add(new Particle(Texture, Position, angle, speed, hp, Transparency, Fade, startingRotation, rotation, scale, StartColor, EndColor, Gravity, false));
+                        ParticleList.Add(new Particle(Texture, Position, angle, speed, hp, Transparency, Fade, startingRotation, rotation, scale, StartColor, EndColor, Gravity, CanBounce));
                         IntervalTime = 0;
                     }
                 }
@@ -103,7 +104,7 @@ namespace TowerDefensePrototype
                             rotation = (float)DoubleRange(RotationIncrementRange.X, RotationIncrementRange.Y);
                             speed = (float)DoubleRange(SpeedRange.X, SpeedRange.Y);
                             startingRotation = (float)DoubleRange(StartingRotationRange.X, StartingRotationRange.Y);
-                            ParticleList.Add(new Particle(Texture, Position, angle, speed, hp, Transparency, Fade, startingRotation, rotation, scale, StartColor, EndColor, Gravity, false));
+                            ParticleList.Add(new Particle(Texture, Position, angle, speed, hp, Transparency, Fade, startingRotation, rotation, scale, StartColor, EndColor, Gravity, CanBounce));
                         }
                         IntervalTime = 0;
                     }

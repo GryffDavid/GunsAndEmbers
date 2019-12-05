@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml.Serialization;
 
 namespace TowerDefensePrototype
 {
-    class Profile
+    [Serializable]
+    public class Profile
     {
+        public int ProfileNumber;
         public string Name;
-        public int LevelNumber;
+        public int LevelNumber;        
     }
 }

@@ -11,12 +11,12 @@ namespace TowerDefensePrototype
 {
     public class HorizontalBar
     {
-        Texture2D Box;
         public int MaxHP, CurrentHP;
-        int CurrentLength;
         public Vector2 Position, MaxSize;
-        Color FrontColor, BackColor;
-
+        Texture2D Box;
+        Color FrontColor, BackColor;        
+        int CurrentLength;      
+        
         public HorizontalBar(ContentManager contentManager, Vector2 maxSize, int maxHP, int currentHP, Color? frontColor = null, Color? backColor = null)
         {
             MaxHP = maxHP;

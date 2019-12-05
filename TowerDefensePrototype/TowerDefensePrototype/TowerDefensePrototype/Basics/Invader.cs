@@ -18,12 +18,12 @@ namespace TowerDefensePrototype
         public Color Color;
         public BoundingBox BoundingBox;
         public Double MoveDelay, CurrentDelay, AttackDelay, CurrentAttackDelay;
-        public int MaxHP, CurrentHP, ResourceValue;
-        HorizontalBar HPBar;
+        public int MaxHP, CurrentHP, ResourceValue;        
         public abstract void TrapDamage(TrapType trapType);
         public int AttackPower;
         public Random Random;
         public float Gravity;
+        HorizontalBar HPBar;
 
         public void LoadContent(ContentManager contentManager)
         {            
@@ -49,10 +49,10 @@ namespace TowerDefensePrototype
                 if (CurrentHP <= 0)
                     Active = false;
 
-                if (Position.X > 1280)
-                    Active = false;
-                else
-                    Active = true;
+                //if (Position.X > 1280)
+                //    Active = false;
+                //else
+                //    Active = true;
 
                 if (CurrentAttackDelay >= AttackDelay)
                 {

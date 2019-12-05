@@ -15,9 +15,8 @@ namespace TowerDefensePrototype
         public Rectangle DestinationRectangle;
         public Rectangle SourceRectangle;
         public String AssetName;
-        public int ElapsedTime, FrameTime, FrameCount, CurrentFrame;
-
         public Vector2 Scale, FrameSize, Position;
+        public int ElapsedTime, FrameTime, FrameCount, CurrentFrame;        
         public bool Active, Looping;
 
         public void Initialize(string assetName, Vector2 position, Vector2 frameSize, int frameCount, int frameTime, Color color, Vector2 scale, bool looping)

@@ -19,7 +19,7 @@ namespace TowerDefensePrototype
             BaseAsset = "CannonTurretBase";
             Position = position;
             Selected = true;
-            FireDelay = 2000;
+            FireDelay = 8000;
             Damage = 20;
         }
 

@@ -16,10 +16,11 @@ namespace TowerDefensePrototype
     {
         string AssetName, IconName, Text, FontName;
         public Vector2 FrameSize, Scale, Position, CursorPosition;
+        public Rectangle DestinationRectangle, SourceRectangle;
+
         Vector2 IconPosition;
         Color Color, TextColor;
-        Texture2D ButtonStrip, IconTexture;
-        public Rectangle DestinationRectangle, SourceRectangle;
+        Texture2D ButtonStrip, IconTexture;        
         Rectangle IconRectangle;
         SpriteFont Font;        
 
