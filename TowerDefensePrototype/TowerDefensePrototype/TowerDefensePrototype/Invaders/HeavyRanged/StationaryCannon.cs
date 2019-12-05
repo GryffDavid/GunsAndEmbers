@@ -31,6 +31,7 @@ namespace TowerDefensePrototype
             DistanceRange = new Vector2(800, 1500);
             CurrentAngle = 0;
             NextAngle = 0;
+            FinalAngle = 45;
             Airborne = false;
 
             CurrentInvaderState = InvaderState.Standing;
@@ -51,19 +52,7 @@ namespace TowerDefensePrototype
             }
 
             if (CurrentInvaderState != PreviousInvaderState || PreviousInvaderState == null)
-            {
-                if (PreviousInvaderState == null)
-                {
-                    BarrelAnimation = new Animation()
-                    {
-                        Texture = TextureList[1],
-                        TotalFrames = 6,
-                        FrameDelay = 150
-                    };
-
-                    BarrelPivot = new Vector2((BarrelAnimation.Texture.Width/BarrelAnimation.TotalFrames) - 10, BarrelAnimation.Texture.Height / 2);                    
-                }
-
+            {                
                 switch (CurrentInvaderState)
                 {
                     case InvaderState.Walking:
@@ -76,23 +65,32 @@ namespace TowerDefensePrototype
                         break;
                 }
 
-                FrameSize = new Vector2(CurrentTexture.Width / CurrentAnimation.TotalFrames, CurrentTexture.Height);
-                CurrentFrameDelay = 0;
+                //This sets up some values for the character that can only be done after sprites have been loaded
+                //but should still only be done once
+                if (PreviousInvaderState == null)
+                {
+                    BarrelAnimation = new Animation()
+                    {
+                        Texture = TextureList[1],
+                        TotalFrames = 1,
+                        FrameDelay = 150
+                    };
+
+                    BarrelPivot = new Vector2((BarrelAnimation.Texture.Width / BarrelAnimation.TotalFrames) - 10, BarrelAnimation.Texture.Height / 2);
+                    BarrelAnimation.GetFrameSize();
+                }
+
                 CurrentFrame = Random.Next(0, CurrentAnimation.TotalFrames);
             }
-
-            //Barrel.Active = true;
-            //Barrel.Position = Position;
-            //Barrel.Update(gameTime);            
 
             //If the invader gets into range, start moving the weapon to it's next position
             if (InRange == true)
             {
-                NextAngle = MathHelper.ToRadians(45);
+                NextAngle = MathHelper.ToRadians(FinalAngle);
             }
 
-            BasePivot = new Vector2(Position.X + TextureList[0].Width / 2, Position.Y + 5);
-            CurrentAngle = MathHelper.SmoothStep(CurrentAngle, NextAngle, 0.05f * (float)(gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
+            BasePivot = new Vector2(Position.X + TextureList[0].Width / 2 + 10, Position.Y + 5);
+            CurrentAngle = MathHelper.SmoothStep(CurrentAngle, NextAngle, 0.1f * (float)(gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
 
             base.Update(gameTime, cursorPosition);
         }
@@ -121,10 +119,8 @@ namespace TowerDefensePrototype
 
         public override void Draw(SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, BasicEffect basicEffect)
         {
-            //spriteBatch.Draw(
-            //Barrel.Draw(spriteBatch);
-            spriteBatch.Draw(BarrelAnimation.Texture, BarrelDestinationRectangle, BarrelSourceRectangle, 
-                             Color, CurrentAngle, BarrelPivot, SpriteEffects.FlipHorizontally, 0);
+            spriteBatch.Draw(BarrelAnimation.Texture, BarrelDestinationRectangle, BarrelAnimation.SourceRectangle,
+                             Color, CurrentAngle, BarrelPivot, SpriteEffects.None, DrawDepth-0.001f);
 
             base.Draw(spriteBatch, graphicsDevice, basicEffect);
         }

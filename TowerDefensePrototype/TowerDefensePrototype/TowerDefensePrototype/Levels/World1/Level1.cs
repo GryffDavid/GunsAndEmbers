@@ -5,6 +5,8 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Media;
+using Microsoft.Xna.Framework.Audio;
 
 namespace TowerDefensePrototype
 {
@@ -18,9 +20,15 @@ namespace TowerDefensePrototype
             StartWeather = Weather.Snow;
             Resources = 1300;
 
-            Wave Wave1 = new Wave(true, 2050, 3000,
-            //     new Soldier(new Vector2(2050, 600)),
-                 new StationaryCannon(new Vector2(2050, 600))
+            Wave Wave1 = new Wave(true, 2050, 100,
+                 //new Soldier(new Vector2(2050, 600)),
+                 //new StationaryCannon(new Vector2(2050, 600)),
+                 new HealDrone(new Vector2(2050, 60)),
+                 new HealDrone(new Vector2(2050, 60)),
+                 new HealDrone(new Vector2(2050, 60)),
+                 new HealDrone(new Vector2(2050, 60)),
+                 new HealDrone(new Vector2(2050, 60)),
+                 new HealDrone(new Vector2(2050, 60))               
                  //new Soldier(new Vector2(2050, 600)),
                  //new Soldier(new Vector2(2050, 600)),
                  //new Soldier(new Vector2(2050, 600)),
@@ -158,6 +166,11 @@ namespace TowerDefensePrototype
             GroundTexture = contentManager.Load<Texture2D>("Backgrounds/Ground");
             ForegroundTexture = contentManager.Load<Texture2D>("Backgrounds/Foreground");
             SkyBackgroundTexture = contentManager.Load<Texture2D>("Backgrounds/Sky");
+
+            AmbienceList = new List<SoundEffect>()
+            {
+                contentManager.Load<SoundEffect>("Sounds/Ambience/PolarWindAmbience")
+            };
         }
     }
 }

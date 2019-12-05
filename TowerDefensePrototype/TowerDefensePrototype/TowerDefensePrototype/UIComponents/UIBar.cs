@@ -94,6 +94,22 @@ namespace TowerDefensePrototype
             {
                 PercentValue = (100 / maxValue * currentValue) / 100;
 
+                QuadList[0] = new Quad(
+                new Vector2[] 
+                {
+                    new Vector2(Position.X, Position.Y + MaxSize.Y),
+                    new Vector2(Position.X, Position.Y),
+                    new Vector2(Position.X + MaxSize.X, Position.Y + MaxSize.Y),
+                    new Vector2(Position.X + MaxSize.X, Position.Y)
+                },
+                new Color[]
+                {
+                    HalfWhite,
+                    HalfWhite,
+                    HalfWhite,
+                    HalfWhite
+                });
+
                 QuadList[1] = new Quad(
                     new Vector2[] 
                 {

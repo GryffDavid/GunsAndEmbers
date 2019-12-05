@@ -7,6 +7,7 @@ namespace TowerDefensePrototype
 {
     class Healer : Invader
     {
+        //Fires a beam into other invaders to heal them. Red beam. Think medic from Team Fortress 2.
         public override void TrapDamage(Trap trap)
         {
             if (VulnerableToTrap == true)

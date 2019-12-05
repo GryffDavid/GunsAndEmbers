@@ -55,22 +55,26 @@ namespace TowerDefensePrototype
             }
 
             if (CurrentInvaderState != PreviousInvaderState || PreviousInvaderState == null)
-            {
+            {                
                 switch (CurrentInvaderState)
                 {
                     case InvaderState.Walking:
                         CurrentTexture = TextureList[0];
                         CurrentAnimation = new Animation() { Texture = CurrentTexture, TotalFrames = 4, FrameDelay = 150 };
+                        CurrentAnimation.Looping = true;
+                        CurrentAnimation.Animated = true;
                         break;
 
                     case InvaderState.Standing:
                         CurrentTexture = TextureList[1];
                         CurrentAnimation = new Animation() { Texture = CurrentTexture, TotalFrames = 2, FrameDelay = 300 };
+                        CurrentAnimation.Looping = true;
+                        CurrentAnimation.Animated = true;
                         break;
                 }
 
-                FrameSize = new Vector2(CurrentTexture.Width / CurrentAnimation.TotalFrames, CurrentTexture.Height);
-                CurrentFrameDelay = 0;
+ 
+                CurrentAnimation.GetFrameSize();
                 CurrentFrame = Random.Next(0, CurrentAnimation.TotalFrames);
             }
 

@@ -5,15 +5,20 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Input;
 
 namespace TowerDefensePrototype
 {
-    class BeamProjectile : LightProjectile
+    class GlueTurret : Turret
     {
-        public BeamProjectile(Vector2 position, Vector2 direction, float? damage = null)
-            : base(position, direction, damage)
+        public GlueTurret(Vector2 position)
         {
-            LightProjectileType = LightProjectileType.Beam;
+
+        }
+
+        public override void Draw(SpriteBatch spriteBatch)
+        {
+
         }
     }
 }

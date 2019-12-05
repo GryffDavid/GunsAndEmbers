@@ -13,7 +13,7 @@ namespace TowerDefensePrototype
         public Texture2D StickTexture, PointTexture;
         public float Bounce = 0.7f;
         float Gravity = 0.35f;
-        float Friction = 0.999f;
+        float Friction = 1.0f;
         double Time;
         bool Rotate = true;
 

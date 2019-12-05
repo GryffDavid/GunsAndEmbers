@@ -18,6 +18,7 @@ namespace TowerDefensePrototype
         public WorldType WorldType;
         public List<Wave> WaveList;
         public Weather StartWeather;
+        public List<SoundEffect> AmbienceList = new List<SoundEffect>();
 
         public virtual void LoadContent(ContentManager contentManager)
         {
