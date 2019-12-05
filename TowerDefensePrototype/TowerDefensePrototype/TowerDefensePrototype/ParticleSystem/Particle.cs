@@ -116,8 +116,6 @@ namespace TowerDefensePrototype
                 {
                     Velocity.X = 0;
                 }
-
-                DrawDepth = 0;
             }
 
             if (Velocity.Y == 0)
@@ -156,6 +154,8 @@ namespace TowerDefensePrototype
                     else
                         CurrentRotation = MathHelper.Lerp(CurrentRotation, 0, 0.2f);
                 }
+
+                DrawDepth = DestinationRectangle.Bottom / 720;
             }
 
             if (Active == true)

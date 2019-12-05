@@ -33,6 +33,7 @@ namespace TowerDefensePrototype
         public int CurrentFrame;
         public Vector2 FrameSize, BarrelEnd;
         public bool Animated, Looping;
+        public Vector2 TestVector;
 
         public void LoadContent(ContentManager contentManager)
         {
@@ -104,17 +105,17 @@ namespace TowerDefensePrototype
                     CurrentMouseState = Mouse.GetState();
                     MousePosition = new Vector2(CurrentMouseState.X, CurrentMouseState.Y);
 
-                    Direction = MousePosition - new Vector2(BarrelRectangle.X, BarrelRectangle.Y);
-                    Direction.Normalize();
-
-                    Rotation = (float)Math.Atan2((double)Direction.Y, (double)Direction.X);
-
-                    Vector2 TestVector = new Vector2(BarrelRectangle.X + (float)Math.Cos(Rotation - 90) * (BarrelPivot.Y - BarrelRectangle.Height / 2),
-                                                                BarrelRectangle.Y + (float)Math.Sin(Rotation - 90) * (BarrelPivot.Y - BarrelRectangle.Height / 2));
+                    TestVector = new Vector2(BarrelRectangle.X + (float)Math.Cos(Rotation - 90) * (BarrelPivot.Y - BarrelRectangle.Height / 2),
+                                             BarrelRectangle.Y + (float)Math.Sin(Rotation - 90) * (BarrelPivot.Y - BarrelRectangle.Height / 2));
 
                     BarrelEnd = new Vector2(TestVector.X + (float)Math.Cos(Rotation) * (BarrelRectangle.Width - BarrelPivot.X),
                                             TestVector.Y + (float)Math.Sin(Rotation) * (BarrelRectangle.Width - BarrelPivot.X));
 
+                    Direction = MousePosition - new Vector2(TestVector.X, TestVector.Y);
+                    Direction.Normalize();
+                                        
+                    Rotation = (float)Math.Atan2((double)Direction.Y, (double)Direction.X);
+                    
                     PreviousMouseState = CurrentMouseState;
                 }
                 else

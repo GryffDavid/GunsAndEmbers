@@ -114,6 +114,7 @@
     <Compile Include="Basics\BulletTrail.cs" />
     <Compile Include="Basics\DialogBox.cs" />
     <Compile Include="Basics\Explosion.cs" />
+    <Compile Include="Basics\ProgressBar.cs" />
     <Compile Include="Basics\LightningBolt.cs" />
     <Compile Include="Basics\Profile.cs" />
     <Compile Include="Basics\RangedInvader.cs" />
@@ -122,8 +123,8 @@
     <Compile Include="Basics\CheckBox.cs" />
     <Compile Include="Basics\InformationBox.cs" />
     <Compile Include="Basics\Upgrade.cs" />
-    <Compile Include="Level.cs" />
-    <Compile Include="Level1.cs" />
+    <Compile Include="Basics\Level.cs" />
+    <Compile Include="Levels\Level1.cs" />
     <Compile Include="Projectiles\LightningProjectile.cs" />
     <Compile Include="Invaders\StationaryCannon.cs" />
     <Compile Include="Turrets\EnergyTurret.cs" />

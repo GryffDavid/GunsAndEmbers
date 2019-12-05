@@ -15,7 +15,7 @@ namespace TowerDefensePrototype
         {
             Active = true;
             TurretType = TurretType.Cluster;
-            BaseAsset = "Turrets/CannonTurretBase";
+            BaseAsset = "Turrets/MachineTurretBase";
             Position = position;
             Selected = true;
             FireDelay = 5000;
@@ -25,8 +25,8 @@ namespace TowerDefensePrototype
 
             CurrentAnimation = new Animation()
             {
-                AssetName = "Turrets/CannonAnimation1",
-                TotalFrames = 10
+                AssetName = "Turrets/MachineTurretBarrel",
+                TotalFrames = 6
             };   
         }
 
@@ -34,11 +34,11 @@ namespace TowerDefensePrototype
         {
             if (Active == true)
             {
-                BaseRectangle = new Rectangle((int)Position.X + 20, (int)Position.Y + 8, TurretBase.Width, TurretBase.Height);
-                BarrelRectangle = new Rectangle((int)Position.X + 20, (int)Position.Y + 8, TurretBarrel.Width / CurrentAnimation.TotalFrames, TurretBarrel.Height);
+                BaseRectangle = new Rectangle((int)Position.X, (int)Position.Y, TurretBase.Width, TurretBase.Height);
+                BarrelRectangle = new Rectangle((int)Position.X, (int)Position.Y, TurretBarrel.Width / CurrentAnimation.TotalFrames, TurretBarrel.Height);
 
-                BarrelPivot = new Vector2(20, TurretBarrel.Height / 2);
-                BasePivot = new Vector2(TurretBase.Width / 2, TurretBase.Height / 2 - 10);
+                BarrelPivot = new Vector2(32, 32);
+                BasePivot = new Vector2(40, 5);
 
                 spriteBatch.Draw(TurretBarrel, BarrelRectangle, SourceRectangle, Color, Rotation, BarrelPivot, SpriteEffects.None, 0.99f);
 

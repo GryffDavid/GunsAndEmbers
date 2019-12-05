@@ -15,13 +15,13 @@ namespace TowerDefensePrototype
             Active = true;
             MoveVector = new Vector2(-1, 0);
             Position = position;
-            CurrentHP = 250;
-            MaxHP = 225;
+            CurrentHP = 150;
+            MaxHP = 150;
             MoveDelay = 5;
             ResourceMinMax = new Vector2(1, 5);
             CurrentAttackDelay = 0;
             AttackDelay = 1500;
-            AttackPower = 4;
+            AttackPower = 20;
             CurrentFrame = 0;            
             InvaderType = InvaderType.Soldier;
             YRange = new Vector2(525, 630);

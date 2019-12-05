@@ -39,7 +39,6 @@ Content\Buttons\ButtonLeft.xnb
 Content\Buttons\ButtonRight.xnb
 Content\Buttons\SmallButton.xnb
 Content\ProfileMenuTitle.xnb
-Content\Backgrounds\NewInterface.xnb
 Content\Projectiles\Torpedo.xnb
 Content\Cursors\Crosshair.xnb
 Content\LoadingAnimation.xnb
@@ -67,12 +66,18 @@ Content\InformationBox.xnb
 Content\Projectiles\ClusterBomb.xnb
 Content\Projectiles\ClusterBombShell.xnb
 Content\Particles\Coin.xnb
-Content\HealthBar.xnb
-Content\ShieldBar.xnb
 Content\Shadow.xnb
 Content\Turrets\MachineTurretBarrel.xnb
 Content\Turrets\MachineTurretBase.xnb
 Content\Particles\MachineShell.xnb
+Content\LightSky.xnb
+Content\InterfaceBar.xnb
+Content\InterfaceButton.xnb
+Content\HealthBar\Background.xnb
+Content\HealthBar\HealthBarForeground.xnb
+Content\HealthBar\Outline.xnb
+Content\HealthBar\ShieldBarForeground.xnb
+Content\BlastRadius.xnb
 Content\Fonts\BoxFont1.xnb
 Content\Fonts\HUDFont.xnb
 Content\Fonts\ButtonFont.xnb
@@ -83,3 +88,8 @@ Content\Sounds\MenuClick.xnb
 Content\Sounds\FireTrapStart.xnb
 Content\Sounds\MenuAmbiance.xnb
 Content\Sounds\LightningSound.xnb
+Content\Traps\LandMineGreenSmall.xnb
+Content\Traps\LandMineRedSmall.xnb
+Content\Cursors\BombCursor.xnb
+Content\BackgroundTest2.xnb
+Content\Ground1.xnb
