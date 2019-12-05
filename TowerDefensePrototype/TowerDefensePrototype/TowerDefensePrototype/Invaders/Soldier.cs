@@ -19,7 +19,7 @@ namespace TowerDefensePrototype
             AssetName = "Soldier";
             CurrentHealth = 50;
             MaxHealth = 50;
-            MoveDelay = 15;
+            MoveDelay = 10;
         }
 
         public override void TrapDamage(TrapType trapType)

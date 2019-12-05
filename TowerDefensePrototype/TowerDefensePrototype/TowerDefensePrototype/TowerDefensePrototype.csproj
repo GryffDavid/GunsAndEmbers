@@ -112,7 +112,7 @@
     <Compile Include="Basics\BlankTrap.cs" />
     <Compile Include="Basics\Invader.cs" />
     <Compile Include="Basics\Fire.cs" />
-    <Compile Include="HorizontalBar.cs" />
+    <Compile Include="Basics\HorizontalBar.cs" />
     <Compile Include="Particle\GroundParticle.cs" />
     <Compile Include="Invaders\BatteringRam.cs" />
     <Compile Include="Basics\MuzzleFlash.cs" />
@@ -132,9 +132,8 @@
     <Compile Include="Basics\Trap.cs" />
     <Compile Include="Basics\Turret.cs" />
     <Compile Include="Invaders\Soldier.cs" />
-    <Compile Include="UserInterface.cs" />
     <Compile Include="DefenseTraps\Wall.cs" />
-    <Compile Include="VerticalBar.cs" />
+    <Compile Include="Basics\VerticalBar.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="aOtherStuff\Game.ico" />

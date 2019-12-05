@@ -35,14 +35,9 @@ namespace TowerDefensePrototype
         public void Update(GameTime gameTime)
         {
             //GameTime = gameTime;
+            VulnerableToTurret = true;
 
             CurrentDelay += gameTime.ElapsedGameTime.Milliseconds;
-
-            if (CurrentDelay > MoveDelay)
-            {
-                Position += MoveVector;
-                CurrentDelay = 0;
-            }   
 
             if (CurrentHealth <= 0)
                 Active = false;
@@ -72,7 +67,11 @@ namespace TowerDefensePrototype
                
         public void Move()
         {
-        
+            if (CurrentDelay > MoveDelay)
+            {
+                Position += MoveVector;
+                CurrentDelay = 0;
+            }   
         }
     }
 }
