@@ -14,6 +14,7 @@ namespace TowerDefensePrototype
         public BlendState BlendState = BlendState.AlphaBlend;
         public bool Emissive = false;
         public bool Normal = false;
+        public bool Shadows = false;
 
 
         public virtual void Draw(SpriteBatch spriteBatch)

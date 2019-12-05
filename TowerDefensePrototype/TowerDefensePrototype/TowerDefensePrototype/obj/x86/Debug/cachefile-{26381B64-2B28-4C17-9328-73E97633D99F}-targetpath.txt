@@ -177,5 +177,5 @@ Content\LightCombinedEffect.xnb
 Content\LightEffect.xnb
 Content\ShadowBlur.xnb
 Content\EmissiveBlur.xnb
-Content\StoryDialogue\StoryDialogue1.xnb
 Content\ParticleEffect.xnb
+Content\StoryDialogue\StoryDialogue1.xnb

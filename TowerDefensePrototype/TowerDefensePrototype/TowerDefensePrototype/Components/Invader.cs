@@ -355,6 +355,87 @@ namespace TowerDefensePrototype
                 effect.VertexColorEnabled = true;
                 effect.Texture = CurrentAnimation.Texture;
 
+                #region Draw trap shadows
+                foreach (Light light in lightList)
+                {
+                    float lightDistance = Vector2.Distance(ShadowPosition, new Vector2(light.Position.X, light.Position.Y));
+
+                    if (lightDistance < light.Radius)
+                    {
+                        Vector2 direction = ShadowPosition - new Vector2(light.Position.X, light.Position.Y);
+                        direction.Normalize();
+
+                        heightMod = lightDistance / (light.Range / 10);
+                        height = MathHelper.Clamp(CurrentAnimation.FrameSize.Y * heightMod, 16, 64);
+                        float width = MathHelper.Clamp(CurrentAnimation.FrameSize.Y * heightMod, 16, 92);
+
+                        shadowColor = Color.Lerp(Color.Lerp(Color.Black, Color.Transparent, 0f), Color.Transparent, lightDistance / light.Radius);
+                        foreach (Light light3 in lightList.FindAll(Light2 => Vector2.Distance(ShadowPosition, new Vector2(Light2.Position.X, Light2.Position.Y)) < light.Radius && Light2 != light).ToList())
+                        {
+                            shadowColor *= MathHelper.Clamp(Vector2.Distance(new Vector2(light3.Position.X, light3.Position.Y), ShadowPosition) / light3.Radius, 0.8f, 1f);
+                        }
+
+                        shadowVertices[0] = new VertexPositionColorTexture()
+                        {
+                            Position = new Vector3(ShadowPosition.X, ShadowPosition.Y, 0),
+                            TextureCoordinate = CurrentAnimation.dBottomLeftTexCoord,
+                            Color = shadowColor
+                        };
+
+                        shadowVertices[1] = new VertexPositionColorTexture()
+                        {
+                            Position = new Vector3(ShadowPosition.X + CurrentAnimation.FrameSize.X, ShadowPosition.Y, 0),
+                            TextureCoordinate = CurrentAnimation.dBottomRightTexCoord,
+                            Color = shadowColor
+                        };
+
+                        shadowVertices[2] = new VertexPositionColorTexture()
+                        {
+                            Position = new Vector3(ShadowPosition.X + CurrentAnimation.FrameSize.X + (direction.X * width), ShadowPosition.Y + (direction.Y * height), 0),
+                            TextureCoordinate = CurrentAnimation.dTopRightTexCoord,
+                            Color = Color.Lerp(shadowColor, Color.Transparent, 0.85f)
+                        };
+
+                        shadowVertices[3] = new VertexPositionColorTexture()
+                        {
+                            Position = new Vector3(ShadowPosition.X + (direction.X * width), ShadowPosition.Y + (direction.Y * height), 0),
+                            TextureCoordinate = CurrentAnimation.dTopLeftTexCooord,
+                            Color = Color.Lerp(shadowColor, Color.Transparent, 0.85f)
+                        };
+
+                        //This stops backface culling when the shadow flips vertically
+                        if (direction.Y > 0)
+                        {
+                            shadowIndices[0] = 0;
+                            shadowIndices[1] = 1;
+                            shadowIndices[2] = 2;
+                            shadowIndices[3] = 2;
+                            shadowIndices[4] = 3;
+                            shadowIndices[5] = 0;
+                        }
+                        else
+                        {
+                            shadowIndices[0] = 3;
+                            shadowIndices[1] = 2;
+                            shadowIndices[2] = 1;
+                            shadowIndices[3] = 1;
+                            shadowIndices[4] = 0;
+                            shadowIndices[5] = 3;
+                        }
+
+                        shadowEffect.Parameters["Texture"].SetValue(CurrentAnimation.Texture);
+                        shadowEffect.Parameters["texSize"].SetValue(CurrentAnimation.FrameSize);
+
+                        foreach (EffectPass pass in shadowEffect.CurrentTechnique.Passes)
+                        {
+                            pass.Apply();
+                            graphics.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, shadowVertices, 0, 4, shadowIndices, 0, 2, VertexPositionColorTexture.VertexDeclaration);
+                        }
+                    }
+                }
+                #endregion
+
+                #region Draw invader sprite
                 invaderVertices[0] = new VertexPositionColorTexture()
                 {
                     Position = new Vector3(DestinationRectangle.Left, DestinationRectangle.Top, 0),
@@ -395,6 +476,7 @@ namespace TowerDefensePrototype
                     pass.Apply();
                     graphics.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, invaderVertices, 0, 4, invaderIndices, 0, 2, VertexPositionColorTexture.VertexDeclaration);
                 }
+                #endregion
             }
         }
 

@@ -317,7 +317,7 @@ namespace TowerDefensePrototype
 
                         trap.CurrentAffectedTime = 0;
 
-                        foreach (Emitter emitter in trap.TrapEmitterList)
+                        foreach (Emitter emitter in YSortedEmitterList.Where(emit => emit.Tether == trap))
                         {
                             emitter.AngleRange = new Vector2(angle1, angle1);
                             emitter.SpeedRange = new Vector2(1, 1.5f);
@@ -404,11 +404,11 @@ namespace TowerDefensePrototype
                                     0.0f, -1, 10, 1, false, new Vector2(0, 1080), true, CursorPosition.Y / 1080,
                                     null, null, null, null, null, null, null, true, true, 150);
 
-                                HitTrap.TrapEmitterList[1].EndColor =
-                                    Color.Lerp(HitTrap.TrapEmitterList[1].EndColor, Color.Red, 0.1f);
-
-                                HitTrap.TrapEmitterList[1].StartColor =
-                                        Color.Lerp(HitTrap.TrapEmitterList[1].EndColor, Color.Red, 0.1f);
+                                foreach (Emitter emitter in YSortedEmitterList.Where(emit => emit.Tether == HitTrap && emit.TextureName.Contains("Fire")))
+                                {
+                                    emitter.EndColor = Color.Lerp(emitter.EndColor, Color.Red, 0.1f);
+                                    emitter.StartColor = Color.Lerp(emitter.EndColor, Color.Red, 0.1f);
+                                }
                                 break;
                         }
                         break;
@@ -472,11 +472,10 @@ namespace TowerDefensePrototype
                 {
                     HitTrap.Active = false;
 
-                    foreach (Emitter emitter in HitTrap.TrapEmitterList)
+                    foreach (Emitter emitter in YSortedEmitterList.Where(emit => emit.Tether == HitTrap))
                     {
                         emitter.AddMore = false;
-                    }
-
+                    }                    
                 }
             }
         }
@@ -1877,7 +1876,7 @@ namespace TowerDefensePrototype
                 VertexBuffer = new VertexBuffer(GraphicsDevice, typeof(VertexPositionColorTexture), Vertices.Length, BufferUsage.None);
                 VertexBuffer.SetData(Vertices);
 
-                BasicEffect = new BasicEffect(GraphicsDevice);
+                BasicEffect = new BasicEffect(GraphicsDevice);                
                 BasicEffect.Projection = Projection;
                 BasicEffect.TextureEnabled = true;
                 BasicEffect.VertexColorEnabled = true;
@@ -2878,7 +2877,7 @@ namespace TowerDefensePrototype
                 GraphicsDevice.SetRenderTarget(LightNormalMap);
                 GraphicsDevice.Clear(new Color(127, 127, 255));
 
-                spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
+                spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null);
                 GraphicsDevice.BlendState = BlendState.AlphaBlend;
 
                 foreach (Drawable drawable in DrawableList)
@@ -2901,6 +2900,17 @@ namespace TowerDefensePrototype
                     //drawable.DrawSpriteDepth(spriteBatch);
                 }
 
+                spriteBatch.End();
+                #endregion
+
+                #region Draw to the emissive map
+                GraphicsDevice.SetRenderTarget(EmissiveMap);
+                GraphicsDevice.Clear(Color.Black);
+                spriteBatch.Begin();
+                foreach (LightningBolt bolt in LightningList)
+                {
+                    bolt.Draw(spriteBatch);
+                }
                 spriteBatch.End();
                 #endregion
 
@@ -2943,16 +2953,7 @@ namespace TowerDefensePrototype
                 //spriteBatch.End();
                 #endregion
 
-                #region Draw to the emissive map
-                GraphicsDevice.SetRenderTarget(EmissiveMap);
-                GraphicsDevice.Clear(Color.Black);
-                spriteBatch.Begin();
-                foreach (LightningBolt bolt in LightningList)
-                {
-                    bolt.Draw(spriteBatch);
-                }
-                spriteBatch.End();
-                #endregion
+                
 
 
 
@@ -7721,7 +7722,7 @@ namespace TowerDefensePrototype
 
                 trap.Update(gameTime);
 
-                if ((trap.Active == false && trap.TrapEmitterList.All(Emitter => Emitter.AddMore == false && Emitter.ParticleList.Count == 0)))
+                if (trap.Active == false)
                 {
                     //LightList.RemoveAll(Light => Light.Tether == trap);
                     TrapList.Remove(trap);
@@ -7770,21 +7771,14 @@ namespace TowerDefensePrototype
                     {
                         trap.Active = false;                       
                         Resources += trap.ResourceCost;
-                        //LightList.RemoveAll(Light => Light.Tether == trap);
 
-                        if (trap.TrapEmitterList.Count > 0)
+                        foreach (Emitter emitter in YSortedEmitterList.Where(emit => emit.Tether == trap))
                         {
-                            foreach (Emitter emitter in trap.TrapEmitterList)
-                            {
-                                emitter.AddMore = false;
-                            }
+                            emitter.AddMore = false;
                         }
-                        else
-                        {
-                            //LightList.RemoveAll(Light => Light.Tether == trap);
-                            TrapList.Remove(trap);
-                            DrawableList.Remove(trap);
-                        }
+
+                        TrapList.Remove(trap);
+                        DrawableList.Remove(trap);
 
                         //Remove the outline from around the trap
                         UITrapOutlineList.RemoveAll(uiOutline => uiOutline.Trap == trap);
@@ -7803,7 +7797,7 @@ namespace TowerDefensePrototype
                         #region Cancel out the effect created by the explosion
                         if (trap.Affected == false)
                         {
-                            foreach (Emitter emitter in trap.TrapEmitterList)
+                            foreach (Emitter emitter in YSortedEmitterList.Where(emit => emit.Tether == trap))
                             {
                                 if (emitter.TextureName.Contains("Fire"))
                                 {
@@ -7829,7 +7823,7 @@ namespace TowerDefensePrototype
                         #region Make less fire if the trap isn't ready to detonate yet
                         if (trap.CurrentDetonateDelay < trap.DetonateDelay)
                         {
-                            foreach (Emitter emitter in trap.TrapEmitterList)
+                            foreach (Emitter emitter in YSortedEmitterList.Where(emit => emit.Tether == trap))
                             {
                                 if (emitter.TextureName.Contains("Fire"))
                                 {
@@ -7854,7 +7848,7 @@ namespace TowerDefensePrototype
                         #region Reset the trap back to it's original state if it's ready to detonate again
                         if (trap.CurrentDetonateDelay >= trap.DetonateDelay)
                         {
-                            foreach (Emitter emitter in trap.TrapEmitterList)
+                            foreach (Emitter emitter in YSortedEmitterList.Where(emit => emit.Tether == trap))
                             {
                                 if (emitter.TextureName.Contains("Fire"))
                                 {
@@ -7917,18 +7911,6 @@ namespace TowerDefensePrototype
                         break;
 
                     #endregion
-                }
-                #endregion
-
-                #region Update all of the particle emitters for the traps
-                foreach (Emitter emitter in trap.TrapEmitterList)
-                {
-                    //emitter.DrawDepth = trap.BoundingBox.Max.Y / 1080;
-
-                    if (emitter.AddMore == false && emitter.ParticleList.Count == 0)
-                    {
-                        trap.Active = false;
-                    }
                 }
                 #endregion
             }
@@ -8755,7 +8737,7 @@ namespace TowerDefensePrototype
                             new Vector2(NewTrap.Position.X + NewTrap.CurrentAnimation.FrameSize.X / 2, NewTrap.Position.Y + NewTrap.CurrentAnimation.FrameSize.Y - 12), new Vector2(60, 120),
                             new Vector2(0.5f, 0.75f), new Vector2(90, 140), 0.85f, true,
                             new Vector2(-4, 4), new Vector2(-1f, 1f), new Vector2(0.075f, 0.15f), FireColor, FireColor2,
-                            0.0f, -1, 75, 1, false, new Vector2(0, 1080), true, NewTrap.DestinationRectangle.Bottom / 1080f, null, null, null, null, null, null, null, true, true, 150);
+                            0.0f, -1, 75, 1, false, new Vector2(0, 1080), true, (NewTrap.DestinationRectangle.Bottom + 1.0f) / 1080f, null, null, null, null, null, null, null, true, true, 150);
                         FireEmitter.TextureName = "FireParticle";
 
                         Emitter SmokeEmitter = new Emitter(SmokeParticle,
@@ -8773,9 +8755,18 @@ namespace TowerDefensePrototype
                                new Vector2(0, 1080), null, (NewTrap.DestinationRectangle.Bottom - 2) / 1080f);
                         SparkEmitter.TextureName = "SparkParticle";
 
-                        NewTrap.TrapEmitterList.Add(SmokeEmitter);
-                        NewTrap.TrapEmitterList.Add(FireEmitter);
-                        NewTrap.TrapEmitterList.Add(SparkEmitter);
+                        YSortedEmitterList.Add(FireEmitter);
+                        AddDrawable(FireEmitter);
+
+                        YSortedEmitterList.Add(SmokeEmitter);
+                        AddDrawable(SmokeEmitter);
+
+                        YSortedEmitterList.Add(SparkEmitter);
+                        AddDrawable(SparkEmitter);
+
+                        FireEmitter.Tether = NewTrap;
+                        SmokeEmitter.Tether = NewTrap;
+                        SparkEmitter.Tether = NewTrap;
 
                         Light light = new Light()
                         {
