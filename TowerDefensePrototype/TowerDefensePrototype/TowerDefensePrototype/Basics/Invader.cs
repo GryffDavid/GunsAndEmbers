@@ -10,7 +10,7 @@ namespace TowerDefensePrototype
 {
     public abstract class Invader
     {
-        public string AssetName;
+        //public string AssetName;
         public Texture2D CurrentTexture;
         public Rectangle DestinationRectangle, SourceRectangle;
         public Vector2 Position, MoveVector, CurrentMoveVector, ResourceMinMax, Velocity;
@@ -28,8 +28,8 @@ namespace TowerDefensePrototype
                         CurrentBurnInterval, BurnInterval, SlowDelay, CurrentSlowDelay;
         HorizontalBar HPBar;
         public InvaderType InvaderType;
-        public int TotalFrames, CurrentFrame;
-        public double CurrentFrameDelay, FrameDelay;
+        public int CurrentFrame;
+        public double CurrentFrameDelay;
         public Vector2 FrameSize;
         public Vector2 Scale = new Vector2(1, 1);
         public float Bottom;
@@ -40,13 +40,13 @@ namespace TowerDefensePrototype
             Random = new System.Random();
             VulnerableToTurret = true;
             VulnerableToTrap = true;
-            CurrentTexture = contentManager.Load<Texture2D>(AssetName);
+            CurrentTexture = contentManager.Load<Texture2D>(CurrentAnimation.AssetName);
             Color = Color.White;
             HPBar = new HorizontalBar(contentManager, new Vector2(32, 4), MaxHP, CurrentHP);
             CurrentMoveDelay = MoveDelay;
             CurrentMoveVector = MoveVector;
             MaxY = Random.Next((int)YRange.X, (int)YRange.Y);
-            FrameSize = new Vector2(CurrentTexture.Width / TotalFrames, CurrentTexture.Height);
+            FrameSize = new Vector2(CurrentTexture.Width / CurrentAnimation.TotalFrames, CurrentTexture.Height);
         }
 
         public virtual void Update(GameTime gameTime)
@@ -162,13 +162,13 @@ namespace TowerDefensePrototype
 
 
                 //This animates the invader, but only if it's not frozen
-                if (CurrentFrameDelay > FrameDelay)
+                if (CurrentFrameDelay > CurrentAnimation.FrameDelay)
                 {                    
                     if (Frozen == false)
                     {
                         CurrentFrame++;
 
-                        if (CurrentFrame == TotalFrames)
+                        if (CurrentFrame == CurrentAnimation.TotalFrames)
                         {
                             CurrentFrame = 0;
                         }

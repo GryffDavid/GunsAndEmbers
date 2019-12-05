@@ -15,22 +15,25 @@ namespace TowerDefensePrototype
             Active = true;
             MoveVector = new Vector2(-1, 0);
             Position = position;
-            AssetName = "Invaders/Tank";
             CurrentHP = 500;
             MaxHP = 500;
             MoveDelay = 40;
             ResourceMinMax = new Vector2(20, 90);
             CurrentAttackDelay = 0;
             AttackDelay = 1500;
-            AttackPower = 30;
-            //FrameSize = new Vector2(126, 64);
-            FrameDelay = 120;
-            TotalFrames = 1;
+            AttackPower = 30;            
             CurrentFrame = 0;
             InvaderType = InvaderType.Tank;
             Scale = new Vector2(1f, 1f);
             YRange = new Vector2(525, 630);
             Airborne = false;
+
+            CurrentAnimation = new Animation() 
+            { 
+                AssetName = "Invaders/Tank", 
+                TotalFrames = 1, 
+                FrameDelay = 120 
+            };
         }
 
         public override void TrapDamage(TrapType trapType)

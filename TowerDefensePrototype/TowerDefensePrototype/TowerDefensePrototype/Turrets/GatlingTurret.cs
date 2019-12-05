@@ -15,7 +15,7 @@ namespace TowerDefensePrototype
         {
             Active = true;
             TurretType = TurretType.Gatling;
-            TurretAsset = "Turrets/MachineTurretBarrel";
+            TurretAsset = "Turrets/MachineTurretBarrel2";
             BaseAsset = "Turrets/MachineTurretBase";
             Position = position;
             Selected = true;

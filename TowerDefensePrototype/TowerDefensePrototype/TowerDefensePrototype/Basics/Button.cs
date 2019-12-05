@@ -91,7 +91,7 @@ namespace TowerDefensePrototype
             }
         }
 
-        public void Update()
+        public virtual void Update()
         {
             CurrentMouseState = Mouse.GetState();
 

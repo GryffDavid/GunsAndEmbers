@@ -14,7 +14,7 @@ namespace TowerDefensePrototype
         {
             Position = position;
             Solid = false;
-            AssetName = "Sawblade2";
+            AssetName = "Traps/SawbladeTrap";
             MaxHP = 50;
             TrapType = TrapType.SawBlade;
             DetonateDelay = 2000;

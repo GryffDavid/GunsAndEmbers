@@ -8,5 +8,6 @@ namespace GameDataTypes
     public class Settings
     {
         public bool FullScreen;
+        public float SFXVolume, MusicVolume;
     }
 }

@@ -10,7 +10,7 @@ namespace TowerDefensePrototype
 {
     public class Arrow : HeavyProjectile
     {
-        public Arrow(Vector2 position, float speed, float angle, float gravity)
+        public Arrow(Vector2 position, float speed, float angle, float gravity, Vector2? yrange = null)
         {
             Active = true;
             Rotate = true;
@@ -31,7 +31,14 @@ namespace TowerDefensePrototype
 
             Rotation = (float)Math.Atan2(Velocity.Y, Velocity.X);
 
-            YRange = new Vector2(420, 530);
+            if (yrange == null)
+            {
+                YRange = new Vector2(520, 630);
+            }
+            else
+            {
+                YRange = yrange.Value;
+            }
 
             Damage = 100;
         }

@@ -15,20 +15,22 @@ namespace TowerDefensePrototype
             Active = true;
             MoveVector = new Vector2(-1, 0);
             Position = position;
-            AssetName = "Invaders/Slime";
             CurrentHP = 100;
             MaxHP = 100;
             MoveDelay = 5;
             ResourceMinMax = new Vector2(1, 5);
             CurrentAttackDelay = 0;
             AttackDelay = 1500;
-            AttackPower = 4;
-            //FrameSize = new Vector2(50, 28);
-            FrameDelay = 120;
-            TotalFrames = 2;
+            AttackPower = 4;            
             CurrentFrame = 0;
             InvaderType = InvaderType.Slime;
-            YRange = new Vector2(525, 630);          
+            YRange = new Vector2(525, 630);
+            CurrentAnimation = new Animation() 
+            { 
+                AssetName = "Invaders/Slime", 
+                TotalFrames = 2, 
+                FrameDelay = 120 
+            };
         }
 
         public override void Update(GameTime gameTime)

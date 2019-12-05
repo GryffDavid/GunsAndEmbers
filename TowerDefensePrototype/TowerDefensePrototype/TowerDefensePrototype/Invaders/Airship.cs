@@ -15,7 +15,6 @@ namespace TowerDefensePrototype
             Active = true;            
             MoveVector = new Vector2(-1, 0);
             Position = position;
-            AssetName = "Invaders/Airship";
             MaxHP = 300;
             CurrentHP = MaxHP;
             MoveDelay = 20;
@@ -24,15 +23,19 @@ namespace TowerDefensePrototype
             AttackDelay = 1500;
             AttackPower = 4;
             InvaderType = TowerDefensePrototype.InvaderType.Airship;
-            //FrameSize = new Vector2(125, 73);
-            FrameDelay = 120;
-            TotalFrames = 1;
             CurrentFrame = 0;
             YRange = new Vector2(60, 150);
             RangedAttackPower = 20;
             Range = new Vector2(200, 800);
             AngleRange = new Vector2(110, 160);
-            PowerRange = new Vector2(9, 12);     
+            PowerRange = new Vector2(9, 12);
+
+            CurrentAnimation = new Animation()
+            {
+                AssetName = "Invaders/Airship",
+                TotalFrames = 1,
+                FrameDelay = 500
+            };
         }
 
         public override void Update(GameTime gameTime)

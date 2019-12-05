@@ -10,7 +10,7 @@ namespace TowerDefensePrototype
 {
     public abstract class Trap
     {
-        Texture2D Texture;
+        Texture2D Texture, Texture2;
         public Rectangle DestinationRectangle, SourceRectangle;
         public String AssetName;
         public int MaxHP, CurrentHP;
@@ -34,6 +34,7 @@ namespace TowerDefensePrototype
             HealthBar = new HorizontalBar(contentManager, new Vector2(32, 4), (int)MaxHP, (int)CurrentHP, Color.Green, Color.DarkRed);
             TrapEmitterList = new List<Emitter>();
             Texture = contentManager.Load<Texture2D>(AssetName);
+            Texture2 = contentManager.Load<Texture2D>("TrapDetBlock");
             BoundingBox = new BoundingBox(new Vector3((int)Position.X, (int)Position.Y, 0), new Vector3((int)Position.X + Texture.Width, (int)Position.Y - Texture.Height, 0));
             CurrentDetonateLimit = DetonateLimit;
             CurrentDetonateDelay = DetonateDelay;
@@ -49,8 +50,6 @@ namespace TowerDefensePrototype
             FrameSize = new Vector2(Texture.Width / FrameCount, Texture.Height);
             ElapsedTime = 0;
             CurrentFrame = 0;
-
-            
         }
 
         public virtual void Update(GameTime gameTime)
@@ -145,7 +144,14 @@ namespace TowerDefensePrototype
             }
 
             if (Active == true)
+            {
                 spriteBatch.Draw(Texture, DestinationRectangle, SourceRectangle, Color.White, MathHelper.ToRadians(0), Vector2.Zero, SpriteEffects.None, DrawDepth);
+
+                for (int i = 0; i < CurrentDetonateLimit; i++)
+                {
+                    spriteBatch.Draw(Texture2, new Rectangle((int)Position.X+(6*i), (int)Position.Y + 32, Texture2.Width, Texture2.Height), Color.White);
+                }
+            }
         }
     }
 }

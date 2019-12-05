@@ -16,7 +16,6 @@ namespace TowerDefensePrototype
             Active = true;
             MoveVector = new Vector2(-2, 0);
             Position = position;
-            AssetName = "Invaders/PixelTestStrip";
             CurrentHP = 100;
             MaxHP = 100;
             MoveDelay = 15;
@@ -24,13 +23,17 @@ namespace TowerDefensePrototype
             CurrentAttackDelay = 0;
             AttackDelay = 500;
             AttackPower = 200;
-            //FrameSize = new Vector2(30, 60);
-            FrameDelay = 120;
-            TotalFrames = 9;
             CurrentFrame = 0;
             InvaderType = InvaderType.SuicideBomber;
             YRange = new Vector2(525, 630);
             Airborne = false;
+
+            CurrentAnimation = new Animation()
+            { 
+                AssetName = "Invaders/PixelTestStrip", 
+                TotalFrames = 9, 
+                FrameDelay = 120 
+            };
         }
 
         public override void Update(GameTime gameTime)

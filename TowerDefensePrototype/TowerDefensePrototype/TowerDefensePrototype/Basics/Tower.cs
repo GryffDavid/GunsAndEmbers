@@ -16,7 +16,7 @@ namespace TowerDefensePrototype
         public Rectangle DestinationRectangle;
         public float MaxHP, CurrentHP, Slots, MaxShield, CurrentShield, ShieldStrength;
         
-        public Tower(string assetName, Vector2 position, int totalHitpoints, int totalShield, float shieldStrength)
+        public Tower(string assetName, Vector2 position, int totalHitpoints, int totalShield, float shieldStrength, int slots)
         {
             AssetName = assetName;
             Position = position;
@@ -25,6 +25,7 @@ namespace TowerDefensePrototype
             MaxShield = totalShield;
             CurrentShield = MaxShield;
             ShieldStrength = shieldStrength;
+            Slots = slots;
         }
 
         public void LoadContent(ContentManager contentManager)

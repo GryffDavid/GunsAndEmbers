@@ -10,7 +10,7 @@ namespace TowerDefensePrototype
 {
     class AcidProjectile : HeavyProjectile
     {
-        public AcidProjectile (Vector2 position, float speed, float angle, float gravity)
+        public AcidProjectile(Vector2 position, float speed, float angle, float gravity, Vector2? yrange = null)
         {
             Active = true;
             Rotate = true;
@@ -35,7 +35,15 @@ namespace TowerDefensePrototype
                 new Vector2(-20, 20), new Vector2(-4, 4),
                 new Vector2(0.1f, 0.25f), FireColor, FireColor2, 0.2f, -1, 1, 1, false, new Vector2(0, 720), true);
 
-            YRange = new Vector2(420, 530);
+            if (yrange == null)
+            {
+                YRange = new Vector2(520, 630);
+            }
+            else
+            {
+                YRange = yrange.Value;
+            }
+
 
             Damage = 50;
         }
