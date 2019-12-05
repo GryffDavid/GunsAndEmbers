@@ -19,7 +19,7 @@ namespace TowerDefensePrototype
             Selected = true;
             FireDelay = 200;
             Damage = 3;
-            AngleOffset = 0f;
+            AngleOffset = 2.5f;
             Animated = false;
             Looping = false;
             ResourceCost = 200;

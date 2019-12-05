@@ -13,11 +13,11 @@ namespace TowerDefensePrototype
         public TestInvader(Vector2 position)
         {
             Active = true;
-            MoveVector = new Vector2(-1.75f, 0);
+            MoveVector = new Vector2(-0.5f, 0);
             Position = position;
             CurrentHP = 40;
             MaxHP = 40;
-            MoveDelay = 5;
+            MoveDelay = 10;
             ResourceMinMax = new Vector2(1, 5);
             YRange = new Vector2(700, 900);
             AttackPower = 1;
@@ -25,7 +25,7 @@ namespace TowerDefensePrototype
             InvaderType = InvaderType.TestInvader;
             RangedAttackPower = 7;
             AngleRange = new Vector2(160, 180);
-            Range = new Vector2(200, 600);
+            Range = new Vector2(600, 900);
             CurrentAttackDelay = 0;  
             AttackDelay = 300;
             CurrentBurstDelay = 0;

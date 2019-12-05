@@ -79,7 +79,8 @@ Content\lightmask.xnb
 Content\Icons\TurretIcons\ShotgunTurretIcon.xnb
 Content\Traps\Trap.xnb
 Content\IceBlock.xnb
-Content\NullBox.xnb
+Content\BloodDecal.xnb
+Content\Particles\Spark.xnb
 Content\Fonts\DefaultFont.xnb
 Content\Fonts\ButtonFont.xnb
 Content\Fonts\TooltipFont.xnb
@@ -107,4 +108,7 @@ Content\Sounds\MenuMusic1.xnb
 Content\Sounds\Implosion.xnb
 Content\Sounds\Implosion2.xnb
 Content\Sounds\TurretOverheat.xnb
-Content\HealthBarEffect.xnb
+Content\Shaders\HealthBarEffect.xnb
+Content\Shaders\ShockWaveEffect.xnb
+Content\Shaders\ShieldBubbleEffect.xnb
+Content\ShieldNormalMap.xnb

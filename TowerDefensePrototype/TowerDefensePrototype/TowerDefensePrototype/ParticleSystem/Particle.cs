@@ -15,13 +15,13 @@ namespace TowerDefensePrototype
         public float Angle, Speed, CurrentHP, MaxHP, CurrentTransparency, Scale, MaxY;
         public float RotationIncrement, CurrentRotation, Gravity, DrawDepth;
         public Color CurrentColor, EndColor, StartColor;
-        public bool Active, Fade, BouncedOnGround, CanBounce, Shrink, StopBounce, HardBounce, Shadow;
+        public bool Active, Fade, BouncedOnGround, CanBounce, Shrink, StopBounce, HardBounce, Shadow, RotateVelocity;
         static Random Random = new Random();
 
         public Particle(Texture2D texture, Vector2 position, float angle, float speed, float maxHP,
             float startingTransparency, bool fade, float startingRotation, float rotationChange,
             float scale, Color startColor, Color endColor, float gravity, bool canBounce, float maxY, bool shrink, 
-            float? drawDepth = null, bool? stopBounce = false, bool? hardBounce = true, bool? shadow = false)
+            float? drawDepth = null, bool? stopBounce = false, bool? hardBounce = true, bool? shadow = false, bool? rotateVelocity = false)
         {
             Active = true;
             Texture = texture;
@@ -40,6 +40,7 @@ namespace TowerDefensePrototype
             Gravity = gravity;
             CanBounce = canBounce;
             Shrink = shrink;
+            RotateVelocity = rotateVelocity.Value;
 
             //CurrentRotation = MathHelper.ToRadians(startingRotation);
             //RotationIncrement = MathHelper.ToRadians(rotationChange);
@@ -169,6 +170,12 @@ namespace TowerDefensePrototype
                 CurrentRotation = CurrentRotation % 360;
                 CurrentPosition += Velocity;
                 Velocity.Y += Gravity;
+
+                if (RotateVelocity == true)
+                {
+                    CurrentRotation = MathHelper.ToDegrees((float)Math.Atan2(Velocity.Y, Velocity.X));
+                }
+
                 DestinationRectangle = new Rectangle((int)CurrentPosition.X, (int)CurrentPosition.Y, (int)(Texture.Width * Scale), (int)(Texture.Height * Scale));
             }
 
@@ -184,6 +191,8 @@ namespace TowerDefensePrototype
             {
                 Scale = MathHelper.Lerp(Scale, (Scale*(PercentageHP)), PercentageHP);
             }
+
+
 
             CurrentColor = Color.Lerp(CurrentColor, EndColor, PercentageHP / (CurrentHP * 0.5f));
             //double PercentHP = (100 / MaxHP) * CurrentHP;

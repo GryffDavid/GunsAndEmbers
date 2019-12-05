@@ -15,6 +15,7 @@ namespace TowerDefensePrototype
         public int CurrentSeconds;
         public SpriteFont Font;
         public Color Color;
+        public string Text;
 
         public WaveCountDown(int seconds)
         {
@@ -35,21 +36,25 @@ namespace TowerDefensePrototype
 
             Scale = MathHelper.Clamp(Scale, 0.5f, 1f);
 
-
-            if (CurrentTime >= 1000 && CurrentSeconds > 0)
+            if (CurrentTime >= 1000 && CurrentSeconds > -1)
             {
                 Scale = 0.5f;
                 CurrentTime = 0;
                 CurrentSeconds -= 1;
             }
+
+            if (CurrentSeconds != 0)
+                Text = CurrentSeconds.ToString();
+            else
+                Text = "Begin!";
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            Origin = new Vector2(Font.MeasureString(CurrentSeconds.ToString()).X/2,Font.MeasureString(CurrentSeconds.ToString()).Y/2);
-
+            Origin = new Vector2(Font.MeasureString(Text).X / 2, Font.MeasureString(Text).Y / 2);
             Color = Color.Lerp(Color.Red, Color.Transparent, CurrentTime / 1000);
-            spriteBatch.DrawString(Font, CurrentSeconds.ToString(), new Vector2(1920 / 2, 1080 / 2), Color, 0, Origin, Scale, SpriteEffects.None, 0);
+
+            spriteBatch.DrawString(Font, Text, new Vector2(1920 / 2, 1080 / 2), Color, 0, Origin, Scale, SpriteEffects.None, 0);
         }
     }
 }

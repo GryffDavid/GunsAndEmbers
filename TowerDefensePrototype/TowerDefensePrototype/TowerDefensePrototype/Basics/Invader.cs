@@ -14,7 +14,7 @@ namespace TowerDefensePrototype
         public Texture2D CurrentTexture, Shadow, IceBlock;
         public Rectangle DestinationRectangle, SourceRectangle;
         public Vector2 Position, MoveVector, CurrentMoveVector, ResourceMinMax, Velocity;
-        public bool Active, VulnerableToTurret, VulnerableToTrap, CanAttack, Burning, Frozen, Slow, Airborne, StartTiming;//, CanMove;
+        public bool Active, VulnerableToTurret, VulnerableToTrap, CanAttack, Burning, Frozen, Slow, Airborne;
         public Color Color, BurnColor, FrozenColor, AcidColor;
         public BoundingBox BoundingBox;
         public Double CurrentMoveDelay, MoveDelay, CurrentDelay, AttackDelay, CurrentAttackDelay;
@@ -46,7 +46,6 @@ namespace TowerDefensePrototype
             IceBlock = contentManager.Load<Texture2D>("IceBlock");
             VulnerableToTurret = true;
             VulnerableToTrap = true;
-            StartTiming = false;
             CurrentTexture = contentManager.Load<Texture2D>(CurrentAnimation.AssetName);
             Color = Color.White;
             //HPBar = new HorizontalBar(contentManager, new Vector2(32, 4), MaxHP, CurrentHP);

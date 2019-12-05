@@ -16,7 +16,7 @@ namespace TowerDefensePrototype
         public Vector2 ScaleRange, HPRange, RotationIncrementRange, SpeedRange, StartingRotationRange, EmitterDirection, EmitterVelocity;
         public float Transparency, Gravity, ActiveSeconds, CurrentTime, Interval, IntervalTime, MaxY, DrawDepth, EmitterSpeed, EmitterAngle, EmitterGravity;
         public Color StartColor, EndColor;
-        public bool Active, Fade, CanBounce, AddMore, Shrink, StopBounce, HardBounce, BouncedOnGround;
+        public bool Active, Fade, CanBounce, AddMore, Shrink, StopBounce, HardBounce, BouncedOnGround, RotateVelocity;
         public string TextureName;
         public int Burst;
         static Random Random = new Random();
@@ -25,7 +25,7 @@ namespace TowerDefensePrototype
             float startingTransparency, bool fade, Vector2 startingRotationRange, Vector2 rotationIncrement, Vector2 scaleRange, 
             Color startColor, Color endColor, float gravity, float activeSeconds, float interval, int burst, bool canBounce,
             Vector2 yrange, bool? shrink = null, float? drawDepth = null, bool? stopBounce = null, bool? hardBounce = null, Vector2? emitterSpeed = null,
-            Vector2? emitterAngle = null, float? emitterGravity = null)
+            Vector2? emitterAngle = null, float? emitterGravity = null, bool? rotateVelocity = null)
         {
             Active = true;
             TextureName = textureName;
@@ -90,6 +90,11 @@ namespace TowerDefensePrototype
                 EmitterVelocity = EmitterDirection * EmitterSpeed;
             }
 
+            if (rotateVelocity != null)
+                RotateVelocity = rotateVelocity.Value;
+            else
+                RotateVelocity = false;
+
             MaxY = Random.Next((int)yrange.X, (int)yrange.Y);
             AddMore = true;
         }
@@ -98,7 +103,7 @@ namespace TowerDefensePrototype
            float startingTransparency, bool fade, Vector2 startingRotationRange, Vector2 rotationIncrement, Vector2 scaleRange,
            Color startColor, Color endColor, float gravity, float activeSeconds, float interval, int burst, bool canBounce,
            Vector2 yrange, bool? shrink = null, float? drawDepth = null, bool? stopBounce = null, bool? hardBounce = null, Vector2? emitterSpeed = null,
-           Vector2? emitterAngle = null, float? emitterGravity = null)
+           Vector2? emitterAngle = null, float? emitterGravity = null, bool? rotateVelocity = null)
         {
             Active = true;
             Texture = texture;
@@ -162,6 +167,11 @@ namespace TowerDefensePrototype
                 EmitterDirection.Y = (float)Math.Cos(EmitterAngle);
                 EmitterVelocity = EmitterDirection * EmitterSpeed;
             }
+
+            if (rotateVelocity != null)
+                RotateVelocity = rotateVelocity.Value;
+            else
+                RotateVelocity = false;
 
             MaxY = Random.Next((int)yrange.X, (int)yrange.Y);
             AddMore = true;
@@ -274,7 +284,7 @@ namespace TowerDefensePrototype
                             speed = (float)DoubleRange(SpeedRange.X, SpeedRange.Y);
                             startingRotation = (float)DoubleRange(StartingRotationRange.X, StartingRotationRange.Y);
                             ParticleList.Add(new Particle(Texture, Position, angle, speed, hp, Transparency, Fade, startingRotation,
-                                rotation, scale, StartColor, EndColor, Gravity, CanBounce, MaxY, Shrink, DrawDepth, StopBounce, HardBounce));
+                                rotation, scale, StartColor, EndColor, Gravity, CanBounce, MaxY, Shrink, DrawDepth, StopBounce, HardBounce, false, RotateVelocity));
                         }
                         IntervalTime = 0;
                     }

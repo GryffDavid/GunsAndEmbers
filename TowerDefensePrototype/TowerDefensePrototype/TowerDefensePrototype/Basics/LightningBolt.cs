@@ -29,18 +29,24 @@ namespace TowerDefensePrototype
         Vector2 Normal;
         public Vector2 Point, Source, Destination;
         float Length;
+        bool Vibrate;
 
-        public LightningBolt(Vector2 source, Vector2 destination, Color color, float fadeRate, float? sway = null)
+        public LightningBolt(Vector2 source, Vector2 destination, Color color, float fadeRate, float? sway = null, bool? vibrate = false)
         {
             if (sway == null)
                 Sway = 500f;
             else
                 Sway = sway.Value;
 
+            if (vibrate == null)
+                Vibrate = false;
+            else
+                Vibrate = vibrate.Value;
+
             Source = source;
             Destination = destination;            
 
-            Segments = CreateBolt(source, destination, 0.25f);
+            Segments = CreateBolt(source, destination, 2);
             Color = color;
             Alpha = 1f;
             AlphaMultiplier = 0.6f;
@@ -59,11 +65,15 @@ namespace TowerDefensePrototype
             //Segments = new List<Line>();
             //Positions = new List<float>();
             //Segments = CreateBolt(Source, Destination, 2);
-            Segments.Clear();
-            Results.Clear();
-            Positions.Clear();
 
-            CreateBolt(Source, Destination, 1);
+            if (Vibrate == true)
+            {
+                Segments.Clear();
+                Results.Clear();
+                Positions.Clear();
+                CreateBolt(Source, Destination, 1);
+            }
+            
             Alpha -= FadeOutRate;
         }
 
