@@ -35,7 +35,7 @@ namespace TowerDefensePrototype
         public virtual void Draw(SpriteBatch spriteBatch)
         {
             if (Active == true)
-            spriteBatch.Draw(Texture, DestinationRectangle, Color.White);
+                spriteBatch.Draw(Texture, DestinationRectangle, Color.White);
         }
     }
 }

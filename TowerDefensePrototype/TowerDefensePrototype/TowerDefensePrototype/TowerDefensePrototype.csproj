@@ -113,12 +113,12 @@
     <Compile Include="Basics\Invader.cs" />
     <Compile Include="Basics\Fire.cs" />
     <Compile Include="Basics\HorizontalBar.cs" />
-    <Compile Include="Particle\GroundParticle.cs" />
+    <Compile Include="HeavyProjectile.cs" />
+    <Compile Include="Particles\Emitter.cs" />
     <Compile Include="Invaders\BatteringRam.cs" />
-    <Compile Include="Basics\MuzzleFlash.cs" />
-    <Compile Include="Basics\Particle.cs" />
     <Compile Include="Basics\Trajectory.cs" />
     <Compile Include="Basics\Projectile.cs" />
+    <Compile Include="Particles\Particle.cs" />
     <Compile Include="Turrets\BasicTurret.cs" />
     <Compile Include="Turrets\BlankTurret.cs" />
     <Compile Include="DefenseTraps\CatapultTrap.cs" />
@@ -134,6 +134,7 @@
     <Compile Include="Invaders\Soldier.cs" />
     <Compile Include="DefenseTraps\Wall.cs" />
     <Compile Include="Basics\VerticalBar.cs" />
+    <Compile Include="Turrets\CannonTurret.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="aOtherStuff\Game.ico" />

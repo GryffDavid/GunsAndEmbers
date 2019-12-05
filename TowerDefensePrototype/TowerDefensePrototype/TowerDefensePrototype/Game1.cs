@@ -28,12 +28,13 @@ namespace TowerDefensePrototype
         MouseState CurrentMouseState, PreviousMouseState;
         KeyboardState CurrentKeyboardState, PreviousKeyboardState;
         int Resources;
-        string BackgroundAssetName, SelectButtonAssetName, TrapSlotAssetName, TowerSlotAssetName;
+        string BackgroundAssetName, SelectButtonAssetName, TowerSlotAssetName;
+        bool ReadyToPlace;
 
         //List declarations
         List<Button> SelectButtonList;
         List<Button> TowerButtonList;
-        List<Button> TrapsButtonList;
+
         List<Trap> TrapList;
         List<Turret> TurretList;
         List<Invader> InvaderList;
@@ -42,16 +43,21 @@ namespace TowerDefensePrototype
         Projectile CurrentProjectile;
 
         Tower Tower;
-        StaticSprite Ground;
+        StaticSprite Ground, Mountains;
         TrapType SelectedTrap;
         TurretType SelectedTurret;
         CursorType CurrentCursor;
 
-        StaticSprite Marker;
+        Texture2D Fire, ShellCasing;
+        List<Emitter> EmitterList;
+        List<Particle> ParticleList;
+
+        Random Random;
 
         bool slow;
 
         int Rounds = 0;
+        int TrapLimit = 8;
 
         public Game1()
         {
@@ -61,22 +67,26 @@ namespace TowerDefensePrototype
             //IsMouseVisible = true;
             //graphics.IsFullScreen = true;
             Content.RootDirectory = "Content";
-
         }
 
+
         protected override void Initialize()
-        {
+        {            
             //this.IsFixedTimeStep = false;
-            int trapButtons = 6;
+
+            ParticleList = new List<Particle>();
+            Random = new Random();
+
             int towerButtons = 3;
             Resources = 500;
 
-            CurrentProjectile = new Projectile(Vector2.Zero, Vector2.Zero);
+            ReadyToPlace = false;
 
-            Marker = new StaticSprite("WhiteBlock", new Vector2(0, 0));
+            CurrentProjectile = new Projectile(Vector2.Zero, Vector2.Zero);
 
             Tower = new Tower("Tower", new Vector2(32, 304 - 65));
             Ground = new StaticSprite("Ground", new Vector2(0, 720 - 160 - 65));
+            Mountains = new StaticSprite("MountainsBackground", new Vector2(0, 200));
 
             #region IconNameList
             //This gets the names of the icons that are to appear on the
@@ -95,20 +105,21 @@ namespace TowerDefensePrototype
             #region Setting up the buttons
             BackgroundAssetName = "UI";
             SelectButtonAssetName = "Button";
-            TrapSlotAssetName = "TrapButton";
+            //TrapSlotAssetName = "TrapButton";
             TowerSlotAssetName = "TrapButton";
 
             Position = new Vector2(0, 560);
 
             SelectButtonList = new List<Button>();
             TowerButtonList = new List<Button>();
-            TrapsButtonList = new List<Button>();
 
-            for (int i = 0; i < trapButtons; i++)
-            {
-                TrapsButtonList.Add(new Button(TrapSlotAssetName, new Vector2((128 * i) + 256 + 64, Position.Y - 32 - 65)));
-                TrapsButtonList[i].LoadContent(Content);
-            }
+            //TrapsButtonList = new List<Button>();
+
+            //for (int i = 0; i < trapButtons; i++)
+            //{
+            //    TrapsButtonList.Add(new Button(TrapSlotAssetName, new Vector2((128 * i) + 256 + 64, Position.Y - 32 - 65)));
+            //    TrapsButtonList[i].LoadContent(Content);
+            //}
 
             for (int i = 0; i < towerButtons; i++)
             {
@@ -126,12 +137,13 @@ namespace TowerDefensePrototype
             #region List Creating Code
             //This code just creates the lists for the buttons and traps with the right number of possible slots
             TrapList = new List<Trap>();
-            for (int i = 0; i < trapButtons; i++)
-            {
-                TrapList.Add(new BlankTrap());
-                TrapList[i].Position = TrapsButtonList[i].Position;
-                TrapList[i].LoadContent(Content);
-            }
+
+            //for (int i = 0; i < trapButtons; i++)
+            //{
+            //    TrapList.Add(new BlankTrap());
+            //    TrapList[i].Position = TrapsButtonList[i].Position;
+            //    TrapList[i].LoadContent(Content);
+            //}
 
             TurretList = new List<Turret>();
             for (int i = 0; i < towerButtons; i++)
@@ -147,6 +159,11 @@ namespace TowerDefensePrototype
                 InvaderList[i].LoadContent(Content);
             }
             #endregion
+            
+            Fire = Content.Load<Texture2D>("star");
+            ShellCasing = Content.Load<Texture2D>("shell");
+
+            EmitterList = new List<Emitter>();
 
             base.Initialize();
         }
@@ -155,13 +172,13 @@ namespace TowerDefensePrototype
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            Marker.LoadContent(Content);
             ResourceFont = Content.Load<SpriteFont>("ResourceFont");
             Tower.LoadContent(Content);
             Ground.LoadContent(Content);
-            BackgroundTexture = Content.Load<Texture2D>(BackgroundAssetName);
-            DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, BackgroundTexture.Width, BackgroundTexture.Height);
+            Mountains.LoadContent(Content);
 
+            BackgroundTexture = Content.Load<Texture2D>(BackgroundAssetName);
+            DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, BackgroundTexture.Width, BackgroundTexture.Height);            
         }
 
         protected override void UnloadContent()
@@ -171,13 +188,12 @@ namespace TowerDefensePrototype
 
         protected override void Update(GameTime gameTime)
         {
-            //If the game is running slowly. Tell me.//
-
-
             //This is just the stuff that needs to be updated every step
             //This is where I call all the smaller procedures that I broke the update into             
             CurrentMouseState = Mouse.GetState();
             CursorPosition = new Vector2(CurrentMouseState.X, CurrentMouseState.Y);
+
+            InvaderUpdate(gameTime);    
 
             RightClickClearSelected();
 
@@ -185,16 +201,36 @@ namespace TowerDefensePrototype
 
             TowerButtonUpdate();
 
-            TrapButtonUpdate();
+            TrapPlacement();
 
             ProjectileUpdate();
 
             TurretUpdate();
 
-            InvaderUpdate(gameTime);
-
-
             TrapCollision();
+
+            foreach (Emitter emitter in EmitterList)
+            {
+                emitter.Update(gameTime);
+            }
+
+            for (int i = 0; i < EmitterList.Count; i++)
+            {
+                if (EmitterList[i].Active == false)
+                EmitterList.RemoveAt(i);
+            }
+
+            foreach (Particle particle in ParticleList)
+            {
+                particle.Update();
+            }
+
+            for (int i = 0; i < ParticleList.Count; i++)
+            {
+                if (ParticleList[i].Active == false)
+                    ParticleList.RemoveAt(i);
+            }
+
 
             foreach (Turret turret in TurretList)
             {
@@ -224,7 +260,6 @@ namespace TowerDefensePrototype
                 slow = false;
             }
 
-
             PreviousMouseState = CurrentMouseState;
 
             base.Update(gameTime);
@@ -234,24 +269,13 @@ namespace TowerDefensePrototype
         {
             GraphicsDevice.Clear(Color.SkyBlue);
 
-            spriteBatch.Begin();
+            spriteBatch.Begin();            
 
-            MoveInvaders();
-
-            spriteBatch.DrawString(ResourceFont, "Resources: " + Resources.ToString(), new Vector2(0, 0), Color.White);
-            spriteBatch.DrawString(ResourceFont, "Rounds: " + Rounds.ToString(), new Vector2(0, 32), Color.White);
-
-
-            if (slow == false)
-            spriteBatch.DrawString(ResourceFont, "Slow: " + slow.ToString(), new Vector2(0, 64), Color.White);
-            else
-            spriteBatch.DrawString(ResourceFont, "Slow: " + slow.ToString(), new Vector2(0, 64), Color.Red);
-
+            MoveInvaders();            
 
             #region Background stuff
-            Ground.Draw(spriteBatch);
-            Tower.Draw(spriteBatch);
-            Marker.Draw(spriteBatch);
+            Mountains.Draw(spriteBatch);            
+            Tower.Draw(spriteBatch);            
             #endregion
 
             #region Drawing buttons
@@ -265,11 +289,6 @@ namespace TowerDefensePrototype
             foreach (Button towerSlot in TowerButtonList)
             {
                 towerSlot.Draw(spriteBatch);
-            }
-
-            foreach (Button trapSlot in TrapsButtonList)
-            {
-                trapSlot.Draw(spriteBatch);
             }
             #endregion
 
@@ -291,79 +310,36 @@ namespace TowerDefensePrototype
             }
             #endregion
 
+            foreach (Emitter emitter in EmitterList)
+            {
+                emitter.Draw(spriteBatch);
+            }
+
+            Ground.Draw(spriteBatch);           
+
+            spriteBatch.DrawString(ResourceFont, "Resources: " + Resources.ToString(), new Vector2(0, 0), Color.White);
+            spriteBatch.DrawString(ResourceFont, "Rounds: " + Rounds.ToString(), new Vector2(0, 32), Color.White);
+
+
+            if (slow == false)
+                spriteBatch.DrawString(ResourceFont, "Slow: " + slow.ToString(), new Vector2(0, 64), Color.White);
+            else
+                spriteBatch.DrawString(ResourceFont, "Slow: " + slow.ToString(), new Vector2(0, 64), Color.Red);
+
+
+
+            foreach (Particle particle in ParticleList)
+            {
+                particle.Draw(spriteBatch);
+            }
+
             CursorDraw(spriteBatch);
 
             spriteBatch.End();
 
             base.Draw(gameTime);
         }
-
-
-        private void TrapButtonUpdate()
-        {
-            //This code makes sure that the selected trap is placed at the Trap Slot that the player has selected
-            //It also deducts the correct amount of resources from the players' current store.
-            //It then deactivates the Trap Slot that was selected to make sure that players can't 
-            //place more than one trap on each slot
-            int Index;
-
-            foreach (Button trapButton in TrapsButtonList)
-            {
-                trapButton.Update();
-
-                if (trapButton.JustClicked == true)
-                {
-                    Index = TrapsButtonList.IndexOf(trapButton);
-
-                    foreach (Invader invader in InvaderList)
-                    {
-                        if (invader.DestinationRectangle.Intersects(trapButton.DestinationRectangle))
-                        {
-                            SelectedTrap = TrapType.Blank;
-                        }
-                    }
-
-                    switch (SelectedTrap)
-                    {
-                        case TrapType.Wall:
-
-                            if (Resources >= 50)
-                            {
-                                TrapList[Index] = new Wall(new Vector2(trapButton.Position.X, trapButton.Position.Y + 32));
-                                TrapList[Index].LoadContent(Content);
-                                Resources -= 50;
-                                SelectedTrap = TrapType.Blank;
-                                trapButton.ButtonActive = false;
-                            }
-                            break;
-
-                        case TrapType.Spikes:
-
-                            if (Resources >= 30)
-                            {
-                                TrapList[Index] = new SpikeTrap(new Vector2(trapButton.Position.X, trapButton.Position.Y + 32));
-                                TrapList[Index].LoadContent(Content);
-                                Resources -= 30;
-                                SelectedTrap = TrapType.Blank;
-                                trapButton.ButtonActive = false;
-                            }
-                            break;
-
-                        case TrapType.Fire:
-
-                            if (Resources >= 60)
-                            {
-                                TrapList[Index] = new FireTrap(new Vector2(trapButton.Position.X, trapButton.Position.Y + 32));
-                                TrapList[Index].LoadContent(Content);
-                                Resources -= 60;
-                                SelectedTrap = TrapType.Blank;
-                                trapButton.ButtonActive = false;
-                            }
-                            break;
-                    }
-                }
-            }
-        }
+                
 
         private void TowerButtonUpdate()
         {
@@ -384,7 +360,7 @@ namespace TowerDefensePrototype
                             if (Resources >= 100)
                             {
                                 TowerButtonList[Index].ButtonActive = false;
-                                TurretList[Index] = new BasicTurret("BasicTurret", "BasicTurretBase", TowerButtonList[Index].Position);
+                                TurretList[Index] = new BasicTurret("BasicTurret", "BasicTurretBase", TowerButtonList[Index].Position); //Fix this to make sure that the BasicTurret has the resource names built in.
                                 TurretList[Index].LoadContent(Content);
                                 Resources -= 100;
                                 SelectedTurret = TurretType.Blank;
@@ -418,54 +394,57 @@ namespace TowerDefensePrototype
                     {
                         case 0:
                             SelectedTrap = TrapType.Blank;
-                            SelectedTurret = TurretType.Blank;
+                            SelectedTurret = TurretType.Blank;                            
                             break;
 
                         case 1:
                             SelectedTrap = TrapType.Spikes;
                             SelectedTurret = TurretType.Blank;
+                            ReadyToPlace = true;
                             break;
 
                         case 2:
                             SelectedTrap = TrapType.Fire;
                             SelectedTurret = TurretType.Blank;
+                            ReadyToPlace = true;
                             break;
 
                         case 3:
                             SelectedTurret = TurretType.Basic;
                             SelectedTrap = TrapType.Blank;
+                            ReadyToPlace = true;
                             break;
                     }
                 }
             }
 
-            if (CurrentKeyboardState.IsKeyUp(Keys.D1) && PreviousKeyboardState.IsKeyDown(Keys.D1))
-            {
-                SelectedTrap = TrapType.Wall;
-                SelectedTurret = TurretType.Blank;
-                ClearTurretSelect();
-            }
+            //if (CurrentKeyboardState.IsKeyUp(Keys.D1) && PreviousKeyboardState.IsKeyDown(Keys.D1))
+            //{
+            //    SelectedTrap = TrapType.Wall;
+            //    SelectedTurret = TurretType.Blank;
+            //    ClearTurretSelect();
+            //}
 
-            if (CurrentKeyboardState.IsKeyUp(Keys.D2) && PreviousKeyboardState.IsKeyDown(Keys.D2))
-            {
-                SelectedTrap = TrapType.Spikes;
-                SelectedTurret = TurretType.Blank;
-                ClearTurretSelect();
-            }
+            //if (CurrentKeyboardState.IsKeyUp(Keys.D2) && PreviousKeyboardState.IsKeyDown(Keys.D2))
+            //{
+            //    SelectedTrap = TrapType.Spikes;
+            //    SelectedTurret = TurretType.Blank;
+            //    ClearTurretSelect();
+            //}
 
-            if (CurrentKeyboardState.IsKeyUp(Keys.D3) && PreviousKeyboardState.IsKeyDown(Keys.D3))
-            {
-                SelectedTrap = TrapType.Fire;
-                SelectedTurret = TurretType.Blank;
-                ClearTurretSelect();
-            }
+            //if (CurrentKeyboardState.IsKeyUp(Keys.D3) && PreviousKeyboardState.IsKeyDown(Keys.D3))
+            //{
+            //    SelectedTrap = TrapType.Fire;
+            //    SelectedTurret = TurretType.Blank;
+            //    ClearTurretSelect();
+            //}
 
-            if (CurrentKeyboardState.IsKeyUp(Keys.D4) && PreviousKeyboardState.IsKeyDown(Keys.D4))
-            {
-                SelectedTurret = TurretType.Basic;
-                SelectedTrap = TrapType.Blank;
-                ClearTurretSelect();
-            }
+            //if (CurrentKeyboardState.IsKeyUp(Keys.D4) && PreviousKeyboardState.IsKeyDown(Keys.D4))
+            //{
+            //    SelectedTurret = TurretType.Basic;
+            //    SelectedTrap = TrapType.Blank;
+            //    ClearTurretSelect();
+            //}
 
             PreviousKeyboardState = CurrentKeyboardState;
         }
@@ -526,10 +505,10 @@ namespace TowerDefensePrototype
         private void TurretShoot()
         {
             CurrentProjectile.Active = false;
-
+            
             foreach (Turret turret in TurretList)
             {
-                if (turret.Active == true)
+                if (turret.Active == true && CursorPosition.Y < Ground.Position.Y)
                     if (turret.Selected == true)
                     {
                         Vector2 MousePosition, Direction;
@@ -541,6 +520,8 @@ namespace TowerDefensePrototype
                         Direction.Normalize();
 
                         CurrentProjectile = new Projectile(new Vector2(turret.BarrelRectangle.X, turret.BarrelRectangle.Y), new Vector2(Direction.X, Direction.Y));
+
+                        ParticleList.Add(new Particle(ShellCasing, turret.Position, turret.Rotation - MathHelper.ToRadians((float)DoubleRange(175, 185)), (float)DoubleRange(2, 4), 500, 1f, false, (float)DoubleRange(-10, 10), (float)DoubleRange(-3, 6), 1, Color.White, Color.White, 0.09f, true));
                     }
             }
         }
@@ -571,7 +552,6 @@ namespace TowerDefensePrototype
 
                             if (CurrentProjectile.Ray.Intersects(HitInvader.BoundingBox) > CurrentProjectile.Ray.Intersects(HitTrap.BoundingBox) && HitInvader.Active == true && HitTrap.TrapType != TrapType.Wall)
                             {
-
                                 CurrentProjectile.Active = false;
                                 HitInvader.TurretDamage(-turret1.Damage);
                                 return;
@@ -638,87 +618,101 @@ namespace TowerDefensePrototype
                                             newPos.X = turret.BarrelRectangle.X - (float)Math.Sqrt(Value1 - Value2) - 16;
                                         }
 
-                                        Marker.Position = newPos;
+                                        if (CurrentMouseState.LeftButton == ButtonState.Pressed && turret.CanShoot == true)
+                                        {
+                                                                                 
+                                        }
                                     }
                                 }
                             }
                         }
-
-
-
-                        }
-                    
+                    }
             }
         }
 
+
+        //Trap stuff that needs to be called every step
+        private void TrapPlacement()
+        {
+            if (CurrentMouseState.LeftButton == ButtonState.Pressed &&
+                PreviousMouseState.RightButton == ButtonState.Released &&
+                ReadyToPlace == true &&
+                TrapList.Count < TrapLimit &&
+                CursorPosition.X > (Tower.Position.X + Tower.Texture.Width) &&
+                CursorPosition.Y < Ground.Position.Y)
+            {
+                foreach (Trap trap in TrapList)
+                {
+                    if (CursorPosition.X > (trap.DestinationRectangle.X - 32) &&
+                        CursorPosition.X < (trap.DestinationRectangle.Right + 32))
+                    {
+                        return;
+                    }
+                }
+
+                switch (SelectedTrap)
+                {
+                    case TrapType.Fire:
+                        if (Resources >= 60)
+                        {
+                            Trap NewTrap = new FireTrap(new Vector2(CursorPosition.X - 16, Ground.Position.Y));
+                            TrapList.Add(NewTrap);
+                            //Color FireColor = new Color(255, 204, 2, 175);
+                            Color FireColor = Color.Orange;
+                            FireColor.A = 100;
+
+                            Color FireColor2 = Color.Orange;
+                            FireColor2.A = 200;
+
+                            EmitterList.Add(new Emitter(Fire, new Vector2(NewTrap.Position.X + 16, NewTrap.Position.Y + 8), new Vector2(75, 105), new Vector2(1.5f, 2), new Vector2(30, 35), 0.2f, true, new Vector2(-20, 20), new Vector2(-4, 4), new Vector2(1, 2f), FireColor, FireColor2, 0.0f, -1));
+                            TrapList[TrapList.IndexOf(NewTrap)].LoadContent(Content);
+                            ReadyToPlace = false;
+                            Resources -= 60;
+                            ClearSelected();
+                        }
+                        break;
+
+                    case TrapType.Spikes:
+                        if (Resources >= 30)
+                        {
+                            Trap NewTrap = new SpikeTrap(new Vector2(CursorPosition.X - 16, Ground.Position.Y));
+                            TrapList.Add(NewTrap);
+                            TrapList[TrapList.IndexOf(NewTrap)].LoadContent(Content);
+                            ReadyToPlace = false;
+                            Resources -= 30;
+                            ClearSelected();
+                        }
+                        break;
+                }
+            }
+        }
 
         private void TrapUpdate(GameTime gameTime)
         {
             foreach (Trap trap in TrapList)
             {
                 trap.Update(gameTime);
-            }
+            }            
         }
 
         private void TrapCollision()
         {
             foreach (Invader invader in InvaderList)
             {
-                for (int i = 5; i > -1; i--)
+                if (TrapList.Any(Trap => Trap.BoundingBox.Intersects(invader.BoundingBox)))
                 {
-                    if (i != 0)
-                    {
-                        if (invader.Position.X < (TrapList[i].DestinationRectangle.Right) &&
-                            (invader.Position.X) > TrapList[i].DestinationRectangle.X &&
-                            TrapList[i].TrapType != TrapType.Blank)
-                        {
-                            invader.TrapDamage(TrapList[i].TrapType);
-                            invader.VulnerableToTrap = false;
-                            break;
-                        }
+                    TrapType HitTrap = TrapList.First(Trap => Trap.BoundingBox.Intersects(invader.BoundingBox)).TrapType;
+                    invader.TrapDamage(HitTrap);
+                    invader.VulnerableToTrap = false;
+                }
 
-                        if (invader.Position.X < (TrapList[i].DestinationRectangle.Right) &&
-                            (invader.Position.X) > TrapList[i].DestinationRectangle.X &&
-                            TrapList[i].TrapType == TrapType.Blank)
-                        {
-                            invader.VulnerableToTrap = false;
-                            break;
-                        }
-
-                        if ((invader.DestinationRectangle.Right) < (TrapList[i].DestinationRectangle.X) && (invader.Position.X > (TrapList[i - 1].DestinationRectangle.Right)))
-                        {
-                            invader.VulnerableToTrap = true;
-                            break;
-                        }
-                    }
-                    else
-                    {
-                        if (invader.Position.X < (TrapList[i].DestinationRectangle.Right) &&
-                            (invader.Position.X) > TrapList[i].DestinationRectangle.X &&
-                            TrapList[i].TrapType != TrapType.Blank)
-                        {
-                            invader.TrapDamage(TrapList[i].TrapType);
-                            invader.VulnerableToTrap = false;
-                            break;
-                        }
-
-                        if (invader.Position.X < (TrapList[i].DestinationRectangle.Right) &&
-                            (invader.Position.X) > TrapList[i].DestinationRectangle.X &&
-                            TrapList[i].TrapType == TrapType.Blank)
-                        {
-                            invader.VulnerableToTrap = false;
-                            break;
-                        }
-
-                        if ((invader.DestinationRectangle.Right) < (TrapList[i].DestinationRectangle.X) && (invader.Position.X > (TrapList[i].DestinationRectangle.Right)))
-                        {
-                            invader.VulnerableToTrap = true;
-                            break;
-                        }
-                    }
+                if (TrapList.All(Trap => !Trap.BoundingBox.Intersects(invader.BoundingBox)))
+                {
+                    invader.VulnerableToTrap = true;
                 }
             }
         }
+
 
         private void CursorDraw(SpriteBatch spriteBatch)
         {
@@ -774,7 +768,6 @@ namespace TowerDefensePrototype
             }
         }
 
-
         #region Various functions to clear current selections
         private void ClearTurretSelect()
         {
@@ -791,6 +784,7 @@ namespace TowerDefensePrototype
             {
                 SelectedTurret = TurretType.Blank;
                 SelectedTrap = TrapType.Blank;
+                ReadyToPlace = false;
 
                 foreach (Turret turret in TurretList)
                 {
@@ -803,7 +797,14 @@ namespace TowerDefensePrototype
         {
             SelectedTurret = TurretType.Blank;
             SelectedTrap = TrapType.Blank;
+            ReadyToPlace = false;
         }
         #endregion
+
+        public double DoubleRange(double one, double two)
+        {
+            Random rand = new Random();
+            return one + Random.NextDouble() * (two - one);
+        }
     }
 }

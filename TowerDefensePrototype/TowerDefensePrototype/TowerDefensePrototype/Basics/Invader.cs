@@ -17,11 +17,11 @@ namespace TowerDefensePrototype
         public bool Active, Attacking, CanMove, VulnerableToTurret, VulnerableToTrap;
         public Color Color;
         public BoundingBox BoundingBox;
-        public Double MoveDelay, CurrentDelay;
-        //GameTime GameTime;
+        public Double MoveDelay, CurrentDelay; 
         public int MaxHealth, CurrentHealth;
         HorizontalBar HealthBar;
         public abstract void TrapDamage(TrapType trapType);
+        public float DistanceToTower;
 
         public void LoadContent(ContentManager contentManager)
         {
@@ -34,7 +34,6 @@ namespace TowerDefensePrototype
 
         public void Update(GameTime gameTime)
         {
-            //GameTime = gameTime;
             VulnerableToTurret = true;
 
             CurrentDelay += gameTime.ElapsedGameTime.Milliseconds;
@@ -53,7 +52,7 @@ namespace TowerDefensePrototype
         public void Draw(SpriteBatch spriteBatch)
         {           
             DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, Texture.Width, Texture.Height);
-            BoundingBox = new BoundingBox(new Vector3(Position.X + 8, Position.Y + 8, 0), new Vector3(Position.X + 24, Position.Y + 24, 0));
+            BoundingBox = new BoundingBox(new Vector3(Position.X + 16, Position.Y, 0), new Vector3(Position.X + 15, Position.Y+Texture.Height, 0));
             spriteBatch.Draw(Texture, DestinationRectangle, Color);
 
             HealthBar.Draw(spriteBatch);
@@ -72,6 +71,16 @@ namespace TowerDefensePrototype
                 Position += MoveVector;
                 CurrentDelay = 0;
             }   
+        }
+
+        public void AttackTower()
+        {
+
+        }
+
+        public void AttackTrap()
+        {
+
         }
     }
 }

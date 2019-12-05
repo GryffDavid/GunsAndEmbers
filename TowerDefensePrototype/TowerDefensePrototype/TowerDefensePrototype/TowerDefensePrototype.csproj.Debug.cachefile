@@ -14,12 +14,11 @@ Content\WallIcon.xnb
 Content\SpikeTrap.xnb
 Content\TrapButton.xnb
 Content\Ground.xnb
-Content\FireStrip.xnb
 Content\Projectile.xnb
 Content\DefaultCursor.xnb
 Content\TurretCrosshair.xnb
-Content\Flash1.xnb
-Content\Flash2.xnb
-Content\Flash3.xnb
 Content\Line.xnb
 Content\WhiteBlock.xnb
+Content\star.xnb
+Content\MountainsBackground.xnb
+Content\shell.xnb

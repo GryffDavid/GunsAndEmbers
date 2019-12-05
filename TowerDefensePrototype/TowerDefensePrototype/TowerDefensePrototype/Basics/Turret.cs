@@ -19,9 +19,12 @@ namespace TowerDefensePrototype
         public float Rotation;
         public bool Selected, Active, JustClicked, CanShoot;
         public Color Color;
-        public MuzzleFlash Flash;
         public double FireDelay;
         public int Damage;
+        public Random Random;
+        public Projectile Projectile;
+        public Vector2 FireDirection;
+        public float FireRotation;
 
         public double ElapsedTime = 0;
 
@@ -38,8 +41,6 @@ namespace TowerDefensePrototype
                 TurretBase = contentManager.Load<Texture2D>(BaseAsset);
                 TurretBarrel = contentManager.Load<Texture2D>(TurretAsset);
             }
-
-            Flash = new MuzzleFlash(contentManager, BarrelRectangle.Width);
 
             Line = contentManager.Load<Texture2D>("Projectile");
         }
@@ -96,8 +97,11 @@ namespace TowerDefensePrototype
                 else
                     Color = Color.White;
             #endregion
+            
+            
 
             PreviousMouseState = CurrentMouseState;
+
         }
 
         public void Draw(SpriteBatch spriteBatch)

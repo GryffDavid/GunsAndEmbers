@@ -10,9 +10,9 @@ namespace TowerDefensePrototype
 {
     class Tower
     {
-        Texture2D TowerTexture;
+        public Texture2D Texture;
         string AssetName;
-        Vector2 Position;
+        public Vector2 Position;
         Rectangle DestinationRectangle;
 
         public Tower(string assetName, Vector2 position)
@@ -23,8 +23,8 @@ namespace TowerDefensePrototype
 
         public void LoadContent(ContentManager contentManager)
         {
-            TowerTexture = contentManager.Load<Texture2D>(AssetName);
-            DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, TowerTexture.Width, TowerTexture.Height);
+            Texture = contentManager.Load<Texture2D>(AssetName);
+            DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, Texture.Width, Texture.Height);
         }
 
         public void Update(GameTime gameTime)
@@ -34,7 +34,7 @@ namespace TowerDefensePrototype
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(TowerTexture, DestinationRectangle, Color.White);
+            spriteBatch.Draw(Texture, DestinationRectangle, Color.White);
         }
     }
 }
