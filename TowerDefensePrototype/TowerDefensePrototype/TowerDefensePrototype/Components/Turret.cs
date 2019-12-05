@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace TowerDefensePrototype
 {
+    #region Turret Enums
     public enum TurretType
     {
         MachineGun,
@@ -27,6 +28,7 @@ namespace TowerDefensePrototype
     };
     public enum TurretAnimationState { Overheated, ReadyToFire };
     public enum TurretFireType { FullAuto, SemiAuto, Single, Beam };
+    #endregion
 
     public abstract class Turret : Drawable
     {

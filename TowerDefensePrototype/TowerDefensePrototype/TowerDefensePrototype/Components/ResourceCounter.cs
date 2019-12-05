@@ -10,14 +10,14 @@ namespace TowerDefensePrototype
 {
     class ResourceChange
     {
-        public Vector2 Position, Velocity, NextPosition;
+        public Vector2 Position, Velocity, NextPosition, StringSize;
         public string Text;
         public float CurrentTime, MaxTime;
     }
 
     class ResourceCounter
     {
-        Vector2 StartPosition = new Vector2(441, 1000);
+        Vector2 StartPosition = new Vector2(489, 1000);
         public SpriteFont Font;
         public List<ResourceChange> Changes = new List<ResourceChange>();
         public Texture2D ResourceIcon;        
@@ -47,8 +47,10 @@ namespace TowerDefensePrototype
             for (int i = Changes.Count-1; i >= 0; i--)
             {
                 //float ColorFade = ((100f / Changes[i].MaxTime) * Changes[i].CurrentTime)/100f;
-                spriteBatch.DrawString(Font, Changes[i].Text, Changes[i].Position, Color.White);
-                spriteBatch.Draw(ResourceIcon, new Rectangle((int)Changes[i].Position.X + 48, (int)Changes[i].Position.Y + 4, 16, 16), Color.White);
+                //spriteBatch.DrawString(Font, Changes[i].Text, Changes[i].Position, Color.White);
+
+                spriteBatch.DrawString(Font, Changes[i].Text, new Vector2(Changes[i].Position.X - Changes[i].StringSize.X - 4, Changes[i].Position.Y - 4), Color.White);
+                spriteBatch.Draw(ResourceIcon, new Rectangle((int)Changes[i].Position.X, (int)Changes[i].Position.Y, 16, 16), Color.White);
             }
         }
 
@@ -59,10 +61,6 @@ namespace TowerDefensePrototype
             if (diff > 0)
             {
                 Diff = Diff.Insert(0, "+");   
-            }
-            else
-            {
-                Diff = Diff.Insert(0, "-");
             }
 
             for (int i = 0; i < Changes.Count; i++)
@@ -89,7 +87,8 @@ namespace TowerDefensePrototype
                     Position = StartPosition,
                     NextPosition = StartPosition, 
                     Text = Diff,
-                    Velocity = new Vector2(0, -0.2f)
+                    Velocity = new Vector2(0, -0.2f),
+                    StringSize = Font.MeasureString(Diff)
                 });
         }
     }

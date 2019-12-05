@@ -28,6 +28,12 @@ namespace TowerDefensePrototype
 
         }
 
+        public virtual void Draw(GraphicsDevice graphics, BasicEffect effect)
+        {
+
+        }
+        
+
         /// <summary>
         /// For invaders, traps etc. that needs to cast shadows from lights
         /// </summary>
@@ -46,10 +52,11 @@ namespace TowerDefensePrototype
         /// <param name="graphics">Graphics Device</param>
         /// <param name="effect">Basic effect for drawing the actual sprite</param>
         /// <param name="shadowEffect">The shadow effect for blurring the shadow</param>
-        public virtual void Draw(GraphicsDevice graphics, BasicEffect effect, Effect shadowEffect)
+        public virtual void Draw(GraphicsDevice graphics, BasicEffect effect, Effect shadowEffect, SpriteBatch spriteBatch)
         {
 
         }
+
 
         /// <summary>
         /// Draw the depth of the sprite - reduce to single byte value to draw grey
@@ -60,7 +67,6 @@ namespace TowerDefensePrototype
         {
 
         }
-
         
         public virtual void DrawSpriteNormal(GraphicsDevice graphics, BasicEffect basicEffect)
         {

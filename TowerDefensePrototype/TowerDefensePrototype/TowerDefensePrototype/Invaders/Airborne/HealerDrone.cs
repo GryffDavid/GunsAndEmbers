@@ -17,6 +17,7 @@ namespace TowerDefensePrototype
         public Invader HealTarget;
         public LightningBolt Bolt = new LightningBolt(Vector2.One, Vector2.Zero, Color.Transparent, 1f);
         public List<LightningBolt> BoltList = new List<LightningBolt>();
+        public Texture2D JetSprite;
 
         //MEDBOT
         //Flies above the other invaders and heals them when necessary.
@@ -54,19 +55,7 @@ namespace TowerDefensePrototype
             }
 
             BoltList.RemoveAll(Bolt => Bolt.Alpha <= 0);
-
             base.Update(gameTime, cursorPosition);
-        }
-
-        public override void Draw(SpriteBatch spriteBatch)
-        {
-            if (HealTarget != null)
-                DrawDepth = HealTarget.DrawDepth;
-
-            //if (Jet != null)
-            //    Jet.Draw(spriteBatch);
-
-            base.Draw(spriteBatch);
         }
     }
 }

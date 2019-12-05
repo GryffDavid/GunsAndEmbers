@@ -12,9 +12,7 @@ namespace TowerDefensePrototype
     #region Invader Enums
     public enum AnimationState_Invader { Walk, Stand, Melee, Shoot };
 
-
     public enum InvaderFireType { Burst };
-
 
     public enum InvaderType
     {
@@ -78,7 +76,6 @@ namespace TowerDefensePrototype
         public float Damage;
         public float CurrentAttackDelay, MaxAttackDelay;
     };
-    #endregion
 
     public struct PreviousResult
     {
@@ -87,7 +84,8 @@ namespace TowerDefensePrototype
         public int NumHits; //Number of relevant hits from the previous batch of projectiles
         public float FireAngle; //The angle most recently used when firing
     }
-
+    #endregion
+    
     public abstract class Invader : Drawable
     {
         #region Variables used for invaders

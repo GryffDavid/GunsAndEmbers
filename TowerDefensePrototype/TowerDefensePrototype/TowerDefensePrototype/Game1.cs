@@ -437,7 +437,21 @@ namespace TowerDefensePrototype
         }
 
 
-        int Resources, PreviousResources, TowerButtons, ProfileNumber, LevelNumber, limit, TotalParticles;
+        int TowerButtons, ProfileNumber, LevelNumber, limit, TotalParticles;
+
+        private int _Resources;
+        public int Resources 
+        {
+            get { return _Resources; }
+            set 
+            {
+                if (ResourceCounter != null)
+                    ResourceCounter.AddChange(value - _Resources);
+
+                _Resources = value;
+            }
+        }
+
         int CurrentWaveIndex = 0;
         int CurrentInvaderIndex = 0;
         int MaxWaves = 0;
@@ -592,7 +606,7 @@ namespace TowerDefensePrototype
         VertexPositionColorTexture[] Vertices;
         VertexBuffer VertexBuffer;
 
-        BasicEffect BasicEffect, BasicEffect2;
+        BasicEffect BasicEffect, BasicEffect2, ProjectileBasicEffect;
         Effect LightEffect, LightCombinedEffect, ShadowBlurEffect, DepthEffect, EmissiveBlurEffect;
 
         public static BlendState BlendBlack = new BlendState()
@@ -612,7 +626,7 @@ namespace TowerDefensePrototype
         BlendState Multiply = new BlendState() { ColorSourceBlend = Blend.DestinationColor, AlphaSourceBlend = Blend.DestinationAlpha };
         #endregion
 
-        Texture2D LightTexture;
+        Texture2D LightTexture, JetEngineSprite;
 
         bool ShowMapping = false;
         Texture2D MappingOutlines;
@@ -945,6 +959,11 @@ namespace TowerDefensePrototype
                 BasicEffect.Projection = Projection;
                 BasicEffect.TextureEnabled = true;
                 BasicEffect.VertexColorEnabled = true;
+                
+                ProjectileBasicEffect = new BasicEffect(GraphicsDevice);
+                ProjectileBasicEffect.Projection = Projection;
+                ProjectileBasicEffect.TextureEnabled = true;
+                ProjectileBasicEffect.VertexColorEnabled = true;
 
                 LightColorMap = new RenderTarget2D(GraphicsDevice, 1920, 1080, false, SurfaceFormat.Rgba64, DepthFormat.Depth24Stencil8);
                 DepthMap = new RenderTarget2D(GraphicsDevice, 1920, 1080, false, SurfaceFormat.Rgba64, DepthFormat.Depth24Stencil8);
@@ -999,6 +1018,8 @@ namespace TowerDefensePrototype
 
                 PowerupDeliveryPod = Content.Load<Texture2D>("PowerupDeliveryPod");
                 PowerupDeliveryFin = Content.Load<Texture2D>("PowerupDeliveryFin");
+
+                JetEngineSprite = Content.Load<Texture2D>("JetSprite");
                 #endregion
 
                 #region Loading shaders
@@ -1183,6 +1204,7 @@ namespace TowerDefensePrototype
                 //    Radius = 500,
                 //    LightTexture = LightTexture
                 //});
+
 
                 AllLoaded = true;
 
@@ -1999,6 +2021,11 @@ namespace TowerDefensePrototype
 
                 foreach (Drawable drawable in DrawableList)
                 {
+                    if (drawable.GetType().BaseType == typeof(HeavyProjectile))
+                    {
+                        drawable.Draw(GraphicsDevice, ProjectileBasicEffect, ShadowBlurEffect, spriteBatch);
+                    }
+
                     if (drawable.GetType().BaseType == typeof(Invader) ||
                         drawable.GetType().BaseType == typeof(LightRangedInvader) ||
                         drawable.GetType().BaseType == typeof(HeavyRangedInvader) ||
@@ -2012,6 +2039,7 @@ namespace TowerDefensePrototype
                         }
                         else
                         {
+                            //drawable.Draw(GraphicsDevice, BasicEffect, ShadowBlurEffect, spriteBatch);
                             drawable.Draw(GraphicsDevice, BasicEffect, ShadowBlurEffect, LightList);
                         }
                     }
@@ -2714,6 +2742,7 @@ namespace TowerDefensePrototype
                             CurrentSpecialAbility.Update(gameTime);
                         #endregion
 
+                        #region Ammo belts from destroyed turrets
                         foreach (AmmoBelt belt in AmmoBeltList)
                         {
                             belt.Update(gameTime);
@@ -2722,8 +2751,15 @@ namespace TowerDefensePrototype
                                 DrawableList.Remove(belt);
                         }
 
-                        AmmoBeltList.RemoveAll(Belt => Belt.Active == false);
-                        
+                        AmmoBeltList.RemoveAll(Belt => Belt.Active == false); 
+                        #endregion
+
+                        //if (PreviousResources != Resources)
+                        //{
+                        //    int diff = Resources - PreviousResources;
+
+                        //    ResourceCounter.AddChange(diff);
+                        //}
 
                         //Seconds += gameTime.ElapsedGameTime.TotalMilliseconds;
                         ResourceCounter.Update(gameTime);
@@ -3210,7 +3246,9 @@ namespace TowerDefensePrototype
                     break;
                 #endregion
             }
+                       
 
+            //PreviousResources = Resources;
             PreviousKeyboardState = CurrentKeyboardState;
             PreviousMouseState = CurrentMouseState;
 
@@ -3485,7 +3523,7 @@ namespace TowerDefensePrototype
                     #endregion
 
                     Resources += invader.ResourceValue;
-                    ResourceCounter.AddChange(invader.ResourceValue);
+                    //ResourceCounter.AddChange(invader.ResourceValue);
 
                     invader.Active = false;
 
@@ -3528,12 +3566,7 @@ namespace TowerDefensePrototype
                         #region LIGHT Ranged Invader
                         if (lightRangedInvader != null)
                         {
-                            if (heavyRangedInvader.CurrentAngle == heavyRangedInvader.EndAngle &&
-                                heavyRangedInvader.InTowerRange == false &&
-                                heavyRangedInvader.InTrapRange == false)
-                            {
-                                invader.CurrentMicroBehaviour = MicroBehaviour.MovingForwards;
-                            }
+                            invader.CurrentMicroBehaviour = MicroBehaviour.MovingForwards;                            
                         }
                         #endregion
                     }
@@ -7292,8 +7325,7 @@ namespace TowerDefensePrototype
                 }
                 #endregion
             }
-        }
-        
+        }        
 
         public void OnTurretShoot(object source, TurretShootEventArgs e)
         {
@@ -9114,6 +9146,13 @@ namespace TowerDefensePrototype
                                     HeavyRangedInvader heavyRangedInvader = nextInvader as HeavyRangedInvader;
                                     LightRangedInvader lightRangedInvader = nextInvader as LightRangedInvader;
 
+
+                                    //if (nextInvader.InvaderType == InvaderType.HealDrone)
+                                    //{
+                                    //    HealDrone drone = nextInvader as HealDrone;
+                                    //    drone.JetEngine1.JetSprite = JetEngineSprite;
+                                    //}
+
                                     //This is here to load the barrel sprite for the heavy ranged invaders
                                     if (heavyRangedInvader != null)
                                     {
@@ -9125,7 +9164,7 @@ namespace TowerDefensePrototype
                                                 }
                                                 break;
                                         }
-                                    }
+                                    }                                    
 
                                     for (int i = 0; i < invaderAnimationList.Count; i++)
                                     {
@@ -9285,6 +9324,7 @@ namespace TowerDefensePrototype
             //Load the resources used for this specific level (Can't be generalised) i.e. backgroung textures
             CurrentLevel.LoadContent(Content);
             CurrentWeather = CurrentLevel.StartWeather;
+
 
             #region Use those resources to create the background and foreground sprites
             Ground = new StaticSprite(CurrentLevel.GroundTexture, new Vector2(0, 1080 - 500 + 70));

@@ -117,10 +117,11 @@
     <Compile Include="Animations\Animation.cs" />
     <Compile Include="Animations\InvaderAnimation.cs" />
     <Compile Include="Basics\Ballistics.cs" />
-    <Compile Include="Components\JetEngine.cs" />
     <Compile Include="Components\ResourceCounter.cs" />
     <Compile Include="Components\Shield.cs" />
     <Compile Include="ParticleSystem\Corpse.cs" />
+    <Compile Include="ParticleSystem\JetEngine.cs" />
+    <Compile Include="ParticleSystem\JetTrail.cs" />
     <Compile Include="Turrets\Light\SniperTurret.cs" />
     <Compile Include="UIComponents\CheckBox.cs" />
     <Compile Include="Components\BulletTrail.cs" />
@@ -139,7 +140,6 @@
     <Compile Include="Invaders\LighRanged\JumpMan.cs" />
     <Compile Include="Invaders\LighRanged\Sapper.cs" />
     <Compile Include="ParticleSystem\AmmoBelt.cs" />
-    <Compile Include="ParticleSystem\JetEffect.cs" />
     <Compile Include="ParticleSystem\ShellCasing.cs" />
     <Compile Include="Components\VerletObject.cs" />
     <Compile Include="Projectiles\Grenades\FireGrenadeProjectile.cs" />

@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.Content;
 
 namespace TowerDefensePrototype
 {
+    #region Projectile Type
     public enum HeavyProjectileType
     {
         CannonBall,
@@ -22,10 +23,12 @@ namespace TowerDefensePrototype
         Grenade,
         GasGrenade,
         FireGrenade
-    };
+    }; 
+    #endregion
     
     public abstract class HeavyProjectile : Drawable
     {
+        #region For Verlet Physics
         public class Stick
         {
             public Node Point1, Point2;
@@ -35,14 +38,29 @@ namespace TowerDefensePrototype
             public float Rotation;
             public Rectangle DestinationRectangle;
         }
-
         public class Node
         {
             public Vector2 CurrentPosition, PreviousPosition, Velocity;
             public bool Pinned;
             public float Friction;
         }
-        
+        #endregion
+
+        #region Vertex Declarations
+        public VertexPositionColorTexture[] shadowVertices = new VertexPositionColorTexture[4];
+        public int[] shadowIndices = new int[6];
+
+        public VertexPositionColorTexture[] projectileVertices = new VertexPositionColorTexture[4];
+        public int[] projectileIndices = new int[6];
+
+        //public VertexPositionColorTexture[] normalVertices = new VertexPositionColorTexture[4];
+        //public int[] normalIndices = new int[6];
+        #endregion
+
+        #region Movement Related Variables
+
+        #endregion
+
         public Texture2D Texture;
         public List<Emitter> EmitterList = new List<Emitter>();
         public Vector2 Velocity, Position, YRange, Origin, Center, BasePosition, TipPosition;
@@ -98,7 +116,7 @@ namespace TowerDefensePrototype
 
             Verlet = verlet.Value;
                         
-            //Set up special values based on whether the projectile is Verlet based or not
+            #region Set up special values based on whether the projectile is Verlet based or not
             if (verlet.Value == true)
             {
                 Node1 = new Node()
@@ -127,6 +145,81 @@ namespace TowerDefensePrototype
 
                 Constraints = new Rectangle(0, 0, 1920, (int)MaxY);
             }
+            #endregion
+
+            #region Sprite Vertices
+            projectileVertices[0] = new VertexPositionColorTexture()
+            {
+                Position = new Vector3(DestinationRectangle.Left, DestinationRectangle.Top, 0),
+                TextureCoordinate = new Vector2(0, 0),
+                Color = Color.White
+            };
+
+            projectileVertices[1] = new VertexPositionColorTexture()
+            {
+                Position = new Vector3(DestinationRectangle.Left + DestinationRectangle.Width, DestinationRectangle.Top, 0),
+                TextureCoordinate = new Vector2(1, 0),
+                Color = Color.White
+            };
+
+            projectileVertices[2] = new VertexPositionColorTexture()
+            {
+                Position = new Vector3(DestinationRectangle.Left + DestinationRectangle.Width, DestinationRectangle.Top + DestinationRectangle.Height, 0),
+                TextureCoordinate = new Vector2(1, 1),
+                Color = Color.White
+            };
+
+            projectileVertices[3] = new VertexPositionColorTexture()
+            {
+                Position = new Vector3(DestinationRectangle.Left, DestinationRectangle.Top + DestinationRectangle.Height, 0),
+                TextureCoordinate = new Vector2(0, 1),
+                Color = Color.White
+            };
+
+            projectileIndices[0] = 0;
+            projectileIndices[1] = 1;
+            projectileIndices[2] = 2;
+            projectileIndices[3] = 2;
+            projectileIndices[4] = 3;
+            projectileIndices[5] = 0;
+            #endregion
+
+            #region Shadow Vertices
+            shadowVertices[0] = new VertexPositionColorTexture()
+            {
+                Position = new Vector3(DestinationRectangle.Left, MaxY, 0),
+                TextureCoordinate = new Vector2(0, 0),
+                Color = Color.White
+            };
+
+            shadowVertices[1] = new VertexPositionColorTexture()
+            {
+                Position = new Vector3(DestinationRectangle.Left + DestinationRectangle.Width, MaxY, 0),
+                TextureCoordinate = new Vector2(1, 0),
+                Color = Color.White
+            };
+
+            shadowVertices[2] = new VertexPositionColorTexture()
+            {
+                Position = new Vector3(DestinationRectangle.Left + DestinationRectangle.Width, MaxY + DestinationRectangle.Height, 0),
+                TextureCoordinate = new Vector2(1, 1),
+                Color = Color.White
+            };
+
+            shadowVertices[3] = new VertexPositionColorTexture()
+            {
+                Position = new Vector3(DestinationRectangle.Left, MaxY + DestinationRectangle.Height, 0),
+                TextureCoordinate = new Vector2(0, 1),
+                Color = Color.White
+            };
+
+            shadowIndices[0] = 0;
+            shadowIndices[1] = 1;
+            shadowIndices[2] = 2;
+            shadowIndices[3] = 2;
+            shadowIndices[4] = 3;
+            shadowIndices[5] = 0;
+            #endregion
         }
 
         public virtual void Update(GameTime gameTime)
@@ -212,43 +305,37 @@ namespace TowerDefensePrototype
                 #endregion
 
                 Center = new Vector2(DestinationRectangle.Center.X, DestinationRectangle.Center.Y);
+
+                #region Update Vertices
+                if (Velocity != Vector2.Zero)
+                {
+                    ShadowLength = Math.Abs(TipPosition.X - BasePosition.X);
+
+                    projectileVertices[0].Position = new Vector3(DestinationRectangle.Left, DestinationRectangle.Top, 0);
+                    projectileVertices[1].Position = new Vector3(DestinationRectangle.Left + DestinationRectangle.Width, DestinationRectangle.Top, 0);
+                    projectileVertices[2].Position = new Vector3(DestinationRectangle.Left + DestinationRectangle.Width, DestinationRectangle.Top + DestinationRectangle.Height, 0);
+                    projectileVertices[3].Position = new Vector3(DestinationRectangle.Left, DestinationRectangle.Top + DestinationRectangle.Height, 0);
+
+                    shadowVertices[0].Position = new Vector3(DestinationRectangle.Left, MaxY, 0);
+                    shadowVertices[1].Position = new Vector3(DestinationRectangle.Left + ShadowLength, MaxY, 0);
+                    shadowVertices[2].Position = new Vector3(DestinationRectangle.Left + ShadowLength, MaxY + DestinationRectangle.Height, 0);
+                    shadowVertices[3].Position = new Vector3(DestinationRectangle.Left, MaxY + DestinationRectangle.Height, 0);
+
+                    shadowVertices[0].Color = Color.Black * 0.85f;
+                    shadowVertices[1].Color = Color.Black * 0.85f;
+                    shadowVertices[2].Color = Color.Black * 0.85f;
+                    shadowVertices[3].Color = Color.Black * 0.85f;
+                }
+                #endregion
             }
 
             foreach (Emitter emitter in EmitterList)
             {
                 emitter.Update(gameTime);
             }
-        }
+        }               
 
-        public override void Draw(SpriteBatch spriteBatch)
-        {
-            if (Active == true)
-            {
-                if (Verlet == true)
-                {
-                    spriteBatch.Draw(Texture, Rod.DestinationRectangle, null, Color.White, Rod.Rotation,
-                                     new Vector2(0, Texture.Height / 2), SpriteEffects.None, 0);
-                }
-                else
-                {
-                    spriteBatch.Draw(Texture, DestinationRectangle, null, Color.White, CurrentRotation,
-                                     new Vector2(Origin.X, Origin.Y), SpriteEffects.None, DrawDepth);
-                }
-
-                #region Draw Shadow
-                ShadowLength = Math.Abs(TipPosition.X - BasePosition.X);
-                spriteBatch.Draw(Texture, new Rectangle((int)Position.X, (int)MaxY, (int)ShadowLength, (int)(Texture.Height*0.8f)), Color.Black * 0.25f);
-                #endregion
-            }
-
-
-            foreach (Emitter emitter in EmitterList)
-            {
-                emitter.Draw(spriteBatch);
-            }
-        }
-
-        public override void Draw(GraphicsDevice graphics, BasicEffect effect, Effect shadowEffect)
+        public override void Draw(GraphicsDevice graphics, BasicEffect effect, Effect shadowEffect, SpriteBatch spriteBatch)
         {
             if (Active == true)
             {
@@ -257,15 +344,35 @@ namespace TowerDefensePrototype
                 effect.Texture = Texture;
 
                 #region Draw projectile shadow
+                shadowEffect.Parameters["Texture"].SetValue(Texture);
+                shadowEffect.Parameters["texSize"].SetValue(new Vector2(Texture.Width, Texture.Height));
 
+                foreach (EffectPass pass in shadowEffect.CurrentTechnique.Passes)
+                {
+                    pass.Apply();
+                    graphics.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, shadowVertices, 0, 4, shadowIndices, 0, 2, VertexPositionColorTexture.VertexDeclaration);
+                }
                 #endregion
 
                 #region Draw projectile sprite
+                effect.World = Matrix.CreateTranslation(new Vector3(-Position.X - Origin.X, -Position.Y - Origin.Y, 0)) *
+                               Matrix.CreateRotationZ(CurrentRotation) *
+                               Matrix.CreateTranslation(new Vector3(Position.X, Position.Y, 0));
 
+                foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+                {
+                    pass.Apply();
+                    graphics.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, projectileVertices, 0, 4, projectileIndices, 0, 2, VertexPositionColorTexture.VertexDeclaration);
+                }
                 #endregion
             }
 
-            base.Draw(graphics, effect, shadowEffect);
+            foreach (Emitter emitter in EmitterList)
+            {
+                emitter.Draw(spriteBatch);
+            }
+
+            base.Draw(graphics, effect, shadowEffect, spriteBatch);
         }
 
         public void UpdateNodes()
