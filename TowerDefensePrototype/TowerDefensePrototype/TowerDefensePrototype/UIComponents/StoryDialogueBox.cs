@@ -27,7 +27,7 @@ namespace TowerDefensePrototype
             TipText = "Click to Continue";
 
             CurrentTime = 0;
-            MaxTime = 25;
+            MaxTime = 5;
             LengthIndex = 0;
 
             Position = new Vector2(0, 100);

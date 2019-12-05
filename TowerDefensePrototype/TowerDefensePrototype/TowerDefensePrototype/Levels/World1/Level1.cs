@@ -25,6 +25,9 @@ namespace TowerDefensePrototype
                         
             //A float in the middle of the list changes the delay between invaders
             //An int in the middle of the list creates a pause without changing the timing
+            //THE OVERFLOW BOOL VARIABLE NEEDS TO GO IN THE CURRENT WAVE TO CREATE OVERFLOW, NOT THE NEXT WAVE.
+            //WAVE 2 WILL NOT START IF WAVE 1 HAS A FALSE OVERFLOW BUT WAVE 2 HAS A TRUE OVERFLOW.
+            //KEEPS CATCHING ME OUT AND I END UP DEBUGGING IT OVER AND OVER AGAIN
             #region Wave1
             Wave Wave1 = new Wave(false, 350, 100,
 
@@ -65,7 +68,11 @@ namespace TowerDefensePrototype
 
                     //5000,
 
-                    //new HealDrone(new Vector2(2050, 600), new Vector2(700, 850)),
+                //new HealDrone(new Vector2(2050, 600), new Vector2(700, 850)),
+                //new HealDrone(new Vector2(2050, 600), new Vector2(700, 850)),
+                //new HealDrone(new Vector2(2050, 600), new Vector2(700, 850)),
+                //new HealDrone(new Vector2(2050, 600), new Vector2(700, 850)),
+                //new HealDrone(new Vector2(2050, 600), new Vector2(700, 850)),
                 //new HealDrone(new Vector2(2050, 600), new Vector2(700, 850)),
                 //new HealDrone(new Vector2(2050, 600), new Vector2(700, 850))//,
 

@@ -21,12 +21,15 @@ namespace TowerDefensePrototype
             WaveList = new List<Wave>();
             WorldType = WorldType.Snowy;
             StartWeather = Weather.Snow;
-            Resources = 200;
+            Resources = 4000;
                         
             //A float in the middle of the list changes the delay between invaders
             //An int in the middle of the list creates a pause without changing the timing
             #region Wave1
-            Wave Wave1 = new Wave(false, 350, 100,
+            Wave Wave1 = new Wave(true, 350, 100,
+                new RifleMan(new Vector2(2050, 600), new Vector2(700, 850)),
+                new RifleMan(new Vector2(2050, 600), new Vector2(700, 850)),
+                new RifleMan(new Vector2(2050, 600), new Vector2(700, 850)),
                 new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
                 new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
                 new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
@@ -38,7 +41,77 @@ namespace TowerDefensePrototype
                  );            
             #endregion
 
+            #region Wave2
+            Wave Wave2 = new Wave(true, 350, 100,
+                new RifleMan(new Vector2(2050, 600), new Vector2(700, 850)),
+                new RifleMan(new Vector2(2050, 600), new Vector2(700, 850)),
+                new RifleMan(new Vector2(2050, 600), new Vector2(700, 850)),
+                new RifleMan(new Vector2(2050, 600), new Vector2(700, 850)),
+                new RifleMan(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                4000,
+                new DropShip(new Vector2(2050, 300), new Vector2(300, 300),
+                        new BatteringRam(new Vector2(1800, 0), new Vector2(700, 850)),
+                        new BatteringRam(new Vector2(1800, 0), new Vector2(700, 850))
+                        ),
+                3000,
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850))
+                 );
+            #endregion
+
+            #region Wave2
+            Wave Wave3 = new Wave(false, 350, 100,
+                new DropShip(new Vector2(2050, 300), new Vector2(300, 300),
+                        new BatteringRam(new Vector2(1800, 0), new Vector2(700, 850)),
+                        new BatteringRam(new Vector2(1800, 0), new Vector2(700, 850)),
+                        new BatteringRam(new Vector2(1800, 0), new Vector2(700, 850)),
+                        new BatteringRam(new Vector2(1800, 0), new Vector2(700, 850)),
+                        new BatteringRam(new Vector2(1800, 0), new Vector2(700, 850))
+                        ),
+                7000,
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)), 
+                8000,
+                150f,
+                new RifleMan(new Vector2(2050, 600), new Vector2(700, 850)),
+                new RifleMan(new Vector2(2050, 600), new Vector2(700, 850)),
+                new RifleMan(new Vector2(2050, 600), new Vector2(700, 850)),
+                new RifleMan(new Vector2(2050, 600), new Vector2(700, 850)),
+                new RifleMan(new Vector2(2050, 600), new Vector2(700, 850)),
+                new RifleMan(new Vector2(2050, 600), new Vector2(700, 850))
+                 );
+            #endregion
+
             WaveList.Add(Wave1);
+            WaveList.Add(Wave2);
+            WaveList.Add(Wave3);
         }
 
         public override void LoadContent(ContentManager contentManager)

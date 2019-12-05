@@ -109,7 +109,7 @@ namespace TowerDefensePrototype
 
                     case TurretType.MachineGun:
                         WeaponName = "Machine Gun";
-                        WeaponTip = "Place on lower turret slots for devestation at close range";
+                        WeaponTip = " ";
                         WeaponType = "Machine Gun";
 
                         BarText1 = "Rate of Fire";
@@ -143,10 +143,12 @@ namespace TowerDefensePrototype
                         break;
 
                     case TurretType.GasGrenade:
+                        WeaponTip = "Doesn't discriminate! Will asphyxiate any organic lifeform!";
                         WeaponName = "Gas Grenade Launcher";
                         break;
 
                     case TurretType.Beam:
+                        WeaponTip = "We have created this amazing machine to destroy our fellow men.";
                         WeaponName = "Beam Cannon";
                         break;
 
@@ -159,7 +161,8 @@ namespace TowerDefensePrototype
                         break;
 
                     case TurretType.PersistentBeam:
-                        WeaponName = "Persistent Beam";
+                        WeaponTip = "C-Beams were outlawed in the early 22nd century. This is the replacement.";
+                        WeaponName = "D-Beam";
                         break;
                 }
 
@@ -213,11 +216,13 @@ namespace TowerDefensePrototype
                         break;
 
                     case TrapType.Wall:
+                        WeaponTip = "Model E Wall. Unlikely to develop sentience.";
                         WeaponName = "Wall";
                         break;
 
                     case TrapType.LandMine:
                         WeaponName = "Land Mine";
+                        WeaponTip = "Particularly good at maiming civilians!";
                         break;
 
                     case TrapType.Trigger:

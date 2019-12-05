@@ -28,9 +28,9 @@ namespace TowerDefensePrototype
             Animated = false;
             Looping = false;
             MaxHealth = 500;
-            BlastRadius = 270;
+            BlastRadius = 220;
             MaxHealth = 200;
-            LaunchVelocity = 16;
+            LaunchVelocity = 19;
 
             TurretFireType = TurretFireType.SemiAuto;
 

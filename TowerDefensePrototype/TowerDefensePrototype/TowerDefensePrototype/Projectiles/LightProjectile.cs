@@ -27,6 +27,7 @@ namespace TowerDefensePrototype
         public Vector2 Position;
         public LightProjectileType LightProjectileType;
         public float Damage;
+        public object Source;
 
         public LightProjectile(Vector2 position, Vector2 Direction, float? damage = null)
         {

@@ -26,7 +26,7 @@ namespace TowerDefensePrototype
 
             RangedAttackTiming = new RangedAttackTiming()
             {
-                MaxFireDelay = 250,
+                MaxFireDelay = 450,
                 CurrentFireDelay = 0
             };
 

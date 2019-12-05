@@ -36,60 +36,74 @@ namespace TowerDefensePrototype
             switch (CurrentID)
             {
                 default:
-
-                    if (CurrentMouseState.LeftButton == ButtonState.Released &&
-                        PreviousMouseState.LeftButton == ButtonState.Pressed &&
-                        DialogueBox.LengthIndex == DialogueBox.CompleteText.Length &&
-                        DialogueBox.DestinationRectangle.Contains(new Point(CurrentMouseState.X, CurrentMouseState.Y)))
+                    if (DialogueBox.MaxTime < 20)
                     {
-                        Next();
+                        if (CurrentMouseState.LeftButton == ButtonState.Released &&
+                            PreviousMouseState.LeftButton == ButtonState.Pressed &&
+                            DialogueBox.LengthIndex < DialogueBox.CompleteText.Length &&
+                            DialogueBox.DestinationRectangle.Contains(new Point(CurrentMouseState.X, CurrentMouseState.Y)))
+                        {
+                            DialogueBox.LengthIndex = DialogueBox.CompleteText.Length;
+                            break;
+                        }
+
+                        if (CurrentMouseState.LeftButton == ButtonState.Released &&
+                            PreviousMouseState.LeftButton == ButtonState.Pressed &&
+                            DialogueBox.LengthIndex == DialogueBox.CompleteText.Length &&
+                            DialogueBox.DestinationRectangle.Contains(new Point(CurrentMouseState.X, CurrentMouseState.Y)))
+                        {
+                            Next();
+                        }
                     }
-
-                    //CurrentTime += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
-
-                    //if (CurrentTime > ItemsList[CurrentID].Time)
-                    //{
-                    //    CurrentID++;
-                    //    CurrentTime = 0;
-                    //}
                     break;
 
                 case 3:
-                    DialogueBox.TipText = "";
-
-                    TutorialMarker.Position = Game1.CooldownButtonList[0].CurrentPosition + Game1.CooldownButtonList[0].CurrentSize / 2;
-                    TutorialMarker.Active = true;
-                    //TutorialMarker.StartSize = Game1.CooldownButtonList[0].CurrentSize;
-                    //TutorialMarker.MaxSize = TutorialMarker.StartSize * 3f;
-
-                    if (Game1.CurrentProfile.Buttons[0] == null)
-                        Game1.DynamicAddWeapon(0, TurretType.MachineGun, null);
-
-                    if (Game1.SelectedTurret == TurretType.MachineGun)
                     {
-                        Next();
+                        DialogueBox.TipText = "";
+
+                        int index = Game1.CurrentProfile.Buttons.IndexOf(null);
+
+                        TutorialMarker.Position = Game1.CooldownButtonList[index].CurrentPosition + Game1.CooldownButtonList[index].CurrentSize / 2;
+                        TutorialMarker.Active = true;
+                        //TutorialMarker.StartSize = Game1.CooldownButtonList[0].CurrentSize;
+                        //TutorialMarker.MaxSize = TutorialMarker.StartSize * 3f;
+
+
+
+                        if (Game1.CurrentProfile.Buttons[index] == null)
+                            Game1.DynamicAddWeapon(index, TurretType.MachineGun, null);
+
+                        if (Game1.SelectedTurret == TurretType.MachineGun)
+                        {
+                            Next();
+                        }
                     }
                     break;
 
                 case 4:
-                    TutorialMarker.Position = Game1.TowerButtonList[0].CurrentPosition + Game1.TowerButtonList[0].FrameSize / 2;
-                    TutorialMarker.Active = true;
-
-                    if (Game1.TurretList.Count<Turret>(Turret => Turret != null && 
-                        Turret.TurretType == TurretType.MachineGun) > 0)
                     {
-                        Next();
-                        TutorialMarker.Active = false;
+                        TutorialMarker.Position = Game1.TowerButtonList[0].CurrentPosition + Game1.TowerButtonList[0].FrameSize / 2;
+                        TutorialMarker.Active = true;
+
+                        if (Game1.TurretList.Count<Turret>(Turret => Turret != null &&
+                            Turret.TurretType == TurretType.MachineGun) > 0)
+                        {
+                            Next();
+                            TutorialMarker.Active = false;
+                        }
                     }
                     break;
 
                 case 5:
-                    if (Game1.TurretList[0].ShotsFired >= 5)
+                    if (Game1.TurretList[0] != null)
                     {
-                        Next();
+                        if (Game1.TurretList[0].ShotsFired >= 5)
+                        {
+                            Next();
 
-                        Crate crate = new Crate(new Vector2(Random.Next(800, 1200), 500), new Vector2(690, 930));
-                        Game1.AddInvader(crate, gameTime);                        
+                            Crate crate = new Crate(new Vector2(Random.Next(800, 1200), 500), new Vector2(690, 930));
+                            Game1.AddInvader(crate, gameTime);
+                        }
                     }
                     break;
 
@@ -103,11 +117,13 @@ namespace TowerDefensePrototype
                 case 7:
                     if (Game1.CurrentTurret == null)
                     {
-                        TutorialMarker.Position = Game1.CooldownButtonList[1].CurrentPosition + Game1.CooldownButtonList[1].CurrentSize / 2;
+                        int index = Game1.CurrentProfile.Buttons.IndexOf(null);
+
+                        TutorialMarker.Position = Game1.CooldownButtonList[index].CurrentPosition + Game1.CooldownButtonList[index].CurrentSize / 2;
                         TutorialMarker.Active = true;
 
                         Next();
-                        Game1.DynamicAddWeapon(1, null, TrapType.Fire);
+                        Game1.DynamicAddWeapon(index, null, TrapType.Fire);
                         Game1.Resources += 120;
                     }
                     break;
@@ -155,10 +171,13 @@ namespace TowerDefensePrototype
 
                 case 12:
                     //The turret has overheated. Warn the player about this mechanic
-                    if (Game1.TurretList[0].Overheated == true)
+                    if (Game1.TurretList[0] != null)
                     {
-                        Next();
-                        Game1.Resources += 250;
+                        if (Game1.TurretList[0].Overheated == true)
+                        {
+                            Next();
+                            Game1.Resources += 250;
+                        }
                     }
 
                     //The wave has been defeated before the player overheats the turret. Move along anyway.
@@ -240,8 +259,9 @@ namespace TowerDefensePrototype
                             {
                                 Crate crate = new Crate(new Vector2(Random.Next(800, 1200), 500), new Vector2(690, 930), 20);
                                 Game1.AddInvader(crate, gameTime);
-                                Next();
                             }
+
+                            Next();
                         }
                         else
                         {

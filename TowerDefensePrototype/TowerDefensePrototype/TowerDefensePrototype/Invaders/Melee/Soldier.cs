@@ -11,7 +11,7 @@ namespace TowerDefensePrototype
     class Soldier : Invader
     {
         //Done this way so that the speed can be reset if need be
-        public override float OriginalSpeed { get { return 0.65f; } }
+        public override float OriginalSpeed { get { return 1.0f; } }
 
         public Soldier(Vector2 position, Vector2? yRange = null)
             : base(position, yRange)

@@ -437,21 +437,6 @@ namespace TowerDefensePrototype
             set 
             { 
                 _LeftButtonState = value;
-                if (value == ButtonState.Released)
-                {
-                    if (GameState == GameState.Playing)
-                    {
-                        if (CurrentBeam != null)
-                        {
-                            CurrentTurret.ElapsedTime = 0;
-                            CurrentBeam = null;
-                            foreach (Invader invader in InvaderList.Where(Invader => Invader.HitByBeam == true))
-                            {
-                                invader.HitByBeam = false;
-                            }
-                        }
-                    }
-                }
             }
         }
 
@@ -504,6 +489,8 @@ namespace TowerDefensePrototype
         SoundEffect MenuClick, FireTrapStart, LightningSound, CannonExplosion, CannonFire,
                     MachineShot1, GroundImpact, Ricochet1, Ricochet2, Ricochet3, MenuWoosh,
                     PlaceTrap, Splat1, Splat2, MenuMusic, Implosion, TurretOverheat;
+
+        SoundEffect BatteringRamDrop1;
 
         //Ambient sounds
         //SoundEffect PolarWindAmbience;
@@ -586,7 +573,7 @@ namespace TowerDefensePrototype
         //WaveCountDown WaveCountDown;
         public Turret CurrentTurret;
         Tabs ProfileManagementTabs;
-        BeamProjectile CurrentBeam;
+        //BeamProjectile CurrentBeam;
         //UIInvaderInfo UIInvaderInfo;
         #endregion
         
@@ -646,6 +633,8 @@ namespace TowerDefensePrototype
         List<JetEngine> JetEngineList = new List<JetEngine>();
 
         public LevelDialogue LoadoutMenuDialogue;
+
+        LightProjectile CurrentBeam;
         
         //StoryDialogueItems Level1Dialogue;
 
@@ -889,7 +878,7 @@ namespace TowerDefensePrototype
             TrapPlacementEvent += OnTrapPlacement;
             HeavyProjectileCollisionEvent += OnHeavyProjectileCollision;
 
-            LoadingAnimation = new AnimatedSprite("LoadingAnimation", new Vector2(1920 / 2 - 65, 1080 / 2 - 65), new Vector2(131, 131), 17, 30, HalfWhite, Vector2.One, true);
+            LoadingAnimation = new AnimatedSprite("LoadingAnimation", new Vector2(1920 / 2 - 65, 1080 / 2 - 65), new Vector2(131, 131), 17, 30, new Color(255,255,255,10), Vector2.One, true);
             LoadingAnimation.LoadContent(SecondaryContent);
             IsLoading = false;
 
@@ -1263,6 +1252,8 @@ namespace TowerDefensePrototype
             Splat1 = Content.Load<SoundEffect>("Sounds/Splat1");
             Splat2 = Content.Load<SoundEffect>("Sounds/Splat2");
             Implosion = Content.Load<SoundEffect>("Sounds/Implosion2");
+
+            BatteringRamDrop1 = Content.Load<SoundEffect>("Sounds/BatteringRamDrop1");
 
         }
 
@@ -2051,10 +2042,10 @@ namespace TowerDefensePrototype
 
                 //Drawing the loading screen background here so that it doesn't bug out
                 //when drawn as a quad with multiple threads running
-                if (GameState == GameState.Loading)
-                {
-                    MenuBackground1.Draw(spriteBatch);
-                }
+                //if (GameState == GameState.Loading)
+                //{
+                //    MenuBackground1.Draw(spriteBatch);
+                //}
 
                 switch (GameState)
                 {
@@ -2064,7 +2055,7 @@ namespace TowerDefensePrototype
                             if (AllLoaded == false)
                                 LoadingAnimation.Draw(spriteBatch);
 
-                            spriteBatch.DrawString(RobotoBold40_2, AllLoaded.ToString(), new Vector2(100, 100), Color.White);
+                            //spriteBatch.DrawString(RobotoBold40_2, AllLoaded.ToString(), new Vector2(100, 100), Color.White);
                         }
                         break;
                     #endregion
@@ -3325,6 +3316,14 @@ namespace TowerDefensePrototype
             }
 
             if (CurrentKeyboardState.IsKeyDown(Keys.LeftControl) &&
+             CurrentKeyboardState.IsKeyDown(Keys.R) &&
+             PreviousKeyboardState.IsKeyUp(Keys.R))
+            {
+                StartWaves();
+            }
+
+
+            if (CurrentKeyboardState.IsKeyDown(Keys.LeftControl) &&
                 CurrentKeyboardState.IsKeyDown(Keys.G) &&
                 PreviousKeyboardState.IsKeyUp(Keys.G))
             {
@@ -3432,6 +3431,11 @@ namespace TowerDefensePrototype
                         //{
                         //    engine.Update(gameTime);
                         //}
+
+                        if (CurrentBeam != null)
+                        {
+                            UpdateBeams();
+                        }
 
                         foreach (Rope rope in RopeList)
                         {
@@ -3658,9 +3662,6 @@ namespace TowerDefensePrototype
                         #region Projectile update stuff
                         if (HeavyProjectileList.Count > 0)
                             HeavyProjectileUpdate(gameTime);
-
-                        if (CurrentBeam != null)
-                            BeamProjectileUpdate(gameTime);
                         #endregion
 
                         
@@ -5418,6 +5419,54 @@ namespace TowerDefensePrototype
 
                 invader.Update(gameTime, CursorPosition);
 
+                if (invader.InvaderType == InvaderType.DropShip &&
+                    invader.Position.X < 0 - invader.DestinationRectangle.Width)
+                {
+                    invader.Active = false;
+                }
+
+                //STOP VERTICAL VELOCITY WHEN HITTING THE GROUND
+                if (invader.CurrentMicroBehaviour != MicroBehaviour.FollowWaypoints)
+                    if (invader.Airborne == false)
+                {
+                    if ((invader.BoundingBox.Max.Y + invader.Velocity.Y) > invader.MaxY)
+                    {
+                        invader.Velocity.Y = 0;
+                        invader.Gravity = 0;
+                        invader.Position = new Vector2(invader.Position.X, invader.MaxY - invader.DestinationRectangle.Height);
+                        invader.InAir = false;
+
+                        switch (invader.InvaderType)
+                        {
+                            default:
+
+                                break;
+
+                            case InvaderType.BatteringRam:
+                                {
+                                    Emitter DustEmitter = new Emitter(ToonDust3,
+                                      new Vector2(invader.Center.X, invader.DestinationRectangle.Bottom + 2),
+                                      new Vector2(50, 130), new Vector2(1f, 4f), new Vector2(1500, 2000), 1f, false, new Vector2(-10, 10),
+                                      new Vector2(0f, 0f), new Vector2(0.03f, 0.04f), Color.White, Color.White, 0.03f, 0.02f, 5, 5, false,
+                                      new Vector2(invader.DestinationRectangle.Bottom + 2, invader.DestinationRectangle.Bottom + 2), true, invader.DestinationRectangle.Bottom + 2 / 1080.0f,
+                                      null, null, null, null, null, null, new Vector2(0.08f, 0.08f), false, false,
+                                      null, null, null, null);
+
+                                    YSortedEmitterList.Add(DustEmitter);
+
+                                    AddDrawable(DustEmitter);
+                                    BatteringRamDrop1.Play();
+                                }
+                                break;
+                        }
+                    }
+
+                    if (invader.BoundingBox.Max.Y < invader.MaxY)
+                    {
+                        invader.Gravity = 0.2f;
+                    }
+                }
+
                 #region Show damage and healing values
                 if (invader.CurrentHP < invader.PreviousHP)
                 {
@@ -5447,6 +5496,15 @@ namespace TowerDefensePrototype
                             }
                             break;
                         #endregion
+
+                        case InvaderType.HealDrone:
+                            {
+                                ShellCasing turretBase = new ShellCasing(invader.Position, new Vector2(invader.Direction.X * 3, 0), HealDroneAnimations[0].Texture);
+                                VerletShells.Add(turretBase);
+                                
+                                AddDrawable(turretBase);
+                            }
+                            break;
                     }
                     
                     #region Create the Coin visual based on the resource value of the invader
@@ -5692,14 +5750,14 @@ namespace TowerDefensePrototype
                                 Vector2 direction = new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
                                 CreateLightProjectile(new MachineGunProjectile(lightRangedInvader.Center, direction, lightRangedInvader.RangedDamage), lightRangedInvader);
 
-                                ShellCasing newShell = new ShellCasing(
-                                    new Vector2(lightRangedInvader.Position.X, lightRangedInvader.Position.Y), 
-                                    new Vector2(Random.Next(1, 3), -Random.Next(2, 5)), 
-                                    SmallShellingCasing, new Vector2(invader.MaxY, invader.MaxY + 12));
-                                newShell.Initialize();
-                                VerletShells.Add(newShell);
+                                //ShellCasing newShell = new ShellCasing(
+                                //    new Vector2(lightRangedInvader.Position.X, lightRangedInvader.Position.Y), 
+                                //    new Vector2(Random.Next(1, 3), -Random.Next(2, 5)), 
+                                //    SmallShellingCasing, new Vector2(invader.MaxY, invader.MaxY + 12));
+                                //newShell.Initialize();
+                                //VerletShells.Add(newShell);
 
-                                AddDrawable(newShell);
+                                //AddDrawable(newShell);
                             }
                             break;
                         #endregion
@@ -7033,6 +7091,7 @@ namespace TowerDefensePrototype
                                     break;
                                 #endregion
 
+                                #region HarpoonCannon
                                 case InvaderType.HarpoonCannon:
                                     {
                                         Emitter BOOMEmitter = SnapPing(collisionEnd);
@@ -7051,7 +7110,40 @@ namespace TowerDefensePrototype
 
                                         AddDrawable(hitEmitter, BOOMEmitter);
                                     }
-                                    break;
+                                    break; 
+                                #endregion
+
+                                #region BatteringRam
+                                case InvaderType.BatteringRam:
+                                    {
+                                        Emitter BOOMEmitter = SnapPing(collisionEnd);
+
+                                        YSortedEmitterList.Add(BOOMEmitter);
+
+                                        Emitter hitEmitter = new Emitter(HitEffectParticle, collisionEnd,
+                                                new Vector2(MathHelper.ToDegrees(-(float)Math.Atan2(CurrentProjectile.Ray.Direction.Y, CurrentProjectile.Ray.Direction.X)) - 180 - 45,
+                                                            MathHelper.ToDegrees(-(float)Math.Atan2(CurrentProjectile.Ray.Direction.Y, CurrentProjectile.Ray.Direction.X)) - 180 + 45), new Vector2(5, 8), new Vector2(250, 500), 1f, false,
+                                                new Vector2(0, 0), new Vector2(0, 0), new Vector2(0.15f, 0.15f),
+                                                Color.White, Color.Yellow, 0f, 0.05f, 50, 10, false, new Vector2(0, 1080), true,
+                                                1.0f, null, null, null, null, null, true, new Vector2(0.2f, 0.2f), false, false,
+                                                null, false, false, false);
+
+                                        Emitter Sparks2 = new Emitter(RoundSparkParticle, collisionEnd,
+                                            new Vector2(MathHelper.ToDegrees(-(float)Math.Atan2(CurrentProjectile.Ray.Direction.Y, CurrentProjectile.Ray.Direction.X)) - 180 - 25,
+                                                        MathHelper.ToDegrees(-(float)Math.Atan2(CurrentProjectile.Ray.Direction.Y, CurrentProjectile.Ray.Direction.X)) - 180 + 25), new Vector2(0.7f, 4.05f),
+                                            new Vector2(1016f, 2484f), 1f, true, new Vector2(-2f, 2f), new Vector2(-1f, 1f),
+                                            new Vector2(0.15f, 0.15f), new Color(254, 197, 1, 78), new Color(255, 128, 0, 9),
+                                            0.102f, 0.09f, 18f, 12, true, new Vector2(hitInvader.DestinationRectangle.Bottom + 4, hitInvader.DestinationRectangle.Bottom + 16), true, hitInvader.DrawDepth + (1f / 1080f), true, true,
+                                            new Vector2(0f, 0f), new Vector2(0f, 0f), 0f, true, new Vector2(0f, 0f),
+                                            false, false, 0f, false, false, false, null);
+
+                                        YSortedEmitterList.Add(hitEmitter);
+                                        YSortedEmitterList.Add(Sparks2);
+
+                                        AddDrawable(hitEmitter, BOOMEmitter, Sparks2);
+                                    }
+                                    break; 
+                                #endregion
                             }
                         }
                         break;
@@ -7585,50 +7677,138 @@ namespace TowerDefensePrototype
                 }
             };
             #endregion
-
+             
             CheckCollision(source);
 
             CurrentProjectile = null;
             projectile = null;
         }
-
-
-        private void BeamProjectileUpdate(GameTime gameTime)
+        
+        public void UpdateBeams()
         {
-            if (CurrentMouseState.LeftButton == ButtonState.Pressed &&
-                PreviousMouseState.LeftButton == ButtonState.Pressed)
+            if (CurrentMouseState.LeftButton == ButtonState.Pressed)
             {
-                CurrentBeam.Ray.Direction = new Vector3(CurrentTurret.FireDirection.X, CurrentTurret.FireDirection.Y, 0);
+                LightProjectile projectile = CurrentBeam;
+                LightRangedInvader sourceInvader = CurrentBeam.Source as LightRangedInvader;
+                Turret sourceTurret = CurrentBeam.Source as Turret;
+                sourceTurret.ChangeFireDirection();
 
-                if (CurrentTurret != null)
+                CurrentProjectile = projectile;
+
+                CurrentBeam.Ray.Direction = new Vector3(sourceTurret.FireDirection.X, sourceTurret.FireDirection.Y, 0);
+                CurrentBeam.Ray.Position = new Vector3(sourceTurret.BarrelEnd.X, sourceTurret.BarrelEnd.Y, 0);
+                CurrentBeam.Position = new Vector2(sourceTurret.BarrelEnd.X, sourceTurret.BarrelEnd.Y);
+
+                #region Change the ground bounding box
+                if (sourceTurret != null)
+                {
                     Ground.BoundingBox.Min = new Vector3(0, MathHelper.Clamp(CursorPosition.Y, Math.Max(690, CurrentTurret.BaseRectangle.Bottom + 16), 960), 0);
-                else
-                    Ground.BoundingBox.Min = new Vector3(0, MathHelper.Clamp(CursorPosition.Y, 690, 960), 0);
+                }
+
+                if (sourceInvader != null)
+                {
+                    Ground.BoundingBox.Min = new Vector3(0, MathHelper.Clamp(sourceInvader.DestinationRectangle.Bottom + 16, 690, 960), 0);
+                }
+                #endregion
+
 
                 #region Determine what effect to create
-                Action<Vector2, Vector2, LightProjectileType> CreateBeamEffect = (Vector2 CollisionStart, Vector2 CollisionEnd, LightProjectileType LightProjectileType) =>
+                Action<Vector2, Vector2, LightProjectileType> CreateEffect = (Vector2 CollisionStart, Vector2 CollisionEnd, LightProjectileType LightProjectileType) =>
                 {
                     switch (LightProjectileType)
                     {
-                        #region Persistent beam
-                        case LightProjectileType.PersistentBeam:
-                            if (!TrailList.All(Trail => Trail.SourceTurret != CurrentTurret) || TrailList.Count < 1)
+                        #region MachineGun
+                        case LightProjectileType.MachineGun:
+                            Trail = new BulletTrail(CollisionStart, CollisionEnd);
+                            Trail.Segment = BulletTrailSegment;
+                            Trail.Cap = BulletTrailCap;
+                            Trail.SetUp();
+                            TrailList.Add(Trail);
+                            break;
+                        #endregion
+
+                        #region Lightning
+                        case LightProjectileType.Lightning:
+                            for (int i = 0; i < 1; i++)
                             {
-                                Trail = new BulletTrail(CollisionStart, CollisionEnd);
-                                Trail.Segment = BulletTrailSegment;
-                                Trail.Cap = BulletTrailCap;
-                                Trail.SetUp();
-                                Trail.SourceTurret = CurrentTurret;
-                                TrailList.Add(Trail);
+                                Vector2 thing = CollisionStart - CollisionEnd;
+
+                                int numSeg = (int)MathHelper.Clamp(GetEven((int)thing.Length() / 10), 4, (float)double.PositiveInfinity);
+                                LightningList.Clear();
+                                ToonLightning newLightning = new ToonLightning(numSeg, 15, CollisionStart, CollisionEnd, new Vector2(80, 100));
+                                newLightning.DrawDepth = (CollisionEnd.Y / 1080f);
+                                ToonLightningList.Add(newLightning);
+                                AddDrawable(newLightning);
+                                //LightningList.Add(newLightning);   
+
+                                //ToonLightning lightning = new ToonLightning(
+                                //Lightning = new LightningBolt(CollisionStart, CollisionEnd, Color.MediumPurple, 0.02f, 150f, false);
+                                //LightningList.Add(Lightning);
                             }
+                            break;
+                        #endregion
+
+                        #region Beam
+                        case LightProjectileType.Laser:
+                            for (int i = 0; i < 5; i++)
+                            {
+                                Lightning = new LightningBolt(CollisionStart, CollisionEnd, RandomColor(Color.Red, Color.Orange), 0.02f, 1);
+                                LightningList.Add(Lightning);
+                            }
+
+                            for (int i = 0; i < 5; i++)
+                            {
+                                Bolt = new LightningBolt(CollisionStart, CollisionEnd, RandomColor(Color.Red, Color.Orange), 0.02f, 200);
+                                LightningList.Add(Bolt);
+                            }
+                            break;
+                        #endregion
+
+                        #region Freeze
+                        case LightProjectileType.Freeze:
+                            Emitter FlashSparks = new Emitter(BallParticle, CollisionStart,
+                            new Vector2(0, 360), new Vector2(1, 3), new Vector2(5, 15), 1f, true, new Vector2(0, 360),
+                            new Vector2(2, 5), new Vector2(0.25f, 0.25f), Color.Blue, Color.DeepSkyBlue, 0.0f, 0.1f, 1, 10,
+                            false, new Vector2(0, 1080), false, null, false, false);
+
+                            Emitter FlashSmoke = new Emitter(SmokeParticle, CollisionStart,
+                            new Vector2(0, 360), new Vector2(1, 2), new Vector2(5, 15), 1f, true, new Vector2(0, 360),
+                            new Vector2(2, 5), new Vector2(1f, 2f), Color.Blue, Color.DeepSkyBlue, 0.0f, 0.1f, 1, 1,
+                            false, new Vector2(0, 1080), false, null, false, false);
+
+                            AlphaEmitterList.Add(FlashSparks);
+                            AlphaEmitterList.Add(FlashSmoke);
+
+                            for (int i = 0; i < 15; i++)
+                            {
+                                Lightning = new LightningBolt(CollisionStart, CollisionEnd, RandomColor(Color.Blue, Color.White), 0.02f, 1, false);
+                                LightningList.Add(Lightning);
+                            }
+
+                            for (int i = 0; i < 5; i++)
+                            {
+                                Bolt = new LightningBolt(CollisionStart, CollisionEnd, RandomColor(Color.Blue, Color.White), 0.02f, 200, true);
+                                LightningList.Add(Bolt);
+                            }
+                            break;
+                        #endregion
+
+                        #region Shotgun
+                        case LightProjectileType.Shotgun:
+                            Trail = new BulletTrail(CollisionStart, CollisionEnd);
+                            Trail.Segment = BulletTrailSegment;
+                            Trail.Cap = BulletTrailCap;
+                            Trail.SetUp();
+                            TrailList.Add(Trail);
                             break;
                         #endregion
                     }
                 };
                 #endregion
 
-                #region Determine what the invader does when hit by a beam
-                Action<Turret, Invader, Vector2> InvaderBeamEffect = (Turret Turret, Invader hitInvader, Vector2 collisionEnd) =>
+
+                #region INVADER hit by a projectile
+                Action<Turret, Invader, Vector2> InvaderEffect = (Turret Turret, Invader hitInvader, Vector2 collisionEnd) =>
                 {
                     #region The turret has a limited range
                     float TurretInvaderDist = Vector2.Distance(Turret.BarrelEnd, collisionEnd);
@@ -7637,14 +7817,23 @@ namespace TowerDefensePrototype
                         #region The invader is in range
                         if (TurretInvaderDist <= Turret.Range)
                         {
-                            //hitInvader.HitByBeam = true;
-                            //hitInvader.BeamDelay = Turret.FireDelay;
+                            switch (Turret.TurretFireType)
+                            {
+                                default:
+                                    hitInvader.TurretDamage(-Turret.Damage);
+                                    break;
 
-                            //if (hitInvader.CurrentBeamDelay >= hitInvader.BeamDelay)
-                            //{
-                            //    hitInvader.TurretDamage(-Turret.Damage);
-                            //    hitInvader.CurrentBeamDelay = 0;
-                            //}                         
+                                //case TurretFireType.Beam:
+                                //    hitInvader.HitByBeam = true;
+                                //    hitInvader.BeamDelay = Turret.FireDelay;
+
+                                //    if (hitInvader.CurrentBeamDelay >= hitInvader.BeamDelay)
+                                //    {
+                                //        hitInvader.TurretDamage(-Turret.Damage);
+                                //        hitInvader.CurrentBeamDelay = 0;
+                                //    }
+                                //    break;
+                            }
                         }
                         #endregion
                         else
@@ -7653,6 +7842,34 @@ namespace TowerDefensePrototype
                             float OverRange = TurretInvaderDist - Turret.Range;
                             float DamageReduction = Math.Min((100 / (2 * Turret.Range)) * OverRange, 50);
                             float FinalDamage = ((100 - DamageReduction) / 100) * Turret.Damage;
+                            switch (Turret.TurretFireType)
+                            {
+                                default:
+                                    hitInvader.TurretDamage((int)-FinalDamage);
+                                    break;
+
+                                //case TurretFireType.Beam:
+                                //    hitInvader.HitByBeam = true;
+                                //    hitInvader.BeamDelay = Turret.FireDelay;
+
+                                //    if (hitInvader.CurrentBeamDelay >= hitInvader.BeamDelay)
+                                //    {
+                                //        hitInvader.TurretDamage((int)-FinalDamage);
+                                //        hitInvader.CurrentBeamDelay = 0;
+                                //    }
+                                //    break;
+                            }
+                        }
+                        #endregion
+                    }
+                    #endregion
+                    else
+                    {
+                        switch (Turret.TurretFireType)
+                        {
+                            default:
+                                hitInvader.TurretDamage(-Turret.Damage);
+                                break;
 
                             //case TurretFireType.Beam:
                             //    hitInvader.HitByBeam = true;
@@ -7660,97 +7877,292 @@ namespace TowerDefensePrototype
 
                             //    if (hitInvader.CurrentBeamDelay >= hitInvader.BeamDelay)
                             //    {
-                            //        hitInvader.TurretDamage((int)-FinalDamage);
+                            //        hitInvader.TurretDamage(-Turret.Damage);
                             //        hitInvader.CurrentBeamDelay = 0;
                             //    }
-                            //    break;                            
+                            //    break;
                         }
-                        #endregion
-                    }
-                    #endregion
-                    else
-                    {
-                        //case TurretFireType.Beam:
-                        hitInvader.HitByBeam = true;
-                        hitInvader.BeamDelay = Turret.FireDelay;
-
-                        if (hitInvader.CurrentBeamDelay >= hitInvader.BeamDelay)
-                        {
-                            hitInvader.TurretDamage(-Turret.Damage);
-                            hitInvader.CurrentBeamDelay = 0;
-                        }
-                        //    break;                        
                     }
 
-                    //switch (Turret.TurretType)
-                    //{
-                    //    //Create the blood/gibb/particle effects here 
-                    //    //for when an invader is hit by a beam
-                    //}
-                };
-                #endregion
-
-                #region Determine what the trap does when hit by a beam
-                Action<Vector2, Turret, Trap> TrapBeamEffect = (Vector2 CollisionEnd, Turret turret, Trap Trap) =>
-                {
-                    switch (turret.TurretType)
+                    switch (Turret.TurretType)
                     {
-                        default:
-                            switch (Trap.TrapType)
+                        #region Freeze
+                        case TurretType.Freeze:
+                            switch (hitInvader.InvaderType)
                             {
-                                case TrapType.Wall:
-                                    Emitter Emitter = new Emitter(SplodgeParticle, CollisionEnd,
-                                        new Vector2(MathHelper.ToDegrees(-(float)Math.Atan2(CurrentProjectile.Ray.Direction.Y, CurrentProjectile.Ray.Direction.X)) - 180 - (float)RandomDouble(0, 45),
-                                        MathHelper.ToDegrees(-(float)Math.Atan2(CurrentProjectile.Ray.Direction.Y, CurrentProjectile.Ray.Direction.X)) - 180 + (float)RandomDouble(0, 45)),
-                                        new Vector2(1, 2), new Vector2(50, 100), 0.5f, true, new Vector2(0, 360),
-                                        new Vector2(1, 3), new Vector2(0.02f, 0.05f), Color.Gray, Color.DarkGray,
-                                        0.1f, 0.1f, 10, 2, true, new Vector2(Trap.DestinationRectangle.Bottom, Trap.DestinationRectangle.Bottom), false, 1, true, false);
+                                #region Default
+                                default:
+                                    hitInvader.Freeze(new FreezeStruct() { MaxDelay = 3000 }, Color.SkyBlue);
 
-                                    YSortedEmitterList.Add(Emitter);
-                                    AddDrawable(Emitter);
-                                    break;
+                                    Emitter InvaderSparks = new Emitter(BallParticle, hitInvader.Center,
+                                    new Vector2(70, 110), new Vector2(1, 3), new Vector2(5, 15), 1f, true, new Vector2(0, 360),
+                                    new Vector2(2, 5), new Vector2(0.25f, 0.25f), Color.Blue, Color.DeepSkyBlue, 0.0f, 0.1f, 1, 10,
+                                    false, new Vector2(0, 1080), false, 0, false, false);
 
-                                case TrapType.Barrel:
-                                    Trap.CurrentHP -= turret.Damage;
+                                    Emitter InvaderSmoke = new Emitter(SmokeParticle, hitInvader.Center,
+                                    new Vector2(70, 110), new Vector2(1, 3), new Vector2(5, 15), 1f, true, new Vector2(0, 360),
+                                    new Vector2(2, 5), new Vector2(1f, 1f), Color.Blue, Color.DeepSkyBlue, 0.0f, 0.1f, 1, 10,
+                                    false, new Vector2(0, 1080), false, 0, false, false);
+
+                                    AlphaEmitterList.Add(InvaderSparks);
+                                    AlphaEmitterList.Add(InvaderSmoke);
                                     break;
+                                #endregion
                             }
                             break;
+                        #endregion
+
+                        #region Lightning
+                        case TurretType.Lightning:
+                            {
+                                switch (hitInvader.InvaderType)
+                                {
+                                    #region Default
+                                    default:
+                                        foreach (Invader invader in InvaderList)
+                                        {
+                                            if (Vector2.Distance(invader.Center, hitInvader.Center) < 150)
+                                            {
+                                                for (int i = 0; i < 2; i++)
+                                                {
+                                                    Bolt = new LightningBolt(collisionEnd, invader.Center,
+                                                        Color.MediumPurple, 0.02f, 150f, true);
+
+                                                    LightningList.Add(Bolt);
+                                                }
+
+                                                if (invader != hitInvader)
+                                                {
+                                                    invader.CurrentHP -= 5;
+                                                }
+                                            }
+                                        }
+                                        break;
+                                    #endregion
+                                }
+                            }
+                            break;
+                        #endregion
+
+                        #region Machine Gun
+                        case TurretType.MachineGun:
+                            {
+                                switch (hitInvader.InvaderType)
+                                {
+                                    #region Soldier
+                                    case InvaderType.Soldier:
+                                        Emitter BloodEmitter = new Emitter(ToonBloodDrip1,
+                                        new Vector2(hitInvader.Center.X, collisionEnd.Y),
+                                        new Vector2(
+                                        MathHelper.ToDegrees(-(float)Math.Atan2(CurrentProjectile.Ray.Direction.Y, CurrentProjectile.Ray.Direction.X)) - (float)RandomDouble(0, 45),
+                                        MathHelper.ToDegrees(-(float)Math.Atan2(CurrentProjectile.Ray.Direction.Y, CurrentProjectile.Ray.Direction.X)) + (float)RandomDouble(0, 45)),
+                                        new Vector2(1, 2), new Vector2(3000, 6000), 1f, false, new Vector2(0, 360),
+                                        new Vector2(1, 3), new Vector2(0.01f, 0.03f), Color.White, Color.White,
+                                        0.1f, 0.1f, 10, 5, true, new Vector2(hitInvader.MaxY - 5, hitInvader.MaxY + 5), true, (hitInvader.DestinationRectangle.Bottom + 1) / 1080f, true, false,
+                                        null, null, null, true, null, null, null, 500);
+
+                                        Emitter BloodEmitter2 = new Emitter(ToonBloodDrip1,
+                                        new Vector2(hitInvader.Center.X, collisionEnd.Y),
+                                        new Vector2(
+                                        MathHelper.ToDegrees(-(float)Math.Atan2(-CurrentProjectile.Ray.Direction.Y, -CurrentProjectile.Ray.Direction.X)) - (float)RandomDouble(0, 45),
+                                        MathHelper.ToDegrees(-(float)Math.Atan2(-CurrentProjectile.Ray.Direction.Y, -CurrentProjectile.Ray.Direction.X)) + (float)RandomDouble(0, 45)),
+                                        new Vector2(1, 3), new Vector2(1800, 3600), 1f, false, new Vector2(0, 360),
+                                        new Vector2(1, 3), new Vector2(0.01f, 0.03f), Color.White, Color.White,
+                                        0.1f, 0.1f, 10, 5, true, new Vector2(hitInvader.MaxY - 5, hitInvader.MaxY + 5), true, (hitInvader.DestinationRectangle.Bottom + 1) / 1080f, true, false,
+                                        null, null, null, true, null, null, null, 500);
+
+                                        YSortedEmitterList.Add(BloodEmitter);
+                                        YSortedEmitterList.Add(BloodEmitter2);
+
+                                        AddDrawable(BloodEmitter, BloodEmitter2);
+                                        break;
+                                    #endregion
+
+                                    case InvaderType.HarpoonCannon:
+                                        {
+                                            Emitter BOOMEmitter = SnapPing(collisionEnd);
+
+                                            YSortedEmitterList.Add(BOOMEmitter);
+
+                                            Emitter hitEmitter = new Emitter(HitEffectParticle, collisionEnd,
+                                                    new Vector2(MathHelper.ToDegrees(-(float)Math.Atan2(CurrentProjectile.Ray.Direction.Y, CurrentProjectile.Ray.Direction.X)) - 180 - 45,
+                                                                MathHelper.ToDegrees(-(float)Math.Atan2(CurrentProjectile.Ray.Direction.Y, CurrentProjectile.Ray.Direction.X)) - 180 + 45), new Vector2(5, 8), new Vector2(250, 500), 1f, false,
+                                                    new Vector2(0, 0), new Vector2(0, 0), new Vector2(0.15f, 0.15f),
+                                                    Color.White, Color.Yellow, 0f, 0.05f, 50, 10, false, new Vector2(0, 1080), true,
+                                                    1.0f, null, null, null, null, null, true, new Vector2(0.2f, 0.2f), false, false,
+                                                    null, false, false, false);
+
+                                            YSortedEmitterList.Add(hitEmitter);
+
+                                            AddDrawable(hitEmitter, BOOMEmitter);
+                                        }
+                                        break;
+                                }
+                            }
+                            break;
+                        #endregion
                     }
                 };
                 #endregion
 
-                #region Determine what the ground does when hit by a beam
-                Action<Vector2, Vector2, LightProjectileType> GroundBeamEffect = (Vector2 CollisionStart, Vector2 CollisionEnd, LightProjectileType LightProjectileType) =>
+                #region TRAP hit by a projectile
+                Action<Vector2, object, Trap> TrapEffect = (Vector2 collisionEnd, object sourceObject, Trap Trap) =>
+                {
+                    Turret turret = sourceObject as Turret;
+                    Invader invader = sourceObject as Invader;
+
+                    #region Source of projectile was a TURRET
+                    if (turret != null)
+                    {
+                        switch (turret.TurretType)
+                        {
+                            default:
+                                switch (Trap.TrapType)
+                                {
+                                    #region Wall
+                                    case TrapType.Wall:
+                                        {
+                                            Emitter BOOMEmitter = SnapPing(collisionEnd);
+                                            YSortedEmitterList.Add(BOOMEmitter);
+
+                                            Emitter DustEmitter = new Emitter(ToonSmoke3,
+                                                   new Vector2(collisionEnd.X, collisionEnd.Y),
+                                                   new Vector2(MathHelper.ToDegrees(-(float)Math.Atan2(CurrentProjectile.Ray.Direction.Y, CurrentProjectile.Ray.Direction.X)) - 180 - (float)RandomDouble(0, 45),
+                                                               MathHelper.ToDegrees(-(float)Math.Atan2(CurrentProjectile.Ray.Direction.Y, CurrentProjectile.Ray.Direction.X)) - 180 + (float)RandomDouble(0, 45)),
+                                                   new Vector2(1.8f, 3f), new Vector2(1120, 1600), 1f, false, new Vector2(0, 360),
+                                                   new Vector2(0.5f, 1f), new Vector2(0.02f, 0.05f), Color.Gray, Color.Gray, 0.03f, 0.02f, 5, 1, true,
+                                                   new Vector2(0, 1080), true, (Trap.DestinationRectangle.Bottom + 8) / 1080f,
+                                                   null, null, null, null, null, null, new Vector2(0.08f, 0.08f), true, true);
+                                            YSortedEmitterList.Add(DustEmitter);
+
+                                            Emitter hitEmitter = new Emitter(HitEffectParticle, collisionEnd,
+                                                        new Vector2(MathHelper.ToDegrees(-(float)Math.Atan2(CurrentProjectile.Ray.Direction.Y, CurrentProjectile.Ray.Direction.X)) - 180 - 45,
+                                                                    MathHelper.ToDegrees(-(float)Math.Atan2(CurrentProjectile.Ray.Direction.Y, CurrentProjectile.Ray.Direction.X)) - 180 + 45),
+                                                        new Vector2(5, 8), new Vector2(250, 500), 1f, false,
+                                                        new Vector2(0, 0), new Vector2(0, 0), new Vector2(0.15f, 0.15f),
+                                                        Color.White, Color.LightYellow, 0f, 0.05f, 50, 5, false, new Vector2(0, 1080), true,
+                                                        Trap.DrawDepth + (4f / 1080f), null, null, null, null, null, true, new Vector2(0.2f, 0.2f), false, false,
+                                                        null, false, false, false);
+                                            YSortedEmitterList.Add(hitEmitter);
+                                            AddDrawable(DustEmitter, hitEmitter, BOOMEmitter);
+                                        }
+                                        break;
+                                    #endregion
+
+                                    #region Barrel
+                                    case TrapType.Barrel:
+                                        Trap.CurrentHP -= turret.Damage;
+                                        break;
+                                    #endregion
+                                }
+                                break;
+                        }
+                    }
+                    #endregion
+
+                    #region Source of projectile was an INVADER
+                    if (invader != null)
+                    {
+                        switch (invader.InvaderType)
+                        {
+                            default:
+                                Trap.CurrentHP -= projectile.Damage;
+
+                                switch (Trap.TrapType)
+                                {
+                                    #region Wall
+                                    case TrapType.Wall:
+                                        {
+                                            Emitter Emitter = new Emitter(SplodgeParticle, collisionEnd,
+                                                new Vector2(MathHelper.ToDegrees(-(float)Math.Atan2(CurrentProjectile.Ray.Direction.Y, CurrentProjectile.Ray.Direction.X)) - 180 - (float)RandomDouble(0, 45),
+                                                            MathHelper.ToDegrees(-(float)Math.Atan2(CurrentProjectile.Ray.Direction.Y, CurrentProjectile.Ray.Direction.X)) - 180 + (float)RandomDouble(0, 45)),
+                                                new Vector2(1, 2), new Vector2(800, 1600), 0.5f, true, new Vector2(0, 360),
+                                                new Vector2(1, 3), new Vector2(0.02f, 0.05f), Color.Gray, Color.DarkGray,
+                                                0.1f, 0.1f, 10, 2, true, new Vector2(Trap.DestinationRectangle.Bottom, Trap.DestinationRectangle.Bottom), false, 1, true, false);
+                                            YSortedEmitterList.Add(Emitter);
+
+                                            //Need to calculate the reflection angle better. 
+                                            for (int i = 0; i < Random.Next(2, 8); i++)
+                                            {
+                                                Emitter SparkEmitter2 = new Emitter(RoundSparkParticle, collisionEnd,
+                                                new Vector2(0, 360), new Vector2(0.5f, 1.5f), new Vector2(480, 960), 100f, true, new Vector2(0, 360),
+                                                new Vector2(1, 3), new Vector2(0.1f, 0.3f), Color.Orange, Color.OrangeRed, 0.05f, 0.5f, 10, 1, true,
+                                                new Vector2(Trap.DestinationRectangle.Bottom, Trap.DestinationRectangle.Bottom),
+                                                false, null, true, true, new Vector2(2, 5),
+                                                new Vector2(MathHelper.ToDegrees(-(float)Math.Atan2(CurrentProjectile.Ray.Direction.Y, CurrentProjectile.Ray.Direction.X)) - 180 - (float)RandomDouble(0, 45),
+                                                            MathHelper.ToDegrees(-(float)Math.Atan2(CurrentProjectile.Ray.Direction.Y, CurrentProjectile.Ray.Direction.X)) - 180 + (float)RandomDouble(0, 45)),
+                                                            0.6f, false, new Vector2(0.5f, 0), null, null, null, true, null);
+
+                                                AdditiveEmitterList.Add(SparkEmitter2);
+                                            }
+
+                                            Emitter DustEmitter = new Emitter(SmokeParticle,
+                                                   new Vector2(collisionEnd.X, collisionEnd.Y),
+                                                   new Vector2(MathHelper.ToDegrees(-(float)Math.Atan2(CurrentProjectile.Ray.Direction.Y, CurrentProjectile.Ray.Direction.X)) - 180 - (float)RandomDouble(0, 45),
+                                                               MathHelper.ToDegrees(-(float)Math.Atan2(CurrentProjectile.Ray.Direction.Y, CurrentProjectile.Ray.Direction.X)) - 180 + (float)RandomDouble(0, 45)),
+                                                   new Vector2(1.8f, 3f), new Vector2(1120, 1600), 0.5f, true, new Vector2(0, 360),
+                                                   new Vector2(0.5f, 1f), new Vector2(0.2f, 0.5f), DirtColor2, DirtColor, 0.03f, 0.02f, 5, 1, false,
+                                                   new Vector2(0, 1080), true, collisionEnd.Y / 1080,
+                                                   null, null, null, null, null, null, new Vector2(0.08f, 0.08f), true, true);
+                                            YSortedEmitterList.Add(DustEmitter);
+
+                                            AddDrawable(DustEmitter, Emitter);
+                                        }
+                                        break;
+                                    #endregion
+
+                                    #region Barrel
+                                    case TrapType.Barrel:
+                                        //Trap.CurrentHP -= invader.D
+                                        break;
+                                    #endregion
+                                }
+                                break;
+                        }
+                    }
+                    #endregion
+                };
+                #endregion
+
+                #region GROUND hit by a projectile
+                Action<Vector2, Vector2, LightProjectileType> GroundEffect = (Vector2 CollisionStart, Vector2 CollisionEnd, LightProjectileType LightProjectileType) =>
                 {
                     switch (LightProjectileType)
                     {
-                        #region Persistent Beam
-                        case LightProjectileType.PersistentBeam:
-                            Emitter DebrisEmitter = new Emitter(SplodgeParticle, new Vector2(CollisionEnd.X, CollisionEnd.Y),
-                                                                new Vector2(60, 120), new Vector2(2, 4), new Vector2(20, 40), 0.85f, true,
-                                                                new Vector2(0, 360), new Vector2(1, 3),
-                                                                new Vector2(0.02f, 0.04f), Color.DarkSlateGray, Color.SaddleBrown, 0.2f,
-                                                                0.1f, 5, 1, true, new Vector2(CollisionEnd.Y + 8, CollisionEnd.Y + 16), null, CollisionEnd.Y / 1080,
-                                                                true, true, null, null, null, null, null, true, true, 50f, false);
-                            YSortedEmitterList.Add(DebrisEmitter);
+                        #region MachineGun
+                        case LightProjectileType.MachineGun:
+                            //Emitter DebrisEmitter = new Emitter(SplodgeParticle, new Vector2(CollisionEnd.X, CollisionEnd.Y),
+                            //                                    new Vector2(60, 120), new Vector2(2, 4), new Vector2(320, 640), 1f, false,
+                            //                                    new Vector2(0, 0), new Vector2(0, 0),
+                            //                                    new Vector2(0.02f, 0.04f), Color.DarkSlateGray, Color.DarkSlateGray, 0.2f,
+                            //                                    0.1f, 5, 1, true, new Vector2(CollisionEnd.Y + 8, CollisionEnd.Y + 16), false, (CollisionEnd.Y-4) / 1080,
+                            //                                    true, true, null, null, null, null, null, true, true, 50f, false);
+                            //YSortedEmitterList.Add(DebrisEmitter);
 
-                            Emitter DebrisEmitter2 = new Emitter(SplodgeParticle, new Vector2(CollisionEnd.X, CollisionEnd.Y),
-                                                                new Vector2(80, 100), new Vector2(3, 5), new Vector2(20, 40), 0.85f, true,
-                                                                new Vector2(0, 360), new Vector2(1, 3),
-                                                                new Vector2(0.01f, 0.03f), Color.DarkSlateGray, Color.SaddleBrown, 0.2f,
-                                                                0.1f, 2, 3, true, new Vector2(CollisionEnd.Y + 8, CollisionEnd.Y + 16), null, CollisionEnd.Y / 1080,
-                                                                true, true, null, null, null, null, null, true, true, 50f, false);
-                            YSortedEmitterList.Add(DebrisEmitter2);
+                            //Emitter DebrisEmitter2 = new Emitter(SplodgeParticle, new Vector2(CollisionEnd.X, CollisionEnd.Y),
+                            //                                    new Vector2(80, 100), new Vector2(3, 5), new Vector2(320, 640), 1f, false,
+                            //                                    new Vector2(0, 0), new Vector2(0, 0),
+                            //                                    new Vector2(0.01f, 0.03f), Color.DarkSlateGray, Color.DarkSlateGray, 0.2f,
+                            //                                    0.1f, 2, 3, true, new Vector2(CollisionEnd.Y + 8, CollisionEnd.Y + 16), false, (CollisionEnd.Y-4) / 1080,
+                            //                                    true, true, null, null, null, null, null, true, true, 50f, false);
+                            //YSortedEmitterList.Add(DebrisEmitter2);
 
-                            Emitter DustEmitter = new Emitter(SmokeParticle,
-                                           new Vector2(CollisionEnd.X, CollisionEnd.Y),
-                                           new Vector2(80, 100), new Vector2(2f, 4f), new Vector2(70, 100), 0.8f, true, new Vector2(0, 360),
-                                           new Vector2(0.5f, 1f), new Vector2(0.2f, 0.5f), DirtColor2, DirtColor, 0.03f, 0.02f, 5, 2, false,
-                                           new Vector2(0, 1080), false, CollisionEnd.Y / 1080,
-                                           null, null, null, null, null, null, new Vector2(0.08f, 0.08f), true, true);
+                            Emitter DustEmitter = new Emitter(ToonDust3,
+                                           new Vector2(CollisionEnd.X, CollisionEnd.Y + 2),
+                                           new Vector2(70, 110), new Vector2(1f, 4f), new Vector2(1120, 1600), 1f, false, new Vector2(-10, 10),
+                                           new Vector2(0f, 0f), new Vector2(0.03f, 0.04f), Color.White, Color.White, 0.03f, 0.02f, 5, 3, false,
+                                           new Vector2(CollisionEnd.Y + 2, CollisionEnd.Y + 2), true, CollisionEnd.Y / 1080.0f,
+                                           null, null, null, null, null, null, new Vector2(0.08f, 0.08f), false, false,
+                                           null, null, null, null);
+
+                            //if ((CollisionEnd.Y / 1080.0f) < 0.5f)
+                            //{
+                            //    int stop = 0;
+                            //}
+
                             YSortedEmitterList.Add(DustEmitter);
 
-                            AddDrawable(DebrisEmitter, DebrisEmitter2, DustEmitter);
+                            AddDrawable(DustEmitter);//, DebrisEmitter, DebrisEmitter2);
 
                             Decal NewDecal = new Decal(ExplosionDecal1, new Vector2(CollisionEnd.X, CollisionEnd.Y),
                                                        (float)RandomDouble(0, 0), 0.2f);
@@ -7758,184 +8170,376 @@ namespace TowerDefensePrototype
                             DecalList.Add(NewDecal);
                             break;
                         #endregion
+
+                        #region Lightning
+                        case LightProjectileType.Lightning:
+                            Emitter hitEmitter = new Emitter(HitEffectParticle, CollisionEnd, new Vector2(0, 180),
+                                                        new Vector2(5, 8), new Vector2(250, 500), 1f, false,
+                                                        new Vector2(0, 0), new Vector2(0, 0), new Vector2(0.15f, 0.15f),
+                                                        Color.White, Color.LightYellow, 0f, 0.05f, 50, 15, false, new Vector2(0, 1080), true,
+                                                        (CollisionEnd.Y + 4) / 1080f, null, null, null, null, null, true, new Vector2(0.2f, 0.2f), false, false,
+                                                        null, false, false, false);
+                            YSortedEmitterList.Add(hitEmitter);
+                            AddDrawable(hitEmitter);
+                            break;
+                        #endregion
+
+                        #region Beam
+                        case LightProjectileType.Laser:
+
+                            break;
+                        #endregion
+
+                        #region Freeze
+                        case LightProjectileType.Freeze:
+
+                            break;
+                        #endregion
+
+                        #region Pulse Gun
+                        case LightProjectileType.Pulse:
+                            Emitter PulseDebrisEmitter = new Emitter(SplodgeParticle, new Vector2(CollisionEnd.X, CollisionEnd.Y),
+                            new Vector2(60, 120), new Vector2(2, 4), new Vector2(20, 40), 2f, true, new Vector2(0, 360), new Vector2(1, 3),
+                            new Vector2(0.01f, 0.03f), Color.DarkSlateGray, Color.SaddleBrown, 0.2f, 0.1f, 2, 2, true, new Vector2(CollisionEnd.Y + 8, CollisionEnd.Y + 8));
+                            YSortedEmitterList.Add(PulseDebrisEmitter);
+
+                            Emitter PulseSmokeEmitter = new Emitter(SmokeParticle, new Vector2(CollisionEnd.X, CollisionEnd.Y - 4),
+                            new Vector2(90, 90), new Vector2(0.5f, 1f), new Vector2(20, 30), 1f, true, new Vector2(0, 0),
+                            new Vector2(-2, 2), new Vector2(0.5f, 1f), DirtColor, DirtColor2, 0f, 0.02f, 10, 1, false, new Vector2(0, 1080), false);
+                            YSortedEmitterList.Add(PulseSmokeEmitter);
+
+                            AddDrawable(PulseSmokeEmitter, PulseDebrisEmitter);
+
+                            Emitter PulseSparkEmitter = new Emitter(BallParticle, new Vector2(CollisionEnd.X, CollisionEnd.Y),
+                            new Vector2(0, 0), new Vector2(0, 0), new Vector2(2, 5), 1f, true, new Vector2(0, 0),
+                            new Vector2(0, 0), new Vector2(0.25f, 0.25f), FireColor, FireColor2, 0f, 0.1f, 500, 1,
+                            false, new Vector2(0, 1080));
+                            AlphaEmitterList.Add(PulseSparkEmitter);
+                            break;
+                        #endregion
                     }
                 };
                 #endregion
 
-                foreach (Turret turret in TurretList)
+                #region SHIELD hit by a projectile
+                Action<Vector2, object, Shield> ShieldEffect = (Vector2 CollisionEnd, object sourceObject, Shield shield) =>
                 {
-                    #region Check what was hit by the projectile - Invader, Trap, PowerUp Delivery, Ground or Sky
-                    if (turret != null && turret.Active == true && turret.Selected == true && CurrentBeam != null)
+                    #region INVADER fired
+                    if (sourceObject.GetType().BaseType == typeof(LightRangedInvader))
                     {
-                        #region Variables used for checking bullet collisions
-                        //List of traps that intersect with the projectile ray AND are solid
-                        List<Trap> HitTraps = TrapList.Where(Trap => Trap.BoundingBox.Intersects(CurrentBeam.Ray) != null && Trap.Solid == true).ToList();
+                        Tower.TakeDamage(projectile.Damage);
 
-                        //List of invaders that intersect with the projectile ray
-                        List<Invader> HitInvaders = InvaderList.FindAll(Invader => Invader.BoundingBox.Intersects(CurrentBeam.Ray) != null);
-
-                        Vector2 CollisionEnd;
-
-                        Trap HitTrap;
-                        Invader HitInvader;
-
-                        float? MinDistInv, MinDistTrap, MinDistDelivery;
-                        float MinDist;
-                        #endregion
-
-                        MinDistTrap = HitTraps.Min(Trap => Trap.BoundingBox.Intersects(CurrentBeam.Ray));
-                        HitTrap = HitTraps.Find(Trap => Trap.BoundingBox.Intersects(CurrentBeam.Ray) == MinDistTrap);
-
-                        MinDistInv = HitInvaders.Min(Invader => Invader.BoundingBox.Intersects(CurrentBeam.Ray));
-                        HitInvader = HitInvaders.Find(Invader => Invader.BoundingBox.Intersects(CurrentBeam.Ray) == MinDistInv);
-
-                        #region Add the minimum distances to the list of distances
-                        //Consider changing this to an enumerated. Might be more efficient
-                        List<float> DistanceList = new List<float>();
-
-                        if (MinDistInv != null)
-                            DistanceList.Add((float)MinDistInv);
-
-                        if (MinDistTrap != null)
-                            DistanceList.Add((float)MinDistTrap);
-
-                        if (PowerupDelivery != null)
+                        for (int i = 0; i < Random.Next(2, 8); i++)
                         {
-                            if (CurrentBeam.Ray.Intersects(PowerupDelivery.BoundingBox) != null)
+                            Emitter SparkEmitter2 = new Emitter(RoundSparkParticle, CollisionEnd,
+                            new Vector2(0, 360), new Vector2(0.5f, 1.5f), new Vector2(480, 960), 100f, true, new Vector2(0, 360),
+                            new Vector2(1, 3), new Vector2(0.1f, 0.3f), Color.AliceBlue, Color.Aquamarine, 0.05f, 0.5f, 10, 1, true,
+                            new Vector2(Tower.DestinationRectangle.Bottom, Tower.DestinationRectangle.Bottom),
+                            false, null, true, true, new Vector2(2, 5),
+                            new Vector2(MathHelper.ToDegrees(-(float)Math.Atan2(CurrentProjectile.Ray.Direction.Y, CurrentProjectile.Ray.Direction.X)) - 180 - (float)RandomDouble(0, 45),
+                                        MathHelper.ToDegrees(-(float)Math.Atan2(CurrentProjectile.Ray.Direction.Y, CurrentProjectile.Ray.Direction.X)) - 180 + (float)RandomDouble(0, 45)),
+                                        0.6f, false, new Vector2(0.5f, 0), null, null, null, true, null);
+
+                            AdditiveEmitterList.Add(SparkEmitter2);
+                        }
+                    }
+                    #endregion
+
+                    #region TURRET fired
+                    if (sourceObject.GetType().BaseType == typeof(Turret))
+                    {
+                        if ((shield.Tether as Invader) != null)
+                        {
+                            Invader shieldSource = (shield.Tether as Invader);
+
+                            switch (shieldSource.InvaderType)
                             {
-                                MinDistDelivery = CurrentBeam.Ray.Intersects(PowerupDelivery.BoundingBox);
-                                DistanceList.Add((float)MinDistDelivery);
+                                #region ShieldGenerator
+                                case InvaderType.ShieldGenerator:
+                                    {
+                                        shield.TakeDamage(sourceTurret.Damage);
+                                    }
+                                    break;
+                                #endregion
+                            }
+
+                            for (int i = 0; i < Random.Next(2, 8); i++)
+                            {
+                                Emitter SparkEmitter2 = new Emitter(RoundSparkParticle, CollisionEnd,
+                                new Vector2(0, 360), new Vector2(0.5f, 1.5f), new Vector2(480, 960), 100f, true, new Vector2(0, 360),
+                                new Vector2(1, 3), new Vector2(0.1f, 0.3f), Color.AliceBlue, Color.Aquamarine, 0.05f, 0.5f, 10, 1, true,
+                                new Vector2(shield.DestinationRectangle.Bottom, shield.DestinationRectangle.Bottom + 4),
+                                false, null, true, true, new Vector2(2, 5),
+                                new Vector2(MathHelper.ToDegrees(-(float)Math.Atan2(CurrentProjectile.Ray.Direction.Y, CurrentProjectile.Ray.Direction.X)) - 180 - (float)RandomDouble(0, 45),
+                                            MathHelper.ToDegrees(-(float)Math.Atan2(CurrentProjectile.Ray.Direction.Y, CurrentProjectile.Ray.Direction.X)) - 180 + (float)RandomDouble(0, 45)),
+                                            0.6f, false, new Vector2(0.5f, 0), null, null, null, true, null);
+
+                                AdditiveEmitterList.Add(SparkEmitter2);
                             }
                         }
-                        #endregion
+                    }
+                    #endregion
+                };
+                #endregion
 
-                        //If there was a collision with an object
-                        if (DistanceList.Count > 0)
+                #region TURRET hit by a projectile
+                Action<Vector2, object, Trap> TurretEffect = (Vector2 CollisionEnd, object sourceObject, Trap Trap) =>
+                {
+
+                };
+                #endregion
+
+                #region TOWER hit by a projectile
+                Action<Vector2, object> TowerEffect = (Vector2 CollisionEnd, object sourceObject) =>
+                {
+                    Tower.TakeDamage(projectile.Damage);
+                };
+                #endregion
+
+
+
+                #region Check what the projectile actually hit - trap, invader, ground, nothing etc.
+                Action<object> CheckCollision = (object projectileSource) =>
+                {
+                    CurrentProjectile = projectile;
+                    Vector2 sourcePosition = projectile.Position;
+                    Vector2 CollisionEnd;
+
+                    List<Drawable> Intersections = DrawableList.FindAll(Drawable => Drawable.BoundingBox.Intersects(CurrentProjectile.Ray) != null);
+                    List<Drawable> SphereIntersections = DrawableList.FindAll(Drawable => Drawable.BoundingSphere.Intersects(CurrentProjectile.Ray) != null);
+
+                    SphereIntersections.RemoveAll(Drawable => Drawable.GetType() == typeof(Shield) && (Drawable as Shield).ShieldOn == false);
+                    Intersections.RemoveAll(Drawable => Drawable.GetType().BaseType == typeof(Trap) && (Drawable as Trap).Solid == false);
+
+                    #region Make sure TURRETS can't shoot themselves or other TURRETS
+                    if (sourceTurret != null)
+                    {
+                        Intersections.RemoveAll(Drawable => Drawable.GetType().BaseType == typeof(Turret));
+                    }
+                    #endregion
+
+                    #region Make sure INVADERS can't shoot themselves or other INVADERS
+                    if (sourceInvader != null)
+                    {
+                        Intersections.RemoveAll(Drawable =>
+                                                Drawable.GetType().BaseType == typeof(LightRangedInvader) ||
+                                                Drawable.GetType().BaseType == typeof(HeavyRangedInvader) ||
+                                                Drawable.GetType().BaseType == typeof(Invader));
+
+                        SphereIntersections.RemoveAll(Drawable =>
+                                                Drawable.GetType().BaseType == typeof(LightRangedInvader) ||
+                                                Drawable.GetType().BaseType == typeof(HeavyRangedInvader) ||
+                                                Drawable.GetType().BaseType == typeof(Invader));
+                    }
+                    #endregion
+
+                    #region What object was hit first
+                    Drawable HitBox = Intersections.OrderBy(Collision => Collision.BoundingBox.Intersects(CurrentProjectile.Ray)).FirstOrDefault();
+                    Drawable HitSphere = SphereIntersections.OrderBy(Collision => Collision.BoundingSphere.Intersects(CurrentProjectile.Ray)).FirstOrDefault();
+                    float? boxDist = 5000;
+                    float? sphereDist = 5000;
+
+                    if (HitSphere != null)
+                        sphereDist = HitSphere.BoundingSphere.Intersects(CurrentProjectile.Ray);
+
+                    if (HitBox != null)
+                        boxDist = HitBox.BoundingBox.Intersects(CurrentProjectile.Ray);
+
+                    Drawable hitObject;
+
+                    if (sphereDist < boxDist)
+                    {
+                        hitObject = HitSphere;
+                    }
+                    else
+                    {
+                        hitObject = HitBox;
+                    }
+                    #endregion
+
+                    Invader HitInvader = hitObject as Invader;
+                    Turret HitTurret = hitObject as Turret;
+                    Trap HitTrap = hitObject as Trap;
+                    PowerupDelivery HitPowerupDelivery = hitObject as PowerupDelivery;
+                    Shield HitShield = hitObject as Shield;
+
+                    if (hitObject == null)
+                    {
+                        float? DistToGround = CurrentProjectile.Ray.Intersects(Ground.BoundingBox);
+
+                        #region TURRET fired the projectile
+                        if (sourceTurret != null)
                         {
-                            //Find the closest collision (Trap, invader of powerup deliver)
-                            MinDist = DistanceList.Min();
-
-                            #region Trap was closest
-                            if (MinDist == MinDistTrap)
+                            if (DistToGround != null)
                             {
-                                CollisionEnd = new Vector2(turret.BarrelEnd.X + (CurrentBeam.Ray.Direction.X * (float)MinDist),
-                                                           turret.BarrelEnd.Y + (CurrentBeam.Ray.Direction.Y * (float)MinDist));
+                                CollisionEnd = new Vector2(sourcePosition.X + (CurrentProjectile.Ray.Direction.X * (float)DistToGround),
+                                                           Random.Next(0, 0) + sourcePosition.Y + (CurrentProjectile.Ray.Direction.Y * (float)DistToGround));
 
-                                CreateBeamEffect(turret.BarrelEnd, CollisionEnd, CurrentBeam.LightProjectileType);
-                                TrapBeamEffect(CollisionEnd, turret, HitTrap);
-                            }
-                            #endregion
-
-                            #region Invader was closest
-                            if (MinDist == MinDistInv)
-                            {
-                                CollisionEnd = new Vector2(turret.BarrelEnd.X + (CurrentBeam.Ray.Direction.X * (float)MinDist),
-                                                           turret.BarrelEnd.Y + (CurrentBeam.Ray.Direction.Y * (float)MinDist));
-
-                                CreateBeamEffect(turret.BarrelEnd, CollisionEnd, CurrentBeam.LightProjectileType);
-                                InvaderBeamEffect(turret, HitInvader, CollisionEnd);
-
-                                foreach (Invader invader in InvaderList.Where(Invader => Invader.HitByBeam == true))
-                                {
-                                    if (invader != HitInvader)
-                                    {
-                                        //invader.CurrentBeamDelay = 0;
-                                        invader.HitByBeam = false;
-                                    }
-                                }
+                                CreateEffect(sourcePosition, CollisionEnd, CurrentProjectile.LightProjectileType);
+                                GroundEffect(sourcePosition, CollisionEnd, CurrentProjectile.LightProjectileType);
                             }
                             else
                             {
-                                foreach (Invader invader in InvaderList.Where(Invader => Invader.HitByBeam == true))
-                                {
-                                    if (invader != HitInvader)
-                                    {
-                                        //invader.CurrentBeamDelay = 0;
-                                        invader.HitByBeam = false;
-                                    }
-                                }
-                            }
-                            #endregion
+                                CollisionEnd = new Vector2(sourcePosition.X + (CurrentProjectile.Ray.Direction.X * 1920),
+                                                           sourcePosition.Y + (CurrentProjectile.Ray.Direction.Y * 1920));
 
-                            #region Powerup Delivery was closest
-                            if (PowerupDelivery != null && MinDist == CurrentBeam.Ray.Intersects(PowerupDelivery.BoundingBox))
-                            {
-                                CollisionEnd = new Vector2(turret.BarrelRectangle.X + (CurrentBeam.Ray.Direction.X * (float)MinDist),
-                                                           turret.BarrelRectangle.Y + (CurrentBeam.Ray.Direction.Y * (float)MinDist));
-
-                                CreateBeamEffect(turret.BarrelEnd, CollisionEnd, CurrentBeam.LightProjectileType);
-                                //TrapEffect(CollisionEnd, turret, HitTrap);
-                                PowerupDelivery.CurrentHP -= turret.Damage;
-                            }
-                            #endregion
-                        }
-
-                        #region Ground
-                        //If a projectile doesn't hit a trap or an invader but does hit the ground
-                        if (HitTraps.All(Trap => Trap.BoundingBox.Intersects(CurrentBeam.Ray) == null) &&
-                            InvaderList.All(Invader => Invader.BoundingBox.Intersects(CurrentBeam.Ray) == null) &&
-                            CurrentBeam.Ray.Intersects(Ground.BoundingBox) != null &&
-                            CurrentBeam.Active == true)
-                        {
-                            if (PowerupDelivery == null || CurrentBeam.Ray.Intersects(PowerupDelivery.BoundingBox) == null)
-                            {
-                                var DistToGround = CurrentBeam.Ray.Intersects(Ground.BoundingBox);
-
-                                if (DistToGround != null)
-                                {
-                                    CollisionEnd = new Vector2(turret.BarrelCenter.X + (CurrentBeam.Ray.Direction.X * (float)DistToGround),
-                                                               turret.BarrelCenter.Y + (CurrentBeam.Ray.Direction.Y * (float)DistToGround));
-
-                                    CollisionEnd.Y += (float)RandomDouble(-turret.AngleOffset * 5, turret.AngleOffset * 5);
-
-                                    CreateBeamEffect(turret.BarrelEnd, CollisionEnd, CurrentBeam.LightProjectileType);
-                                    GroundBeamEffect(turret.BarrelEnd, CollisionEnd, CurrentBeam.LightProjectileType);
-                                }
-                            }
-
-                            foreach (Invader invader in InvaderList.Where(Invader => Invader.HitByBeam == true))
-                            {
-                                if (invader != HitInvader)
-                                {
-                                    //invader.CurrentBeamDelay = 0;
-                                    invader.HitByBeam = false;
-                                }
+                                CreateEffect(sourcePosition, CollisionEnd, CurrentProjectile.LightProjectileType);
                             }
                         }
                         #endregion
 
-                        #region Sky
-
-                        //If a projectile doesn't hit a trap, an invader or the ground
-                        if (HitTraps.All(Trap => Trap.BoundingBox.Intersects(CurrentBeam.Ray) == null) &&
-                            InvaderList.All(Invader => Invader.BoundingBox.Intersects(CurrentBeam.Ray) == null) &&
-                            CurrentBeam.Ray.Intersects(Ground.BoundingBox) == null &&
-                            CurrentBeam.Active == true)
+                        #region INVADER fired the projectile
+                        if (sourceInvader != null)
                         {
-                            if (PowerupDelivery == null || CurrentBeam.Ray.Intersects(PowerupDelivery.BoundingBox) == null)
-                            {
-                                CollisionEnd = new Vector2(turret.BarrelRectangle.X + (CurrentBeam.Ray.Direction.X * 1920),
-                                                           turret.BarrelRectangle.Y + (CurrentBeam.Ray.Direction.Y * 1920));
+                            float? DistToTower = CurrentProjectile.Ray.Intersects(Tower.BoundingBox);
+                            float? DistToShield = CurrentProjectile.Ray.Intersects(Tower.Shield.BoundingSphere);
 
-                                CreateBeamEffect(turret.BarrelEnd, CollisionEnd, CurrentBeam.LightProjectileType);
-                            }
+                            List<float> DistanceList = new List<float>();
 
-                            foreach (Invader invader in InvaderList.Where(Invader => Invader.HitByBeam == true))
+                            if (DistToTower != null)
+                                DistanceList.Add((float)DistToTower);
+
+                            if (DistToShield != null && Tower.Shield.ShieldOn == true)
+                                DistanceList.Add((float)DistToShield);
+
+                            if (DistToGround != null)
+                                DistanceList.Add((float)DistToGround);
+
+                            DistanceList.Add(1920);
+
+                            CollisionEnd = new Vector2(sourcePosition.X + (CurrentProjectile.Ray.Direction.X * (float)DistanceList.Min()),
+                                                       sourcePosition.Y + (CurrentProjectile.Ray.Direction.Y * (float)DistanceList.Min()));
+
+
+                            #region GROUND was hit
+                            if (DistanceList.Min() == DistToGround)
                             {
-                                if (invader != HitInvader)
-                                {
-                                    //invader.CurrentBeamDelay = 0;
-                                    invader.HitByBeam = false;
-                                }
+                                CreateEffect(sourcePosition, CollisionEnd, CurrentProjectile.LightProjectileType);
+                                GroundEffect(sourcePosition, CollisionEnd, CurrentProjectile.LightProjectileType);
+                                sourceInvader.HitObject = Ground;
                             }
+                            #endregion
+
+                            #region SHIELD was hit
+                            if (DistanceList.Min() == DistToShield)
+                            {
+                                CreateEffect(sourcePosition, CollisionEnd, CurrentProjectile.LightProjectileType);
+                                ShieldEffect(CollisionEnd, CurrentBeam.Source, Tower.Shield);
+                                sourceInvader.HitObject = Tower.Shield;
+                            }
+                            #endregion
+
+                            #region TOWER was hit
+                            if (DistanceList.Min() == DistToTower)
+                            {
+                                CreateEffect(sourcePosition, CollisionEnd, CurrentProjectile.LightProjectileType);
+                                sourceInvader.HitObject = Tower;
+                                Tower.TakeDamage(CurrentProjectile.Damage);
+                            }
+                            #endregion
+
+                            #region NOTHING was hit
+                            if (DistanceList.Count == 0)
+                            {
+                                CollisionEnd = new Vector2(sourcePosition.X + (CurrentProjectile.Ray.Direction.X * 1920),
+                                                           sourcePosition.Y + (CurrentProjectile.Ray.Direction.Y * 1920));
+
+                                CreateEffect(sourcePosition, CollisionEnd, CurrentProjectile.LightProjectileType);
+
+                                sourceInvader.HitObject = null;
+                            }
+                            #endregion
                         }
                         #endregion
                     }
-                    #endregion
-                }
+                    else
+                    {
+                        #region Distance to collision intersection
+                        float minDist;
+
+                        if (hitObject.BoundingBox != new BoundingBox())
+                        {
+                            minDist = (float)hitObject.BoundingBox.Intersects(CurrentProjectile.Ray);
+                        }
+                        else
+                        {
+                            minDist = (float)hitObject.BoundingSphere.Intersects(CurrentProjectile.Ray);
+                        }
+                        #endregion
+
+                        CollisionEnd = new Vector2(sourcePosition.X + (CurrentProjectile.Ray.Direction.X * (float)minDist),
+                                                   sourcePosition.Y + (CurrentProjectile.Ray.Direction.Y * (float)minDist));
+
+                        #region TRAP was hit
+                        if (HitTrap != null)
+                        {
+                            CreateEffect(sourcePosition, CollisionEnd, CurrentProjectile.LightProjectileType);
+                            TrapEffect(CollisionEnd, projectileSource, HitTrap);
+
+                            if (sourceInvader != null)
+                                sourceInvader.HitObject = HitTrap;
+                        }
+                        #endregion
+
+                        #region INVADER was hit
+                        if (HitInvader != null)
+                        {
+                            CreateEffect(sourcePosition, CollisionEnd, CurrentProjectile.LightProjectileType);
+                            InvaderEffect(sourceTurret, HitInvader, CollisionEnd);
+                        }
+                        #endregion
+
+                        #region TURRET was hit
+                        if (HitTurret != null)
+                        {
+                            if (Tower.Shield.ShieldOn == true)
+                            {
+                                float? DistToShield = CurrentProjectile.Ray.Intersects(Tower.Shield.BoundingSphere);
+                                CollisionEnd = new Vector2(sourcePosition.X + (CurrentProjectile.Ray.Direction.X * (float)DistToShield),
+                                                           sourcePosition.Y + (CurrentProjectile.Ray.Direction.Y * (float)DistToShield));
+
+                                ShieldEffect(CollisionEnd, CurrentBeam.Source, Tower.Shield);
+                                sourceInvader.HitObject = HitTurret;
+                            }
+                            else
+                            {
+                                //TurretEffect(CollisionEnd, 
+                            }
+
+                            CreateEffect(sourcePosition, CollisionEnd, CurrentProjectile.LightProjectileType);
+                        }
+                        #endregion
+
+                        #region POWERUP DELIVERY was hit
+                        if (HitPowerupDelivery != null)
+                        {
+                            CreateEffect(sourcePosition, CollisionEnd, CurrentProjectile.LightProjectileType);
+
+                            sourceInvader.HitObject = HitPowerupDelivery;
+                        }
+                        #endregion
+
+                        #region INVADER SHIELD was hit
+                        if (HitShield != null)
+                        {
+                            CreateEffect(sourcePosition, CollisionEnd, CurrentProjectile.LightProjectileType);
+                            ShieldEffect(CollisionEnd, CurrentBeam.Source, HitShield);
+                        }
+                        #endregion
+                    }
+                };
+                #endregion
+
+                CheckCollision(CurrentBeam.Source);
+            }
+            else
+            {
+                CurrentBeam = null;
             }
         }
 
+
+        
         private void AddCluster(object source, int number, Vector2 position, Vector2 angleRange, HeavyProjectileType type, Vector2 yRange, float speed)
         {
             HeavyProjectile heavyProjectile;
@@ -8686,9 +9290,13 @@ namespace TowerDefensePrototype
                 #region Persistent beam turret
                 case TurretType.PersistentBeam:
                     {
+                        //LightProjectile beam = new MachineGunProjectile(new Vector2(turret.BarrelEnd.X,
+                        //                                                           turret.BarrelEnd.Y), Direction), turret
                         if (CurrentBeam == null)
                         {
-                            CurrentBeam = new PersistentBeamProjectile(CurrentTurret.BarrelEnd, CurrentTurret.FireDirection);
+                            LightProjectile beam = new MachineGunProjectile(new Vector2(turret.BarrelEnd.X, turret.BarrelEnd.Y), Direction, turret.Damage);
+                            beam.Source = turret;
+                            CurrentBeam = beam;
                         }
                     }
                     break;
@@ -9492,9 +10100,14 @@ namespace TowerDefensePrototype
         }
         #endregion
 
-        public void AddInvader(Invader nextInvader, GameTime gameTime)
+        public void AddInvader(Invader nextInvader, GameTime gameTime, Vector2? posOverride = null)
         {
             float Multiplier = (float)RandomDouble(0.75f, 1.5f);
+
+            if (posOverride != null)
+            {
+                nextInvader.Position = posOverride.Value;
+            }
 
             switch (nextInvader.InvaderType)
             {
@@ -9564,7 +10177,7 @@ namespace TowerDefensePrototype
                                 (nextInvader as DropShip).DoorTexture = DropShipDoorTexture;
                                 (nextInvader as DropShip).VapourTexture = ToonSmoke3;
                                 (nextInvader as DropShip).RopeTexture = RopeTexture1;
-
+                                (nextInvader as DropShip).Game1 = this;
                             }
                             break;
                         #endregion
@@ -9625,8 +10238,8 @@ namespace TowerDefensePrototype
 
             nextInvader.MaxY = Random.Next((int)nextInvader.YRange.X, (int)nextInvader.YRange.Y);
 
-            if (nextInvader.Airborne == false)
-                nextInvader.Position.Y = nextInvader.MaxY - nextInvader.CurrentAnimation.FrameSize.Y;
+            //if (nextInvader.Airborne == false)
+            //    nextInvader.Position.Y = nextInvader.MaxY - nextInvader.CurrentAnimation.FrameSize.Y;
 
             nextInvader.Velocity = Vector2.Zero;
             nextInvader.Initialize();

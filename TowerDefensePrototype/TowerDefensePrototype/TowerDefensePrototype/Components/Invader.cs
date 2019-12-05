@@ -730,22 +730,23 @@ namespace TowerDefensePrototype
                 }
                 #endregion
 
-                if (CurrentMicroBehaviour != MicroBehaviour.FollowWaypoints)
-                if (Airborne == false)
-                {
-                    if ((BoundingBox.Max.Y + Velocity.Y) > MaxY)
-                    {
-                        Velocity.Y = 0;
-                        Gravity = 0;
-                        Position = new Vector2(Position.X, MaxY - DestinationRectangle.Height);
-                        InAir = false;
-                    }
+                //STOP VERTICAL VELOCITY WHEN HITTING THE GROUND
+                //if (CurrentMicroBehaviour != MicroBehaviour.FollowWaypoints)
+                //if (Airborne == false)
+                //{
+                //    if ((BoundingBox.Max.Y + Velocity.Y) > MaxY)
+                //    {
+                //        Velocity.Y = 0;
+                //        Gravity = 0;
+                //        Position = new Vector2(Position.X, MaxY - DestinationRectangle.Height);
+                //        InAir = false;
+                //    }
 
-                    if (BoundingBox.Max.Y < MaxY)
-                    {
-                        Gravity = 0.2f;
-                    }
-                }
+                //    if (BoundingBox.Max.Y < MaxY)
+                //    {
+                //        Gravity = 0.2f;
+                //    }
+                //}
                 
                 if (HitByBeam == true)
                 {

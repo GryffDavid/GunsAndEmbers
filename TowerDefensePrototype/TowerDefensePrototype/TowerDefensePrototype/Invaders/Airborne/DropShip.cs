@@ -10,6 +10,7 @@ namespace TowerDefensePrototype
 {
     class DropShip : Invader
     {
+        public Game1 Game1;
         enum SpecificBehaviour { Approach, OpenDoors, DropOff, Retreat};
         SpecificBehaviour DropShipBehaviour;
 
@@ -21,6 +22,10 @@ namespace TowerDefensePrototype
         Vector2 HoverRange = new Vector2(590, 610);
         List<Rope> RopeList = new List<Rope>();
 
+        List<Invader> DropInvaders = new List<Invader>();
+        float CurrentDropTime, MaxDropTime;
+        int CurrentInvader = 0;
+
         //Drop ship needs to arrive from top right corner, but not move in normally like the other invaders
         //instead it should pull in at an angle with its decent like a helicopter getting ready to land,
         //with the front pitching down and then take off again after invaders have been dropped off
@@ -28,7 +33,7 @@ namespace TowerDefensePrototype
 
         //The drop ship getting close to the ground could disrupt smoke and fire effects too. Blowing away from the 
         //center of the dropship
-        public DropShip(Vector2 position, Vector2? yRange = null)
+        public DropShip(Vector2 position, Vector2? yRange = null, params object[] invaders)
             : base(position, yRange)
         {
             MaxHP = 400;
@@ -38,7 +43,15 @@ namespace TowerDefensePrototype
             Airborne = true;
             InAir = true;
             InvaderAnimationState = AnimationState_Invader.Walk;
-            DropShipBehaviour = SpecificBehaviour.Approach;            
+            DropShipBehaviour = SpecificBehaviour.Approach;
+
+            CurrentDropTime = 700;
+            MaxDropTime = 800;
+
+            foreach (object thing in invaders)
+            {
+                DropInvaders.Add(thing as Invader);
+            }
         }
 
         public override void Initialize()
@@ -98,31 +111,57 @@ namespace TowerDefensePrototype
                 #region DropOff
                 case SpecificBehaviour.DropOff:
                     {
-                        if (RopeList.Count == 0)
+                        if (CurrentDropTime <= MaxDropTime)
                         {
-                            for (int i = 0; i < 6; i++)
-                            {
-                                float maxY = Random.Next(760, 900);
-                                Rope rope = new Rope(RightDoor.Position - (i * new Vector2(36, 0)), null, maxY);
-                                rope.DrawDepth = maxY / 1080.0f;
-                                rope.StickTexture = RopeTexture;
-                                RopeList.Add(rope);
-                                rope.Sticks.RemoveAt(rope.Sticks.Count - 1);
-                                Game1.AddDrawable(rope);
-                                //DrawableList.Add(rope);
-                            }
+                            CurrentDropTime += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
                         }
+                        
+
+                        if (CurrentDropTime >= MaxDropTime && CurrentInvader < DropInvaders.Count)
+                        {
+                            Game1.AddInvader(DropInvaders[CurrentInvader], gameTime, new Vector2(LeftDoor.DestinationRectangle.Right, LeftDoor.DestinationRectangle.Top));
+                            CurrentInvader++;
+                            CurrentDropTime = 0;
+                        }
+
+                        //if (DropInvaders.Count > 0)
+                        //{
+                        //    foreach (Invader invader in DropInvaders)
+                        //    {
+                        //        Game1.AddInvader(invader, gameTime, new Vector2(LeftDoor.DestinationRectangle.Right, LeftDoor.DestinationRectangle.Top));
+                        //    }
+
+                        //    DropInvaders.Clear();
+                        //}
+
+
+
+                        //if (RopeList.Count == 0)
+                        //{
+                        //    for (int i = 0; i < 6; i++)
+                        //    {
+                        //        float maxY = Random.Next(760, 900);
+                        //        Rope rope = new Rope(RightDoor.Position - (i * new Vector2(36, 0)), null, maxY);
+                        //        rope.DrawDepth = maxY / 1080.0f;
+                        //        rope.StickTexture = RopeTexture;
+                        //        RopeList.Add(rope);
+                        //        rope.Sticks.RemoveAt(rope.Sticks.Count - 1);
+                        //        Game1.AddDrawable(rope);
+                        //        //DrawableList.Add(rope);
+                        //    }
+                        //}
 
                         if (LeftDoor.CurrentState == DropShipDoor.DoorState.Closing &&
                             RightDoor.CurrentState == DropShipDoor.DoorState.Closing)
                         {
                             DropShipBehaviour = SpecificBehaviour.Retreat;
 
-                            foreach (Rope rope in RopeList)
-                            {
-                                rope.Sticks.RemoveAt(0);
-                            }
+                            //foreach (Rope rope in RopeList)
+                            //{
+                            //    rope.Sticks.RemoveAt(0);
+                            //}
                         }
+                        
                     }
                     break;
                 #endregion
@@ -147,10 +186,10 @@ namespace TowerDefensePrototype
                 #endregion
             }
 
-            foreach (Rope rope in RopeList)
-            {
-                rope.Update(gameTime);
-            }
+            //foreach (Rope rope in RopeList)
+            //{
+            //    rope.Update(gameTime);
+            //}
 
             base.Update(gameTime, cursorPosition);
         }

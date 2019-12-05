@@ -44,6 +44,20 @@ namespace TowerDefensePrototype
                         Next();
                     }
                     break;
+
+                case 3:
+                    {
+                        int index = Game1.CurrentProfile.Buttons.IndexOf(null);
+                        Game1.DynamicAddWeapon(index, null, TrapType.Wall);
+                        Next();                        
+                    }
+                    break;
+
+                case 4:
+                    {
+                        
+                    }
+                    break;
             }
 
             PreviousMouseState = CurrentMouseState;
