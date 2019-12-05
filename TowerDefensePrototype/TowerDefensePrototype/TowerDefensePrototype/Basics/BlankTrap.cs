@@ -13,6 +13,9 @@ namespace TowerDefensePrototype
         public BlankTrap()
         {
             AssetName = "Blank";
+            HP = 100000;
+            TrapType = TrapType.Blank;
+            DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, 1, 1);
         }
     }
 }

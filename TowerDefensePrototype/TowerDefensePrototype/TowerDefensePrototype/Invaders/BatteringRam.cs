@@ -15,12 +15,20 @@ namespace TowerDefensePrototype
             Active = true;
             Position = position;
             AssetName = "BatteringRam";
-            HP = 1000;
+            CurrentHealth = 1000;
         }
 
-        public override void Behaviour()
+        public override void TrapDamage(TrapType trapType)
         {
-            Position.X -= 0.5f;
+            if (VulnerableToTrap == true)
+            {
+                switch (trapType)
+                {
+                    case TrapType.Fire:
+
+                        break;
+                }
+            }
         }
     }
 }

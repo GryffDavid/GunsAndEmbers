@@ -11,12 +11,13 @@ namespace TowerDefensePrototype
     public abstract class Trap
     {
         Texture2D Texture;
-        Rectangle DestinationRectangle;
+        public Rectangle DestinationRectangle;
         public String AssetName;
         public int HP;
         public Vector2 Scale, FrameSize, Position;
         public bool Active, Solid, CanTrigger;
         public BoundingBox BoundingBox;
+        public TrapType TrapType;
 
         public virtual void LoadContent(ContentManager contentManager)
         {

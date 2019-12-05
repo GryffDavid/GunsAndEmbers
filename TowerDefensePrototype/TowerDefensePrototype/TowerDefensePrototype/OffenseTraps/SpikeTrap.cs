@@ -15,6 +15,7 @@ namespace TowerDefensePrototype
             Position = position;
             Solid = false;
             AssetName = "SpikeTrap";
+            TrapType = TrapType.Spikes;
             HP = 50;
         }
     }

@@ -14,15 +14,29 @@ namespace TowerDefensePrototype
         {
             Active = true;
             CanMove = true;
+            MoveVector = new Vector2(-1, 0);
             Position = position;
             AssetName = "Soldier";
-            HP = 100;
+            CurrentHealth = 50;
+            MaxHealth = 50;
+            MoveDelay = 15;
         }
 
-        public override void Behaviour()
+        public override void TrapDamage(TrapType trapType)
         {
-            if (CanMove == true)
-            Position.X -= 1;
+            if (VulnerableToTrap == true)
+            {
+                switch (trapType)
+                {
+                    case TrapType.Fire:
+                        CurrentHealth -= 10;
+                        break;
+
+                    case TrapType.Spikes:
+                        CurrentHealth -= 25;
+                        break;
+                }
+            }
         }
     }
 }

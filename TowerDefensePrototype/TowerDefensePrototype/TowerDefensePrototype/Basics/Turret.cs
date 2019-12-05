@@ -17,16 +17,18 @@ namespace TowerDefensePrototype
         public Rectangle BaseRectangle, BarrelRectangle;
         MouseState CurrentMouseState, PreviousMouseState;
         public float Rotation;
-        public bool Selected, Active, JustClicked;//, CanShoot;
+        public bool Selected, Active, JustClicked, CanShoot;
         public Color Color;
         public MuzzleFlash Flash;
         public double FireDelay;
+        public int Damage;
 
-        double ElapsedTime = 0;
+        public double ElapsedTime = 0;
 
         public void LoadContent(ContentManager contentManager)
         {
-            //CanShoot = true;
+            CanShoot = false;
+
             Color = Color.White;
             BaseRectangle = new Rectangle();
             BarrelRectangle = new Rectangle();
@@ -39,27 +41,23 @@ namespace TowerDefensePrototype
 
             Flash = new MuzzleFlash(contentManager, BarrelRectangle.Width);
 
-            Line = contentManager.Load<Texture2D>("Line");
+            Line = contentManager.Load<Texture2D>("Projectile");
         }
 
         public void Update(GameTime gameTime)
         {
-            CurrentMouseState = Mouse.GetState();
-            
-            ElapsedTime += gameTime.ElapsedGameTime.TotalSeconds;
+            ElapsedTime += gameTime.ElapsedGameTime.TotalMilliseconds;
 
-            if (ElapsedTime >= FireDelay)
+            if (ElapsedTime > FireDelay)
             {
-                //CanShoot = true;
-                ElapsedTime = 0;
-                return;
+                CanShoot = true;
+            }
+            else
+            {
+                CanShoot = false;
             }
 
-            //if (CanShoot == true && CurrentMouseState.LeftButton == ButtonState.Pressed && Selected == true)
-            //{
-            //    Flash.Flash(0, 3);
-            //    ElapsedTime = 0;
-            //}                       
+            CurrentMouseState = Mouse.GetState();
 
             if (Active == true)
             {
@@ -106,13 +104,14 @@ namespace TowerDefensePrototype
         {
             if (Active == true)
             {
-                //Flash.Draw(spriteBatch, gameTime, new Vector2(BarrelRectangle.X, BarrelRectangle.Y), Rotation);
+                //if (Selected == true)
+                //    spriteBatch.Draw(Line, new Rectangle(BarrelRectangle.X, BarrelRectangle.Y, Line.Width * 8, Line.Height), null, Color.White, Rotation, new Vector2 (0,+(Line.Height/2)), SpriteEffects.None, 1f);
 
                 BaseRectangle = new Rectangle((int)Position.X - 12, (int)Position.Y - 16-6, TurretBase.Width, TurretBase.Height);
                 BarrelRectangle = new Rectangle((int)Position.X+8, (int)Position.Y-6, TurretBarrel.Width, TurretBarrel.Height);
 
                 spriteBatch.Draw(TurretBarrel, BarrelRectangle, null, Color, Rotation, new Vector2(24, TurretBarrel.Height / 2), SpriteEffects.None, 1f);
-                spriteBatch.Draw(Line, new Rectangle(BarrelRectangle.X, BarrelRectangle.Y, Line.Width, Line.Height), null, Color, Rotation, Vector2.Zero, SpriteEffects.None, 1f);
+               
                 spriteBatch.Draw(TurretBase, BaseRectangle, Color);               
             }
         }

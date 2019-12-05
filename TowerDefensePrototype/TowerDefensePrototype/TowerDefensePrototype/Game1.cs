@@ -34,6 +34,7 @@ namespace TowerDefensePrototype
         protected override void Initialize()
         {
             //this.IsFixedTimeStep = false;
+            //this.TargetElapsedTime = TimeSpan.FromMilliseconds(5);
             UserInterface = new UserInterface(6, 3, 500, Content);
             base.Initialize();
         }
@@ -52,6 +53,12 @@ namespace TowerDefensePrototype
         protected override void Update(GameTime gameTime)
         {
             UserInterface.Update(gameTime);
+
+            if (gameTime.IsRunningSlowly == true)
+            {
+                bool slow = true;
+            }
+
             base.Update(gameTime);
         }
 

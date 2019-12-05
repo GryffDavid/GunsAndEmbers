@@ -16,6 +16,7 @@ namespace TowerDefensePrototype
             Solid = true;
             HP = 50;
             AssetName = "Wall";
+            TrapType = TrapType.Wall;
         }
         
         //public override TrapType TrapType

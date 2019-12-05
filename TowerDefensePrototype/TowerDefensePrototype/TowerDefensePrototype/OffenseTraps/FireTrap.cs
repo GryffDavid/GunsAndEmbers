@@ -18,6 +18,7 @@ namespace TowerDefensePrototype
             Solid = false;
             AssetName = "FireTrap";
             HP = 50;
+            TrapType = TrapType.Fire;
         }
     }
 }
