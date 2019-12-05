@@ -19,9 +19,9 @@ namespace TowerDefensePrototype
             throw new NotImplementedException();
         }
 
-        public override void Update(GameTime gameTime)
+        public override void Update(GameTime gameTime, Vector2 cursorPosition)
         {            
-            base.Update(gameTime);
+            base.Update(gameTime, cursorPosition);
             
             if (CurrentBurst >= MaxBurst &&
                 CurrentBurstDelay < MaxBurstDelay)

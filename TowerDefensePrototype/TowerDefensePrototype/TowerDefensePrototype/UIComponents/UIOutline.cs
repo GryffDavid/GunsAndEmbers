@@ -8,20 +8,22 @@ using Microsoft.Xna.Framework.Content;
 
 namespace TowerDefensePrototype
 {
-    class UIOutline
+    public class UIOutline
     {
-        Vector2 Position, Size;
+        public Vector2 Position, Size;
         public Texture2D OutlineTexture;
-        bool Visible;
+        public bool Visible;
         public Trap Trap;
         public Turret Turret;
+        public Invader Invader;
 
-        public UIOutline(Vector2 position, Vector2 size, Trap trap = null, Turret turret = null)
+        public UIOutline(Vector2 position, Vector2 size, Trap trap = null, Turret turret = null, Invader invader = null)
         {
             Position = position;
             Size = size;
             Trap = trap;
             Turret = turret;
+            Invader = invader;
             Visible = true;
         }
 
@@ -52,9 +54,10 @@ namespace TowerDefensePrototype
 
                 //Bottom left
                 spriteBatch.Draw(OutlineTexture,
-                    new Rectangle((int)Position.X, (int)(Position.Y + Size.Y - OutlineTexture.Height),
+                    new Rectangle(
+                        (int)Position.X, (int)(Position.Y + Size.Y - OutlineTexture.Height),
                         OutlineTexture.Width, OutlineTexture.Height),
-                    null, Color.White, 0, Vector2.Zero, SpriteEffects.FlipVertically, 0);
+                        null, Color.White, 0, Vector2.Zero, SpriteEffects.FlipVertically, 0);
             }
         }
     }

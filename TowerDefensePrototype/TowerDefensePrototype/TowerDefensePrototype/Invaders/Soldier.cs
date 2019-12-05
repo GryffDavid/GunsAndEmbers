@@ -43,7 +43,7 @@ namespace TowerDefensePrototype
             //CurrentFrame = Random.Next(0, CurrentAnimation.TotalFrames);
         }
 
-        public override void Update(GameTime gameTime)
+        public override void Update(GameTime gameTime, Vector2 cursorPosition)
         {
             if (Velocity.X != 0)
             {
@@ -74,7 +74,7 @@ namespace TowerDefensePrototype
                 CurrentFrame = Random.Next(1, CurrentAnimation.TotalFrames);
             }
 
-            base.Update(gameTime);
+            base.Update(gameTime, cursorPosition);
         }
 
         public override void TrapDamage(Trap trap)

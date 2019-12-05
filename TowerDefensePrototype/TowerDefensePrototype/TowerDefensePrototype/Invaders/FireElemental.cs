@@ -37,11 +37,6 @@ namespace TowerDefensePrototype
             Color FireColor2 = new Color(Color.DarkOrange.R, Color.DarkOrange.G, Color.DarkOrange.B, 90);
         }
 
-        public override void Update(GameTime gameTime)
-        {
-            base.Update(gameTime);
-        }
-
         public override void TrapDamage(Trap trap)
         {
             if (VulnerableToTrap == true)

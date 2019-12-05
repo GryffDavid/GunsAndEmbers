@@ -41,6 +41,8 @@ namespace TowerDefensePrototype
         public InvaderState? PreviousInvaderState = null;
         public InvaderBehaviour Behaviour;// = InvaderBehaviour.AttackTower;
         public DamageType DamageVulnerability;
+        public UIOutline InvaderOutline;
+        public UIBar HealthBar;
 
         private InvaderBehaviour RandomOrientation(params InvaderBehaviour[] Orientations)
         {
@@ -65,9 +67,11 @@ namespace TowerDefensePrototype
             ResourceValue = Random.Next((int)ResourceMinMax.X, (int)ResourceMinMax.Y);
             //FrameSize = new Vector2(CurrentTexture.Width / CurrentAnimation.TotalFrames, CurrentTexture.Height);
             Velocity = Direction * Speed;
+            //InvaderOutline = new UIOutline(Position, new Vector2(DestinationRectangle.Width, DestinationRectangle.Height), null, null, this);
+            HealthBar = new UIBar(Position, new Vector2(32, 4), new Color(255,0, 0, 255));
         }
 
-        public virtual void Update(GameTime gameTime)
+        public virtual void Update(GameTime gameTime, Vector2 cursorPosition)
         {
             if (Active == true)
             {
@@ -76,7 +80,7 @@ namespace TowerDefensePrototype
 
                 CurrentAttackDelay += gameTime.ElapsedGameTime.TotalMilliseconds;                
                 VulnerableToTurret = true;
-
+                
                 //This disables the invader if it has 0 health left
                 if (CurrentHP <= 0)
                     Active = false;
@@ -206,6 +210,20 @@ namespace TowerDefensePrototype
                     FireEmitter = null;
                 }
 
+                if (InvaderOutline != null)
+                {
+                    InvaderOutline.Position = Position;
+
+                    if (DestinationRectangle.Contains(new Point((int)cursorPosition.X, (int)cursorPosition.Y)))
+                    {
+                        InvaderOutline.Visible = true;
+                    }
+                    else
+                    {
+                        InvaderOutline.Visible = false;
+                    }
+                }
+
                 SourceRectangle = new Rectangle((int)(CurrentFrame * FrameSize.X), 0, (int)FrameSize.X, (int)FrameSize.Y);
                 DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, 
                                                      (int)(FrameSize.X * Scale.X), (int)(FrameSize.Y * Scale.Y));
@@ -220,12 +238,24 @@ namespace TowerDefensePrototype
             }
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public void Draw(SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, BasicEffect basicEffect)
         {
             if (Active == true)
             {
-                spriteBatch.Draw(Shadow, new Rectangle(DestinationRectangle.Left, (int)MaxY - (DestinationRectangle.Height / 8), DestinationRectangle.Width, DestinationRectangle.Height / 4), Color.Lerp(Color.White, Color.Transparent, 0.75f));
+                InvaderOutline.Draw(spriteBatch);
 
+                if (InvaderOutline.Visible == true)
+                {
+                    HealthBar.Update(MaxHP, CurrentHP, null, new Vector2(Position.X + (DestinationRectangle.Width - HealthBar.MaxSize.X) / 2, Position.Y - 8));
+
+                    foreach (EffectPass pass in basicEffect.CurrentTechnique.Passes)
+                    {
+                        pass.Apply();
+                        HealthBar.Draw(graphicsDevice);
+                    }
+                }
+
+                spriteBatch.Draw(Shadow, new Rectangle(DestinationRectangle.Left, (int)MaxY - (DestinationRectangle.Height / 8), DestinationRectangle.Width, DestinationRectangle.Height / 4), Color.Lerp(Color.White, Color.Transparent, 0.75f));
                 
                 BoundingBox = new BoundingBox(new Vector3(Position.X, Position.Y, 0),
                               new Vector3(Position.X + (FrameSize.X * Scale.X), Position.Y + (FrameSize.Y * Scale.Y), 0));

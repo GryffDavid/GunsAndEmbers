@@ -33,11 +33,6 @@ namespace TowerDefensePrototype
             };
         }
 
-        public override void Update(GameTime gameTime)
-        {
-            base.Update(gameTime);
-        }
-
         public override void TrapDamage(Trap trap)
         {
             if (VulnerableToTrap == true)

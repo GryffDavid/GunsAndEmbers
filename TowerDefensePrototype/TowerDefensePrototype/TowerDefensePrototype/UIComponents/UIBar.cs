@@ -11,7 +11,7 @@ namespace TowerDefensePrototype
     {
         public List<Quad> QuadList = new List<Quad>();
         public float MaxValue, CurrentValue, PreviousValue;
-        public Vector2 MaxSize, Position;
+        public Vector2 MaxSize, Position, PreviousPosition;
         Color HalfWhite = Color.Lerp(Color.Black, Color.Transparent, 0.5f);
         Color BarColor;
         float PercentValue;
@@ -74,9 +74,14 @@ namespace TowerDefensePrototype
             QuadList.Add(ValueQuad);
         }
 
-        public void Update(float maxValue, float currentValue, GameTime gameTime)
+        public void Update(float maxValue, float currentValue, GameTime gameTime, Vector2? position = null)
         {
             CurrentValue = currentValue;
+
+            if (position != null)
+            {
+                Position = position.Value;
+            }
 
             //if (PreviousValue < CurrentValue &&
             //    ((100 / maxValue * currentValue) / 100) == 1)
@@ -84,7 +89,8 @@ namespace TowerDefensePrototype
             //    Pulsing = true;
             //}
 
-            if (PreviousValue != CurrentValue)
+            if (PreviousValue != CurrentValue ||
+                Position != PreviousPosition)
             {
                 PercentValue = (100 / maxValue * currentValue) / 100;
 
@@ -170,7 +176,8 @@ namespace TowerDefensePrototype
                     Color.Lerp(Color.Transparent, BarColor,  1f - CurrentScale.X/12)
                 });
             }
-            
+
+            PreviousPosition = Position;
             PreviousValue = CurrentValue;
         }
 

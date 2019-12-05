@@ -135,7 +135,6 @@
     <Compile Include="Basics\HeavyRangedInvader.cs" />
     <Compile Include="Basics\Quad.cs" />
     <Compile Include="Basics\SpecialAbility.cs" />
-    <Compile Include="UIComponents\UIInvaderInfo.cs" />
     <Compile Include="UIComponents\UIPowerup.cs" />
     <Compile Include="UIComponents\UIPowerupInfo.cs" />
     <Compile Include="UIComponents\UISlopedBar.cs" />
