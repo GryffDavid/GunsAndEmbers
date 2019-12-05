@@ -15,8 +15,8 @@ namespace TowerDefensePrototype
             Active = true;
             MoveVector = new Vector2(-1, 0);
             Position = position;
-            CurrentHP = 100;
-            MaxHP = 100;
+            CurrentHP = 250;
+            MaxHP = 225;
             MoveDelay = 5;
             ResourceMinMax = new Vector2(1, 5);
             CurrentAttackDelay = 0;
@@ -43,7 +43,7 @@ namespace TowerDefensePrototype
                 {
                     case TrapType.Fire:
                         CurrentHP -= 10;
-                        DamageOverTime(3000, 2, 300, Color.Red);
+                        DamageOverTime(3000, 10, 300, Color.Red);
                         break;
 
                     case TrapType.Spikes:

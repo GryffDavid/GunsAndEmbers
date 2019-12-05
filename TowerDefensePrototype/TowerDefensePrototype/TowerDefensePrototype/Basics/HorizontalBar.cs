@@ -11,13 +11,13 @@ namespace TowerDefensePrototype
 {
     public class HorizontalBar
     {
-        public int MaxHP, CurrentHP;
+        public float MaxHP, CurrentHP;
         public Vector2 Position, MaxSize;
         Texture2D Box;
         Color FrontColor, BackColor;        
         int CurrentLength;      
         
-        public HorizontalBar(ContentManager contentManager, Vector2 maxSize, int maxHP, int currentHP, Color? frontColor = null, Color? backColor = null)
+        public HorizontalBar(ContentManager contentManager, Vector2 maxSize, float maxHP, float currentHP, Color? frontColor = null, Color? backColor = null)
         {
             MaxHP = maxHP;
             CurrentHP = currentHP;
@@ -38,7 +38,7 @@ namespace TowerDefensePrototype
             
         }
 
-        public void Update(Vector2 position, int currentHP)
+        public void Update(Vector2 position, float currentHP)
         {
             Position = position;
 
@@ -49,7 +49,7 @@ namespace TowerDefensePrototype
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(Box, new Rectangle((int)Position.X, (int)Position.Y, (int)MaxSize.X, (int)MaxSize.Y), null, BackColor, 0, Vector2.Zero, SpriteEffects.None, 1);
+            spriteBatch.Draw(Box, new Rectangle((int)Position.X, (int)Position.Y, (int)MaxSize.X, (int)MaxSize.Y), null, BackColor, 0, Vector2.Zero, SpriteEffects.None, 0.99f);
             spriteBatch.Draw(Box, new Rectangle((int)Position.X, (int)Position.Y, CurrentLength, (int)MaxSize.Y), null, FrontColor, 0, Vector2.Zero, SpriteEffects.None, 1);           
         }
     }

@@ -18,7 +18,8 @@ namespace TowerDefensePrototype
         public Color Color, BurnColor, FrozenColor, AcidColor;
         public BoundingBox BoundingBox;
         public Double CurrentMoveDelay, MoveDelay, CurrentDelay, AttackDelay, CurrentAttackDelay;
-        public int MaxHP, CurrentHP, ResourceValue, MaxY;
+        public float MaxHP, CurrentHP;
+        public int ResourceValue, MaxY;
         public Vector2 YRange;
         public abstract void TrapDamage(TrapType trapType);
         public int AttackPower;

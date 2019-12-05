@@ -44,7 +44,7 @@ namespace TowerDefensePrototype
             spriteBatch.Draw(Texture, DestinationRectangle, null, Color.White, MathHelper.ToRadians(0), Vector2.Zero, SpriteEffects.None, 1);
         }
 
-        public void TakeDamage(int value)
+        public void TakeDamage(float value)
         {
             if (CurrentShield > 0)
             {

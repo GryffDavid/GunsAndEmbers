@@ -13,7 +13,7 @@ namespace TowerDefensePrototype
         Texture2D Texture, Texture2;
         public Rectangle DestinationRectangle, SourceRectangle;
         public String AssetName;
-        public int MaxHP, CurrentHP;
+        public float MaxHP, CurrentHP;
         public Vector2 Scale, FrameSize, Position;
         public bool Active, Solid, CanTrigger, Animated;
         public BoundingBox BoundingBox;

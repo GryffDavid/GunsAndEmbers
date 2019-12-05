@@ -41,7 +41,7 @@ namespace TowerDefensePrototype
                 Vector2 BarrelPivot = new Vector2(18, TurretBarrel.Height / 2);
                 Vector2 BasePivot = new Vector2(TurretBase.Width / 2-8, TurretBase.Height / 2 - 10);
 
-                spriteBatch.Draw(TurretBarrel, BarrelRectangle, null, Color, Rotation, BarrelPivot, SpriteEffects.None, 1f);
+                spriteBatch.Draw(TurretBarrel, BarrelRectangle, SourceRectangle, Color, Rotation, BarrelPivot, SpriteEffects.None, 0.99f);
 
                 spriteBatch.Draw(TurretBase, BaseRectangle, null, Color, 0, BasePivot, SpriteEffects.None, 1f);
             }

@@ -18,8 +18,8 @@ namespace TowerDefensePrototype
             BaseAsset = "Turrets/CannonTurretBase";
             Position = position;
             Selected = true;
-            FireDelay = 5000;
-            Damage = 100;
+            FireDelay = 500;
+            Damage = 200;
             Animated = false;
             Looping = false;
 
@@ -37,11 +37,10 @@ namespace TowerDefensePrototype
                 BaseRectangle = new Rectangle((int)Position.X + 20, (int)Position.Y + 8, TurretBase.Width, TurretBase.Height);
                 BarrelRectangle = new Rectangle((int)Position.X + 20, (int)Position.Y + 8, TurretBarrel.Width / CurrentAnimation.TotalFrames, TurretBarrel.Height);
 
-                BarrelPivot = new Vector2(20, TurretBarrel.Height / 2);
+                BarrelPivot = new Vector2(45, TurretBarrel.Height / 2);
                 BasePivot = new Vector2(TurretBase.Width / 2, TurretBase.Height / 2 - 10);
 
-                //Rectangle SourceRectangle = new Rectangle(0 + (int)FrameSize.X * CurrentFrame, 0, (int)FrameSize.X, (int)FrameSize.Y);
-                spriteBatch.Draw(TurretBarrel, BarrelRectangle, SourceRectangle, Color, Rotation, BarrelPivot, SpriteEffects.None, 1f);
+                spriteBatch.Draw(TurretBarrel, BarrelRectangle, SourceRectangle, Color, Rotation, BarrelPivot, SpriteEffects.None, 0.99f);
 
                 spriteBatch.Draw(TurretBase, BaseRectangle, null, Color, 0, BasePivot, SpriteEffects.None, 1f);
             }

@@ -10,7 +10,7 @@ namespace TowerDefensePrototype
 {
     public class  CannonBall : HeavyProjectile
     {
-        public CannonBall(Vector2 position, float speed, float angle, float gravity, Vector2? yrange = null)
+        public CannonBall(Vector2 position, float speed, float angle, float gravity, float damage, float range, Vector2? yrange = null)
         {
             Active = true;
             Rotate = true;
@@ -21,6 +21,7 @@ namespace TowerDefensePrototype
             Speed = speed;
             Gravity = gravity;
             Position = position;
+            Range = range;
 
             if (yrange == null)
             {
@@ -41,7 +42,7 @@ namespace TowerDefensePrototype
                 new Vector2(1.5f, 2), new Vector2(15, 20), 0.2f, true, new Vector2(-20, 20), new Vector2(-4, 4), 
                 new Vector2(0.25f, 0.5f), ParticleColor1, ParticleColor2, 0.0f, -1, 1, 1, false, new Vector2(0, 720));
 
-            Damage = 50;
+            Damage = damage;
 
             //YRange = new Vector2(520, 630);
         }
