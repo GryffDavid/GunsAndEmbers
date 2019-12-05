@@ -32,7 +32,7 @@ namespace TowerDefensePrototype
         HealDrone,
         JumpMan,
         RifleMan,
-        ShieldProjector
+        ShieldGenerator
     };
     #endregion
 
@@ -277,6 +277,7 @@ namespace TowerDefensePrototype
                                 //0 means the invader will never, ever back up even after taking a heavy hit
 
         public AnimatedSprite ThinkingAnimation;
+        public Shield Shield;
         #endregion
 
         public virtual void Initialize()
@@ -293,7 +294,7 @@ namespace TowerDefensePrototype
 
             Velocity = Direction * Speed;
 
-            HealthBar = new UIBar(new Vector2(100, 100), new Vector2(32, 4), Color.DarkRed, false);
+            HealthBar = new UIBar(new Vector2(100, 100), new Vector2(32, 4), Color.DarkRed, false, true);
 
             Color = Color.White;
 
@@ -467,18 +468,16 @@ namespace TowerDefensePrototype
                 #endregion
 
                 if (CurrentAnimation != null)
-                {
-                    HealthBar.Update(MaxHP, CurrentHP, gameTime, new Vector2(Position.X + (CurrentAnimation.FrameSize.X - HealthBar.MaxSize.X) / 2 + Velocity.X, Position.Y - 8));
-
+                {                    
                     DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y,
                                                          (int)(CurrentAnimation.FrameSize.X),
                                                          (int)(CurrentAnimation.FrameSize.Y));
 
-                    BoundingBox = new BoundingBox(new Vector3(Position.X + 6, Position.Y + 6, 0),
-                                                  new Vector3(Position.X + ((CurrentAnimation.FrameSize.X - 6)),
-                                                              Position.Y + 6 + ((CurrentAnimation.FrameSize.Y - 6)), 0));
+                    BoundingBox = new BoundingBox(new Vector3(DestinationRectangle.Left + 6, DestinationRectangle.Top + 6, 0),
+                                                  new Vector3(DestinationRectangle.Right - 6, DestinationRectangle.Bottom, 0));
 
-                    Center = new Vector2(DestinationRectangle.Center.X, DestinationRectangle.Center.Y + 6);
+                    Center = new Vector2(DestinationRectangle.Center.X, DestinationRectangle.Center.Y);
+                    HealthBar.Update(MaxHP, CurrentHP, gameTime, new Vector2(Center.X + Velocity.X, Position.Y - 8));
                 }
 
                 //#region Melee Attack
@@ -561,7 +560,7 @@ namespace TowerDefensePrototype
                 #region Handle the invader selection outline
                 if (InvaderOutline != null)
                 {
-                    InvaderOutline.Position = Position;
+                    InvaderOutline.Position = Position;// +new Vector2(0, 4);
 
                     if (DestinationRectangle.Contains(new Point((int)cursorPosition.X, (int)cursorPosition.Y)))
                     {
@@ -821,12 +820,33 @@ namespace TowerDefensePrototype
             }
         }
 
+        public void ExplosionDamage(int change)
+        {
+            if (Active == true)
+            {
+                if (VulnerableToTurret == true)
+                {
+                    if (Shield == null || Shield.ShieldOn == false)
+                    {
+                        CurrentHP -= change;
+                    }
+                    else
+                        if (Shield.ShieldOn == true)
+                        {
+                            Shield.TakeDamage(change);
+                        }
+                }
+            }
+        }
+
         public void TurretDamage(int change)
         {
             if (Active == true)
             {
                 if (VulnerableToTurret == true)
+                {
                     CurrentHP += change;
+                }
             }
         }
 

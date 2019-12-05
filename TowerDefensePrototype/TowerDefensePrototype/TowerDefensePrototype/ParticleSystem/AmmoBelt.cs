@@ -82,6 +82,18 @@ namespace TowerDefensePrototype
                     Length = ShellTexture.Width / 2
                 });
             }
+
+            //Update(new GameTime());
+
+            foreach (Node node in Nodes)
+            {
+                node.CurrentPosition = anchorPosition;
+            }
+
+            foreach (Node node in Nodes2)
+            {
+                node.CurrentPosition = anchorPosition;
+            }
         }
 
         public override void Update(GameTime gameTime)

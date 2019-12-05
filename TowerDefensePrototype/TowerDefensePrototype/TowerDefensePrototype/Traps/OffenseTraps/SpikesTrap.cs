@@ -8,20 +8,21 @@ using Microsoft.Xna.Framework.Content;
 
 namespace TowerDefensePrototype
 {
-    class LandMine : Trap
+    class SpikesTrap : Trap
     {
-        public LandMine(Vector2 position)
+        public SpikesTrap(Vector2 position)
         {
             Position = position;
             Solid = false;
+            TrapType = TrapType.Spikes;
             MaxHP = 50;
-            TrapType = TrapType.LandMine;
-            DetonateDelay = 10000;
-            DetonateLimit = 1;
-            OnGround = true;
-            NormalDamage = 100;
-            ResourceCost = 25;
-            PowerCost = 1;
+            DetonateDelay = 2000;
+            DetonateLimit = 8;
+        }
+
+        public override void Update(GameTime gameTime)
+        {
+            base.Update(gameTime);
         }
     }
 }

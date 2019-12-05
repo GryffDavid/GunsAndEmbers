@@ -93,15 +93,16 @@ namespace TowerDefensePrototype
 
             CurrentHP = MaxHP;
 
-            TimingBar = new UIBar(new Vector2(Position.X, Position.Y + CurrentAnimation.FrameSize.Y + 4), new Vector2(32, 4), Color.DodgerBlue);
-            HealthBar = new UIBar(new Vector2(Position.X, Position.Y + CurrentAnimation.FrameSize.Y + 8), new Vector2(32, 4), Color.White); 
-
             CurrentDetonateLimit = DetonateLimit;
             CurrentDetonateDelay = DetonateDelay;
             //CurrentAffectedTime = AffectedTime;
 
             DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, (int)CurrentAnimation.FrameSize.X, (int)CurrentAnimation.FrameSize.Y);
             Center = new Vector2(DestinationRectangle.Center.X, DestinationRectangle.Y);
+
+            TimingBar = new UIBar(new Vector2(Center.X, Position.Y + CurrentAnimation.FrameSize.Y + 4), new Vector2(32, 4), Color.DodgerBlue, false, true);
+            HealthBar = new UIBar(new Vector2(Center.X, Position.Y + CurrentAnimation.FrameSize.Y + 8), new Vector2(32, 4), Color.White, false, true); 
+
 
             DrawDepth = (float)(DestinationRectangle.Bottom / 1080f);
             //Affected = false;

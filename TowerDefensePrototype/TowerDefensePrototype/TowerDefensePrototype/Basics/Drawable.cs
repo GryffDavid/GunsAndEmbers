@@ -13,6 +13,7 @@ namespace TowerDefensePrototype
         public float DrawDepth;
         public BlendState BlendState = BlendState.AlphaBlend;
         public BoundingBox BoundingBox;
+        public BoundingSphere BoundingSphere;
         public bool Emissive = false;
         public bool Normal = false;
         public bool Shadows = false;

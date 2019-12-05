@@ -57,8 +57,7 @@ namespace TowerDefensePrototype
                 _LeftButtonState = value;
                 PrevInOut = InOut;
 
-                if (DestinationRectangle.Contains(new Point((int)CursorPosition.X, (int)CursorPosition.Y)) == true &&
-                    GetColor() != Color.Transparent)
+                if (DestinationRectangle.Contains(new Point((int)CursorPosition.X, (int)CursorPosition.Y)) == true)// && GetColor() != Color.Transparent)
                 {
                     //In                    
                     InOut = true;
@@ -87,8 +86,7 @@ namespace TowerDefensePrototype
                 _RightButtonState = value;
                 PrevInOut = InOut;
 
-                if (DestinationRectangle.Contains(new Point((int)CursorPosition.X, (int)CursorPosition.Y)) == true &&
-                    GetColor() != Color.Transparent)
+                if (DestinationRectangle.Contains(new Point((int)CursorPosition.X, (int)CursorPosition.Y)) == true) // && GetColor() != Color.Transparent)
                 {
                     //In                    
                     InOut = true;
@@ -206,7 +204,7 @@ namespace TowerDefensePrototype
 
             DestinationRectangle = new Rectangle((int)CurrentPosition.X, (int)CurrentPosition.Y, (int)(FrameSize.X * Scale.X), (int)(FrameSize.Y * Scale.Y));
 
-            if (DestinationRectangle.Contains(new Point((int)CursorPosition.X, (int)CursorPosition.Y)) && GetColor() != Color.Transparent)
+            if (DestinationRectangle.Contains(new Point((int)CursorPosition.X, (int)CursorPosition.Y)))// && GetColor() != Color.Transparent)
             {
                 if (CurrentMouseState.LeftButton == ButtonState.Pressed && InOut == true)
                 {
@@ -341,29 +339,29 @@ namespace TowerDefensePrototype
             }
         }
 
-        public Color GetColor()
-        {
-            Color[] retrievedColor = new Color[1];
-            Rectangle Rect;
-            Rect = new Rectangle((int)((1 / Scale.X) * ((int)CursorPosition.X - CurrentPosition.X)), (int)((1 / Scale.Y) * ((int)CursorPosition.Y - CurrentPosition.Y)), 1, 1);
+        //public Color GetColor()
+        //{
+        //    Color[] retrievedColor = new Color[1];
+        //    Rectangle Rect;
+        //    Rect = new Rectangle((int)((1 / Scale.X) * ((int)CursorPosition.X - CurrentPosition.X)), (int)((1 / Scale.Y) * ((int)CursorPosition.Y - CurrentPosition.Y)), 1, 1);
 
-            if (DestinationRectangle.Contains(new Point((int)CursorPosition.X, (int)CursorPosition.Y)) &&
-                new Rectangle(0, 0, 1920, 1080).Contains(new Point((int)CursorPosition.X, (int)CursorPosition.Y)))
-            {
-                if (DestinationRectangle.Contains(new Point((int)CursorPosition.X, (int)CursorPosition.Y)) && Rect != null && Rect.Width == 1 && Rect.Height == 1)
-                {
-                    //Vector2 pos = new Vector2((1 / Scale.X) * ((int)CursorPosition.X - Position.X), (1 / Scale.Y) * ((int)CursorPosition.Y - Position.Y));
-                    //Rectangle testRect = new Rectangle((int)((1 / Scale.X) * ((int)CursorPosition.X - Position.X)), (int)((1 / Scale.Y) * ((int)CursorPosition.Y - Position.Y)), 1, 1);
-                    if (Rect != new Rectangle(Math.Abs((int)((1 / Scale.X) * ((int)CursorPosition.X - CurrentPosition.X))),
-                        Math.Abs((int)((1 / Scale.Y) * ((int)CursorPosition.Y - CurrentPosition.Y))), 1, 1))
-                        return Color.White;
-                    else
-                        ButtonStrip.GetData<Color>(0, Rect, retrievedColor, 0, 1);
-                }
-            }
+        //    if (DestinationRectangle.Contains(new Point((int)CursorPosition.X, (int)CursorPosition.Y)) &&
+        //        new Rectangle(0, 0, 1920, 1080).Contains(new Point((int)CursorPosition.X, (int)CursorPosition.Y)))
+        //    {
+        //        if (DestinationRectangle.Contains(new Point((int)CursorPosition.X, (int)CursorPosition.Y)) && Rect != null && Rect.Width == 1 && Rect.Height == 1)
+        //        {
+        //            //Vector2 pos = new Vector2((1 / Scale.X) * ((int)CursorPosition.X - Position.X), (1 / Scale.Y) * ((int)CursorPosition.Y - Position.Y));
+        //            //Rectangle testRect = new Rectangle((int)((1 / Scale.X) * ((int)CursorPosition.X - Position.X)), (int)((1 / Scale.Y) * ((int)CursorPosition.Y - Position.Y)), 1, 1);
+        //            if (Rect != new Rectangle(Math.Abs((int)((1 / Scale.X) * ((int)CursorPosition.X - CurrentPosition.X))),
+        //                Math.Abs((int)((1 / Scale.Y) * ((int)CursorPosition.Y - CurrentPosition.Y))), 1, 1))
+        //                return Color.White;
+        //            else
+        //                ButtonStrip.GetData<Color>(0, Rect, retrievedColor, 0, 1);
+        //        }
+        //    }
 
-            return retrievedColor[0];
-        }
+        //    return retrievedColor[0];
+        //}
 
         public void ResetState()
         {

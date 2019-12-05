@@ -20,10 +20,19 @@ namespace TowerDefensePrototype
         public float CurrentPulseTime, MaxPulseTime, TopXOffset, BottomXOffset;
         public Vector2 CurrentScale = new Vector2(1, 1);
 
-        public UIBar(Vector2 position, Vector2 maxSize, Color Color, bool? drawMarker = false)
+        public UIBar(Vector2 position, Vector2 maxSize, Color Color, bool? drawMarker = false, bool? centered = false)
         {
-            Position = position;
-            MaxSize = maxSize;          
+            MaxSize = maxSize;
+
+            if (centered == true)
+            {
+                Position = position - new Vector2(maxSize.X / 2, 0);
+            }
+            else
+            {
+                Position = position;
+            }
+
             BarColor = Color;
             DrawMarker = drawMarker.Value;
 
@@ -83,7 +92,7 @@ namespace TowerDefensePrototype
 
             if (position != null)
             {
-                Position = position.Value;
+                Position = position.Value - new Vector2(MaxSize.X/2, 0);
             }
 
             //if (PreviousValue < CurrentValue &&

@@ -97,7 +97,6 @@ Content\Particles\ExplosionParticle2.xnb
 Content\Icons\HealthIcon.xnb
 Content\Buttons\DiamondButton.xnb
 Content\Icons\OverheatIcon.xnb
-Content\Icons\DamageTypeIcons\ConcussiveDamageIcon.xnb
 Content\FlareMap1.xnb
 Content\Weather\SnowDust1.xnb
 Content\Weather\SnowDust2.xnb
@@ -120,7 +119,6 @@ Content\Fonts\RobotoLight20_0.xnb
 Content\Fonts\RobotoLight20_2.xnb
 Content\Fonts\RobotoRegular20_5.xnb
 Content\Icons\CurrencyIcon.xnb
-Content\Icons\DamageTypeIcons\FireDamageIcon.xnb
 Content\Particles\MachineBullet.xnb
 Content\Backgrounds\MenuBackground1.xnb
 Content\Fonts\RobotoRegular40_2.xnb
@@ -163,6 +161,8 @@ Content\Icons\TrapIcons\LandMineTrapIcon.xnb
 Content\Icons\TurretIcons\GasGrenadeTurretIcon.xnb
 Content\Traps\BarrelTrap.xnb
 Content\Projectiles\FlameProjectile.xnb
+Content\ShieldSprite.xnb
+Content\ShieldSphereMap.xnb
 Content\Sounds\Menu\MenuClick.xnb
 Content\Sounds\FireTrapStart.xnb
 Content\Sounds\Menu\MenuAmbiance.xnb

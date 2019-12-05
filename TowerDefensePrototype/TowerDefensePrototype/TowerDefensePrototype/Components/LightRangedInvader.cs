@@ -10,6 +10,62 @@ namespace TowerDefensePrototype
 {
     abstract class LightRangedInvader : Invader
     {
+        private object _HitObject;
+        public new object HitObject
+        {
+            get { return _HitObject; }
+            set
+            {
+                PreviousHitObject = _HitObject;
+                _HitObject = value;
+
+                TotalHits++;
+
+                if (_HitObject != null)
+                {
+                    #region Hit the ground
+                    if (_HitObject.GetType() == typeof(StaticSprite))
+                    {
+                        HitGround++;
+                        return;
+                    }
+                    #endregion
+
+                    #region Hit the shield
+                    if (_HitObject.GetType() == typeof(Shield))
+                    {
+                        HitShield++;
+                        return;
+                    }
+                    #endregion
+
+                    #region Hit the tower
+                    if (_HitObject.GetType() == typeof(Tower))
+                    {
+                        HitTower++;
+                        return;
+                    }
+                    #endregion
+
+                    #region Hit a turret
+                    if (_HitObject.GetType().BaseType == typeof(Turret))
+                    {
+                        HitTurret++;
+                        return;
+                    }
+                    #endregion
+
+                    #region Hit a trap
+                    if (_HitObject.GetType().BaseType == typeof(Trap))
+                    {
+                        HitTrap++;
+                        return;
+                    }
+                    #endregion
+                }
+            }
+        }
+
         #region For handling ranged attacking
         public InvaderFireType FireType; //Whether the invader fires a single projectile, fires a burst or fires a beam etc.
         public Vector2 TowerDistanceRange; //How far away from the tower the invader will be before stopping to fire
@@ -24,6 +80,17 @@ namespace TowerDefensePrototype
         public float RangedDamage; //How much damage the projectile does
         public float CurrentFireDelay, MaxFireDelay; //How many milliseconds between shots
         public int CurrentBurstShots, MaxBurstShots; //How many shots are fired in a row before a longer recharge is needed
+
+        public float CurrentAngle = 0;
+        public float EndAngle;
+
+        public int TotalHits = 0;
+
+        public int HitGround = 0;
+        public int HitTower = 0;
+        public int HitShield = 0;
+        public int HitTurret = 0;
+        public int HitTrap = 0;
         #endregion
 
         public override void Initialize()
@@ -36,11 +103,11 @@ namespace TowerDefensePrototype
 
         public override void Update(GameTime gameTime, Vector2 cursorPosition)
         {
-            if (DistToTower <= MinTowerRange)
-            {
-                Velocity.X = 0;
-                InTowerRange = true;
-            }
+            //if (DistToTower <= MinTowerRange)
+            //{
+            //    Velocity.X = 0;
+            //    InTowerRange = true;
+            //}
 
             base.Update(gameTime, cursorPosition);
         }
@@ -61,6 +128,17 @@ namespace TowerDefensePrototype
                     CanAttack = false;
                 }
             }
+        }
+
+        public void ResetCollisions()
+        {
+            TotalHits = 0;
+
+            HitGround = 0;
+            HitTower = 0;
+            HitShield = 0;
+            HitTurret = 0;
+            HitTrap = 0;
         }
     }
 }

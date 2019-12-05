@@ -145,7 +145,6 @@ namespace TowerDefensePrototype
 
                 if (currentLength != stick.Length)
                 {
-                    
                     directioon.Normalize();
 
                     if (stick.Point2.Pinned == false)

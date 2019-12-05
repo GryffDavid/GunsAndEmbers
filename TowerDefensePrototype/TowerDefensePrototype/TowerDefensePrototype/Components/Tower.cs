@@ -31,13 +31,17 @@ namespace TowerDefensePrototype
             CurrentHP = MaxHP;
             Slots = slots;
 
-            Shield = new TowerDefensePrototype.Shield() 
+            Shield = new TowerDefensePrototype.Shield(300)
             { 
                 CurrentShield = maxShield, 
                 MaxShield = maxShield, 
                 ShieldTime = shieldTime, 
-                ShieldOn = true 
+                ShieldOn = true,
+                CurrentRadius = 300,
+                RechargeRate = 0.5f
             };
+
+            Shield.Active = true;
 
             Color = Color.White;
             MaxPowerUnits = powerUnits;
@@ -51,20 +55,19 @@ namespace TowerDefensePrototype
             BoundingBox = new BoundingBox(new Vector3(DestinationRectangle.Left, DestinationRectangle.Top, 0),
                                           new Vector3(DestinationRectangle.Right, DestinationRectangle.Bottom, 0));
 
-            Shield.ShieldBoundingSphere = new BoundingSphere(new Vector3(DestinationRectangle.Center.X, DestinationRectangle.Center.Y, 0), 300);
+            //Shield.ShieldBoundingSphere = new BoundingSphere(new Vector3(DestinationRectangle.Center.X, DestinationRectangle.Center.Y, 0), 300);
+            Shield.Position = new Vector2(DestinationRectangle.Center.X, DestinationRectangle.Center.Y);
         }
 
         public void Update(GameTime gameTime)
         {
             DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, Texture.Width, Texture.Height);
-            Shield.Update(gameTime);
-
+            Shield.Update(gameTime, new Vector2(DestinationRectangle.Center.X, DestinationRectangle.Center.Y));
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
             //DRAW SHADOW HERE
-
             spriteBatch.Draw(Texture, DestinationRectangle, null, Color, 0, Vector2.Zero, SpriteEffects.None, 1);
         }
 

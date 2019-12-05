@@ -26,8 +26,9 @@ namespace TowerDefensePrototype
         Shotgun,
         PersistentBeam
     };
-    public enum TurretAnimationState { Overheated, ReadyToFire };
+    public enum TurretAnimationState { Overheated, ReadyToFire, Stunned };
     public enum TurretFireType { FullAuto, SemiAuto, Single, Beam };
+
     #endregion
 
     public abstract class Turret : Drawable
@@ -157,16 +158,6 @@ namespace TowerDefensePrototype
 
             if (CurrentMouseState.LeftButton != PreviousMouseState.LeftButton)
                 LeftButtonState = CurrentMouseState.LeftButton;
-
-            if (AmmoBelt != null)
-            {
-                Vector2 direction = new Vector2((float)Math.Cos(Rotation), (float)Math.Sin(Rotation));
-                direction.Normalize();
-
-                AmmoBelt.Nodes[0].CurrentPosition = BarrelCenter + (direction * AmmoBelt.ShellTexture.Width / 2);
-                AmmoBelt.Nodes2[0].CurrentPosition = BarrelCenter - (direction * AmmoBelt.ShellTexture.Width / 2);
-                AmmoBelt.Update(gameTime);
-            }
 
             if (double.IsNaN(Rotation) == true)
                 Rotation = -20;
@@ -300,6 +291,16 @@ namespace TowerDefensePrototype
                     if (double.IsNaN(Rotation) == true)
                         Rotation = -20;
                 }
+            }
+
+            if (AmmoBelt != null)
+            {
+                Vector2 direction = new Vector2((float)Math.Cos(Rotation), (float)Math.Sin(Rotation));
+                direction.Normalize();
+
+                AmmoBelt.Nodes[0].CurrentPosition = BarrelCenter + (direction * AmmoBelt.ShellTexture.Width / 2);
+                AmmoBelt.Nodes2[0].CurrentPosition = BarrelCenter - (direction * AmmoBelt.ShellTexture.Width / 2);
+                AmmoBelt.Update(gameTime);
             }
 
             float Percent = (CurrentHeat / MaxHeat) * 100;

@@ -12,7 +12,6 @@ namespace TowerDefensePrototype
         public string Name;
         public int LevelNumber, Points, Credits, ShotsFired;
         public List<Weapon> Buttons;
-        public List<Upgrade> UpgradesList;
 
         //What turrets the player has access to
         public bool FlameThrower, 

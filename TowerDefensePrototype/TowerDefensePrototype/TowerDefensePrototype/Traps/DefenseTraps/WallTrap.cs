@@ -8,9 +8,9 @@ using Microsoft.Xna.Framework.Content;
 
 namespace TowerDefensePrototype
 {
-    class Wall : Trap
+    class WallTrap : Trap
     {
-        public Wall(Vector2 position)
+        public WallTrap(Vector2 position)
         {
             Position = position;
             Solid = true;

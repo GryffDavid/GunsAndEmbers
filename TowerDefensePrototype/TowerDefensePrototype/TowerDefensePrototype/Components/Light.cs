@@ -84,7 +84,11 @@ namespace TowerDefensePrototype
                 //LightDecay = (int)(Radius * Math.Sin(Math.PI * Percentage));
                 //LightDecay = (int)(Radius - (Radius * Percentage));
                 //LightDecay = (int)(Radius * Percentage);
-                Position.Z -= 0.5f * Percentage;
+                //Position.Z -= 0.5f * Percentage;
+
+                Position.Z = MathHelper.Lerp(StartPosition.Z, 0, Percentage);
+
+                //Position.Z = MathHelper.Lerp(Position.Z, 0, Percentage);
                 //Position.Y -= 0.25f * Percentage;
                 Power = 0.015f;// *Percentage;
                 

@@ -309,7 +309,7 @@ namespace TowerDefensePrototype
                 #region Update Vertices
                 if (Velocity != Vector2.Zero)
                 {
-                    ShadowLength = Math.Abs(TipPosition.X - BasePosition.X);
+                    ShadowLength = MathHelper.Clamp(Math.Abs(TipPosition.X - BasePosition.X), Texture.Height, Texture.Width);
 
                     projectileVertices[0].Position = new Vector3(DestinationRectangle.Left, DestinationRectangle.Top, 0);
                     projectileVertices[1].Position = new Vector3(DestinationRectangle.Left + DestinationRectangle.Width, DestinationRectangle.Top, 0);

@@ -22,7 +22,7 @@ namespace TowerDefensePrototype
 
     public class Emitter : Drawable
     {
-        public Vector2 Position, AngleRange;
+        public Vector2 Position, PreviousPosition, AngleRange;
         public List<Particle> ParticleList;
         public Texture2D Texture;
         public Vector2 ScaleRange, TimeRange, RotationIncrementRange, SpeedRange, StartingRotationRange, EmitterDirection, EmitterVelocity, YRange, Friction;
@@ -230,6 +230,11 @@ namespace TowerDefensePrototype
                     }
                 }
 
+                if (Anchor != null)
+                {
+                    Position = Anchor.Center;
+                }
+
                 if (ReduceDensity == true)
                 {
                     //After halftime, begin reducing the density from 100% down to 0% as the time continues to expire                    
@@ -308,62 +313,35 @@ namespace TowerDefensePrototype
                     //3
                 }
 
-                if (Burst < 2)
+                IntervalTime += gameTime.ElapsedGameTime.TotalMilliseconds;
+
+                if (IntervalTime > Interval && AddMore == true)
                 {
-                    float angle, hp, scale, rotation, speed, startingRotation;
+                    int newBurst = (int)(Burst * (IntervalTime / Interval));
 
-                    angle = -MathHelper.ToRadians((float)DoubleRange(AngleRange.X, AngleRange.Y));
-                    hp = (float)DoubleRange(TimeRange.X, TimeRange.Y);
-                    scale = (float)DoubleRange(ScaleRange.X, ScaleRange.Y);
-                    rotation = (float)DoubleRange(RotationIncrementRange.X, RotationIncrementRange.Y);
-                    speed = (float)DoubleRange(SpeedRange.X, SpeedRange.Y);
-                    startingRotation = (float)DoubleRange(StartingRotationRange.X, StartingRotationRange.Y);
-                    MaxY = Random.Next((int)YRange.X, (int)YRange.Y);
-                    IntervalTime += gameTime.ElapsedGameTime.TotalMilliseconds;
-
-                    if (IntervalTime > Interval && AddMore == true)
+                    for (int i = 0; i < newBurst; i++)
                     {
+                        float angle, hp, scale, rotation, speed, startingRotation;
+
+                        angle = -MathHelper.ToRadians((float)DoubleRange(AngleRange.X, AngleRange.Y));
+                        hp = (float)DoubleRange(TimeRange.X, TimeRange.Y);
+                        scale = (float)DoubleRange(ScaleRange.X, ScaleRange.Y);
+                        rotation = (float)DoubleRange(RotationIncrementRange.X, RotationIncrementRange.Y);
+                        speed = (float)DoubleRange(SpeedRange.X, SpeedRange.Y);
+                        startingRotation = (float)DoubleRange(StartingRotationRange.X, StartingRotationRange.Y);
+                        MaxY = Random.Next((int)YRange.X, (int)YRange.Y);
+
                         Particle NewParticle = new Particle(Texture, Position, angle, speed, hp, Transparency, Fade, startingRotation,
                                                             rotation, scale, StartColor, EndColor, Gravity, CanBounce, MaxY, Shrink,
                                                             DrawDepth, StopBounce, HardBounce, false, RotateVelocity, Friction, Orientation,
                                                             FadeDelay, SortParticles, Grow);
+
+
                         ParticleList.Add(NewParticle);
-                        IntervalTime = 0;
                     }
-                }
-                else
-                {
-                    IntervalTime += gameTime.ElapsedGameTime.TotalMilliseconds;
 
-                    if (IntervalTime > Interval && AddMore == true)
-                    {
-                        int newBurst = (int)(Burst * (IntervalTime / Interval));
-
-                        for (int i = 0; i < newBurst; i++)
-                        {
-                            float angle, hp, scale, rotation, speed, startingRotation;
-
-                            angle = -MathHelper.ToRadians(Random.Next((int)AngleRange.X, (int)AngleRange.Y));
-                            hp = (float)DoubleRange(TimeRange.X, TimeRange.Y);
-                            scale = (float)DoubleRange(ScaleRange.X, ScaleRange.Y);
-                            rotation = (float)DoubleRange(RotationIncrementRange.X, RotationIncrementRange.Y);
-                            speed = (float)DoubleRange(SpeedRange.X, SpeedRange.Y);
-                            startingRotation = (float)DoubleRange(StartingRotationRange.X, StartingRotationRange.Y);
-                            MaxY = Random.Next((int)YRange.X, (int)YRange.Y);
-
-                            ParticleList.Add(new Particle(Texture, Position, angle, speed, hp, Transparency, Fade, startingRotation,
-                                                          rotation, scale, StartColor, EndColor, Gravity, CanBounce, MaxY, Shrink,
-                                                          DrawDepth, StopBounce, HardBounce, false, RotateVelocity, Friction, Orientation,
-                                                          FadeDelay, SortParticles, Grow));
-                        }
-                        IntervalTime = 0;
-                    }
-                }
-
-                if (Anchor != null)
-                {
-                    Position = Anchor.Center;
-                }
+                    IntervalTime = 0;
+                }                
             }
 
             for (int i = 0; i < ParticleList.Count; i++)
@@ -373,6 +351,8 @@ namespace TowerDefensePrototype
                 if (ParticleList[i].Active == false)
                     ParticleList.RemoveAt(i);
             }
+
+            PreviousPosition = Position;
         }
 
         public override void Draw(SpriteBatch spriteBatch)

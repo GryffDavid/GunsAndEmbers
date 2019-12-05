@@ -272,11 +272,11 @@ namespace TowerDefensePrototype
 
         public void LoadContent(ContentManager contentManager)
         {
-            ConcussiveDamageIcon = contentManager.Load<Texture2D>("Icons/DamageTypeIcons/ConcussiveDamageIcon");
-            KineticDamageIcon = contentManager.Load<Texture2D>("Icons/DamageTypeIcons/ConcussiveDamageIcon");
-            FireDamageIcon = contentManager.Load<Texture2D>("Icons/DamageTypeIcons/FireDamageIcon");
-            RadiationDamageIcon = contentManager.Load<Texture2D>("Icons/DamageTypeIcons/ConcussiveDamageIcon");
-            ElectricDamageIcon = contentManager.Load<Texture2D>("Icons/DamageTypeIcons/ConcussiveDamageIcon");
+            //ConcussiveDamageIcon = contentManager.Load<Texture2D>("Icons/DamageTypeIcons/ConcussiveDamageIcon");
+            //KineticDamageIcon = contentManager.Load<Texture2D>("Icons/DamageTypeIcons/ConcussiveDamageIcon");
+            //FireDamageIcon = contentManager.Load<Texture2D>("Icons/DamageTypeIcons/FireDamageIcon");
+            //RadiationDamageIcon = contentManager.Load<Texture2D>("Icons/DamageTypeIcons/ConcussiveDamageIcon");
+            //ElectricDamageIcon = contentManager.Load<Texture2D>("Icons/DamageTypeIcons/ConcussiveDamageIcon");
         }
 
         public void Draw(SpriteBatch spriteBatch, GraphicsDevice graphics, BasicEffect basicEffect)
@@ -651,11 +651,11 @@ namespace TowerDefensePrototype
                     break;
 
                 case TrapType.Spikes:
-                    cost = new SpikeTrap(Vector2.Zero).ResourceCost;
+                    cost = new SpikesTrap(Vector2.Zero).ResourceCost;
                     break;
 
                 case TrapType.Wall:
-                    cost = new Wall(Vector2.Zero).ResourceCost;
+                    cost = new WallTrap(Vector2.Zero).ResourceCost;
                     break;
 
                 case TrapType.Barrel:
