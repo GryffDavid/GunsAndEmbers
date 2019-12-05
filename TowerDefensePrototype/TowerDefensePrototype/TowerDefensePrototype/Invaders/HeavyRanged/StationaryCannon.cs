@@ -397,6 +397,8 @@ namespace TowerDefensePrototype
                                           Move the trajectory down. If it's closer, change the target trap
                                           i.e. always target the closest trap because that's the one that's a problem.*/
 
+
+                                        //Can propbably do this more elegantly with a ref
                                         if (HitObject != TargetTrap)
                                         {
                                             RecentTrapCollision = HitObject as Trap;

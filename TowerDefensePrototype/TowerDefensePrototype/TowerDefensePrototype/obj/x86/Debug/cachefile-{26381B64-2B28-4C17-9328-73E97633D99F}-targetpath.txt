@@ -187,6 +187,8 @@ Content\Particles\ToonDust\ToonDust3.xnb
 Content\Particles\ToonDust\ToonDust4.xnb
 Content\Particles\ToonDust\ToonDust5.xnb
 Content\Particles\ToonDust\ToonDust7.xnb
+Content\GridTexture.xnb
+Content\Block.xnb
 Content\Sounds\Menu\MenuClick.xnb
 Content\Sounds\FireTrapStart.xnb
 Content\Sounds\Menu\MenuAmbiance.xnb
@@ -225,3 +227,4 @@ Content\EmissiveBlur.xnb
 Content\ParticleEffect.xnb
 Content\StoryDialogue\StoryDialogue1.xnb
 Content\Fonts\SpriteFont1.xnb
+Content\Circle.xnb

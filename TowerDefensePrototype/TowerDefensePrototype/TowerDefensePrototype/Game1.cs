@@ -636,6 +636,10 @@ namespace TowerDefensePrototype
 
         SmokeTrail SmokeTrail = new SmokeTrail(new Vector2(200, 200));
         //List<SmokeTrail> SmokeTrailList = new List<SmokeTrail>();
+
+        //^:b*[^:b#/]+.*$//
+        //Regular expression to count KLOC
+
         #endregion
         
         public Game1()
@@ -934,7 +938,7 @@ namespace TowerDefensePrototype
                 LightTexture = Content.Load<Texture2D>("SmallLight");
                 ExplosionRingSprite = Content.Load<Texture2D>("ExplosionRingSprite");
                 ShieldSprite = Content.Load<Texture2D>("ShieldSprite");
-
+                
                 #region Just to handle lighting
                 Vertices = new VertexPositionColorTexture[4];
                 Vertices[0] = new VertexPositionColorTexture(new Vector3(-1, 1, 0), Color.White, new Vector2(0, 0));
@@ -2109,6 +2113,11 @@ namespace TowerDefensePrototype
                 SkyBackground.Draw(spriteBatch);
                 Ground.Draw(spriteBatch);
 
+                foreach (Invader invader in InvaderList.Where(Invader => Invader.OperatingVehicle != null))
+                {
+                    invader.Pathfinder.Map.Draw(spriteBatch);
+                }
+
                 foreach (Decal decal in DecalList)
                 {
                     decal.Draw(spriteBatch);
@@ -2118,6 +2127,7 @@ namespace TowerDefensePrototype
                 {
                     effect.Draw(spriteBatch);
                 }
+
                 //FocusedEmitter.Draw(spriteBatch);
 
                 Tower.Draw(spriteBatch);
@@ -2391,7 +2401,10 @@ namespace TowerDefensePrototype
                 GraphicsDevice.Clear(Color.Transparent);
 
                 spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
+
+
                 
+
                 #region Draw diagnostics
                 if (Diagnostics == true)
                 {
@@ -5053,18 +5066,18 @@ namespace TowerDefensePrototype
                         #endregion
                     }
 
-                    if (invader.OperatingVehicle != null)
-                        invader.OperatingVehicle.OperatorList.Remove(invader);
+                    //if (invader.OperatingVehicle != null)
+                    //    invader.OperatingVehicle.OperatorList.Remove(invader);
 
-                    if (invader.OperatorList.Count > 0)
-                    {
-                        foreach (Invader vehicleOperator in invader.OperatorList)
-                        {
-                            vehicleOperator.OperatingVehicle = null;
-                            vehicleOperator.CurrentMacroBehaviour = MacroBehaviour.AttackTower;
-                            vehicleOperator.CurrentMicroBehaviour = MicroBehaviour.MovingForwards;
-                        }
-                    }
+                    //if (invader.OperatorList.Count > 0)
+                    //{
+                    //    foreach (Invader vehicleOperator in invader.OperatorList)
+                    //    {
+                    //        vehicleOperator.OperatingVehicle = null;
+                    //        vehicleOperator.CurrentMacroBehaviour = MacroBehaviour.AttackTower;
+                    //        vehicleOperator.CurrentMicroBehaviour = MicroBehaviour.MovingForwards;
+                    //    }
+                    //}
 
                     #region Create the Coin visual based on the resource value of the invader
                     for (int i = 0; i < invader.ResourceValue / 10; i++)
@@ -5093,7 +5106,8 @@ namespace TowerDefensePrototype
                 if (invader.BoundingBox.Intersects(Tower.BoundingBox) ||
                     TrapList.Any(Trap => Trap.Solid == true && Trap.BoundingBox.Intersects(invader.BoundingBox)))
                 {
-                    invader.TargetTrap = TrapList.Find(Trap => Trap.Solid == true && Trap.BoundingBox.Intersects(invader.BoundingBox));
+                    Trap trap = TrapList.Find(Trap => Trap.Solid == true && Trap.BoundingBox.Intersects(invader.BoundingBox));
+                    invader.SetTargetTrap(ref trap);
 
                     if (invader.CurrentMicroBehaviour == MicroBehaviour.MovingForwards ||
                         invader.CurrentMicroBehaviour == MicroBehaviour.MovingBackwards)
@@ -5347,18 +5361,11 @@ namespace TowerDefensePrototype
                 {
                     case InvaderType.Soldier:
                         {
-                            if (invader.OperatingVehicle != null)
-                            {
-                                invader.CurrentMacroBehaviour = MacroBehaviour.OperateVehicle;
+                            Soldier soldier = invader as Soldier;
 
-                                if (invader.Velocity.X > 0)
-                                {
-                                    invader.Orientation = SpriteEffects.FlipHorizontally;
-                                }
-                                else
-                                {
-                                    invader.Orientation = SpriteEffects.None;
-                                }
+                            if (soldier.OperatingVehicle != null)
+                            {
+                                soldier.Speed = 0f;
                             }
                         }
                         break;
@@ -5367,32 +5374,36 @@ namespace TowerDefensePrototype
                     case InvaderType.BatteringRam:
                         {
                             BatteringRam batteringRam = invader as BatteringRam;
-                            batteringRam.CurrentOperators = batteringRam.OperatorList.Count();
 
                             if (batteringRam.CurrentOperators < batteringRam.NeededOperators)
                             {
-                                batteringRam.OperatorList.Clear();
-
-                                //The battering ram needs operators. Recruit the closest ones.
                                 List<Invader> closeInvaders = InvaderList.OrderBy(Invader => Vector2.Distance(Invader.Position, batteringRam.Position)).ToList();
-                                closeInvaders.RemoveAll(Invader => Invader.InvaderType != InvaderType.Soldier);
-                                //Also need to remove invaders that are already operating other vehicles
+                                closeInvaders.RemoveAll(Invader => Invader.InvaderType != InvaderType.Soldier || (Invader.OperatingVehicle != null && Invader.InvaderType != InvaderType.Soldier));
 
-                                if (closeInvaders.Count > 1)
+                                if (closeInvaders.Count >= 2)
                                 {
-                                    closeInvaders[0].OperatingVehicle = batteringRam;
-                                    closeInvaders[1].OperatingVehicle = batteringRam;
-                                    
-                                    closeInvaders[0].Speed = batteringRam.Speed;
-                                    closeInvaders[1].Speed = batteringRam.Speed;
+                                    //batteringRam.OperatorList.AddRange(closeInvaders.GetRange(0, 2));
+                                    closeInvaders = closeInvaders.GetRange(0, 2).ToList();
+                                    batteringRam.SetOperators(ref closeInvaders);
+                                }
 
-                                    //These invaders need to end up on either side of the vehicle - further and closer depth
-                                    batteringRam.OperatorList.Add(closeInvaders[0]);
-                                    batteringRam.OperatorList.Add(closeInvaders[1]);
+                                foreach (Invader pilot in batteringRam.OperatorList)
+                                {
+                                    //pilot.OperatingVehicle = batteringRam;
+                                    pilot.SetOperatingVehicle(ref invader);
+
+                                    Map map = new Map(TrapList, InvaderList, new Vector2(pilot.Position.X, pilot.MaxY), new Vector2(batteringRam.Position.X + batteringRam.DestinationRectangle.Width, batteringRam.MaxY - (batteringRam.DestinationRectangle.Height * batteringRam.OperatorList.IndexOf(pilot))));
+                                    map.LoadContent(Content);
+
+                                    Pathfinder pathfinder = new Pathfinder(map);
+                                    
+
+                                    pilot.Pathfinder = pathfinder;
+
+                                    //pilot.FindPath(pilot.Position, pilot.OperatingVehicle.Position);                                   
+                                    
                                 }
                             }
-
-                            //batteringRam.CurrentOperators = batteringRam.OperatorList.Count;
                         }
                         break;
                     #endregion

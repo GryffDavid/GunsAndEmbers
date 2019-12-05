@@ -34,6 +34,12 @@ namespace TowerDefensePrototype
 
         public override void Update(GameTime gameTime, Vector2 cursorPosition)
         {
+            if (Pathfinder != null)
+            {
+                Pathfinder.Map.Update(gameTime);
+                Waypoints = Pathfinder.GetWaypoints();
+            }
+
             switch (CurrentMicroBehaviour)
             {
                 #region Stationary
@@ -101,32 +107,7 @@ namespace TowerDefensePrototype
             {
                 case MacroBehaviour.OperateVehicle:
                     {
-                        Vector2 diff = Position - OperatingVehicle.Position;
-                        diff.Normalize();
 
-                        //Move towards the point where it'll be able to operate the vehicle
-                        if (Vector2.Distance(Position, OperatingVehicle.Position) >= 48)
-                        {
-                            if (diff.X > 0)
-                            {
-                                CurrentMicroBehaviour = MicroBehaviour.MovingForwards;
-                            }
-                            else
-                            {
-                                CurrentMicroBehaviour = MicroBehaviour.MovingBackwards;
-                            }
-
-                            if (diff.Y > 0)
-                            {
-                                Velocity.Y -= 0.5f;
-                                MaxY -= 0.5f;
-                            }
-                            else
-                            {
-                                Velocity.Y += 0.5f;
-                                MaxY += 0.5f;
-                            }
-                        }
                     }
                     break;
             }

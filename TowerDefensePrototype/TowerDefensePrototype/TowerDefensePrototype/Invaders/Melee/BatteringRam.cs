@@ -34,6 +34,8 @@ namespace TowerDefensePrototype
         
         public override void Update(GameTime gameTime, Vector2 cursorPosition)
         {
+            CurrentOperators = OperatorList.Count;
+
             switch (CurrentMicroBehaviour)
             {
                 #region Moving Forwards

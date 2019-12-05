@@ -63,6 +63,8 @@ namespace TowerDefensePrototype
         public TurretAnimation CurrentAnimation;
         public List<Emitter> EmitterList = new List<Emitter>();
         public UIBar TimingBar, HealthBar;
+
+        //Use ref for this
         public AmmoBelt AmmoBelt;
 
         public UIOutline TurretOutline;

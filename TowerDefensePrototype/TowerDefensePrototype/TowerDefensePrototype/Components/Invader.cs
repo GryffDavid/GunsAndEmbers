@@ -255,6 +255,7 @@ namespace TowerDefensePrototype
         public Invader TargetInvader;
         public Invader OperatingVehicle;
 
+
         public DamageOverTimeStruct CurrentDOT;
 
         public InvaderType InvaderType;
@@ -296,6 +297,9 @@ namespace TowerDefensePrototype
         public List<Invader> OperatorList = new List<Invader>();
 
         public bool ShowDiagnostics = false;
+
+        public Pathfinder Pathfinder;
+        public List<Vector2> Waypoints = new List<Vector2>();
         #endregion
 
         public Invader(Vector2 position, Vector2? yRange = null)
@@ -950,6 +954,28 @@ namespace TowerDefensePrototype
                 InAir = true;
 
             Velocity = velocity;
+        }
+
+
+        public void FindPath(Vector2 startPoint, Vector2 endPoint)
+        {
+
+        }
+
+
+        public void SetOperatingVehicle(ref Invader operatingVehicle)
+        {
+            OperatingVehicle = operatingVehicle;
+        }
+
+        public void SetTargetTrap(ref Trap targetTrap)
+        {
+            TargetTrap = targetTrap;
+        }
+
+        public void SetOperators(ref List<Invader> operatorList)
+        {
+            OperatorList = operatorList;
         }
     }
 }

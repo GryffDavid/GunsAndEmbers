@@ -44,10 +44,10 @@ namespace TowerDefensePrototype
 
         public float RadRotation;
 
-        //THIS IS SO THAT SPARKS CAN BOUNCE OFF OF INVADERS
+        //THIS IS SO THAT SPARKS CAN BOUNCE OFF OF INVADERS - USE REF
         //List<Invader> InvaderList;
 
-        //THIS IS SO THAT SPARKS CAN BOUNCE OFF OF SOLID TRAPS
+        //THIS IS SO THAT SPARKS CAN BOUNCE OFF OF SOLID TRAPS - USE REF
         //List<Trap> TrapList;
 
         VertexPositionColorTexture[] ParticleVertices = new VertexPositionColorTexture[4];
