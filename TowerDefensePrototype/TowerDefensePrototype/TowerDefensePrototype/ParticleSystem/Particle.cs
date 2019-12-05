@@ -23,7 +23,7 @@ namespace TowerDefensePrototype
 
         public Color CurrentColor, EndColor, StartColor;
         public bool Fade, BouncedOnGround, CanBounce, Shrink, StopBounce, HardBounce, Shadow, RotateVelocity, SortDepth, Grow;
-        static Random Random = new Random();
+        //static Random Random = new Random();
         public SpriteEffects Orientation;
 
         private Color _Color;

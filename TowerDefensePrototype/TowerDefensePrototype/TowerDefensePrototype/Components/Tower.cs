@@ -10,9 +10,7 @@ namespace TowerDefensePrototype
 {
     public class Tower : Drawable
     {
-        public Texture2D Texture;
         string AssetName;
-        public Vector2 Position;
         //public Rectangle DestinationRectangle;
         //public BoundingBox BoundingBox;
 
@@ -21,7 +19,7 @@ namespace TowerDefensePrototype
 
         public Shield Shield;
 
-        public Color Color;
+        //public Color Color;
         
         public Tower(string assetName, Vector2 position, int totalHitpoints, int maxShield, int slots, float shieldTime, int powerUnits)
         {
@@ -86,7 +84,7 @@ namespace TowerDefensePrototype
             //base.DrawSpriteNormal(spriteBatch);
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public new void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(Texture, DestinationRectangle, new Rectangle(0, 0, Texture.Width, Texture.Height/2), Color, 0, Vector2.Zero, SpriteEffects.None, 1);
         }

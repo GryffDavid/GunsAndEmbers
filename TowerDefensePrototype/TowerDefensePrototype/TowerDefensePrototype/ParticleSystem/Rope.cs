@@ -12,7 +12,6 @@ namespace TowerDefensePrototype
     class Rope : Drawable
     {
         public Texture2D StickTexture;
-        public Texture2D FirstStickTexture, EndStickTexture;
         float Bounce = 0.25f;
         float Gravity = 0.5f;
         float Friction = 0.95f;
@@ -42,7 +41,7 @@ namespace TowerDefensePrototype
         public Vector2 StartPoint, EndPoint;
 
         //public float MaxY;
-        public static Random Random = new Random();
+        //public static Random Random = new Random();
 
         public Rope(Vector2 startPoint, object tether, float maxY)
         {

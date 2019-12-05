@@ -13,7 +13,7 @@ namespace TowerDefensePrototype
         //public int[] shellIndices = new int[6];
 
         public Texture2D ShellTexture;
-        static Random Random = new Random();
+       // static Random Random = new Random();
 
         float DelayTime;
         float MaxDelayTime = 4000f;

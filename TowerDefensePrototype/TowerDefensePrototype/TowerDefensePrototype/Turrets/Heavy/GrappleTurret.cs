@@ -15,10 +15,7 @@ namespace TowerDefensePrototype
         {
             get { return _ResourceCost; }
         }
-
-        float RopeDelay, MaxRopeDelay;
-        public Rope Rope;
-
+        
         public GrappleTurret(Vector2 position)
         {
             Active = true;

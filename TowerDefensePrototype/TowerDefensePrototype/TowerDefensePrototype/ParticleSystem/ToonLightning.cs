@@ -11,7 +11,6 @@ namespace TowerDefensePrototype
     class ToonLightning : Drawable
     {
         Texture2D Block;
-        static Random Random = new Random();
 
         Vector2 EndPosition, StartPosition;
 
@@ -21,7 +20,7 @@ namespace TowerDefensePrototype
             public float Angle, Width;
         }
 
-        public Color Color = Color.White * 0.9f;
+        public new Color Color = Color.White * 0.9f;
 
         public Vector2 LengthRange;
 
@@ -143,9 +142,11 @@ namespace TowerDefensePrototype
             float DeltaY = NodeList[NodeList.Count - 1].NodeEnd.Y - EndPosition.Y;
             float DeltaX = NodeList[NodeList.Count - 1].NodeEnd.X - EndPosition.X;
 
-            List<Node> NewNodes = new List<Node>();
-            NewNodes.Add(NodeList[0]);
-            NewNodes.Add(NodeList[1]);
+            List<Node> NewNodes = new List<Node>
+            {
+                NodeList[0],
+                NodeList[1]
+            };
 
             for (int i = 2; i < TotalLength / 2; i++)
             {

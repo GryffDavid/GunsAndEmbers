@@ -91,7 +91,7 @@ namespace TowerDefensePrototype
         public Color CurrentColor;
         public HeavyProjectileType HeavyProjectileType;
         public Rectangle CollisionRectangle, Constraints;
-        static Random Random = new Random();
+        //static Random Random = new Random();
 
         public Node Node1 = new Node();
         public Node Node2 = new Node();

@@ -386,7 +386,6 @@ namespace TowerDefensePrototype
 
                     if (PercentageThrough >= 50)
                         Interval = StartingInterval + (Interval / 100 * PercentageThrough);
-
                 }
 
                 if (Tether != null && Tether.GetType()== typeof(FlameJetTrooper))
