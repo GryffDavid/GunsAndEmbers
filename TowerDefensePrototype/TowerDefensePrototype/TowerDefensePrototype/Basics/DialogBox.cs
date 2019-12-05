@@ -33,7 +33,7 @@ namespace TowerDefensePrototype
             Box = contentManager.Load<Texture2D>("DialogBox");
 
             LeftButton = new Button("Buttons/ButtonLeft", new Vector2(-300, 
-                Position.Y + 128 - (Box.Height/2)), null, new Vector2(0.5f, 1), null, LeftText, "Fonts/ButtonFont", "Left", Color.White);
+                Position.Y + 128 - (Box.Height/2)), null, new Vector2(0.5f, 1), null, LeftText, "Fonts/DefaultFont", "Left", Color.White);
             LeftButton.NextPosition.X = Position.X - (Box.Width / 2);
             LeftButton.Scale = new Vector2(1,2);
             LeftButton.LoadContent(contentManager);
@@ -43,7 +43,7 @@ namespace TowerDefensePrototype
             if (RightText != null)
             {
                 RightButton = new Button("Buttons/ButtonRight", new Vector2(1280+300,
-                    Position.Y + 128 - (Box.Height / 2)), null, new Vector2(0.5f, 1), null, RightText, "Fonts/ButtonFont", "Right", Color.White);
+                    Position.Y + 128 - (Box.Height / 2)), null, new Vector2(0.5f, 1), null, RightText, "Fonts/DefaultFont", "Right", Color.White);
                 RightButton.NextPosition.X = Position.X + 252 - (Box.Width / 2);
                 RightButton.Scale = new Vector2(1, 2);
                 RightButton.LoadContent(contentManager);
@@ -51,7 +51,7 @@ namespace TowerDefensePrototype
                 
             }
 
-            TextFont = contentManager.Load<SpriteFont>("Fonts/DialogFont");
+            TextFont = contentManager.Load<SpriteFont>("Fonts/DefaultFont");
 
             for (int i = 0; i < BoxText.Length; i++)
             {

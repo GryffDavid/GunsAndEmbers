@@ -14,7 +14,7 @@ namespace TowerDefensePrototype
         {
             Position = position;
             Solid = false;
-            AssetName = "Traps/IceTrap";
+            AssetName = "Traps/Trap";
             MaxHP = 50;
             TrapType = TrapType.Tar;
             DetonateDelay = 3000;

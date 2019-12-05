@@ -32,8 +32,8 @@ namespace TowerDefensePrototype
 
             CurrentAnimation = new Animation()
             {
-                AssetName = "Invaders/SpiderSprite",
-                TotalFrames = 3,
+                AssetName = "Invaders/Invader",
+                TotalFrames = 1,
                 FrameDelay = 250
             };
 

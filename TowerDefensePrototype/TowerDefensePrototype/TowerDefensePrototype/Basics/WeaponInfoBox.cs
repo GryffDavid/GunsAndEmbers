@@ -37,7 +37,7 @@ namespace TowerDefensePrototype
 
         public void LoadContent(ContentManager contentManager)
         {
-            NameFont = contentManager.Load<SpriteFont>("Fonts/HUDFont");
+            NameFont = contentManager.Load<SpriteFont>("Fonts/DefaultFont");
 
             for (int i = 0; i < 10; i++)
             {

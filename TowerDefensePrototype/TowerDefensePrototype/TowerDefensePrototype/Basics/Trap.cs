@@ -10,7 +10,7 @@ namespace TowerDefensePrototype
 {
     public abstract class Trap
     {
-        Texture2D Texture, Texture2;
+        Texture2D Texture;
         public Rectangle DestinationRectangle, SourceRectangle;
         public String AssetName;
         public float MaxHP, CurrentHP;
@@ -35,7 +35,6 @@ namespace TowerDefensePrototype
             HealthBar = new HorizontalBar(contentManager, new Vector2(32, 4), (int)MaxHP, (int)CurrentHP, Color.Green, Color.DarkRed);
             TrapEmitterList = new List<Emitter>();
             Texture = contentManager.Load<Texture2D>(AssetName);
-            Texture2 = contentManager.Load<Texture2D>("TrapDetBlock");
             BoundingBox = new BoundingBox(new Vector3((int)Position.X, (int)Position.Y, 0), new Vector3((int)Position.X + Texture.Width, (int)Position.Y - Texture.Height, 0));
             CurrentDetonateLimit = DetonateLimit;
             CurrentDetonateDelay = DetonateDelay;

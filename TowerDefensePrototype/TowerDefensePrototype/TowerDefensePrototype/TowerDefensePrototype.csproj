@@ -122,6 +122,7 @@
     <Compile Include="Basics\RangedInvader.cs" />
     <Compile Include="Basics\WeaponInfoBox.cs" />
     <Compile Include="Basics\NumberChange.cs" />
+    <Compile Include="Projectiles\PulseGunProjectile.cs" />
     <Compile Include="Projectiles\TimerHeavyProjectile.cs" />
     <Compile Include="Basics\World.cs" />
     <Compile Include="Basics\CheckBox.cs" />
@@ -151,6 +152,7 @@
     <Compile Include="Invaders\StationaryCannon.cs" />
     <Compile Include="Turrets\BeamTurret.cs" />
     <Compile Include="Turrets\BoomerangTurret.cs" />
+    <Compile Include="Turrets\PulseGunTurret.cs" />
     <Compile Include="Turrets\FreezeTurret.cs" />
     <Compile Include="Turrets\FelCannon.cs" />
     <Compile Include="Turrets\GrenadeTurret.cs" />
@@ -211,7 +213,6 @@
     <Compile Include="Basics\Wave.cs" />
     <Compile Include="Basics\WeaponBox.cs" />
     <Compile Include="Basics\Weapon.cs" />
-    <Compile Include="Basics\VictoryScreen.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Service References\aOtherStuff\Game.ico" />

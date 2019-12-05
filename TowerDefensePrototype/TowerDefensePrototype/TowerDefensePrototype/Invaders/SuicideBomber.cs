@@ -30,8 +30,8 @@ namespace TowerDefensePrototype
 
             CurrentAnimation = new Animation()
             { 
-                AssetName = "Invaders/PixelTestStrip", 
-                TotalFrames = 9, 
+                AssetName = "Invaders/Invader", 
+                TotalFrames = 1, 
                 FrameDelay = 120 
             };
         }

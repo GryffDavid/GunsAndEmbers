@@ -10,7 +10,7 @@ namespace TowerDefensePrototype
 {
     class StaticSprite
     {
-        Texture2D Texture;
+        public Texture2D Texture;
         string AssetName;
         public Vector2 Position, Scale, Move;
         public Color Color;

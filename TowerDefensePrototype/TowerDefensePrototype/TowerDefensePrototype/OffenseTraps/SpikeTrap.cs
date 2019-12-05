@@ -14,7 +14,7 @@ namespace TowerDefensePrototype
         {
             Position = position;
             Solid = false;
-            AssetName = "Traps/SpikeTrap";
+            AssetName = "Traps/Trap";
             TrapType = TrapType.Spikes;
             MaxHP = 50;
             DetonateDelay = 300;

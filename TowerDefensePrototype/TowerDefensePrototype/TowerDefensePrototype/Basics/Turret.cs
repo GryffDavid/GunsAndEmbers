@@ -23,7 +23,8 @@ namespace TowerDefensePrototype
         public bool Selected, Active, JustClicked, CanShoot, Animated, Looping, Overheated;
         public double FireDelay, CurrentFrameTime;
         public double ElapsedTime = 0;
-        public int Damage, AngleOffset, CurrentFrame, ResourceCost;
+        public int Damage, CurrentFrame, ResourceCost;
+        public float AngleOffset, MaxAngleOffset, MinAngleOffset;
         public static Random Random = new Random();
         public TurretType TurretType;
         public HorizontalBar TimingBar, HealthBar, HeatBar;
@@ -31,7 +32,7 @@ namespace TowerDefensePrototype
         public Animation CurrentAnimation;
         public List<Emitter> EmitterList = new List<Emitter>();
         public List<Rectangle> RectList = new List<Rectangle>();
-
+        public SpriteFont Font;
 
         public void LoadContent(ContentManager contentManager)
         {
@@ -58,6 +59,7 @@ namespace TowerDefensePrototype
             SelectBox = new Rectangle((int)Position.X - 32, (int)Position.Y - 32, 64, 64);
 
             Rect = contentManager.Load<Texture2D>("Icons/TrapIcons/FireTrapIcon");
+            Font = contentManager.Load<SpriteFont>("Fonts/DefaultFont");
         }
 
         public void Update(GameTime gameTime)
@@ -110,7 +112,9 @@ namespace TowerDefensePrototype
                 }
 
                 if (CurrentHeat < MaxHeat && CurrentHeat > 0)
+                {
                     CurrentHeat -= CoolValue;
+                }
 
                 if (CurrentHeat >= MaxHeat)
                 {
@@ -197,7 +201,7 @@ namespace TowerDefensePrototype
 
         public virtual void Draw(SpriteBatch spriteBatch)
         {
-
+            
         }
 
         public bool InsideRotatedRectangle(Rectangle originalRectangle, Vector2 rotationPoint, Vector2 mousePoint, float rotationAngle)

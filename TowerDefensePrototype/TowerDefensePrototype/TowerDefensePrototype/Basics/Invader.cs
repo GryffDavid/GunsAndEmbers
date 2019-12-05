@@ -55,7 +55,7 @@ namespace TowerDefensePrototype
             if (DustEmitter != null)
             DustEmitter.LoadContent(contentManager);
 
-            spriteFont = contentManager.Load<SpriteFont>("Fonts/HUDFont");
+            spriteFont = contentManager.Load<SpriteFont>("Fonts/DefaultFont");
         }
 
         public virtual void Update(GameTime gameTime)

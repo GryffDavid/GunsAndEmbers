@@ -25,10 +25,11 @@ namespace TowerDefensePrototype
             CurrentFrame = 0;
             InvaderType = InvaderType.Slime;
             YRange = new Vector2(525, 630);
+
             CurrentAnimation = new Animation() 
             { 
-                AssetName = "Invaders/Slime", 
-                TotalFrames = 2, 
+                AssetName = "Invaders/Invader", 
+                TotalFrames = 1, 
                 FrameDelay = 120 
             };
         }

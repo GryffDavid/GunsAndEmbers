@@ -21,7 +21,7 @@ namespace TowerDefensePrototype
             ResourceMinMax = new Vector2(1, 5);
             CurrentAttackDelay = 0;
             AttackDelay = 1500;
-            AttackPower = 5;
+            AttackPower = 24;
             CurrentFrame = 0;            
             InvaderType = InvaderType.Soldier;
             YRange = new Vector2(500, 600);
@@ -31,7 +31,13 @@ namespace TowerDefensePrototype
                                                new Vector2(60, 60), new Vector2(0.5f, 1f), new Vector2(20, 30), 0.5f, true, new Vector2(0, 0),
                                                new Vector2(-2, 2), new Vector2(0.25f, 0.5f), Color.SaddleBrown, Color.SaddleBrown, 0f, -1, 600, 1, false, new Vector2(0, 720), false);
 
-            CurrentAnimation = new Animation() { AssetName = "Invaders/SoldierStrip3342", TotalFrames = 4, FrameDelay = 300 };
+            CurrentAnimation = new Animation() 
+            { 
+                AssetName = "Invaders/Invader", 
+                TotalFrames = 1, 
+                FrameDelay = 300 
+            };
+
             CurrentFrame = Random.Next(0, CurrentAnimation.TotalFrames);
         }
 

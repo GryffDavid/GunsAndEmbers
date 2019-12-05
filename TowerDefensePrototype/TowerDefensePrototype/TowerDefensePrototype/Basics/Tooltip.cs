@@ -31,7 +31,7 @@ namespace TowerDefensePrototype
         public void LoadContent(ContentManager contentManager)
         {
             BoxTexture = contentManager.Load<Texture2D>("InformationBox");
-            Font = contentManager.Load<SpriteFont>("Fonts/BoxFont");
+            Font = contentManager.Load<SpriteFont>("Fonts/TooltipFont");
 
             for (int i = 0; i < Text.Length; i++)
             {

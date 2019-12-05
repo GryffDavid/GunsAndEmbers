@@ -14,15 +14,13 @@ namespace TowerDefensePrototype
         {
             Position = position;
             Solid = false;
-            AssetName = "Traps/SawbladeTrap";
+            AssetName = "Traps/Trap";
             MaxHP = 50;
             TrapType = TrapType.SawBlade;
             DetonateDelay = 2000;
             DetonateLimit = 5;
             AffectedTime = 300;            
-            Animated = true;
-            FrameTime = 15;
-            FrameCount = 20;
+            Animated = false;
         }
     }
 }

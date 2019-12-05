@@ -12,7 +12,7 @@ namespace TowerDefensePrototype
 
         public CheckBox(Vector2 position):base("Buttons/SmallButton", position)
         {
-            base.FontName = "Fonts/ButtonFont";
+            base.FontName = "Fonts/DefaultFont";
         }
 
         public override void Update()

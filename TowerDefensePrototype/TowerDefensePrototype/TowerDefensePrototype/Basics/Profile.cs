@@ -16,7 +16,7 @@ namespace TowerDefensePrototype
 
         //What turrets the player has access to
         public bool FlameThrower, MachineGun, Cannon, Lightning, Cluster,
-                    FelCannon, Beam, Freeze, Grenade, Boomerang;
+                    FelCannon, Beam, Freeze, Grenade, Boomerang, PulseGun;
 
         //What traps the player has access to
         public bool Fire, Spikes, Wall, Catapult, SawBlade, Ice, Barrel;
