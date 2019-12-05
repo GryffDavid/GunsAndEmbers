@@ -88,7 +88,7 @@ namespace TowerDefensePrototype
 
     //This should possibly be moved into a base class which the powerups inherit from
     public struct PowerupEffect
-    {
+    { 
         public float PowerupValue;
         public Nullable<GeneralPowerup> GeneralPowerup;
         public Nullable<TurretPowerup> TurretPowerup;
@@ -4246,7 +4246,8 @@ namespace TowerDefensePrototype
                     List<Trap> WallList = new List<Trap>();
                     WallList = TrapList.FindAll(Trap => Trap.TrapType == TrapType.Wall);
 
-                    InvaderList = InvaderList.OrderBy(Invader => Vector2.Distance(PointToVector(Invader.DestinationRectangle.Center), explosion.Position)).ToList();
+                    List<Invader> InRangeInvaders = InvaderList.FindAll(Invader => Vector2.Distance(PointToVector(Invader.DestinationRectangle.Center), explosion.Position) < explosion.BlastRadius).ToList();
+                    InRangeInvaders = InRangeInvaders.OrderBy(Invader => Vector2.Distance(PointToVector(Invader.DestinationRectangle.Center), explosion.Position)).ToList();
 
                     foreach (Invader invader in InvaderList)
                     {

@@ -137,6 +137,7 @@ Content\Projectiles\Grenade.xnb
 Content\Invaders\StationaryCannon\StationaryCannonBarrel.xnb
 Content\Invaders\StationaryCannon\StationaryCannonBase.xnb
 Content\Invaders\HealDrone\HealDrone.xnb
+Content\JetSprite3.xnb
 Content\Sounds\Menu\MenuClick.xnb
 Content\Sounds\FireTrapStart.xnb
 Content\Sounds\Menu\MenuAmbiance.xnb
@@ -168,4 +169,3 @@ Content\Shaders\BackgroundEffect.xnb
 Content\Shaders\ButtonBlurEffect.xnb
 Content\Shaders\CrepuscularRaysEffect.xnb
 Content\StoryDialogue\StoryDialogue1.xnb
-Content\JetSprite3.xnb
