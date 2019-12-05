@@ -6,17 +6,19 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+
 namespace TowerDefensePrototype
 {
     class UserInterface
     {
         //XNA Declarations
         ContentManager ContentManager;
-        Texture2D BackgroundTexture, CursorTexture;
+        Texture2D BackgroundTexture, PrimaryCursorTexture, SecondaryCursorTexture;
         Vector2 Position, CursorPosition;
         Rectangle DestinationRectangle;
         SpriteFont ResourceFont;
         MouseState CurrentMouseState, PreviousMouseState;
+        KeyboardState CurrentKeyboardState, PreviousKeyboardState;
         int Resources;
         string BackgroundAssetName, SelectButtonAssetName, TrapSlotAssetName, TowerSlotAssetName;
 
@@ -34,21 +36,26 @@ namespace TowerDefensePrototype
         StaticSprite Ground;
         TrapType SelectedTrap;
         TurretType SelectedTurret;
+        CursorType CurrentCursor;
+
+        GameTime GameTime;
+
+        Ray TestRay;
 
         //Basic XNA calls
-        public UserInterface(int traps, int slots, int resources, ContentManager contentManager)
+        public UserInterface(int trapButtons, int towerButtons, int resources, ContentManager contentManager)
         {
-            Tower = new Tower("Tower", new Vector2(32, 304));          
-            Ground = new StaticSprite("Ground", new Vector2(0, 720 - 160 - 48));
+            Tower = new Tower("Tower", new Vector2(32, 304-65));          
+            Ground = new StaticSprite("Ground", new Vector2(0, 720 - 160 - 65));
             
             Resources = resources;
-            ContentManager = contentManager;
+            ContentManager = contentManager;            
 
             #region IconNameList 
             //This gets the names of the icons that are to appear on the
             //buttons that allow the player to select traps/turrets they want to place
                 IconNameList = new List<string>();
-                IconNameList.Add("Wall");
+                IconNameList.Add("WallIcon");
                 IconNameList.Add("SpikeTrap");
                 IconNameList.Add("FireTrap");
                 IconNameList.Add("BasicTurretIcon");
@@ -70,15 +77,15 @@ namespace TowerDefensePrototype
             TowerButtonList = new List<Button>();
             TrapsButtonList = new List<Button>();
 
-            for (int i = 0; i < traps; i++)
+            for (int i = 0; i < trapButtons; i++)
             {
-                TrapsButtonList.Add(new Button(TrapSlotAssetName, new Vector2((128 * i) + 256+64, Position.Y - 32)));
+                TrapsButtonList.Add(new Button(TrapSlotAssetName, new Vector2((128 * i) + 256+64, Position.Y - 32-65)));
                 TrapsButtonList[i].LoadContent(ContentManager);
             }        
 
-            for (int i = 0; i < slots; i++)
+            for (int i = 0; i < towerButtons; i++)
             {
-                TowerButtonList.Add(new Button(TowerSlotAssetName, new Vector2(48+64+32, 320 + ((38+64) * i))));
+                TowerButtonList.Add(new Button(TowerSlotAssetName, new Vector2(48+64+32+8, 272 + ((38+90) * i)-65)));
                 TowerButtonList[i].LoadContent(ContentManager);
             }
 
@@ -92,14 +99,14 @@ namespace TowerDefensePrototype
             #region List Creating Code
             //This code just creates the lists for the buttons and traps with the right number of possible slots
                 TrapList = new List<Trap>();                      
-                for (int i = 0; i < traps; i++)
+                for (int i = 0; i < trapButtons; i++)
                 {
                     TrapList.Add(new BlankTrap());
                     TrapList[i].LoadContent(ContentManager);
                 }
 
                 TurretList = new List<Turret>();
-                for (int i = 0; i < slots; i++)
+                for (int i = 0; i < towerButtons; i++)
                 {
                     TurretList.Add(new BlankTurret());
                     TurretList[i].LoadContent(ContentManager);
@@ -108,7 +115,7 @@ namespace TowerDefensePrototype
                 InvaderList = new List<Invader>();
                 for (int i = 0; i < 8; i++)
                 {
-                    InvaderList.Add(new Soldier(new Vector2(1260+(32*i), 720 - 160 - 37)));
+                    InvaderList.Add(new Soldier(new Vector2(1260+(32*i), 720 - 160 - 37-65)));
                     InvaderList[i].LoadContent(ContentManager);
                 }
             #endregion           
@@ -127,13 +134,14 @@ namespace TowerDefensePrototype
         {
             //This is just the stuff that needs to be updated every step
             //This is where I call all the smaller procedures that I broke the update into 
+            GameTime = gameTime;
             CurrentMouseState = Mouse.GetState();
             CursorPosition = new Vector2(CurrentMouseState.X, CurrentMouseState.Y);
             RightClickClearSelected();         
                                       
             SelectButtonsUpdate();
             TowerButtonUpdate();
-            TrapButtonUpdate();
+            TrapButtonUpdate();            
 
             PreviousMouseState = CurrentMouseState;
         }
@@ -146,7 +154,7 @@ namespace TowerDefensePrototype
             Tower.Draw(spriteBatch);
 
             InvaderUpdate();
-            TurretUpdate();            
+            TurretUpdate();
 
             #region Drawing buttons
                 spriteBatch.Draw(BackgroundTexture, DestinationRectangle, Color.White);
@@ -181,12 +189,13 @@ namespace TowerDefensePrototype
                 foreach (Turret turret in TurretList)
                 {
                     turret.Update();
-                    turret.Draw(spriteBatch);
+                    turret.Draw(spriteBatch, GameTime);
                 }
             #endregion
 
-            CursorUpdate();
-            spriteBatch.Draw(CursorTexture, new Rectangle((int)CursorPosition.X - (CursorTexture.Width / 2), (int)CursorPosition.Y - (CursorTexture.Height / 2), CursorTexture.Width, CursorTexture.Height), Color.White);
+            CursorDraw(spriteBatch);
+
+            TurretShoot();
         }
 
         
@@ -289,11 +298,14 @@ namespace TowerDefensePrototype
         }
 
         private void SelectButtonsUpdate()
-        {
+        {            
             //This makes sure that when the button at the bottom of the screen is clicked, the corresponding trap or turret is actually selected//
             //This will code will need to be added to every time that a new trap/turret is added to the game.
-            int Index;
 
+            CurrentKeyboardState = Keyboard.GetState();
+
+            int Index;
+            
             foreach (Button button in SelectButtonList)
             {
                 button.Update();
@@ -327,6 +339,36 @@ namespace TowerDefensePrototype
                     }
                 }
             }
+
+            if (CurrentKeyboardState.IsKeyUp(Keys.D1) && PreviousKeyboardState.IsKeyDown(Keys.D1))
+            {
+                SelectedTrap = TrapType.Wall;
+                SelectedTurret = TurretType.Blank;
+                ClearTurretSelect();
+            }
+
+            if (CurrentKeyboardState.IsKeyUp(Keys.D2) && PreviousKeyboardState.IsKeyDown(Keys.D2))
+            {
+                SelectedTrap = TrapType.Spikes;
+                SelectedTurret = TurretType.Blank;
+                ClearTurretSelect();
+            }
+
+            if (CurrentKeyboardState.IsKeyUp(Keys.D3) && PreviousKeyboardState.IsKeyDown(Keys.D3))
+            {
+                SelectedTrap = TrapType.Fire;
+                SelectedTurret = TurretType.Blank;
+                ClearTurretSelect();
+            }
+
+            if (CurrentKeyboardState.IsKeyUp(Keys.D4) && PreviousKeyboardState.IsKeyDown(Keys.D4))
+            {
+                SelectedTurret = TurretType.Basic;
+                SelectedTrap = TrapType.Blank;
+                ClearTurretSelect();
+            }
+            
+            PreviousKeyboardState = CurrentKeyboardState;
         }
 
 
@@ -347,7 +389,7 @@ namespace TowerDefensePrototype
         {
             //This piece of code makes sure that two turrets cannot be selected at any one time
             foreach (Turret turret in TurretList)
-            {               
+            {
                 if (turret.JustClicked == true)
                 {
                     ClearSelected();
@@ -371,39 +413,80 @@ namespace TowerDefensePrototype
             }
         }
 
-        private void CursorUpdate()
+        private void CursorDraw(SpriteBatch spriteBatch)
         {
+            if ((TurretList[0].Selected == true) || (TurretList[1].Selected == true) || (TurretList[2].Selected == true))
+            {
+                PrimaryCursorTexture = ContentManager.Load<Texture2D>("TurretCrosshair");
+                CurrentCursor = CursorType.Crosshair;
+            }
+            else
+            {
+                PrimaryCursorTexture = ContentManager.Load<Texture2D>("DefaultCursor");
+                CurrentCursor = CursorType.Default;
+            }
+
             switch (SelectedTrap)
             {
                 case TrapType.Blank:
-                    CursorTexture = ContentManager.Load<Texture2D>("Blank");
                     switch (SelectedTurret)
                     {
                         case TurretType.Blank:
-                            CursorTexture = ContentManager.Load<Texture2D>("Blank");
+                            SecondaryCursorTexture = ContentManager.Load<Texture2D>("Blank");
                             break;
 
                         case TurretType.Basic:
-                            CursorTexture = ContentManager.Load<Texture2D>("BasicTurretIcon");
+                            SecondaryCursorTexture = ContentManager.Load<Texture2D>("BasicTurretIcon");
                             break;
-                    }     
+                    }
                     break;
 
                 case TrapType.Fire:
-                    CursorTexture = ContentManager.Load<Texture2D>("FireTrap");
+                    SecondaryCursorTexture = ContentManager.Load<Texture2D>("FireTrap");
                     break;
 
                 case TrapType.Spikes:
-                    CursorTexture = ContentManager.Load<Texture2D>("SpikeTrap");
+                    SecondaryCursorTexture = ContentManager.Load<Texture2D>("SpikeTrap");
                     break;
 
                 case TrapType.Wall:
-                    CursorTexture = ContentManager.Load<Texture2D>("Wall");
+                    SecondaryCursorTexture = ContentManager.Load<Texture2D>("Wall");
                     break;
+            }
+
+
+            spriteBatch.Draw(SecondaryCursorTexture, new Rectangle((int)CursorPosition.X - (SecondaryCursorTexture.Width/2), (int)CursorPosition.Y - SecondaryCursorTexture.Height, SecondaryCursorTexture.Width, SecondaryCursorTexture.Height), Color.White);
+
+            if (CurrentCursor == CursorType.Default)
+            {
+                spriteBatch.Draw(PrimaryCursorTexture, new Rectangle((int)CursorPosition.X, (int)CursorPosition.Y, PrimaryCursorTexture.Width, PrimaryCursorTexture.Height), Color.White);
+            }
+            else
+            {
+                spriteBatch.Draw(PrimaryCursorTexture, new Rectangle((int)CursorPosition.X - (PrimaryCursorTexture.Width / 2), (int)CursorPosition.Y - (PrimaryCursorTexture.Height / 2), PrimaryCursorTexture.Width, PrimaryCursorTexture.Height), Color.White);
+            }
+
+        }
+
+        private void TurretShoot()
+        {
+            foreach (Turret turret in TurretList)
+            {                
+                if (turret.Selected == true)
+                if (CurrentMouseState.LeftButton == ButtonState.Pressed && CurrentMouseState.Y < 720-160)
+                {
+                    turret.Flash.Flash(0, 3);
+                }
             }
         }
 
-        
+        private void ProjectilesUpdate()
+        {
+
+        }
+
+
+
         private void ClearTurretSelect()
         {
             //This forces all turrets to become un-selected.

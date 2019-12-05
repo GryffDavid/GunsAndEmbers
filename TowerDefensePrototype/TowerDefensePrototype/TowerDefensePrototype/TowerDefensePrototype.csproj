@@ -16,8 +16,8 @@
     <XnaProfile>HiDef</XnaProfile>
     <XnaCrossPlatformGroupID>3cf02ccf-87a0-447a-a6d3-1186213294f7</XnaCrossPlatformGroupID>
     <XnaOutputType>Game</XnaOutputType>
-    <ApplicationIcon>Basics\Game.ico</ApplicationIcon>
-    <Thumbnail>Basics\GameThumbnail.png</Thumbnail>
+    <ApplicationIcon>aOtherStuff\Game.ico</ApplicationIcon>
+    <Thumbnail>aOtherStuff\GameThumbnail.png</Thumbnail>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -113,6 +113,7 @@
     <Compile Include="Basics\Invader.cs" />
     <Compile Include="Basics\Fire.cs" />
     <Compile Include="Invaders\BatteringRam.cs" />
+    <Compile Include="MuzzleFlash.cs" />
     <Compile Include="Turrets\BasicTurret.cs" />
     <Compile Include="Turrets\BlankTurret.cs" />
     <Compile Include="DefenseTraps\CatapultTrap.cs" />
@@ -130,8 +131,8 @@
     <Compile Include="DefenseTraps\Wall.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Basics\Game.ico" />
-    <Content Include="Basics\GameThumbnail.png" />
+    <Content Include="aOtherStuff\Game.ico" />
+    <Content Include="aOtherStuff\GameThumbnail.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TowerDefensePrototypeContent\TowerDefensePrototypeContent.contentproj">

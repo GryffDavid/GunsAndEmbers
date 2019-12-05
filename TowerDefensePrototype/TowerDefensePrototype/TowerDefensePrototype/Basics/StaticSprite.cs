@@ -12,7 +12,7 @@ namespace TowerDefensePrototype
     {
         Texture2D Texture;
         string AssetName;
-        Vector2 Position, Scale;
+        public Vector2 Position, Scale;
         Color Color;
         Rectangle DestinationRectangle;
 
@@ -34,12 +34,12 @@ namespace TowerDefensePrototype
 
         public void LoadContent(ContentManager contentManager)
         {
-            Texture = contentManager.Load<Texture2D>(AssetName);
-            DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, (int)(Texture.Width*Scale.X), (int)(Texture.Height*Scale.Y));
+            Texture = contentManager.Load<Texture2D>(AssetName);            
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
+            DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, (int)(Texture.Width * Scale.X), (int)(Texture.Height * Scale.Y));
             spriteBatch.Draw(Texture, DestinationRectangle, Color);
         }
     }

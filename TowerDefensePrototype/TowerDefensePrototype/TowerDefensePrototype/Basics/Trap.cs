@@ -15,8 +15,7 @@ namespace TowerDefensePrototype
         public String AssetName;
         public int HP;
         public Vector2 Scale, FrameSize, Position;
-        public bool Active, Solid;
-
+        public bool Active, Solid, CanTrigger;
 
         public virtual void LoadContent(ContentManager contentManager)
         {

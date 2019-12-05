@@ -14,22 +14,26 @@ namespace TowerDefensePrototype
         public String TurretAsset, BaseAsset;
         public Texture2D TurretBase, TurretBarrel;
         public Vector2 Direction, Position, MousePosition;
-        public Rectangle BaseRectangle, TurretRectangle;
+        public Rectangle BaseRectangle, BarrelRectangle;
         MouseState CurrentMouseState, PreviousMouseState;
-        float Rotation;
+        public float Rotation;
         public bool Selected, Active, JustClicked;
         public Color Color;
+        public MuzzleFlash Flash;
 
         public void LoadContent(ContentManager contentManager)
         {
+           
+
             Color = Color.White;
             BaseRectangle = new Rectangle();
-            TurretRectangle = new Rectangle();
+            BarrelRectangle = new Rectangle();
 
             if (Active == true)
             {
                 TurretBase = contentManager.Load<Texture2D>(BaseAsset);
                 TurretBarrel = contentManager.Load<Texture2D>(TurretAsset);
+                Flash = new MuzzleFlash(contentManager, TurretBarrel.Bounds.Width);
             }
         }
 
@@ -57,35 +61,35 @@ namespace TowerDefensePrototype
                 }
             }
 
-            if ((BaseRectangle.Contains(new Point(CurrentMouseState.X, CurrentMouseState.Y)) && CurrentMouseState.LeftButton == ButtonState.Released && PreviousMouseState.LeftButton == ButtonState.Pressed) ||
-            (TurretRectangle.Contains(new Point(CurrentMouseState.X, CurrentMouseState.Y)) && CurrentMouseState.LeftButton == ButtonState.Released && PreviousMouseState.LeftButton == ButtonState.Pressed))
+            if (BaseRectangle.Contains(new Point(CurrentMouseState.X, CurrentMouseState.Y)) && CurrentMouseState.LeftButton == ButtonState.Released && PreviousMouseState.LeftButton == ButtonState.Pressed)            
             {
                 JustClicked = true;
             }
             else
             {
                 JustClicked = false;
-            }
+            }            
             
             if (Selected == true)
             {
                 Color = Color.Red;
             }
             else
-                Color = Color.White;   
+                Color = Color.White;  
 
             PreviousMouseState = CurrentMouseState;
         }
 
-        public void Draw(SpriteBatch spriteBatch)
-        {            
+        public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+        {
             if (Active == true)
             {
-                BaseRectangle = new Rectangle((int)Position.X - 20, (int)Position.Y - 16, TurretBase.Width, TurretBase.Height);
-                TurretRectangle = new Rectangle((int)Position.X, (int)Position.Y, TurretBarrel.Width, TurretBarrel.Height);
+                BaseRectangle = new Rectangle((int)Position.X - 12, (int)Position.Y - 16-6, TurretBase.Width, TurretBase.Height);
+                BarrelRectangle = new Rectangle((int)Position.X+8, (int)Position.Y-6, TurretBarrel.Width, TurretBarrel.Height);
 
-                spriteBatch.Draw(TurretBarrel, TurretRectangle, null, Color, Rotation, new Vector2(24, TurretBarrel.Height / 2), SpriteEffects.None, 1f);
+                Flash.Draw(spriteBatch, gameTime, new Vector2(BarrelRectangle.X, BarrelRectangle.Y), Rotation);
 
+                spriteBatch.Draw(TurretBarrel, BarrelRectangle, null, Color, Rotation, new Vector2(24, TurretBarrel.Height / 2), SpriteEffects.None, 1f);
                 spriteBatch.Draw(TurretBase, BaseRectangle, Color);
             }
         }

@@ -10,17 +10,17 @@ namespace TowerDefensePrototype
 {
     public class AnimatedSprite
     {
-        Texture2D SpriteStrip;
-        Color Color;
-        Rectangle DestinationRect;
-        Rectangle SourceRect;
-        String AssetName;
-        int ElapsedTime, FrameTime, FrameCount, CurrentFrame;
+        public Texture2D SpriteStrip;
+        public Color Color;
+        public Rectangle DestinationRectangle;
+        public Rectangle SourceRectangle;
+        public String AssetName;
+        public int ElapsedTime, FrameTime, FrameCount, CurrentFrame;
 
         public Vector2 Scale, FrameSize, Position;
         public bool Active, Looping;
 
-        public AnimatedSprite(string assetName, Vector2 position, Vector2 frameSize, int frameCount, int frameTime, Color color, Vector2 scale, bool looping)
+        public void Initialize(string assetName, Vector2 position, Vector2 frameSize, int frameCount, int frameTime, Color color, Vector2 scale, bool looping)
         {
             Color = color;
             FrameSize = frameSize;
@@ -68,15 +68,15 @@ namespace TowerDefensePrototype
                 ElapsedTime = 0;
             }
 
-            SourceRect = new Rectangle(CurrentFrame * (int)FrameSize.X, 0, (int)FrameSize.X, (int)FrameSize.Y);
-            DestinationRect = new Rectangle((int)Position.X, (int)Position.Y, (int)FrameSize.X, (int)FrameSize.Y);
+            SourceRectangle = new Rectangle(CurrentFrame * (int)FrameSize.X, 0, (int)FrameSize.X, (int)FrameSize.Y);
+            DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, (int)FrameSize.X, (int)FrameSize.Y);
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
             if (Active)
             {
-                spriteBatch.Draw(SpriteStrip, DestinationRect, SourceRect, Color);
+                spriteBatch.Draw(SpriteStrip, DestinationRectangle, SourceRectangle, Color);
             }
         }    
     }

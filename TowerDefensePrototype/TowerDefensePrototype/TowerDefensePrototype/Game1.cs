@@ -13,6 +13,7 @@ namespace TowerDefensePrototype
 {
     public enum TrapType { Blank, Wall, Spikes, Catapult, Fire };
     public enum TurretType { Blank, Basic };
+    public enum CursorType { Default, Crosshair };
 
     public class Game1 : Microsoft.Xna.Framework.Game
     {
@@ -25,21 +26,21 @@ namespace TowerDefensePrototype
             graphics = new GraphicsDeviceManager(this);
             graphics.PreferredBackBufferWidth = 1280;
             graphics.PreferredBackBufferHeight = 720;
-            IsMouseVisible = true;
+            //IsMouseVisible = true;
             //graphics.IsFullScreen = true;
             Content.RootDirectory = "Content";
         }
 
         protected override void Initialize()
         {
-            UserInterface = new UserInterface(6, 3, 500, Content);           
+            //this.IsFixedTimeStep = false;
+            UserInterface = new UserInterface(6, 3, 500, Content);
             base.Initialize();
         }
 
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
-
             UserInterface.LoadContent(Content);
         }
 
@@ -56,7 +57,9 @@ namespace TowerDefensePrototype
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+
+            //GraphicsDevice.Clear(new Color(208,244,247));
+            GraphicsDevice.Clear(Color.SkyBlue);
             spriteBatch.Begin();                
                 UserInterface.Draw(spriteBatch);
             spriteBatch.End();
