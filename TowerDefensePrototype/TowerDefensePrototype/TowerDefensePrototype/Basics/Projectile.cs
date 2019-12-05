@@ -11,7 +11,6 @@ namespace TowerDefensePrototype
     class Projectile
     {
         public Ray Ray;
-        //public Vector3 Direction, Position;
         public bool Active;
 
         public Projectile(Vector2 Position, Vector2 Direction)

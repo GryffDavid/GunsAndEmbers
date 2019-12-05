@@ -30,6 +30,8 @@ namespace TowerDefensePrototype
         List<Turret> TurretList;
         List<Invader> InvaderList;
         List<string> IconNameList;
+
+        List<Projectile> ProjectileList;
         
         Tower Tower;
         StaticSprite Ground;
@@ -39,14 +41,13 @@ namespace TowerDefensePrototype
 
         GameTime GameTime;
 
-        List<Ray> RayList;
-
         int Rounds = 0;
 
         //Basic XNA calls
         public UserInterface(int trapButtons, int towerButtons, int resources, ContentManager contentManager)
         {
-            RayList = new List<Ray>();
+            ProjectileList = new List<Projectile>();
+
             Tower = new Tower("Tower", new Vector2(32, 304-65));          
             Ground = new StaticSprite("Ground", new Vector2(0, 720 - 160 - 65));
             
@@ -157,6 +158,8 @@ namespace TowerDefensePrototype
                     InvaderList.RemoveAt(i);
                 }
             }
+
+            TurretShoot();
         }
 
         public void Draw(SpriteBatch spriteBatch)
@@ -398,15 +401,6 @@ namespace TowerDefensePrototype
             {
                 invader.Update();
                 invader.Behaviour();
-
-                for (int p = 0; p < RayList.Count; p++)
-                {
-                    if (RayList[p].Intersects(invader.BoundingBox) != null)
-                    {
-                        invader.Active = false;
-                        RayList.RemoveAt(p);
-                    }
-                }
             }
 
             for (int i = 0; i < InvaderList.Count; i++)
@@ -499,21 +493,33 @@ namespace TowerDefensePrototype
             {
                 spriteBatch.Draw(PrimaryCursorTexture, new Rectangle((int)CursorPosition.X - (PrimaryCursorTexture.Width / 2), (int)CursorPosition.Y - (PrimaryCursorTexture.Height / 2), PrimaryCursorTexture.Width, PrimaryCursorTexture.Height), Color.White);
             }
-
         }
 
 
         private void TurretShoot()
         {
-            RayList.Clear();
+            ProjectileList.Clear();
 
             foreach (Turret turret in TurretList)
             {
                 if (turret.Selected == true && CurrentMouseState.LeftButton == ButtonState.Pressed)
                 {
-                    RayList.Add(new Ray(new Vector3(turret.BarrelRectangle.X, turret.BarrelRectangle.Y, 0), new Vector3(turret.Direction.X, turret.Direction.Y, 0)));
+                    ProjectileList.Add(new Projectile(new Vector2(turret.BarrelRectangle.X, turret.BarrelRectangle.Y), new Vector2(turret.Direction.X, turret.Direction.Y)));
+                }
+            //}
+                foreach (Invader invader in InvaderList)
+                 {
+                for (int i = 0; i < ProjectileList.Count; i++)
+                {
+                    if (ProjectileList[i].Ray.Intersects(invader.BoundingBox) != null && ProjectileList[i].Active == true)
+                    {
+                        ProjectileList[i].Active = false;
+                        ProjectileList.Clear();
+                        invader.Active = false;                        
+                    }
                 }
             }
+        }
         }
 
         
