@@ -17,7 +17,7 @@ namespace TowerDefensePrototype
         public Rectangle BaseRectangle, BarrelRectangle;
         MouseState CurrentMouseState, PreviousMouseState;
         public float Rotation;
-        public bool Selected, Active, JustClicked, CanShoot;
+        public bool Selected, Active, JustClicked;//, CanShoot;
         public Color Color;
         public MuzzleFlash Flash;
         public double FireDelay;
@@ -50,7 +50,7 @@ namespace TowerDefensePrototype
 
             if (ElapsedTime >= FireDelay)
             {
-                CanShoot = true;
+                //CanShoot = true;
                 ElapsedTime = 0;
                 return;
             }
@@ -102,11 +102,11 @@ namespace TowerDefensePrototype
             PreviousMouseState = CurrentMouseState;
         }
 
-        public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+        public void Draw(SpriteBatch spriteBatch)
         {
             if (Active == true)
             {
-                Flash.Draw(spriteBatch, gameTime, new Vector2(BarrelRectangle.X, BarrelRectangle.Y), Rotation);
+                //Flash.Draw(spriteBatch, gameTime, new Vector2(BarrelRectangle.X, BarrelRectangle.Y), Rotation);
 
                 BaseRectangle = new Rectangle((int)Position.X - 12, (int)Position.Y - 16-6, TurretBase.Width, TurretBase.Height);
                 BarrelRectangle = new Rectangle((int)Position.X+8, (int)Position.Y-6, TurretBarrel.Width, TurretBarrel.Height);
