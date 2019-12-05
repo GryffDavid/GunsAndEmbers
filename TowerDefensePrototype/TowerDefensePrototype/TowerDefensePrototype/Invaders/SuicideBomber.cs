@@ -2,14 +2,70 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Content;
+
 
 namespace TowerDefensePrototype
 {
     class SuicideBomber : Invader
     {
+        public SuicideBomber(Vector2 position)
+        {
+            Active = true;
+            MoveVector = new Vector2(-2, 0);
+            Position = position;
+            AssetName = "Invaders/PixelTestStrip";
+            CurrentHP = 100;
+            MaxHP = 100;
+            MoveDelay = 15;
+            ResourceMinMax = new Vector2(1, 5);
+            CurrentAttackDelay = 0;
+            AttackDelay = 500;
+            AttackPower = 200;
+            //FrameSize = new Vector2(30, 60);
+            FrameDelay = 120;
+            TotalFrames = 9;
+            CurrentFrame = 0;
+            InvaderType = InvaderType.SuicideBomber;
+            YRange = new Vector2(525, 630);
+            Airborne = false;
+        }
+
+        public override void Update(GameTime gameTime)
+        {
+            base.Update(gameTime);
+        }
+
         public override void TrapDamage(TrapType trapType)
         {
+            if (VulnerableToTrap == true)
+            {
+                switch (trapType)
+                {
+                    case TrapType.Fire:
+                        CurrentHP -= 10;
+                        DamageOverTime(3000, 2, 300, Color.Red);
+                        break;
 
+                    case TrapType.Spikes:
+                        CurrentHP -= 10;
+                        break;
+
+                    case TrapType.Catapult:
+                        Trajectory(new Vector2(5, -10));
+                        break;
+
+                    case TrapType.Ice:
+                        Freeze(4000, Color.LightBlue);
+                        break;
+
+                    case TrapType.Tar:
+                        MakeSlow(4000, 80);
+                        break;
+                }
+            }
         }
     }
 }

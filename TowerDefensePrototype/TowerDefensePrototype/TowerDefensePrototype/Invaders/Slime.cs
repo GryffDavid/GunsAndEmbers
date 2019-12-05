@@ -23,7 +23,7 @@ namespace TowerDefensePrototype
             CurrentAttackDelay = 0;
             AttackDelay = 1500;
             AttackPower = 4;
-            FrameSize = new Vector2(50, 28);
+            //FrameSize = new Vector2(50, 28);
             FrameDelay = 120;
             TotalFrames = 2;
             CurrentFrame = 0;

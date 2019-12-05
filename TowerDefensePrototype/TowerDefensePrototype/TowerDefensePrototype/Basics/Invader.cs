@@ -14,7 +14,7 @@ namespace TowerDefensePrototype
         public Texture2D CurrentTexture;
         public Rectangle DestinationRectangle, SourceRectangle;
         public Vector2 Position, MoveVector, CurrentMoveVector, ResourceMinMax, Velocity;
-        public bool Active, VulnerableToTurret, VulnerableToTrap, CanAttack, Burning, Frozen, Slow;//, CanMove;
+        public bool Active, VulnerableToTurret, VulnerableToTrap, CanAttack, Burning, Frozen, Slow, Airborne;//, CanMove;
         public Color Color, BurnColor, FrozenColor, AcidColor;
         public BoundingBox BoundingBox;
         public Double CurrentMoveDelay, MoveDelay, CurrentDelay, AttackDelay, CurrentAttackDelay;
@@ -33,6 +33,7 @@ namespace TowerDefensePrototype
         public Vector2 FrameSize;
         public Vector2 Scale = new Vector2(1, 1);
         public float Bottom;
+        public Animation CurrentAnimation;
 
         public void LoadContent(ContentManager contentManager)
         {
@@ -44,7 +45,8 @@ namespace TowerDefensePrototype
             HPBar = new HorizontalBar(contentManager, new Vector2(32, 4), MaxHP, CurrentHP);
             CurrentMoveDelay = MoveDelay;
             CurrentMoveVector = MoveVector;
-            MaxY = Random.Next((int)YRange.X, (int)YRange.Y); 
+            MaxY = Random.Next((int)YRange.X, (int)YRange.Y);
+            FrameSize = new Vector2(CurrentTexture.Width / TotalFrames, CurrentTexture.Height);
         }
 
         public virtual void Update(GameTime gameTime)
@@ -58,21 +60,24 @@ namespace TowerDefensePrototype
                 CurrentDelay += gameTime.ElapsedGameTime.Milliseconds;
                 CurrentAttackDelay += gameTime.ElapsedGameTime.Milliseconds;
 
+                //This disables the invader if it has 0 health left
                 if (CurrentHP <= 0)
                     Active = false;
 
-                if (Position.X > 1280)
-                {
-                    VulnerableToTurret = false;
-                    VulnerableToTrap = false;
-                }
-                else
-                {
-                    VulnerableToTurret = true;
-                    VulnerableToTrap = true;
-                }
+                #region This makes sure that the invader can't take damage if it's off screen (i.e. before it's visible to the player)
+                    if (Position.X > 1280)
+                    {
+                        VulnerableToTurret = false;
+                        VulnerableToTrap = false;
+                    }
+                    else
+                    {
+                        VulnerableToTurret = true;
+                        VulnerableToTrap = true;
+                    }
+                #endregion
 
-
+                //This makes sure that the invader only attacks when every 1.5 seconds (Or other delay) - Set in the specific class
                 if (CurrentAttackDelay >= AttackDelay)
                 {
                     CanAttack = true;
@@ -83,62 +88,70 @@ namespace TowerDefensePrototype
                     CanAttack = false;
                 }
 
-                if (Burning == true)
-                {
-                    CurrentBurnDelay += gameTime.ElapsedGameTime.TotalMilliseconds;
-                    CurrentBurnInterval += gameTime.ElapsedGameTime.TotalMilliseconds;
-                }
+                #region This controls how the invader takes damage when it's burning
+                    if (Burning == true)
+                    {
+                        CurrentBurnDelay += gameTime.ElapsedGameTime.TotalMilliseconds;
+                        CurrentBurnInterval += gameTime.ElapsedGameTime.TotalMilliseconds;
+                    }
 
-                if (CurrentBurnInterval > BurnInterval)
-                {
-                    CurrentHP -= (int)BurnDamage;
-                    CurrentBurnInterval = 0;
-                }
+                    if (CurrentBurnInterval > BurnInterval)
+                    {
+                        CurrentHP -= (int)BurnDamage;
+                        CurrentBurnInterval = 0;
+                    }
 
-                if (Burning == true && CurrentBurnDelay > BurnDelay)
-                {
-                    Burning = false;
-                    CurrentBurnInterval = 0;
-                    CurrentBurnDelay = 0;
-                }                              
+                    if (Burning == true && CurrentBurnDelay > BurnDelay)
+                    {
+                        Burning = false;
+                        CurrentBurnInterval = 0;
+                        CurrentBurnDelay = 0;
+                    }                              
 
-                if (Burning == true)
-                {
-                    Color = BurnColor;
-                }
+                    if (Burning == true)
+                    {
+                        Color = BurnColor;
+                    }
+                #endregion
 
+                #region This controls how the invader behaves when it's frozen
                 if (Frozen == true)
-                {
-                    CurrentFreezeDelay += gameTime.ElapsedGameTime.TotalMilliseconds;
-                    Color = FrozenColor;
-                    CurrentMoveVector = Vector2.Zero;
-                }
+                    {
+                        CurrentFreezeDelay += gameTime.ElapsedGameTime.TotalMilliseconds;
+                        Color = FrozenColor;
+                        CurrentMoveVector = Vector2.Zero;
+                    }
 
-                if (Frozen == true && CurrentFreezeDelay > FreezeDelay)
-                {
-                    Frozen = false;
-                    CurrentMoveVector = MoveVector;
-                    CurrentFreezeDelay = 0;
-                }
+                    if (Frozen == true && CurrentFreezeDelay > FreezeDelay)
+                    {
+                        Frozen = false;
+                        CurrentMoveVector = MoveVector;
+                        CurrentFreezeDelay = 0;
+                    }
 
-                if (Frozen == false && Burning == false)
-                {
-                    Color = Color.White;
-                }
+                    if (Frozen == false && Burning == false)
+                    {
+                        Color = Color.White;
+                    }
+                #endregion
 
+                #region This controls how the invader behaves when it's slow
                 if (Slow == true)
-                {
-                    CurrentSlowDelay += gameTime.ElapsedGameTime.TotalMilliseconds;
-                    CurrentMoveDelay = MoveDelay * 5;                    
-                }
+                    {
+                        CurrentSlowDelay += gameTime.ElapsedGameTime.TotalMilliseconds;
+                        CurrentMoveDelay = MoveDelay * 5;                    
+                    }
 
-                if (Slow == true && CurrentSlowDelay > SlowDelay)
-                {
-                    Slow = false;
-                    CurrentMoveDelay = MoveDelay;
-                    CurrentSlowDelay = 0;
-                }
+                    if (Slow == true && CurrentSlowDelay > SlowDelay)
+                    {
+                        Slow = false;
+                        CurrentMoveDelay = MoveDelay;
+                        CurrentSlowDelay = 0;
+                    }
+                #endregion
 
+
+                //This makes sure that the HP bar is displayed in the correct position
                 HPBar.Update(new Vector2(Position.X, Position.Y - 16), CurrentHP);                
 
                 Position += Velocity;
@@ -147,8 +160,10 @@ namespace TowerDefensePrototype
 
                 CurrentFrameDelay += gameTime.ElapsedGameTime.TotalMilliseconds;
 
+
+                //This animates the invader, but only if it's not frozen
                 if (CurrentFrameDelay > FrameDelay)
-                {
+                {                    
                     if (Frozen == false)
                     {
                         CurrentFrame++;
@@ -203,14 +218,11 @@ namespace TowerDefensePrototype
                
         public void Move()
         {
-            //if (Active == true && CanMove == true)
-            //{
             if (CurrentDelay > CurrentMoveDelay)
             {
                 Position += CurrentMoveVector;
                 CurrentDelay = 0;
             }
-            //}
         }
 
         public void Freeze(float milliseconds, Color frozenColor)

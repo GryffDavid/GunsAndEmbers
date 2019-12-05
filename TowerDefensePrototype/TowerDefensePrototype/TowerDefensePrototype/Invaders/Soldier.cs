@@ -23,12 +23,13 @@ namespace TowerDefensePrototype
             CurrentAttackDelay = 0;
             AttackDelay = 1500;
             AttackPower = 4;
-            FrameSize = new Vector2(30, 60);
+            //FrameSize = new Vector2(30, 60);
             FrameDelay = 120;
             TotalFrames = 9;
-            CurrentFrame = 0;
+            CurrentFrame = 0;            
             InvaderType = InvaderType.Soldier;
-            YRange = new Vector2(525, 630);          
+            YRange = new Vector2(525, 630);
+            Airborne = false;            
         }
 
         public override void Update(GameTime gameTime)

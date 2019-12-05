@@ -19,8 +19,7 @@ namespace TowerDefensePrototype
             TrapType = TrapType.Barrel;
             DetonateDelay = 10000;
             DetonateLimit = -1;
-            FrameTime = 30;
-            FrameCount = 1;
+            Animated = false;
         }
     }
 }

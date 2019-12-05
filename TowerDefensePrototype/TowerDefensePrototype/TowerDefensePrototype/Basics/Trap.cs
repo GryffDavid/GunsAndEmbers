@@ -15,7 +15,7 @@ namespace TowerDefensePrototype
         public String AssetName;
         public int MaxHP, CurrentHP;
         public Vector2 Scale, FrameSize, Position;
-        public bool Active, Solid, CanTrigger;
+        public bool Active, Solid, CanTrigger, Animated;
         public BoundingBox BoundingBox;
         public TrapType TrapType;
         public List<Emitter> TrapEmitterList;
@@ -40,9 +40,17 @@ namespace TowerDefensePrototype
             Affected = false;
             CurrentAffectedTime = AffectedTime;
             CurrentHP = MaxHP;
+
+            if (Animated == false)
+            {
+                FrameCount = 1;
+            }
+
             FrameSize = new Vector2(Texture.Width / FrameCount, Texture.Height);
             ElapsedTime = 0;
             CurrentFrame = 0;
+
+            
         }
 
         public virtual void Update(GameTime gameTime)
@@ -51,16 +59,19 @@ namespace TowerDefensePrototype
 
             CurrentAffectedTime += gameTime.ElapsedGameTime.Milliseconds;
 
-            ElapsedTime += (int)gameTime.ElapsedGameTime.TotalMilliseconds;
-
-            if (ElapsedTime > FrameTime)
+            if (Animated == true)
             {
-                CurrentFrame++;
+                ElapsedTime += (int)gameTime.ElapsedGameTime.TotalMilliseconds;
 
-                if (CurrentFrame == FrameCount)
-                    CurrentFrame = 0;
+                if (ElapsedTime > FrameTime)
+                {
+                    CurrentFrame++;
 
-                ElapsedTime = 0;
+                    if (CurrentFrame == FrameCount)
+                        CurrentFrame = 0;
+
+                    ElapsedTime = 0;
+                }
             }
 
             //DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y - Texture.Height, (int)(Texture.Width), (int)(Texture.Height));

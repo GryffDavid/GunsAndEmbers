@@ -15,12 +15,10 @@ namespace TowerDefensePrototype
             Position = position;
             Solid = true;
             MaxHP = 100;
-            //AssetName = "Traps/Wall";
-            AssetName = "Invaders/PixelTestStrip";
+            AssetName = "Traps/Wall";
             TrapType = TrapType.Wall;
             DetonateLimit = -1;
-            FrameTime = 150;
-            FrameCount = 9;
+            Animated = false;
         }
     }
 }

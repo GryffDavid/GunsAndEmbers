@@ -17,7 +17,7 @@ namespace TowerDefensePrototype
         public bool FlameThrower, MachineGun, Cannon;
 
         //What traps the player has access to
-        public bool Fire, Spikes, Wall, Catapult;
+        public bool Fire, Spikes, Wall, Catapult, SawBlade;
 
         //Upgrades the player has purchased
         public bool Upgrade1, Upgrade2, Upgrade3;

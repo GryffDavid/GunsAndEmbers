@@ -18,7 +18,7 @@ namespace TowerDefensePrototype
 {
     public enum TrapType { Blank, Wall, Spikes, Catapult, Fire, Ice, Tar, Barrel, SawBlade };
     public enum TurretType { Blank, Gatling, Cannon, FlameThrower };
-    public enum InvaderType { Soldier, BatteringRam, Airship, Archer, Tank, Spider, Slime };
+    public enum InvaderType { Soldier, BatteringRam, Airship, Archer, Tank, Spider, Slime, SuicideBomber };
     public enum HeavyProjectileType { CannonBall, FlameThrower, Arrow, Acid, Torpedo };
     public enum LightProjectileType { MachineGun, Freeze };
     public enum GameState { Menu, Loading, Playing, Paused, ProfileSelect, Options, ProfileManagement, Tutorial, LoadingGame };
@@ -26,6 +26,7 @@ namespace TowerDefensePrototype
 
     public class Game1 : Microsoft.Xna.Framework.Game
     {
+        #region Variable declarations
         GraphicsDeviceManager graphics;
         ContentManager SecondaryContent;
         SpriteBatch spriteBatch, spriteBatch2, spriteBatch3, spriteBatch4;
@@ -34,94 +35,74 @@ namespace TowerDefensePrototype
         Texture2D BlankTexture, HUDBarTexture, PrimaryCursorTexture, 
             ShellCasing, LoadingScreenBackground, PauseMenuBackground, CurrentCursorTexture, 
             DefaultCursor, CrosshairCursor, FireCursor, WallCursor, SpikesCursor, 
-            BasicTurretCursor, CannonTurretCursor, FlameThrowerCursor;
+            BasicTurretCursor, CannonTurretCursor, FlameThrowerCursor, HealthBarSprite, ShieldBarSprite;
         Vector2 CursorPosition, GroundCollisionPoint;
         Rectangle ScreenRectangle;
         SpriteFont ResourceFont;
         MouseState CurrentMouseState, PreviousMouseState;
         KeyboardState CurrentKeyboardState, PreviousKeyboardState;
-        int Resources, SelectedTurretIndex, TrapLimit, TowerButtons;
-        string SelectButtonAssetName, TowerSlotAssetName, FileName, ContainerName;
+        int Resources, SelectedTurretIndex, TrapLimit, TowerButtons, ProfileNumber, WaveListIndex;
+        string SelectButtonAssetName, TowerSlotAssetName, FileName, ContainerName, ProfileName;
         bool ReadyToPlace, slow, IsLoading;
+        double CurrentWaveDelay;
 
-        //List declarations
-        List<Button> SelectButtonList;
-        List<Button> TowerButtonList;
-        List<Button> MainMenuButtonList;
-        List<Button> PauseButtonList;
-        List<Button> ProfileButtonList;
-        List<Button> ProfileDeleteList;
-        List<Button> UpgradesButtonList;
+        int GatlingSpeed = 0;
+        int CannonSpeed = 0;
+
+        #region List declarations
+        List<Button> SelectButtonList, TowerButtonList, MainMenuButtonList, PauseButtonList, 
+                     ProfileButtonList, ProfileDeleteList, UpgradesButtonList;
 
         List<Trap> TrapList;
         List<Turret> TurretList;
         List<Invader> InvaderList;
             
-        List<HeavyProjectile> HeavyProjectileList;
+        List<HeavyProjectile> HeavyProjectileList, InvaderHeavyProjectileList;
         List<LightProjectile> LightProjectileList;
-
-        List<HeavyProjectile> InvaderHeavyProjectileList;
         
-        List<Emitter> EmitterList; 
-        List<Emitter> EmitterList2;
+        List<Emitter> EmitterList, EmitterList2;
         List<Particle> ShellCasingList;
-        //List<StaticSprite> CloudList;
 
-        List<string> MainMenuNameList;
-        List<string> PauseMenuNameList;
-        List<string> IconNameList;
+        List<string> MainMenuNameList, PauseMenuNameList, IconNameList;
 
-        List<Explosion> ExplosionList;
+        List<Explosion> ExplosionList, EnemyExplosionList;
+
         List<Upgrade> UpgradesList;
 
-        //Custom class declarations
+        List<Wave> WaveList;
+        #endregion
+
+        #region Custom class declarations
         Button ProfileBackButton, ProfileManagementPlay, ProfileManagementBack, OptionsBack, OptionsSave;
         Tower Tower;
-        StaticSprite Ground;
+        StaticSprite Ground, TestBackground, ProfileMenuTitle;
+        AnimatedSprite LoadingAnimation;
         TrapType SelectedTrap;
         TurretType SelectedTurret;
         HorizontalBar TowerHealthBar;
         LightProjectile CurrentProjectile;
-        Emitter DirtEmitter;
-
-        AnimatedSprite LoadingAnimation;
-
-        Random Random;
+        Emitter DirtEmitter;      
         GameState GameState;
         Thread LoadingThread;
-
         Profile CurrentProfile;
         StorageDevice Device;
         Stream OpenFile;
         SpriteFont ButtonFont, HUDFont;
-
-        StaticSprite TestBackground;
-        StaticSprite ProfileMenuTitle;
-
         World CurrentWorld;
-        string ProfileName;
         Level CurrentLevel;
-
-        int ProfileNumber;
-
-        Settings CurrentSettings, DefaultSettings;
+        Settings CurrentSettings, DefaultSettings;          
+        Wave CurrentWave;          
+        Effect HealthBarEffect;
+        Random Random;
+        #endregion        
 
         //Sound effects
         //SoundEffect MachineGunLoop, Explosion1, Explosion2, Explosion3;
         //SoundEffect ButtonClick;
+        #endregion
 
-        Wave CurrentWave;
-        List<Wave> WaveList;     
-        double CurrentWaveDelay;
-        int WaveListIndex;
 
-        Effect HealthBarEffect;
-        Texture2D HealthBarSprite, ShieldBarSprite;
-
-        int GatlingSpeed = 0;
-        int CannonSpeed = 0;
-        
-        #region //Main Game Functions//
+        #region Main Game Functions
         public Game1()
         {
             DefaultSettings = new Settings
@@ -214,40 +195,6 @@ namespace TowerDefensePrototype
             base.Initialize();
         }
 
-        protected override void LoadContent()
-        {
-            spriteBatch = new SpriteBatch(GraphicsDevice);
-            spriteBatch2 = new SpriteBatch(GraphicsDevice);
-            spriteBatch3 = new SpriteBatch(GraphicsDevice);
-            spriteBatch4 = new SpriteBatch(GraphicsDevice);
-
-            LoadingScreenBackground = SecondaryContent.Load<Texture2D>("Backgrounds/LoadingScreen");
-
-            BlankTexture = SecondaryContent.Load<Texture2D>("Blank"); 
-           
-            DefaultCursor = SecondaryContent.Load<Texture2D>("Cursors/DefaultCursor");
-            CrosshairCursor = SecondaryContent.Load<Texture2D>("Cursors/Crosshair");
-            FireCursor = SecondaryContent.Load<Texture2D>("Icons/FireIcon");
-            WallCursor = SecondaryContent.Load<Texture2D>("Icons/WallIcon");
-            SpikesCursor = SecondaryContent.Load<Texture2D>("Icons/SpikesIcon");            
-
-            BasicTurretCursor = SecondaryContent.Load<Texture2D>("Icons/BasicTurretIcon2");
-            CannonTurretCursor = SecondaryContent.Load<Texture2D>("Icons/CannonTurretIcon");
-            FlameThrowerCursor = SecondaryContent.Load<Texture2D>("Icons/FlameThrowerTurretIcon");
-
-            ButtonFont = SecondaryContent.Load<SpriteFont>("Fonts/ButtonFont");
-            HUDFont = SecondaryContent.Load<SpriteFont>("Fonts/HUDFont");
-
-            PrimaryCursorTexture = DefaultCursor;
-            CurrentCursorTexture = BlankTexture;
-        }
-
-        protected override void UnloadContent()
-        {
-            Content.Unload();
-            SecondaryContent.Unload();
-        }
-
         protected override void Update(GameTime gameTime) 
         {
             //This is just the stuff that needs to be updated every step
@@ -331,6 +278,8 @@ namespace TowerDefensePrototype
 
                 RangedAttackTower();
                 RangedAttackTraps();
+
+                EnemyExplosionsUpdate();
 
                 TowerHealthBar.Update(new Vector2(90, 19), (int)Tower.CurrentHP);
 
@@ -685,8 +634,42 @@ namespace TowerDefensePrototype
         #endregion
 
 
-        //This is called as a seperate thread so that the 
-        //loading screen can be displayed while the content is being loaded
+        #region Handle Game Content
+        protected override void LoadContent()
+        {
+            spriteBatch = new SpriteBatch(GraphicsDevice);
+            spriteBatch2 = new SpriteBatch(GraphicsDevice);
+            spriteBatch3 = new SpriteBatch(GraphicsDevice);
+            spriteBatch4 = new SpriteBatch(GraphicsDevice);
+
+            LoadingScreenBackground = SecondaryContent.Load<Texture2D>("Backgrounds/LoadingScreen");
+
+            BlankTexture = SecondaryContent.Load<Texture2D>("Blank");
+
+            DefaultCursor = SecondaryContent.Load<Texture2D>("Cursors/DefaultCursor");
+            CrosshairCursor = SecondaryContent.Load<Texture2D>("Cursors/Crosshair");
+            FireCursor = SecondaryContent.Load<Texture2D>("Icons/FireIcon");
+            WallCursor = SecondaryContent.Load<Texture2D>("Icons/WallIcon");
+            SpikesCursor = SecondaryContent.Load<Texture2D>("Icons/SpikesIcon");
+
+            BasicTurretCursor = SecondaryContent.Load<Texture2D>("Icons/BasicTurretIcon2");
+            CannonTurretCursor = SecondaryContent.Load<Texture2D>("Icons/CannonTurretIcon");
+            FlameThrowerCursor = SecondaryContent.Load<Texture2D>("Icons/FlameThrowerTurretIcon");
+
+            ButtonFont = SecondaryContent.Load<SpriteFont>("Fonts/ButtonFont");
+            HUDFont = SecondaryContent.Load<SpriteFont>("Fonts/HUDFont");
+
+            PrimaryCursorTexture = DefaultCursor;
+            CurrentCursorTexture = BlankTexture;
+        }
+
+        protected override void UnloadContent()
+        {
+            Content.Unload();
+            SecondaryContent.Unload();
+        }
+
+
         private void LoadGameContent()
         {
             if (GameState == GameState.Loading && IsLoading == false)
@@ -846,8 +829,6 @@ namespace TowerDefensePrototype
 
                 InvaderList = new List<Invader>();
 
-                InvaderList.Add(new Soldier(new Vector2(1280, 500)));
-
                 foreach (Invader invader in InvaderList)
                 {
                     invader.LoadContent(Content);
@@ -862,6 +843,7 @@ namespace TowerDefensePrototype
                 EmitterList2 = new List<Emitter>();
 
                 ExplosionList = new List<Explosion>();
+                EnemyExplosionList = new List<Explosion>();
                 #endregion
 
                 WaveList = new List<Wave>();
@@ -870,15 +852,15 @@ namespace TowerDefensePrototype
                 {
                     Active = true,
                     Delay = 1000,
-                    InvaderType = InvaderType.Slime,
+                    InvaderType = InvaderType.SuicideBomber,
                     Number = 10
                 });
 
                 WaveList.Add(new Wave()
                 {
                     Active = true,
-                    Delay = 4000,
-                    InvaderType = InvaderType.Airship,
+                    Delay = 1000,
+                    InvaderType = InvaderType.Soldier,
                     Number = 2
                 });
 
@@ -894,23 +876,22 @@ namespace TowerDefensePrototype
 
                 GameState = GameState.Playing;                
             }
-        }
+        } //This is called as a separate thread to be displayed while content is loaded
 
-        //This is called when the player exits to the main menu
-        //It unloads the content from the ContentManager which has loaded
-        //all the in game content, but not the menu content
         private void UnloadGameContent()
         {
             Content.Unload();
-        }
+        } //This is called when the player exits to the main menu. Unloads game content, not menu content
+
 
         private void LoadGameSounds()
         {
             //Load all the game sounds here
         }
+        #endregion
 
 
-        #region //These handle button presses and are checked on Update
+        #region BUTTON stuff that needs to be done every step
         private void TowerButtonUpdate()
         {
             //This places the selected turret type into the right slot on the tower when the tower slot has been clicked
@@ -1054,6 +1035,13 @@ namespace TowerDefensePrototype
                                     {
                                         SelectedTrap = TrapType.Blank;
                                         SelectedTurret = TurretType.Cannon;
+                                    }
+                                    break;
+
+                                case "SawBlade":
+                                    {
+                                        SelectedTrap = TrapType.SawBlade;
+                                        SelectedTurret = TurretType.Blank;
                                     }
                                     break;
                             }
@@ -1398,8 +1386,7 @@ namespace TowerDefensePrototype
         }
         #endregion
 
-
-        #region //Invader stuff that needs to be done every step
+        #region INVADER stuff that needs to be done every step
         private void InvaderUpdate(GameTime gameTime)
         {
             //This does all the stuff that would normally be in the Update call, but because this 
@@ -1416,7 +1403,8 @@ namespace TowerDefensePrototype
                 {
                     switch (invader.InvaderType)
                     {
-                        case InvaderType.Soldier:
+                        case InvaderType.Soldier: 
+                        case InvaderType.SuicideBomber:                        
                             EmitterList2.Add(new Emitter("Particles/Splodge", new Vector2(invader.DestinationRectangle.Center.X, invader.DestinationRectangle.Center.Y),
                             new Vector2(0, 360), new Vector2(1, 2), new Vector2(50, 100), 0.5f, true, new Vector2(0, 360), new Vector2(1, 3),
                             new Vector2(0.02f, 0.06f), Color.DarkRed, Color.Red, 0.1f, 0.2f, 20, 10, true, new Vector2(invader.MaxY, invader.MaxY)));
@@ -1458,10 +1446,12 @@ namespace TowerDefensePrototype
                 #endregion
 
                 #region This controls the gravity and the ground collisions for the invader if they aren't an airborne type
-                if (invader.InvaderType == InvaderType.Soldier || 
-                    invader.InvaderType == InvaderType.Tank || 
-                    invader.InvaderType == InvaderType.Spider ||
-                    invader.InvaderType == InvaderType.Slime)
+                //if (invader.InvaderType == InvaderType.Soldier || 
+                //    invader.InvaderType == InvaderType.Tank || 
+                //    invader.InvaderType == InvaderType.Spider ||
+                //    invader.InvaderType == InvaderType.Slime || 
+                //    invader.InvaderType == InvaderType.SuicideBomber)
+                if (invader.Airborne == false)
                 {
                     if ((invader.DestinationRectangle.Bottom + invader.Velocity.Y) > invader.MaxY)
                     {
@@ -1476,9 +1466,10 @@ namespace TowerDefensePrototype
                     }
                 }
                 #endregion
-               
+
             }
 
+            #region This controls what happens when an explosion happens near the invader
             if (ExplosionList.Count > 0)
             {
                 foreach (Explosion explosion in ExplosionList)
@@ -1521,28 +1512,13 @@ namespace TowerDefensePrototype
                     explosion.Active = false;
                 }
             }
+            #endregion
         }
         
 
         private void AttackTower()
         {
-            //foreach (Invader invader in InvaderList)
-            //{
-            //    if ((invader.Position.X - Tower.DestinationRectangle.Right) < 4)
-            //    {
-            //        //invader.CanMove = false;
-            //        if (invader.CanAttack == true)
-            //        {
-            //            Tower.CurrentHP -= invader.AttackPower;
-            //        }
-            //    }
-
-            //    if ((invader.Position.X - Tower.DestinationRectangle.Right) < 3)
-            //    {
-            //        //invader.CanMove = false;
-            //    }
-            //}
-
+            //Melee attack
             foreach (Invader invader in InvaderList)
             {
                 if (!invader.DestinationRectangle.Intersects(Tower.DestinationRectangle))
@@ -1556,52 +1532,56 @@ namespace TowerDefensePrototype
 
                     if (invader.CanAttack == true)
                     {
-                        Tower.TakeDamage(invader.AttackPower);
-                    }
-                }
-            }
-        }
-
-        private void AttackTraps()
-        {
-            //foreach (Invader invader in InvaderList)
-            //{
-            //    foreach (Trap trap in TrapList)
-            //    {
-            //        if (invader.DestinationRectangle.Left < trap.DestinationRectangle.Right 
-            //            && invader.DestinationRectangle.Right > trap.DestinationRectangle.Left
-            //            && invader.DestinationRectangle.Bottom > trap.DestinationRectangle.Top
-            //            && trap.TrapType == TrapType.Wall)
-            //        {
-            //            //invader.CanMove = false;
-            //        }
-            //    }
-            //}
-
-            foreach (Invader invader in InvaderList)
-            {
-                foreach (Trap trap in TrapList)
-                {
-                    if (invader.DestinationRectangle.Intersects(trap.DestinationRectangle))
-                    {
-                        switch (trap.TrapType)
+                        switch (invader.InvaderType)
                         {
-                            case TrapType.Wall:
-                                {
-                                    invader.CurrentMoveVector = Vector2.Zero;
-                                }
+                            case InvaderType.SuicideBomber:
+                                Color FireColor = Color.DarkOrange;
+                                FireColor.A = 200;
+
+                                Color FireColor2 = Color.DarkOrange;
+                                FireColor2.A = 90;
+
+                                Emitter ExplosionEmitter = new Emitter("Particles/FireParticle",
+                                        new Vector2(invader.DestinationRectangle.Center.X, invader.DestinationRectangle.Center.Y),
+                                        new Vector2(0, 360), new Vector2(1, 5), new Vector2(1, 10), 0.01f, true, new Vector2(0, 360),
+                                        new Vector2(0, 0), new Vector2(3, 4), FireColor, FireColor2, 0.0f, 0.1f, 1, 7, false,
+                                        new Vector2(0, 720), true);
+
+                                EmitterList.Add(ExplosionEmitter);
+                                EmitterList[EmitterList.IndexOf(ExplosionEmitter)].LoadContent(Content);
+
+
+                                Emitter newEmitter2 = new Emitter("Particles/Smoke",
+                                        new Vector2(invader.DestinationRectangle.Center.X, invader.DestinationRectangle.Center.Y),
+                                        new Vector2(0, 360), new Vector2(1, 2), new Vector2(1, 15), 0.01f, true, new Vector2(0, 360),
+                                        new Vector2(0, 0), new Vector2(1, 2), Color.Gray, Color.DarkGray, 0.0f, 0.3f, 1, 2, false,
+                                        new Vector2(0, 720), false);
+
+                                EmitterList2.Add(newEmitter2);
+                                EmitterList2[EmitterList2.IndexOf(newEmitter2)].LoadContent(Content);
+
+
+                                Emitter ExplosionEmitter2 = new Emitter("Particles/Splodge",
+                                        new Vector2(invader.DestinationRectangle.Center.X, invader.DestinationRectangle.Center.Y),
+                                        new Vector2(0, 360), new Vector2(1, 7), new Vector2(15, 40), 0.01f, true, new Vector2(0, 360),
+                                        new Vector2(0, 0), new Vector2(0.1f, 0.3f), Color.DarkSlateGray, Color.SandyBrown, 0.0f, 0.1f, 1, 3, false,
+                                        new Vector2(0, 720), true);
+
+                                EmitterList.Add(ExplosionEmitter2);
+                                EmitterList[EmitterList.IndexOf(ExplosionEmitter2)].LoadContent(Content);
+
+                                EnemyExplosionList.Add(new Explosion(invader.Position, 100, invader.AttackPower));
+
+                                invader.CurrentHP = 0;
                                 break;
                         }
                     }
                 }
             }
-        }
 
-
-        private void RangedAttackTower()
-        {
+            //Ranged attack
             foreach (Invader invader in InvaderList)
-            {                
+            {
                 RangedInvader rangedInvader = invader as RangedInvader;
 
                 if (rangedInvader != null && rangedInvader.CanAttack == true &&
@@ -1654,6 +1634,33 @@ namespace TowerDefensePrototype
                     }
                 }
             }
+        }
+
+        private void AttackTraps()
+        {
+            foreach (Invader invader in InvaderList)
+            {
+                foreach (Trap trap in TrapList)
+                {
+                    if (invader.DestinationRectangle.Intersects(trap.DestinationRectangle))
+                    {
+                        switch (trap.TrapType)
+                        {
+                            case TrapType.Wall:
+                                {
+                                    invader.CurrentMoveVector = Vector2.Zero;
+                                }
+                                break;
+                        }
+                    }
+                }
+            }
+        }
+
+
+        private void RangedAttackTower()
+        {
+            
         }
 
         private void RangedAttackTraps()
@@ -1846,10 +1853,29 @@ namespace TowerDefensePrototype
                 }
             }
         }
+
+        private void EnemyExplosionsUpdate()
+        {
+            if (EnemyExplosionList.Count > 0)
+            {
+                foreach (Explosion explosion in EnemyExplosionList)
+                {
+                    if (Vector2.Distance(new Vector2(Tower.DestinationRectangle.Right, explosion.Position.Y), 
+                        explosion.Position) < explosion.BlastRadius && explosion.Active == true)
+                    {
+                        float Distance = Vector2.Distance(new Vector2(Tower.DestinationRectangle.Right, Tower.DestinationRectangle.Bottom), explosion.Position);
+                        Tower.TakeDamage((int)(explosion.Damage / 100 * (100 - (100 / explosion.BlastRadius) * Distance)));
+                    }
+
+                    //Add in the code here that will damage the traps when there's an exp
+
+                    explosion.Active = false;
+                }
+            }
+        }
         #endregion
 
-
-        #region //Turret stuff that needs to be called every step
+        #region TURRET stuff that needs to be called every step
         private void TurretUpdate()
         {
             //This piece of code makes sure that two turrets cannot be selected at any one time
@@ -1998,7 +2024,6 @@ namespace TowerDefensePrototype
 
                     HeavyProjectileList[HeavyProjectileList.IndexOf(HeavyProjectileList.First(
                         HeavyProjectile => HeavyProjectile.HeavyProjectileType == HeavyProjectileType.Arrow))].Active = false;
-
                 }
             #endregion
 
@@ -2010,9 +2035,8 @@ namespace TowerDefensePrototype
                 if (heavyProjectile.Emitter != null)
                     heavyProjectile.Emitter.AngleRange = new Vector2(-(MathHelper.ToDegrees((float)Math.Atan2(-heavyProjectile.Velocity.Y, -heavyProjectile.Velocity.X))) - 20,
                                 -(MathHelper.ToDegrees((float)Math.Atan2(-heavyProjectile.Velocity.Y, -heavyProjectile.Velocity.X))) + 20);
-
-                //This makes sure that particles are emitted from the wall in the correct position when a projectile hits it
-                #region
+                                
+                #region This makes sure that particles are emitted from the wall in the correct position when a projectile hits it
                 if (TrapList.Any(Trap => Trap.DestinationRectangle.Intersects(heavyProjectile.CollisionRectangle) && 
                     Trap.TrapType == TrapType.Wall))
                 {
@@ -2037,10 +2061,11 @@ namespace TowerDefensePrototype
                 }
                 #endregion
 
+                #region This controls what happens when a heavy projectile collides with the ground
                 if (heavyProjectile.Position.Y > heavyProjectile.MaxY && heavyProjectile.Active == true)
                 {
                     switch (heavyProjectile.HeavyProjectileType)
-                    {
+                    {                        
                         case HeavyProjectileType.CannonBall:
                             {
                                 Color DirtColor = new Color();
@@ -2085,6 +2110,8 @@ namespace TowerDefensePrototype
                                 EmitterList2.Add(newEmitter);
                                 EmitterList2[EmitterList2.IndexOf(newEmitter)].LoadContent(Content);
 
+                                
+
                                 ExplosionList.Add(new Explosion(heavyProjectile.Position, 300, heavyProjectile.Damage));
                             }
                             break;
@@ -2116,9 +2143,8 @@ namespace TowerDefensePrototype
                             {
 
                             }
-                            break;
+                            break;                       
                     }
-
                     #region Deactivate the Projectile
                     if (heavyProjectile.HeavyProjectileType != HeavyProjectileType.Arrow)
                     {
@@ -2128,6 +2154,7 @@ namespace TowerDefensePrototype
                     }
                     #endregion
                 }
+                #endregion
 
                 #region HeavyPojectile Intersects an invader
                 if (InvaderList.Any(Invader2 => Invader2.DestinationRectangle.Intersects(heavyProjectile.DestinationRectangle)) && heavyProjectile.Active == true)
@@ -2449,8 +2476,7 @@ namespace TowerDefensePrototype
         }
         #endregion
 
-
-        #region //Trap stuff that needs to be called every step
+        #region TRAP stuff that needs to be called every step
         private void TrapPlacement()
         {
             if (CurrentMouseState.LeftButton == ButtonState.Pressed &&
@@ -2588,6 +2614,18 @@ namespace TowerDefensePrototype
                             ClearSelected();
                         }
                         break;
+
+                    case TrapType.SawBlade:
+                        if (Resources >= 50)
+                        {
+                            Trap NewTrap = new SawBladeTrap(new Vector2(CursorPosition.X - 16, CursorPosition.Y));
+                            TrapList.Add(NewTrap);
+                            TrapList[TrapList.IndexOf(NewTrap)].LoadContent(Content);
+                            ReadyToPlace = false;
+                            Resources -= 50;
+                            ClearSelected();
+                        }
+                        break;
                 }
             }
         }
@@ -2637,6 +2675,33 @@ namespace TowerDefensePrototype
 
                         if (HitTrap.CurrentDetonateLimit > 0)
                             HitTrap.CurrentDetonateLimit -= 1;
+
+                        switch (invader.InvaderType)
+                        {
+                            case InvaderType.Soldier:
+                                switch (HitTrap.TrapType)
+                                {
+                                    case TrapType.SawBlade:
+                                        EmitterList2.Add(new Emitter("Particles/Splodge", new Vector2(invader.DestinationRectangle.Center.X, HitTrap.DestinationRectangle.Center.Y),
+                                    new Vector2(0, 65), new Vector2(2, 4), new Vector2(50, 100), 0.5f, true, new Vector2(0, 360), new Vector2(1, 3),
+                                    new Vector2(0.02f, 0.06f), Color.DarkRed, Color.Red, 0.1f, 0.3f, 20, 20, true, new Vector2(invader.MaxY, invader.MaxY)));
+                                        EmitterList2[EmitterList2.Count - 1].LoadContent(Content);
+                                        break;
+                                }
+                                break;
+
+                            case InvaderType.Slime:
+                                switch (HitTrap.TrapType)
+                                {
+                                    case TrapType.SawBlade:
+                                        EmitterList2.Add(new Emitter("Particles/Splodge", new Vector2(invader.DestinationRectangle.Center.X, HitTrap.DestinationRectangle.Center.Y),
+                                    new Vector2(0, 65), new Vector2(2, 4), new Vector2(50, 100), 0.5f, true, new Vector2(0, 360), new Vector2(1, 3),
+                                    new Vector2(0.02f, 0.06f), Color.HotPink, Color.LightPink, 0.1f, 0.3f, 20, 20, true, new Vector2(invader.MaxY, invader.MaxY)));
+                                        EmitterList2[EmitterList2.Count - 1].LoadContent(Content);
+                                        break;
+                                }
+                                break;
+                        }                        
                     }
                 }
 
@@ -2649,141 +2714,7 @@ namespace TowerDefensePrototype
         #endregion
 
 
-        //Draw the correct cursor
-        private void CursorDraw(SpriteBatch spriteBatch) 
-        {
-            if (GameState == GameState.Playing)
-            {
-                if (TurretList.Any(Turret => Turret.Selected == true))
-                {
-                    PrimaryCursorTexture = CrosshairCursor;
-                }
-                else
-                {
-                    PrimaryCursorTexture = DefaultCursor;
-                }
-
-                switch (SelectedTrap)
-                {
-                    case TrapType.Blank:
-                        CurrentCursorTexture = BlankTexture;
-                        break;
-
-                    case TrapType.Fire:
-                        CurrentCursorTexture = FireCursor;
-                        break;
-
-                    case TrapType.Spikes:
-                        CurrentCursorTexture = SpikesCursor;
-                        break;
-
-                    case TrapType.Wall:
-                        CurrentCursorTexture = WallCursor;
-                        break;
-
-                    case TrapType.Ice:
-                        CurrentCursorTexture = WallCursor;
-                        break;
-                }
-
-                switch (SelectedTurret)
-                {
-                    case TurretType.Blank:
-                        if (SelectedTrap == TrapType.Blank)
-                        CurrentCursorTexture = BlankTexture;
-                        break;
-
-                    case TurretType.Gatling:
-                        CurrentCursorTexture = BasicTurretCursor;
-                        break;
-
-                    case TurretType.Cannon:
-                        CurrentCursorTexture = CannonTurretCursor;
-                        break;
-
-                    case TurretType.FlameThrower:
-                        CurrentCursorTexture = FlameThrowerCursor;
-                        break;
-                }
-            }
-
-
-            if (GameState != GameState.Loading)
-            {
-                if (GameState != GameState.Playing)
-                {
-                    PrimaryCursorTexture = DefaultCursor;
-                    spriteBatch.Draw(PrimaryCursorTexture, new Rectangle((int)CursorPosition.X, (int)CursorPosition.Y,
-                                PrimaryCursorTexture.Width, PrimaryCursorTexture.Height), null, Color.White ,MathHelper.ToRadians(0), Vector2.Zero, SpriteEffects.None, 1);
-                }
-                else
-                {
-                    spriteBatch.Draw(CurrentCursorTexture, new Rectangle((int)CursorPosition.X - (CurrentCursorTexture.Width / 2),
-                        (int)CursorPosition.Y - CurrentCursorTexture.Height, CurrentCursorTexture.Width, CurrentCursorTexture.Height), null,
-                        Color.White, MathHelper.ToRadians(0), Vector2.Zero, SpriteEffects.None, 1);
-
-                    if (PrimaryCursorTexture != CrosshairCursor)
-                        spriteBatch.Draw(PrimaryCursorTexture, new Rectangle((int)CursorPosition.X, (int)CursorPosition.Y,
-                                PrimaryCursorTexture.Width, PrimaryCursorTexture.Height), null,
-                        Color.White, MathHelper.ToRadians(0), Vector2.Zero, SpriteEffects.None, 1);
-                    else
-                        spriteBatch.Draw(PrimaryCursorTexture, new Rectangle((int)CursorPosition.X - PrimaryCursorTexture.Width / 2, (int)CursorPosition.Y - PrimaryCursorTexture.Height / 2,
-                            PrimaryCursorTexture.Width, PrimaryCursorTexture.Height), null,
-                        Color.White, MathHelper.ToRadians(0), Vector2.Zero, SpriteEffects.None, 1);
-                }
-            }            
-        }        
-
-
-        //Some math functions
-        public double DoubleRange(double one, double two)
-        {            
-            return one + Random.NextDouble() * (two - one);
-        }
-
-        public double PercentageChange(double number, double percentage)
-        {
-            double newNumber = number;
-            newNumber = newNumber + ((newNumber / 100) * percentage);
-            return newNumber;
-        }
-
-
-        #region //Various functions to clear current selections
-        private void ClearTurretSelect()
-        {
-            //This forces all turrets to become un-selected.
-            foreach (Turret turret in TurretList)
-            {
-                turret.Selected = false;
-            }            
-        }
-
-        private void RightClickClearSelected()
-        {
-            if (CurrentMouseState.RightButton == ButtonState.Released && PreviousMouseState.RightButton == ButtonState.Pressed)
-            {
-                SelectedTurret = TurretType.Blank;
-                SelectedTrap = TrapType.Blank;
-                ReadyToPlace = false;
-
-                foreach (Turret turret in TurretList)
-                {
-                    turret.Selected = false;
-                }
-            }
-        }
-
-        private void ClearSelected()
-        {
-            SelectedTurret = TurretType.Blank;
-            SelectedTrap = TrapType.Blank;
-            ReadyToPlace = false;
-        }
-        #endregion
-
-
-        #region //Handling player profile data//
+        #region Handling player profile data
         public void HandleProfile(IAsyncResult result)
         {
             Device = StorageDevice.EndShowSelector(result);
@@ -2981,7 +2912,7 @@ namespace TowerDefensePrototype
         #endregion
 
 
-        #region //Handling enemy waves//
+        #region Handling enemy waves
         public void UpdateWave(GameTime gameTime)
         {
             CurrentWaveDelay += gameTime.ElapsedGameTime.TotalMilliseconds;
@@ -3030,6 +2961,14 @@ namespace TowerDefensePrototype
                     CurrentWaveDelay = 0;
                 }
 
+                if (CurrentWave.InvaderType == InvaderType.SuicideBomber)
+                {
+                    CurrentWave.Number--;
+                    InvaderList.Add(new SuicideBomber(new Vector2(1280, 400)));
+                    InvaderList[InvaderList.Count - 1].LoadContent(Content);
+                    CurrentWaveDelay = 0;
+                }
+
             }
 
             if (CurrentWave.Number == 0)
@@ -3038,14 +2977,9 @@ namespace TowerDefensePrototype
                 WaveListIndex++;
             }
         }
-
-        public void HandleProfileManagement()
-        {
-
-        }
         #endregion
 
-
+         
         //Handle levels
         public void LoadLevel(int number)
         {
@@ -3091,6 +3025,7 @@ namespace TowerDefensePrototype
             }
         }
 
+
         //Handle upgrades
         public void LoadUpgrades()
         {
@@ -3114,5 +3049,139 @@ namespace TowerDefensePrototype
             GatlingSpeed = 0;
             CannonSpeed = 0;
         }
+
+
+        //Some math functions
+        public double DoubleRange(double one, double two)
+        {
+            return one + Random.NextDouble() * (two - one);
+        }
+
+        public double PercentageChange(double number, double percentage)
+        {
+            double newNumber = number;
+            newNumber = newNumber + ((newNumber / 100) * percentage);
+            return newNumber;
+        }
+
+
+        //Draw the correct cursor
+        private void CursorDraw(SpriteBatch spriteBatch)
+        {
+            if (GameState == GameState.Playing)
+            {
+                if (TurretList.Any(Turret => Turret.Selected == true))
+                {
+                    PrimaryCursorTexture = CrosshairCursor;
+                }
+                else
+                {
+                    PrimaryCursorTexture = DefaultCursor;
+                }
+
+                switch (SelectedTrap)
+                {
+                    case TrapType.Blank:
+                        CurrentCursorTexture = BlankTexture;
+                        break;
+
+                    case TrapType.Fire:
+                        CurrentCursorTexture = FireCursor;
+                        break;
+
+                    case TrapType.Spikes:
+                        CurrentCursorTexture = SpikesCursor;
+                        break;
+
+                    case TrapType.Wall:
+                        CurrentCursorTexture = WallCursor;
+                        break;
+
+                    case TrapType.Ice:
+                        CurrentCursorTexture = WallCursor;
+                        break;
+                }
+
+                switch (SelectedTurret)
+                {
+                    case TurretType.Blank:
+                        if (SelectedTrap == TrapType.Blank)
+                            CurrentCursorTexture = BlankTexture;
+                        break;
+
+                    case TurretType.Gatling:
+                        CurrentCursorTexture = BasicTurretCursor;
+                        break;
+
+                    case TurretType.Cannon:
+                        CurrentCursorTexture = CannonTurretCursor;
+                        break;
+
+                    case TurretType.FlameThrower:
+                        CurrentCursorTexture = FlameThrowerCursor;
+                        break;
+                }
+            }
+
+
+            if (GameState != GameState.Loading)
+            {
+                if (GameState != GameState.Playing)
+                {
+                    PrimaryCursorTexture = DefaultCursor;
+                    spriteBatch.Draw(PrimaryCursorTexture, new Rectangle((int)CursorPosition.X, (int)CursorPosition.Y,
+                                PrimaryCursorTexture.Width, PrimaryCursorTexture.Height), null, Color.White, MathHelper.ToRadians(0), Vector2.Zero, SpriteEffects.None, 1);
+                }
+                else
+                {
+                    spriteBatch.Draw(CurrentCursorTexture, new Rectangle((int)CursorPosition.X - (CurrentCursorTexture.Width / 2),
+                        (int)CursorPosition.Y - CurrentCursorTexture.Height, CurrentCursorTexture.Width, CurrentCursorTexture.Height), null,
+                        Color.White, MathHelper.ToRadians(0), Vector2.Zero, SpriteEffects.None, 1);
+
+                    if (PrimaryCursorTexture != CrosshairCursor)
+                        spriteBatch.Draw(PrimaryCursorTexture, new Rectangle((int)CursorPosition.X, (int)CursorPosition.Y,
+                                PrimaryCursorTexture.Width, PrimaryCursorTexture.Height), null,
+                        Color.White, MathHelper.ToRadians(0), Vector2.Zero, SpriteEffects.None, 1);
+                    else
+                        spriteBatch.Draw(PrimaryCursorTexture, new Rectangle((int)CursorPosition.X - PrimaryCursorTexture.Width / 2, (int)CursorPosition.Y - PrimaryCursorTexture.Height / 2,
+                            PrimaryCursorTexture.Width, PrimaryCursorTexture.Height), null,
+                        Color.White, MathHelper.ToRadians(0), Vector2.Zero, SpriteEffects.None, 1);
+                }
+            }
+        }        
+
+
+        #region Various functions to clear current selections
+        private void ClearTurretSelect()
+        {
+            //This forces all turrets to become un-selected.
+            foreach (Turret turret in TurretList)
+            {
+                turret.Selected = false;
+            }
+        }
+
+        private void RightClickClearSelected()
+        {
+            if (CurrentMouseState.RightButton == ButtonState.Released && PreviousMouseState.RightButton == ButtonState.Pressed)
+            {
+                SelectedTurret = TurretType.Blank;
+                SelectedTrap = TrapType.Blank;
+                ReadyToPlace = false;
+
+                foreach (Turret turret in TurretList)
+                {
+                    turret.Selected = false;
+                }
+            }
+        }
+
+        private void ClearSelected()
+        {
+            SelectedTurret = TurretType.Blank;
+            SelectedTrap = TrapType.Blank;
+            ReadyToPlace = false;
+        }
+        #endregion
     }
 }
