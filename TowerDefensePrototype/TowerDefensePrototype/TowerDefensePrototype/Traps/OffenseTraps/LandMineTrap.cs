@@ -10,7 +10,11 @@ namespace TowerDefensePrototype
 {
     class LandMineTrap : Trap
     {
-        public static new int ResourceCost = 25;
+        private static int _ResourceCost = 25;
+        public static new int ResourceCost
+        {
+            get { return _ResourceCost; }
+        }
 
         public LandMineTrap(Vector2 position)
             : base(position)

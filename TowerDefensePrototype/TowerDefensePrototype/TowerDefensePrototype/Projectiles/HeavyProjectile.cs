@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework.Content;
 namespace TowerDefensePrototype
 {
     #region Projectile Type
+    //NEW_HEAVYPROJECTILE A **heavy projectile type to be added here**
     public enum HeavyProjectileType
     {
         CannonBall,
@@ -22,7 +23,8 @@ namespace TowerDefensePrototype
         Boomerang,
         Grenade,
         GasGrenade,
-        FireGrenade
+        FireGrenade,
+        Harpoon
     }; 
     #endregion
     
@@ -78,6 +80,11 @@ namespace TowerDefensePrototype
 
         public bool Shadow, Verlet;
         public bool Rotate = true;
+
+        //public bool TrapSolid = true;
+        //public bool TowerSolid = true;
+        //public bool ShieldSolid = true;
+        //public bool TurretSolid = true;
 
         public Color CurrentColor;
         public HeavyProjectileType HeavyProjectileType;

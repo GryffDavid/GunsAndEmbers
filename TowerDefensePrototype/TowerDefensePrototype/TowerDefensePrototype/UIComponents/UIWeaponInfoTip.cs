@@ -85,7 +85,7 @@ namespace TowerDefensePrototype
                 BarText5 = "Reload";
                 #endregion
 
-                WeaponCost = TurretCost(turret.TurretType);
+                WeaponCost = Game1.TurretCost(turret.TurretType);
                 WeaponType = "Turret";
                 WeaponTip = "Fire this";
                 WeaponDamage = turret.Damage;
@@ -180,7 +180,8 @@ namespace TowerDefensePrototype
                 BarText5 = "Reload";
                 #endregion
 
-                WeaponCost = TrapCost(trap.TrapType);
+                WeaponCost = Game1.TrapCost(trap.TrapType);
+                
                 WeaponName = "TRAP";
                 WeaponType = "Trap";
                 WeaponTip = "Place this";
@@ -573,94 +574,6 @@ namespace TowerDefensePrototype
             DividerIndices2[4] = 3;
             DividerIndices2[5] = 2;
             #endregion
-        }
-
-        private int TurretCost(TurretType turretType)
-        {
-            int cost = 0;
-
-            switch (turretType)
-            {
-                case TurretType.MachineGun:
-                    cost = MachineGunTurret.ResourceCost;
-                    break;
-
-                case TurretType.Cannon:
-                    cost = CannonTurret.ResourceCost;
-                    break;
-
-                case TurretType.FlameThrower:
-                    cost = FlameThrowerTurret.ResourceCost;
-                    break;
-
-                case TurretType.Lightning:
-                    cost = LightningTurret.ResourceCost;
-                    break;
-
-                case TurretType.Cluster:
-                    cost = ClusterTurret.ResourceCost;
-                    break;
-
-                case TurretType.FelCannon:
-                    cost = FelCannonTurret.ResourceCost;
-                    break;
-
-                case TurretType.Beam:
-                    cost = BeamTurret.ResourceCost;
-                    break;
-
-                case TurretType.Freeze:
-                    cost = FreezeTurret.ResourceCost;
-                    break;
-
-                case TurretType.Boomerang:
-                    cost = BoomerangTurret.ResourceCost;
-                    break;
-
-                case TurretType.Grenade:
-                    cost = GrenadeTurret.ResourceCost;
-                    break;
-            }
-
-            return cost;
-        }
-
-        private int TrapCost(TrapType trapType)
-        {
-            int cost = 0;
-
-            switch (trapType)
-            {
-                case TrapType.Fire:
-                    cost = FireTrap.ResourceCost;
-                    break;
-
-                case TrapType.Catapult:
-                    cost = CatapultTrap.ResourceCost;
-                    break;
-
-                case TrapType.Ice:
-                    cost = IceTrap.ResourceCost;
-                    break;
-
-                case TrapType.SawBlade:
-                    cost = SawBladeTrap.ResourceCost;
-                    break;
-
-                case TrapType.Spikes:
-                    cost = SpikesTrap.ResourceCost;
-                    break;
-
-                case TrapType.Wall:
-                    cost = WallTrap.ResourceCost;
-                    break;
-
-                case TrapType.Barrel:
-                    cost = BarrelTrap.ResourceCost;
-                    break;
-            }
-
-            return cost;
         }
     }
 }

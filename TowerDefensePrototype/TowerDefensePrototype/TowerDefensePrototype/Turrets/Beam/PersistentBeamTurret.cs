@@ -10,7 +10,11 @@ namespace TowerDefensePrototype
 {    
     class PersistentBeamTurret : Turret
     {
-        public static new int ResourceCost = 200;
+        private static int _ResourceCost = 200;
+        public static new int ResourceCost
+        {
+            get { return _ResourceCost; }
+        }
 
         public PersistentBeamTurret(Vector2 position)
         {

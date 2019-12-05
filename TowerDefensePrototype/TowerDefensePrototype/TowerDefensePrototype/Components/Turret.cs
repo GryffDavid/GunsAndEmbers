@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework.Input;
 namespace TowerDefensePrototype
 {
     #region Turret Enums
+    //NEW_TURRET A **turret type to be added here**
     public enum TurretType
     {
         MachineGun,

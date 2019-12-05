@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.Content;
 
 namespace TowerDefensePrototype
 {
+    //NEW_TRAP A **trap type to be added here**
     public enum TrapType
     {
         Wall,

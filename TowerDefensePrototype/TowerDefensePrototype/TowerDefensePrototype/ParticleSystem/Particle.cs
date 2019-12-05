@@ -13,7 +13,6 @@ namespace TowerDefensePrototype
         public Vector2 CurrentPosition, Direction, Velocity, YRange, Origin, StartingPosition, Friction;
         public Rectangle DestinationRectangle;
         public float Angle, Speed,
-                     MaxY,
                      RotationIncrement, CurrentRotation,
                      Gravity,
                      CurrentTime, MaxTime,

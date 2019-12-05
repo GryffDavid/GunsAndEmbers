@@ -6,10 +6,16 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace TowerDefensePrototype.Invaders.HeavyRanged
+namespace TowerDefensePrototype
 {
     class HarpoonCannon : HeavyRangedInvader
     {
+        enum SpecificBehaviour { Attached, PullTaut, Retract, Unattached };
+        SpecificBehaviour HarpoonCannonBehaviour = SpecificBehaviour.Unattached;
+        float RopeDelay, MaxRopeDelay;
+        public Rope Rope;
+        public Turret HarpoonedTurret; //The turret that has been harpooned
+
         public HarpoonCannon(Vector2 position, Vector2? yRange = null)
             : base(position, yRange)
         {
@@ -25,16 +31,18 @@ namespace TowerDefensePrototype.Invaders.HeavyRanged
             CurrentMacroBehaviour = MacroBehaviour.AttackTower;
             CurrentMicroBehaviour = MicroBehaviour.MovingForwards;
 
-            AngleRange = new Vector2(30, 60);
+            AngleRange = new Vector2(25, 30);
             TowerDistanceRange = new Vector2(750, 850);
             TrapDistanceRange = new Vector2(250, 350);
-            LaunchVelocityRange = new Vector2(12, 17);
-            MaxFireDelay = 1500;
+            LaunchVelocityRange = new Vector2(25, 30);
+            MaxFireDelay = 6500;
             CurrentFireDelay = 0;
             RangedDamage = 10;
 
             CurrentAngle = 0;
             EndAngle = 0;
+
+            MaxRopeDelay = 100f;
         }
 
         public override void Update(GameTime gameTime, Vector2 cursorPosition)
@@ -61,6 +69,37 @@ namespace TowerDefensePrototype.Invaders.HeavyRanged
                             else
                                 Velocity.X = Direction.X * Speed;
                             #endregion
+
+                            switch (CurrentMacroBehaviour)
+                            {
+                                #region Attack Tower
+                                case MacroBehaviour.AttackTower:
+                                    {
+                                        if (DistToTower <= MinTowerRange)
+                                        {
+                                            //When the invader gets in range. It chooses the final firing angle
+                                            if (InTowerRange == false)
+                                            {
+                                                float nextAngle = Random.Next((int)AngleRange.X, (int)AngleRange.Y);
+                                                EndAngle = MathHelper.ToRadians(nextAngle);
+                                                Speed = 0.75f;
+                                            }
+
+                                            InTowerRange = true;
+                                            CurrentMicroBehaviour = MicroBehaviour.AdjustTrajectory;
+                                        }
+                                    }
+                                    break;
+                                #endregion
+
+                                #region Attack Traps
+                                case MacroBehaviour.AttackTraps:
+                                    {
+
+                                    }
+                                    break;
+                                #endregion
+                            }
                         }
                         break;
                     #endregion
@@ -83,7 +122,21 @@ namespace TowerDefensePrototype.Invaders.HeavyRanged
                     #region AdjustTrajectory
                     case MicroBehaviour.AdjustTrajectory:
                         {
+                            Velocity.X = 0;
+                            CanAttack = false;
 
+                            if (CurrentAngle != EndAngle)
+                            {
+                                if (Math.Abs(EndAngle - CurrentAngle) > MathHelper.ToRadians(0.25f))
+                                {
+                                    CurrentAngle = MathHelper.Lerp(CurrentAngle, EndAngle, 0.02f * (float)gameTime.ElapsedGameTime.TotalSeconds * 60);
+                                }
+                                else
+                                {
+                                    EndAngle = CurrentAngle;
+                                    CurrentMicroBehaviour = MicroBehaviour.Attack;
+                                }
+                            }
                         }
                         break;
                     #endregion
@@ -96,7 +149,19 @@ namespace TowerDefensePrototype.Invaders.HeavyRanged
                                 #region Attack Tower
                                 case MacroBehaviour.AttackTower:
                                     {
+                                        if (InTowerRange == true && HarpoonCannonBehaviour == SpecificBehaviour.Unattached)
+                                        {
+                                            UpdateFireDelay(gameTime);
 
+                                            if (TotalHits > 0)
+                                            {
+                                                if (HitTurret == 1)
+                                                {
+                                                    HarpoonCannonBehaviour = SpecificBehaviour.Attached;
+                                                    ResetCollisions();
+                                                }
+                                            }
+                                        }
                                     }
                                     break;
                                 #endregion
@@ -114,8 +179,62 @@ namespace TowerDefensePrototype.Invaders.HeavyRanged
                     #endregion
                 }
 
-            //BarrelPivot = new Vector2(BarrelAnimation.FrameSize.X / 2, BarrelAnimation.FrameSize.Y / 2);
-            //BasePivot = new Vector2(Position.X, Position.Y);
+
+            switch (HarpoonCannonBehaviour)
+            {
+                case SpecificBehaviour.Unattached:
+                    {
+
+                    }
+                    break;
+
+                case SpecificBehaviour.Attached:
+                    {
+                        RopeDelay += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+
+                        if (Rope.Sticks.Count > 40 && 
+                            RopeDelay > MaxRopeDelay &&
+                            HarpoonedTurret.CurrentHealth > 0)
+                        {
+                            Rope.Segments = Rope.Sticks.Count - 1;
+                            Rope.Sticks.RemoveAt(Rope.Sticks.Count - 1);
+                            Rope.StartPoint = BarrelEnd;
+                            RopeDelay = 0;
+                        }
+
+                        if (HarpoonedTurret.CurrentHealth == 0)
+                        {
+                            Rope.Sticks.RemoveAt(0);
+                            HarpoonCannonBehaviour = SpecificBehaviour.Unattached;
+                            break;
+                        }
+
+                        if (Rope.Sticks.Count == 40 && Rope.Sticks[0] != null)
+                        {
+                            Rope.Sticks.RemoveAt(0);
+                            HarpoonedTurret.CurrentHealth = 0;
+                            HarpoonCannonBehaviour = SpecificBehaviour.Unattached;
+                            break;
+                        }
+                    }
+                    break;
+
+                case SpecificBehaviour.PullTaut:
+                    {
+
+                    }
+                    break;
+
+                case SpecificBehaviour.Retract:
+                    {
+
+                    }
+                    break;
+            }
+                
+
+            BarrelPivot = new Vector2(BarrelAnimation.FrameSize.X / 2, BarrelAnimation.FrameSize.Y / 2);
+            BasePivot = new Vector2(Position.X, Position.Y);
 
             base.Update(gameTime, cursorPosition);
         }

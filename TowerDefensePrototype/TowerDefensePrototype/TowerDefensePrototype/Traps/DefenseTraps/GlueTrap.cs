@@ -10,6 +10,12 @@ namespace TowerDefensePrototype
 {
     class GlueTrap : Trap
     {
+        private static int _ResourceCost = 120;
+        public static new int ResourceCost
+        {
+            get { return _ResourceCost; }
+        }
+        
         public GlueTrap(Vector2 position)
             : base(position)
         {
@@ -20,8 +26,6 @@ namespace TowerDefensePrototype
 
             DetonateLimit = -1;
             DetonateDelay = 3500;
-
-            ResourceCost = 120;
             PowerCost = 1;
 
             NormalDamage = 0;

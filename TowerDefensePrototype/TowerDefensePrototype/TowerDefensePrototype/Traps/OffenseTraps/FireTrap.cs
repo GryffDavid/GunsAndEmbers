@@ -10,7 +10,11 @@ namespace TowerDefensePrototype
 {
     class FireTrap : Trap
     {
-        public static new int ResourceCost = 120;
+        private static int _ResourceCost = 120;
+        public static new int ResourceCost
+        {
+            get { return _ResourceCost; }
+        }
 
         public FireTrap(Vector2 position)
             : base(position)

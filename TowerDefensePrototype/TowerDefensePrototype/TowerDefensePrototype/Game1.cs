@@ -23,6 +23,7 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using Microsoft.Xna.Framework.Storage;
 
+
 namespace TowerDefensePrototype
 {
     #region Enums and structs
@@ -299,6 +300,7 @@ namespace TowerDefensePrototype
         #endregion
 
         #region Trap sprites
+        //NEW_TRAP B **trap animations list declarations here**
         public List<TrapAnimation> WallAnimations, BarrelTrapAnimations, CatapultTrapAnimations, IceTrapAnimations, TarTrapAnimations,
                                    LineTrapAnimations, SawBladeTrapAnimations, SpikeTrapAnimations, FireTrapAnimations, LandMineTrapAnimations,
                                    FlameThrowerAnimations, GlueTrapAnimations;
@@ -307,6 +309,7 @@ namespace TowerDefensePrototype
         #endregion
 
         #region Turret sprites
+        //NEW_TURRET B **turret sprite declarations here**
         Texture2D TurretSelectBox;
         public Texture2D MachineGunTurretBase, MachineGunTurretBarrel, MachineGunTurretBarrelGib;
         public Texture2D CannonTurretBase, CannonTurretBarrel;
@@ -325,12 +328,16 @@ namespace TowerDefensePrototype
 
         #region Enemy sprites
         Texture2D IceBlock, Shadow;
+
+        //NEW_INVADER B **invader animation list declarations here**
         public List<InvaderAnimation> SoldierAnimations, BatteringRamAnimations, AirshipAnimations, ArcherAnimations,
                                TankAnimations, SpiderAnimations, SlimeAnimations, SuicideBomberAnimations,
                                FireElementalAnimations, TestInvaderAnimations, StationaryCannonAnimations,
-                               HealDroneAnimations, JumpManAnimations, RifleManAnimations, ShieldGeneratorAnimations;
+                               HealDroneAnimations, JumpManAnimations, RifleManAnimations, ShieldGeneratorAnimations,
+                               HarpoonCannonAnimations;
 
-        public InvaderAnimation StationaryCannonBarrelAnimation;
+        //HEAVYRANGED_INVADER A **barrel animation declarations here**
+        public InvaderAnimation StationaryCannonBarrelAnimation, HarpoonCannonBarrelAnimation;
         #endregion
 
         #region Button sprites
@@ -388,8 +395,9 @@ namespace TowerDefensePrototype
         #endregion
 
         #region Projectile sprites
+        //NEW_HEAVYPROJECTILE B **heavy projectile sprite declarations here**
         Texture2D CannonBallSprite, GrenadeSprite, GasGrenadeSprite, FlameSprite, ClusterBombSprite,
-                  ClusterShellSprite, BoomerangSprite, AcidSprite, FlameProjectileSprite;
+                  ClusterShellSprite, BoomerangSprite, AcidSprite, FlameProjectileSprite, HarpoonProjectileSprite;
         #endregion
 
         #region Powerup Icon sprites
@@ -619,6 +627,8 @@ namespace TowerDefensePrototype
 
         List<myRay> ExplosionRays = new List<myRay>();
 
+        List<Rope> RopeList = new List<Rope>();
+        
         #endregion
         
         public Game1()
@@ -949,7 +959,6 @@ namespace TowerDefensePrototype
                 #endregion                
 
                 #region Loading sprites
-
                 LoadInvaderSprites();
                 LoadTurretSprites();
                 LoadTrapSprites();
@@ -1235,12 +1244,9 @@ namespace TowerDefensePrototype
             IceBlock = Content.Load<Texture2D>("IceBlock");
             Shadow = Content.Load<Texture2D>("Shadow");
 
-            //**********IF INVADERS AREN'T SHOWING UP, MAKE SURE YOU ADDED THIS************:
-            //foreach (InvaderAnimation animation in INVADERANIMATIONLIST)
-            //{
-            //    animation.GetFrameSize();
-            //}
-
+           
+            
+            //NEW_INVADER C **invader animations loaded here**
             #region Solider Animations
             SoldierAnimations = new List<InvaderAnimation>()
             {
@@ -1425,6 +1431,52 @@ namespace TowerDefensePrototype
             }
             #endregion
 
+            #region Harpoon Cannon Animations
+            HarpoonCannonAnimations = new List<InvaderAnimation>()
+            {
+                new InvaderAnimation() 
+                { 
+                    CurrentInvaderState = AnimationState_Invader.Walk,
+                    Texture = Content.Load<Texture2D>("Invaders/HarpoonCannon/HarpoonCannonBase"),
+                    AnimationType = AnimationType.Regular,
+                    Animated = true,
+                    CurrentFrame = 0,
+                    FrameDelay = 150,
+                    Looping = true,
+                    TotalFrames = 1
+                },
+
+                new InvaderAnimation() 
+                { 
+                    CurrentInvaderState = AnimationState_Invader.Stand,
+                    Texture = Content.Load<Texture2D>("Invaders/HarpoonCannon/HarpoonCannonBase"),
+                    AnimationType = AnimationType.Regular,
+                    Animated = true,
+                    CurrentFrame = 0,
+                    FrameDelay = 150,
+                    Looping = true,
+                    TotalFrames = 1
+                },
+            };
+
+            HarpoonCannonBarrelAnimation = new InvaderAnimation()
+            {
+                Texture = Content.Load<Texture2D>("Invaders/HarpoonCannon/HarpoonCannonBarrel"),
+                TotalFrames = 1,
+                CurrentFrame = 0,
+                AnimationType = AnimationType.Regular,
+                Animated = true,
+                Looping = false
+            };
+
+            HarpoonCannonBarrelAnimation.GetFrameSize();
+
+            foreach (InvaderAnimation animation in HarpoonCannonAnimations)
+            {
+                animation.GetFrameSize();
+            }
+            #endregion
+
             #region Heal Drone Animations
             HealDroneAnimations = new List<InvaderAnimation>()
             {
@@ -1526,10 +1578,18 @@ namespace TowerDefensePrototype
                 animation.GetFrameSize();
             }
             #endregion
+
+            //NEW_INVADER D **if invaders aren't showing up, make sure you added this**
+            //foreach (InvaderAnimation animation in INVADERANIMATIONLIST)
+            //{
+            //    animation.GetFrameSize();
+            //}
         }
 
         private void LoadTrapSprites()
         {
+            //NEW_TRAP C **trap animations loaded here**
+
             #region Wall animations
             WallAmbShadow = Content.Load<Texture2D>("Traps/Wall/WallShadow");
             WallAnimations = new List<TrapAnimation>()
@@ -1709,10 +1769,18 @@ namespace TowerDefensePrototype
             }
             #endregion
 
+            //NEW_TRAP D **if traps aren't showing up, make sure you added this**
+            //foreach (TrapAnimation animation in TRAPANIMATIONLIST)
+            //{
+            //    animation.GetFrameSize();
+            //}
+
         }
 
         private void LoadProjectileSprites()
         {
+            //NEW_HEAVYPROJECTILE C **heavy projectile sprites loaded here**
+
             CannonBallSprite = Content.Load<Texture2D>("Projectiles/CannonRound");
             GrenadeSprite = Content.Load<Texture2D>("Projectiles/Grenade");
             GasGrenadeSprite = Content.Load<Texture2D>("Projectiles/Grenade");
@@ -1722,18 +1790,13 @@ namespace TowerDefensePrototype
             BoomerangSprite = Content.Load<Texture2D>("Projectiles/CannonRound");
             AcidSprite = Content.Load<Texture2D>("Projectiles/CannonRound");
             FlameProjectileSprite = Content.Load<Texture2D>("Projectiles/FlameProjectile");
-
-            //"Projectiles/Torpedo";
-            //"Projectiles/ClusterBombShell";
-            //"Projectiles/AcidProjectileSprite";
-            //"Projectiles/CannonRound";
-            //"Projectiles/Arrow";
-            //"Projectiles/CannonRound";
-            //"Projectiles/ClusterBomb";
+            HarpoonProjectileSprite = Content.Load<Texture2D>("Projectiles/HarpoonProjectile");
         }
 
         private void LoadTurretSprites()
         {
+            //NEW_TURRET C **turret animations loaded here**
+            
             TurretSelectBox = Content.Load<Texture2D>("SelectBox");
 
             MachineGunTurretBase = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBase");
@@ -2139,6 +2202,12 @@ namespace TowerDefensePrototype
                 }
 
                 Tower.Draw(spriteBatch);
+
+                foreach (Rope rope in RopeList)
+                {
+                    rope.Draw(spriteBatch);
+                }
+
                 spriteBatch.End();
                 #endregion
 
@@ -2146,7 +2215,7 @@ namespace TowerDefensePrototype
                 {
                     trail.DrawVector(GraphicsDevice, SmokeBasicEffect);
                 }
-
+                
                 #region Draw things sorted according to their Y value - To create depth illusion
                 //DrawableList = DrawableList.OrderBy(Drawable => Drawable.DrawDepth).ToList();
                 spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearWrap, null, null);
@@ -3159,6 +3228,11 @@ namespace TowerDefensePrototype
                             engine.Update(gameTime);
                         }
 
+                        foreach (Rope rope in RopeList)
+                        {
+                            rope.Update(gameTime);
+                        }
+
                         foreach (ExplosionEffect effect in ExplosionEffectList)
                         {
                             effect.Update(gameTime);
@@ -3471,6 +3545,19 @@ namespace TowerDefensePrototype
 
                             TurretUpdate(gameTime);
                         }
+
+                        TurretList.ForEach(Turret =>
+                        {
+                            if (Turret != null && Turret.Active == false)
+                            {
+                                DrawableList.Remove(Turret);
+                                TowerButtonList[TurretList.IndexOf(Turret)].Active = true;
+                                TowerButtonList[TurretList.IndexOf(Turret)].ButtonActive = true;
+                                TurretList[TurretList.IndexOf(Turret)] = null;
+                            }
+                        });
+
+                        //TurretList.RemoveAll(Turret => Turret != null && Turret.Active == false);    
                         #endregion
 
                         #region Trap stuff
@@ -5328,6 +5415,27 @@ namespace TowerDefensePrototype
                             }
                             break;
                         #endregion
+
+                        #region Harpoon Cannon
+                        case InvaderType.HarpoonCannon:
+                            {
+                                HeavyProjectile heavyProjectile = new HarpoonProjectile(heavyRangedInvader, HarpoonProjectileSprite, ToonSmoke3,
+                                           new Vector2(heavyRangedInvader.BarrelEnd.X, heavyRangedInvader.BarrelEnd.Y),
+                                           Random.Next((int)(heavyRangedInvader.LaunchVelocityRange.X), (int)(heavyRangedInvader.LaunchVelocityRange.Y)),
+                                           (float)Math.PI + heavyRangedInvader.CurrentAngle, 0.2f, heavyRangedInvader.RangedDamage, 40,
+                                           new Vector2(MathHelper.Clamp(heavyRangedInvader.MaxY + 32, 690, 930), 930));
+                                heavyProjectile.Update(gameTime);
+                                heavyProjectile.YRange = new Vector2(invader.MaxY, invader.MaxY);
+                                HeavyProjectileList.Add(heavyProjectile);
+                                AddDrawable(heavyProjectile);
+
+                                Rope rope = new Rope(heavyRangedInvader.BarrelEnd, heavyProjectile);                                
+                                rope.LoadContent(Content);
+                                RopeList.Add(rope);
+                                (invader as HarpoonCannon).Rope = rope;
+                            }
+                            break;
+                        #endregion
                     }
                 }
                 #endregion
@@ -5408,11 +5516,19 @@ namespace TowerDefensePrototype
 
                     if (heavyProjectile.SourceObject.GetType().BaseType == typeof(HeavyRangedInvader))
                     {
+                        #region SHIELD was hit
+                        if (heavyProjectile.BoundingBox.Intersects(Tower.Shield.BoundingSphere) && Tower.Shield.ShieldOn == true)
+                        {
+                            CreateHeavyProjectileCollision(heavyProjectile, heavyProjectile.SourceObject, Tower.Shield);
+                            //return;
+                        }
+                        #endregion
+
                         #region TOWER was hit
                         if (heavyProjectile.BoundingBox.Intersects(Tower.BoundingBox))
                         {
                             CreateHeavyProjectileCollision(heavyProjectile, heavyProjectile.SourceObject, Tower);
-                            return;
+                            //return;
                         }
                         #endregion
 
@@ -5421,15 +5537,7 @@ namespace TowerDefensePrototype
                         {
                             Turret turret = TurretList.Find(Turret => Turret.BoundingBox.Intersects(heavyProjectile.BoundingBox));
                             CreateHeavyProjectileCollision(heavyProjectile, heavyProjectile.SourceObject, turret);
-                            return;
-                        }
-                        #endregion
-
-                        #region SHIELD was hit
-                        if (heavyProjectile.BoundingBox.Intersects(Tower.Shield.BoundingSphere) && Tower.Shield.ShieldOn == true)
-                        {
-                            CreateHeavyProjectileCollision(heavyProjectile, heavyProjectile.SourceObject, Tower.Shield);
-                            return;
+                            //return;
                         }
                         #endregion
                     }
@@ -6072,6 +6180,8 @@ namespace TowerDefensePrototype
                 #region TRAP was hit
                 if (collisionTrap != null)
                 {
+                    sourceInvader.HitObject = collisionTrap;
+
                     switch (collisionTrap.TrapType)
                     {
                         #region Wall
@@ -6125,7 +6235,6 @@ namespace TowerDefensePrototype
                         #endregion
                     }
 
-                    sourceInvader.HitObject = collisionTrap;
                     DeactivateProjectile(heavyProjectile);
                     return;
                 }
@@ -6134,6 +6243,8 @@ namespace TowerDefensePrototype
                 #region GROUND was hit
                 if (collisionGround != null)
                 {
+                    sourceInvader.HitObject = Ground;
+
                     switch ((source as Invader).InvaderType)
                     {
                         #region Stationary Cannon
@@ -6189,7 +6300,6 @@ namespace TowerDefensePrototype
                         #endregion
                     }
 
-                    sourceInvader.HitObject = Ground;
                     DeactivateProjectile(heavyProjectile);
                     return;
                 }
@@ -6198,12 +6308,14 @@ namespace TowerDefensePrototype
                 #region TOWER was hit
                 if (collisionTower != null)
                 {
+                    sourceInvader.HitObject = collisionTower;
+
                     switch ((source as Invader).InvaderType)
                     {
                         #region Stationary Cannon
                         case InvaderType.StationaryCannon:
                             {
-
+                                DeactivateProjectile(heavyProjectile);
                             }
                             break;
                         #endregion
@@ -6211,13 +6323,11 @@ namespace TowerDefensePrototype
                         #region Archer
                         case InvaderType.Archer:
                             {
-
+                                DeactivateProjectile(heavyProjectile);
                             }
                             break;
                         #endregion
                     }
-
-                    DeactivateProjectile(heavyProjectile);
                     return;
                 }
                 #endregion
@@ -6225,8 +6335,19 @@ namespace TowerDefensePrototype
                 #region TURRET was hit
                 if (collisionTurret != null)
                 {
+                    sourceInvader.HitObject = collisionTurret;
+
                     switch ((source as Invader).InvaderType)
                     {
+                        #region Harpoon Cannon
+                        case InvaderType.HarpoonCannon:
+                            {
+                                DeactivateProjectile(heavyProjectile);
+                                (sourceInvader as HarpoonCannon).HarpoonedTurret = collisionTurret;
+                            }
+                            break;
+                        #endregion
+
                         #region Stationary Cannon
                         case InvaderType.StationaryCannon:
                             {
@@ -6244,7 +6365,7 @@ namespace TowerDefensePrototype
                         #endregion
                     }
 
-                    DeactivateProjectile(heavyProjectile);
+                    //DeactivateProjectile(heavyProjectile);
                     return;
                 }
                 #endregion
@@ -6274,6 +6395,8 @@ namespace TowerDefensePrototype
                                 }
 
                                 Tower.TakeDamage(sourceInvader.RangedDamage);
+                                DeactivateProjectile(heavyProjectile);
+
                             }
                             break;
                         #endregion
@@ -6281,13 +6404,13 @@ namespace TowerDefensePrototype
                         #region Archer
                         case InvaderType.Archer:
                             {
+                                DeactivateProjectile(heavyProjectile);
 
                             }
                             break;
                         #endregion
                     }
 
-                    DeactivateProjectile(heavyProjectile);
                     return;
                 }
                 #endregion
@@ -7685,8 +7808,8 @@ namespace TowerDefensePrototype
                                 Explosion newExplosion = new Explosion(turret.Position, 200, 0);
                                 CreateExplosion(newExplosion, turret);
 
-                                ShellCasing turretBase = new ShellCasing(turret.Position, new Vector2(Random.Next(-5, 5), Random.Next(-5, 5)), turret.TurretBase);
-                                ShellCasing turretBarrel = new ShellCasing(turret.Position, new Vector2(Random.Next(-5, 5), Random.Next(-5, 5)), MachineGunTurretBarrelGib);
+                                ShellCasing turretBase = new ShellCasing(turret.Position, new Vector2(Random.Next(15, 25), Random.Next(-15, 15)), turret.TurretBase);
+                                ShellCasing turretBarrel = new ShellCasing(turret.Position, new Vector2(Random.Next(15, 25), Random.Next(-15, 15)), MachineGunTurretBarrelGib);
                                 VerletShells.Add(turretBase);
                                 VerletShells.Add(turretBarrel);
 
@@ -7741,6 +7864,7 @@ namespace TowerDefensePrototype
             Direction = turret.FireDirection;
             Direction.Normalize();
 
+            //NEW_TURRET D **turret behaviour here**
             switch (turret.TurretType)
             {
                 #region Machine Gun
@@ -8200,50 +8324,19 @@ namespace TowerDefensePrototype
             return (Turret)newTurret;
         }
 
-        private int TurretCost(TurretType turretType)
+        public static int TurretCost(TurretType turretType)
         {
             int cost = 0;
 
             switch (turretType)
             {
-                case TurretType.MachineGun:
-                    cost = MachineGunTurret.ResourceCost;
-                    break;
-
-                case TurretType.Cannon:
-                    cost = CannonTurret.ResourceCost;
-                    break;
-
-                case TurretType.FlameThrower:
-                    cost = FlameThrowerTurret.ResourceCost;
-                    break;
-
-                case TurretType.Lightning:
-                    cost = LightningTurret.ResourceCost;
-                    break;
-
-                case TurretType.Cluster:
-                    cost = ClusterTurret.ResourceCost;
-                    break;
-
-                case TurretType.FelCannon:
-                    cost = FelCannonTurret.ResourceCost;
-                    break;
-
-                case TurretType.Beam:
-                    cost = BeamTurret.ResourceCost;
-                    break;
-
-                case TurretType.Freeze:
-                    cost = FreezeTurret.ResourceCost;
-                    break;
-
-                case TurretType.Boomerang:
-                    cost = BoomerangTurret.ResourceCost;
-                    break;
-
-                case TurretType.Grenade:
-                    cost = GrenadeTurret.ResourceCost;
+                default:
+                    {
+                        PropertyInfo propertyInfo;
+                        propertyInfo = Type.GetType("TowerDefensePrototype." + turretType.ToString() + "Turret").GetProperty("ResourceCost", BindingFlags.Public | BindingFlags.Static);
+                        object value = propertyInfo.GetValue(null, null);
+                        cost = (int)value;
+                    }
                     break;
             }
 
@@ -8293,6 +8386,7 @@ namespace TowerDefensePrototype
                             trap.CurrentDetonateLimit == trap.DetonateLimit)
                         {
                             trap.Active = false;
+
                             Resources += TrapCost(trap.TrapType);
 
                             foreach (Emitter emitter in YSortedEmitterList.Where(emit => emit.Tether == trap))
@@ -8444,6 +8538,7 @@ namespace TowerDefensePrototype
                         if (trap.CurrentHP <= 0)
                         {
                             trap.Active = false;
+
                             Emitter ExplosionEmitter2 = new Emitter(SplodgeParticle, new Vector2(trap.Position.X, trap.DestinationRectangle.Bottom),
                                        new Vector2(0, 180), new Vector2(1, 4), new Vector2(10, 30), 2f, true, new Vector2(0, 360), new Vector2(1, 3),
                                        new Vector2(0.02f, 0.06f), Color.DarkSlateGray, Color.SaddleBrown, 0.2f, 0.2f, 20, 10, true, new Vector2(trap.DestinationRectangle.Bottom + 8, trap.DestinationRectangle.Bottom + 8));
@@ -8493,6 +8588,7 @@ namespace TowerDefensePrototype
 
                 HitTrap.CurrentDetonateDelay = 0;
 
+                //NEW_TRAP E **trap behaviour here**
                 switch (HitTrap.TrapType)
                 {
                     #region Fire Trap
@@ -9004,42 +9100,19 @@ namespace TowerDefensePrototype
             return (Trap)newTrap;
         }
 
-        private int TrapCost(TrapType trapType)
+        public static int TrapCost(TrapType trapType)
         {
             int cost = 0;
 
             switch (trapType)
             {
-                case TrapType.Fire:
-                    cost = FireTrap.ResourceCost;
-                    break;
-
-                case TrapType.Catapult:
-                    cost = CatapultTrap.ResourceCost;
-                    break;
-
-                case TrapType.Ice:
-                    cost = IceTrap.ResourceCost;
-                    break;
-
-                case TrapType.SawBlade:
-                    cost = SawBladeTrap.ResourceCost;
-                    break;
-
-                case TrapType.Spikes:
-                    cost = SpikesTrap.ResourceCost;
-                    break;
-
-                case TrapType.Wall:
-                    cost = WallTrap.ResourceCost;
-                    break;
-
-                case TrapType.Barrel:
-                    cost = BarrelTrap.ResourceCost;
-                    break;
-
-                case TrapType.LandMine:
-                    cost = LandMineTrap.ResourceCost;
+                default:
+                    {
+                        PropertyInfo propertyInfo;
+                        propertyInfo = Type.GetType("TowerDefensePrototype." + trapType.ToString() + "Trap").GetProperty("ResourceCost", BindingFlags.Public | BindingFlags.Static);                        
+                        object value = propertyInfo.GetValue(null, null);
+                        cost = (int)value;
+                    }
                     break;
             }
 
@@ -9050,6 +9123,7 @@ namespace TowerDefensePrototype
         {
             int cost = 0;
 
+            //NEW_TRAP G **trap power usage added here**
             switch (trapType)
             {
                 case TrapType.Fire:
@@ -9210,12 +9284,21 @@ namespace TowerDefensePrototype
                                     #region Load the barrel sprites for the heavy ranged invaders
                                     if (heavyRangedInvader != null)
                                     {
+                                        //HEAVYRANGED_INVADER B **if the invader has a barrel animation that needs to be loaded**
                                         switch (heavyRangedInvader.InvaderType)
                                         {
                                             #region StationaryCannon
                                             case InvaderType.StationaryCannon:
                                                 {
                                                     heavyRangedInvader.BarrelAnimation = StationaryCannonBarrelAnimation;
+                                                }
+                                                break;
+                                            #endregion
+
+                                            #region HarpoonCannon
+                                            case InvaderType.HarpoonCannon:
+                                                {
+                                                    heavyRangedInvader.BarrelAnimation = HarpoonCannonBarrelAnimation;
                                                 }
                                                 break;
                                             #endregion
@@ -9370,7 +9453,7 @@ namespace TowerDefensePrototype
             //}
         }
 
-
+         
         public void LoadLevel(int number)
         {
             //CurrentLevel = Content.Load<Level>("Levels/Level" + number);

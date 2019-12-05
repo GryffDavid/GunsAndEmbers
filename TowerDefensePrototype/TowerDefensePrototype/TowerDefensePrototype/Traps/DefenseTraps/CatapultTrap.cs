@@ -10,7 +10,11 @@ namespace TowerDefensePrototype
 {
     class CatapultTrap : Trap
     {
-        public static new int ResourceCost = 200;
+        private static int _ResourceCost = 200;
+        public static new int ResourceCost
+        {
+            get { return _ResourceCost; }
+        }
 
         //Maybe make invaders take extra turret damage when in the sky after using the catapult trap
         public CatapultTrap(Vector2 position)

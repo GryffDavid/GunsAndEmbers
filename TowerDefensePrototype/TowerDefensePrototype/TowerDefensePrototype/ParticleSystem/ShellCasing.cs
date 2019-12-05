@@ -40,7 +40,7 @@ namespace TowerDefensePrototype
             Nodes.Add(new Node()
             {
                 CurrentPosition = position + new Vector2(7, 7),
-                PreviousPosition = position - new Vector2(Random.Next(-15, -8), Random.Next(-15, -8)),
+                PreviousPosition = position - velocity,
                 Pinned = false
             });
 

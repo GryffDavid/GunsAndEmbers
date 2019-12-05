@@ -11,7 +11,11 @@ namespace TowerDefensePrototype
 {
     class FlameThrowerTurret : Turret
     {
-        public static new int ResourceCost = 200;
+        private static int _ResourceCost = 600;
+        public static new int ResourceCost
+        {
+            get { return _ResourceCost; }
+        }
 
         public FlameThrowerTurret(Vector2 position)
         {

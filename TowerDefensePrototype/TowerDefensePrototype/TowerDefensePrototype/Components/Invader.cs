@@ -20,6 +20,7 @@ namespace TowerDefensePrototype
     public enum InvaderEmotion { Normal, Fear, Anger };
 
     #region InvaderType
+    //NEW_INVADER A **invader type to be added**
     public enum InvaderType
     {
         Soldier,
@@ -343,7 +344,7 @@ namespace TowerDefensePrototype
 
         public virtual void Initialize()
         {
-            base.Active = true;
+            base.Active = true;            
 
             ResourceValue = Random.Next((int)ResourceMinMax.X, (int)ResourceMinMax.Y);
 

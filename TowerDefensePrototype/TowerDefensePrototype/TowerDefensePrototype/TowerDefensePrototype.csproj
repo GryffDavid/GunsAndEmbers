@@ -128,6 +128,7 @@
     <Compile Include="ParticleSystem\JetTrail.cs" />
     <Compile Include="ParticleSystem\Rope.cs" />
     <Compile Include="ParticleSystem\SmokeTrail.cs" />
+    <Compile Include="Projectiles\Heavy\HarpoonProjectile.cs" />
     <Compile Include="Traps\DefenseTraps\GlueTrap.cs" />
     <Compile Include="Traps\OffenseTraps\FlameThrowerTrap.cs" />
     <Compile Include="Traps\OffenseTraps\LandMineTrap.cs" />

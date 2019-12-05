@@ -196,6 +196,14 @@ Content\Traps\FlameThrower\FlameThrowerTrapUntriggered.xnb
 Content\Icons\TrapIcons\FlameThrowerTrapIcon.xnb
 Content\Traps\FlameThrower\FlameThrowerTrapTriggering.xnb
 Content\Traps\FlameThrower\FlameThrowerTrapResetting.xnb
+Content\Traps\GlueTrap.xnb
+Content\Icons\TrapIcons\GlueTrapIcon.xnb
+Content\Particles\ToonGlueDrip1.xnb
+Content\Decals\GlueDecal1.xnb
+Content\Invaders\HarpoonCannon\HarpoonCannonBarrel.xnb
+Content\Invaders\HarpoonCannon\HarpoonCannonBase.xnb
+Content\Projectiles\HarpoonProjectile.xnb
+Content\RopeTexture.xnb
 Content\Sounds\Menu\MenuClick.xnb
 Content\Sounds\FireTrapStart.xnb
 Content\Sounds\Menu\MenuAmbiance.xnb
@@ -224,7 +232,3 @@ Content\Fonts\SpriteFont1.xnb
 Content\ParticleEffect.xnb
 Content\ShadowBlur.xnb
 Content\Shaders\HealthBarEffect.xnb
-Content\Traps\GlueTrap.xnb
-Content\Icons\TrapIcons\GlueTrapIcon.xnb
-Content\Particles\ToonGlueDrip1.xnb
-Content\Decals\GlueDecal1.xnb

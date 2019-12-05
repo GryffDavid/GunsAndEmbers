@@ -11,7 +11,11 @@ namespace TowerDefensePrototype
 {
     class BoomerangTurret : Turret
     {
-        public static new int ResourceCost = 600;
+        private static int _ResourceCost = 600;
+        public static new int ResourceCost
+        {
+            get { return _ResourceCost; }
+        }
 
         public BoomerangTurret(Vector2 position)
         {

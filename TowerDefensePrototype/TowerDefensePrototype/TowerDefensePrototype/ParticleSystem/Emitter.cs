@@ -27,7 +27,7 @@ namespace TowerDefensePrototype
         public List<Texture2D> TextureList;
         public Texture2D Texture;
         public Vector2 ScaleRange, TimeRange, RotationIncrementRange, SpeedRange, StartingRotationRange, EmitterDirection, EmitterVelocity, YRange, Friction;
-        public float Transparency, Gravity, ActiveSeconds, Interval, MaxY, EmitterSpeed,
+        public float Transparency, Gravity, ActiveSeconds, Interval, EmitterSpeed,
                      EmitterAngle, EmitterGravity, FadeDelay, StartingInterval;
         public Color StartColor, EndColor, ThirdColor;
         public bool Fade, CanBounce, AddMore, Shrink, StopBounce, HardBounce, BouncedOnGround,

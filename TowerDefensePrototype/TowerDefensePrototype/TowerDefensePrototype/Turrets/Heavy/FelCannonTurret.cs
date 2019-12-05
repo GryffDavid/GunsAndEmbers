@@ -11,7 +11,11 @@ namespace TowerDefensePrototype
 {
     class FelCannonTurret : Turret
     {
-        public static new int ResourceCost = 600;
+        private static int _ResourceCost = 600;
+        public static new int ResourceCost
+        {
+            get { return _ResourceCost; }
+        }
 
         public FelCannonTurret(Vector2 position)
         {
