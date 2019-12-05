@@ -10,8 +10,6 @@ namespace TowerDefensePrototype
 {
     class StationaryCannon : HeavyRangedInvader
     {
-        List<PreviousResult> PreviousResultsList = new List<PreviousResult>();
-
         int AttackTowerLoopCounter; //How many times the invader made the decision to 
                                     //try shoot the tower instead of the trap after it ran into a trap
 
@@ -19,18 +17,21 @@ namespace TowerDefensePrototype
 
         Trap RecentTrapCollision;
 
-
         //Should keep track of previous operations. i.e. moving down meant the hit rate went up by a bit, keep moving down then.
         //if moving up reduced the hit rate, move up etc. Keeping track of previous hits vs. previous operations means
         //learning over time
+        //
+        //Compare most recent result with previous result. If the number of hits goes up by moving down, keep moving down
+        //if the number of hits goes down when moving up, move down etc.
 
-        //List<MicroBehaviour> PreviousMicroBehaviours = new List<MicroBehaviour>(); //Most recent Micro Behaviours
-        //List<MacroBehaviour> PreviousMacroBehaviours = new List<MacroBehaviour>(); //Most recent Macro Behaviours
-        //List<int> PreviousHits = new List<int>(); //Number of hits previously made
-        
         //Moving forward 100 pixels to approach the tower more than 4 times without bumping into a trap
         //or hitting the tower/shield with a projectile means that the movement range should be updated
         //to moving more than 100 pixels
+
+        //Gets stuck in loop of hitting ground. Too far up and too close to hit the trap. Keeps firing over because the trajectory never
+        //gets low enough. Reduce the launch velocity then.
+
+        //What happens when the player removes the trap that is currently targetted? The invader needs to react to that too
 
         public StationaryCannon(Vector2 position)
         {

@@ -1272,9 +1272,9 @@ namespace TowerDefensePrototype
                     AnimationType = AnimationType.Normal,
                     Animated = true,
                     CurrentFrame = 0,
-                    FrameDelay = 150,
+                    FrameDelay = 30,
                     Looping = true,
-                    TotalFrames = 4
+                    TotalFrames = 24
                 },
 
                 new InvaderAnimation() 
@@ -1296,9 +1296,9 @@ namespace TowerDefensePrototype
                     AnimationType = AnimationType.Normal,
                     Animated = true,
                     CurrentFrame = 0,
-                    FrameDelay = 150,
+                    FrameDelay = 25,
                     Looping = true,
-                    TotalFrames = 2                    
+                    TotalFrames = 30                    
                 }
             };
 

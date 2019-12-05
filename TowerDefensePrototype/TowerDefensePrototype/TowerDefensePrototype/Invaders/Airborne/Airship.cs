@@ -10,6 +10,7 @@ namespace TowerDefensePrototype
 {
     class Airship : HeavyRangedInvader
     {
+        //This could have its gun turret mounted UNDERNEATH the main body of the ship instead of on top
         public Airship(Vector2 position)
         {
             Active = true;

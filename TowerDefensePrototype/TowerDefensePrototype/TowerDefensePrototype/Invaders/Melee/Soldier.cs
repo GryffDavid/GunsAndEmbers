@@ -12,7 +12,7 @@ namespace TowerDefensePrototype
     {
         public Soldier(Vector2 position)
         {
-            Speed = 0.68f;
+            Speed = 0.65f;
             Position = position;
             MaxHP = 20;
             ResourceMinMax = new Vector2(8, 20);

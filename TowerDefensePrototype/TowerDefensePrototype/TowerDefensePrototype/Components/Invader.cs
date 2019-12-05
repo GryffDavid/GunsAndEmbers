@@ -80,12 +80,12 @@ namespace TowerDefensePrototype
     };
     #endregion
 
-    struct PreviousResult
+    public struct PreviousResult
     {
-        MacroBehaviour MacroBehaviour;
-        MicroBehaviour MicroBehaviour;
-        int NumHits; //Number of relevant hits from the previous batch of projectiles
-        float FireAngle; //The angle most recently used when firing
+        public MacroBehaviour MacroBehaviour;
+        public MicroBehaviour MicroBehaviour;
+        public int NumHits; //Number of relevant hits from the previous batch of projectiles
+        public float FireAngle; //The angle most recently used when firing
     }
 
     public abstract class Invader : Drawable
