@@ -74,6 +74,10 @@ namespace TowerDefensePrototype
                     case TrapType.Tar:
                         MakeSlow(4000, 80);
                         break;
+
+                    case TrapType.SawBlade:
+                        CurrentHP -= 12;
+                        break;
                 }
             }
         }

@@ -48,7 +48,7 @@ namespace TowerDefensePrototype
                 {
                     case TrapType.Fire:
                         CurrentHP -= 7;
-                        DamageOverTime(3000, 10, 300, Color.Red);
+                        DamageOverTime(3000, 1, 300, Color.Red);
                         break;
 
                     case TrapType.Spikes:
@@ -65,6 +65,10 @@ namespace TowerDefensePrototype
 
                     case TrapType.Tar:
                         MakeSlow(4000, 80);
+                        break;
+
+                    case TrapType.SawBlade:
+                        CurrentHP -= 12;
                         break;
                 }
             }

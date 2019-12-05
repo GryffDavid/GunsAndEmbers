@@ -18,7 +18,7 @@ namespace TowerDefensePrototype
         public Color Color, BurnColor, FrozenColor, AcidColor;
         public BoundingBox BoundingBox;
         public Double CurrentMoveDelay, MoveDelay, CurrentDelay, AttackDelay, CurrentAttackDelay;
-        public float MaxHP, CurrentHP;
+        public float MaxHP, CurrentHP, PreviousHP;
         public int ResourceValue;
         public float MaxY;
         public Vector2 YRange;
@@ -36,7 +36,8 @@ namespace TowerDefensePrototype
         public Vector2 Scale = new Vector2(1, 1);
         public float Bottom;
         public Animation CurrentAnimation;
-        public Emitter DustEmitter;        
+        public Emitter DustEmitter;
+        public SpriteFont spriteFont;
 
         public void LoadContent(ContentManager contentManager)
         {
@@ -53,6 +54,8 @@ namespace TowerDefensePrototype
           
             if (DustEmitter != null)
             DustEmitter.LoadContent(contentManager);
+
+            spriteFont = contentManager.Load<SpriteFont>("Fonts/HUDFont");
         }
 
         public virtual void Update(GameTime gameTime)
@@ -203,7 +206,7 @@ namespace TowerDefensePrototype
                 BoundingBox = new BoundingBox(new Vector3(Position.X, Position.Y, 0), new Vector3(Position.X + FrameSize.X, Position.Y + FrameSize.Y, 0));
 
                 Bottom = DestinationRectangle.Bottom;
-                DrawDepth = Bottom / 720;
+                DrawDepth = Bottom / 720;                
             }
         }
 

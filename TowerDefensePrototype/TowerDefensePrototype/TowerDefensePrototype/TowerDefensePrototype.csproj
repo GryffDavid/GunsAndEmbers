@@ -121,6 +121,7 @@
     <Compile Include="Basics\Profile.cs" />
     <Compile Include="Basics\RangedInvader.cs" />
     <Compile Include="Basics\WeaponInfoBox.cs" />
+    <Compile Include="Basics\NumberChange.cs" />
     <Compile Include="Projectiles\TimerHeavyProjectile.cs" />
     <Compile Include="Basics\World.cs" />
     <Compile Include="Basics\CheckBox.cs" />
@@ -210,7 +211,7 @@
     <Compile Include="Basics\Wave.cs" />
     <Compile Include="Basics\WeaponBox.cs" />
     <Compile Include="Basics\Weapon.cs" />
-    <Compile Include="VictoryScreen.cs" />
+    <Compile Include="Basics\VictoryScreen.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Service References\aOtherStuff\Game.ico" />

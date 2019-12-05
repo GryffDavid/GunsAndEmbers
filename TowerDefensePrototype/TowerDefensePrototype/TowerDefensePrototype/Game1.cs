@@ -64,7 +64,7 @@ namespace TowerDefensePrototype
 
         string TowerSlotAssetName, FileName, ContainerName, ProfileName;
 
-        bool ReadyToPlace, IsLoading, Slow, BlastRadiusVisible, Victory;
+        bool ReadyToPlace, IsLoading, Slow, BlastRadiusVisible;
         bool DialogVisible = false;
 
         float MenuSFXVolume, MenuMusicVolume, VictoryTime, CurrentInvaderTime, CurrentWaveTime;
@@ -115,6 +115,8 @@ namespace TowerDefensePrototype
         List<LightningBolt> LightningList;
         List<BulletTrail> TrailList;
         List<Light> LightList;
+
+        List<NumberChange> NumberChangeList = new List<NumberChange>();
         #endregion
 
         #region Custom class declarations
@@ -148,6 +150,7 @@ namespace TowerDefensePrototype
         VictoryScreen VictoryScreen;       
         #endregion
         #endregion
+
 
         public Game1()
         {
@@ -284,8 +287,8 @@ namespace TowerDefensePrototype
             PlaceWeaponList = new List<Button>();
             for (int i = 0; i < 10; i++)
             {
-                PlaceWeaponList.Add(new Button("Buttons/Button3", new Vector2(118 + (i * 106), 720-180), null, new Vector2(0.5f, 0.5f), null, "", "", "Left", null, true));
-                PlaceWeaponList[i].NextScale = new Vector2(0.5f, 0.5f);
+                PlaceWeaponList.Add(new Button("Buttons/Button3", new Vector2(118 + (i * 70), 720-180), null, new Vector2(0.35f, 0.35f), null, "", "", "Left", null, true));
+                PlaceWeaponList[i].NextScale = new Vector2(0.35f, 0.35f);
                 PlaceWeaponList[i].LoadContent(SecondaryContent);
             }
 
@@ -667,6 +670,19 @@ namespace TowerDefensePrototype
 
                 if (VictoryScreen != null)
                     VictoryScreen.Update();
+
+                foreach (NumberChange numChange in NumberChangeList)
+                {
+                    numChange.Update(gameTime);
+                }
+
+                for (int i = 0; i < NumberChangeList.Count; i++)
+                {
+                    if (NumberChangeList[i].Active == false)
+                    {
+                        NumberChangeList.RemoveAt(i);
+                    }
+                }
             }
 
             MenuButtonsUpdate();
@@ -1178,7 +1194,12 @@ namespace TowerDefensePrototype
                 if (VictoryScreen != null)
                     VictoryScreen.Draw(spriteBatch);
 
-                spriteBatch.DrawString(HUDFont, CurrentProfile.LevelNumber.ToString(), new Vector2(100,200), Color.Purple);
+                spriteBatch.DrawString(HUDFont, CurrentProfile.LevelNumber.ToString(), new Vector2(100, 200), Color.Purple);
+
+                foreach (NumberChange numChange in NumberChangeList)
+                {
+                    numChange.Draw(spriteBatch);
+                }
             }
 
             CursorDraw(spriteBatch);
@@ -1355,6 +1376,8 @@ namespace TowerDefensePrototype
                 ShellCasingList = new List<Particle>();
                 CoinList = new List<Particle>();
                 LightList = new List<Light>();
+
+                //NumberChangeList = new List<NumberChange>();
                 #endregion
 
                 //LightList.Add(new Light(new Vector2(100,150), 1f, 255, Color.DarkOrange, new Vector2(128, 128)));
@@ -2742,7 +2765,7 @@ namespace TowerDefensePrototype
 
                 #region Handling VictoryScreen Button Presses
                 if (VictoryScreen != null)
-                {                   
+                {
                     if (VictoryScreen.Retry.JustClicked == true)
                     {
                         MenuColor = Color.White;
@@ -2752,8 +2775,10 @@ namespace TowerDefensePrototype
                         LoadLevel(LevelNumber);
                         LoadUpgrades();
                         //StorageDevice.BeginShowSelector(this.SaveProfile, null);
-                        GameState = GameState.Loading;                        
-                        LoadingThread = new Thread(LoadGameContent);                        
+                        Tower.CurrentHP = Tower.MaxHP;
+                        Tower.CurrentShield = Tower.MaxShield;
+                        GameState = GameState.Loading;
+                        LoadingThread = new Thread(LoadGameContent);
                         LoadingThread.Start();
                         IsLoading = false;
                         VictoryTime = 0;
@@ -2811,9 +2836,15 @@ namespace TowerDefensePrototype
             //class became rather unwieldy, I broke up each call into separate smaller ones 
             //so that it's easier to manage
             foreach (Invader invader in InvaderList)
-            {
+            {                
+                if (invader.CurrentHP < invader.PreviousHP)
+                {
+                    NumberChangeList.Add(new NumberChange(HUDFont, invader.Position, new Vector2(0, -1), (int)(invader.PreviousHP - invader.CurrentHP)));
+                }
+                invader.PreviousHP = invader.CurrentHP;
                 invader.Update(gameTime);
-                invader.Move();
+                
+                invader.Move();                
 
                 #region This controls what happens when the invaders die, depending on their type
                 if (invader.CurrentHP <= 0)
@@ -2902,7 +2933,7 @@ namespace TowerDefensePrototype
                             break;
                     }
 
-                    invader.Active = false;
+                    invader.Active = false;                    
                     Resources += invader.ResourceValue;
                 }
                 #endregion
@@ -2969,6 +3000,7 @@ namespace TowerDefensePrototype
                         Dist < explosion.BlastRadius)
                     {
                         invader.CurrentHP -= explosion.Damage / 100 * (100 - (100 / explosion.BlastRadius) * Dist);
+                        //NumberChangeList.Add(new NumberChange(HUDFont, invader.Position, new Vector2(0, -1), (int)(explosion.Damage / 100 * (100 - (100 / explosion.BlastRadius) * Dist))));
                     }                   
                 }
 
@@ -3516,7 +3548,7 @@ namespace TowerDefensePrototype
                                 FlashEmitter.LoadContent(Content);
                                 EmitterList.Add(FlashEmitter);                                
 
-                                HeavyProjectile = new CannonBall(new Vector2(turret.BarrelEnd.X, turret.BarrelEnd.Y), 12, turret.Rotation, 0.2f, turret.Damage, 100,
+                                HeavyProjectile = new CannonBall(new Vector2(turret.BarrelEnd.X, turret.BarrelEnd.Y), 12, turret.Rotation, 0.2f, turret.Damage, 200,
                                     new Vector2(MathHelper.Clamp(turret.Position.Y + 32, 500, 600), 600));
 
                                 HeavyProjectile.LoadContent(Content);
@@ -3766,13 +3798,22 @@ namespace TowerDefensePrototype
                                 Color SmokeColor2 = Color.Lerp(Color.Gray, Color.Transparent, 0.25f);
 
                                 Emitter SmokeEmitter = new Emitter("Particles/Smoke",
-                                        new Vector2(heavyProjectile.Position.X, heavyProjectile.MaxY-30),
+                                        new Vector2(heavyProjectile.Position.X, heavyProjectile.MaxY - 30),
                                         new Vector2(0, 0), new Vector2(1f, 2f), new Vector2(30, 40), 0.01f, true, new Vector2(0, 360),
                                         new Vector2(0, 0), new Vector2(0.8f, 1.2f), SmokeColor1, SmokeColor2, -0.2f, 0.3f, 10, 1, false,
                                         new Vector2(0, 720), false);
 
-                                EmitterList2.Add(SmokeEmitter);
-                                EmitterList2[EmitterList2.IndexOf(SmokeEmitter)].LoadContent(Content);
+                                EmitterList.Add(SmokeEmitter);
+                                EmitterList[EmitterList.IndexOf(SmokeEmitter)].LoadContent(Content);
+
+                                //Emitter SmokeEmitter2 = new Emitter("Particles/Smoke", new Vector2(heavyProjectile.Position.X, heavyProjectile.MaxY),
+                                //new Vector2(-210, 30), new Vector2(0.5f, 1f), new Vector2(10, 50), 0.01f, true, new Vector2(0, 360), new Vector2(1, 3),
+                                //new Vector2(0.25f, 0.4f), Color.Lerp(Color.DarkSlateGray, Color.Transparent, 0.75f),
+                                //Color.Lerp(Color.SaddleBrown, Color.Transparent, 0.85f), 0, 0.2f, 10, 10, false, 
+                                //new Vector2(heavyProjectile.MaxY + 8, heavyProjectile.MaxY + 8));
+
+                                //EmitterList.Add(SmokeEmitter2);
+                                //EmitterList[EmitterList.IndexOf(SmokeEmitter2)].LoadContent(Content);
 
                                 Emitter DebrisEmitter = new Emitter("Particles/Splodge", new Vector2(heavyProjectile.Position.X, heavyProjectile.MaxY),
                                 new Vector2(70, 110), new Vector2(5, 7), new Vector2(30, 110), 2f, true, new Vector2(0, 360), new Vector2(1, 3),
@@ -3788,7 +3829,7 @@ namespace TowerDefensePrototype
                                 EmitterList.Add(DebrisEmitter2);
                                 EmitterList[EmitterList.IndexOf(DebrisEmitter2)].LoadContent(Content);
 
-                                Emitter SparkEmitter = new Emitter("Particles/Splodge", new Vector2(heavyProjectile.Position.X, heavyProjectile.MaxY-20),
+                                Emitter SparkEmitter = new Emitter("Particles/Splodge", new Vector2(heavyProjectile.Position.X, heavyProjectile.MaxY - 20),
                                 new Vector2(0, 360), new Vector2(1, 4), new Vector2(50, 80), 2f, true, new Vector2(0, 360), new Vector2(1, 3),
                                 new Vector2(0.01f, 0.02f), Color.Orange, Color.Yellow, 0.2f, 0.1f, 1, 10, true, new Vector2(heavyProjectile.MaxY + 8, heavyProjectile.MaxY + 8));
 
@@ -4348,6 +4389,7 @@ namespace TowerDefensePrototype
             Action<Turret, Invader, Vector2> InvaderEffect = (Turret Turret, Invader hitInvader, Vector2 collisionEnd) =>
             {
                 hitInvader.TurretDamage(-Turret.Damage);
+                //NumberChangeList.Add(new NumberChange(HUDFont, hitInvader.Position, new Vector2(0, -1), Turret.Damage));
                 if (hitInvader.CurrentHP <= 0)
                     Resources += hitInvader.ResourceValue;
 
@@ -4405,7 +4447,11 @@ namespace TowerDefensePrototype
                                             }
 
                                             invader.Freeze(150, Color.White);
-                                            invader.CurrentHP -= 5;
+                                            if (invader != hitInvader)
+                                            {
+                                                invader.CurrentHP -= 5;
+                                                //NumberChangeList.Add(new NumberChange(HUDFont, invader.Position, new Vector2(0, -1), 5));
+                                            }
                                         }
                                     }
                                     break;
@@ -4607,7 +4653,7 @@ namespace TowerDefensePrototype
                         //Vector2 CollisionEnd;
 
                         CollisionEnd = new Vector2(turret.BarrelRectangle.X + (CurrentProjectile.Ray.Direction.X * (float)MinDistInv),
-                                                       turret.BarrelRectangle.Y + (CurrentProjectile.Ray.Direction.Y * (float)MinDistInv));
+                                                   turret.BarrelRectangle.Y + (CurrentProjectile.Ray.Direction.Y * (float)MinDistInv));
 
                         CreateEffect(turret.BarrelEnd, CollisionEnd, CurrentProjectile.LightProjectileType);
                         InvaderEffect(turret, HitInvader, CollisionEnd);                        
@@ -5459,11 +5505,9 @@ namespace TowerDefensePrototype
                 //Victory condition
                 if (Tower.CurrentHP <= 0)
                 {
-                    Victory = false;
-
                     if (VictoryScreen == null)
                     {
-                        VictoryScreen = new VictoryScreen(false);
+                        VictoryScreen = new VictoryScreen(false, 100, 50, 5000, 5000, 2000, 20, 15, 2000, 5, 3, 20);
                         VictoryScreen.LoadContent(Content);
                     }
                 }
@@ -5473,13 +5517,12 @@ namespace TowerDefensePrototype
                     CurrentLevel.WaveList.All(Wave => Wave.InvaderList.All(Invader => Invader == null)))
                 {
                     VictoryTime += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
-                    Victory = true;
 
                     if (VictoryTime >= 5000)
                     {
                         if (VictoryScreen == null)
                         {
-                            VictoryScreen = new VictoryScreen(true);
+                            VictoryScreen = new VictoryScreen(true, 100, 50, 5000, 5000, 2000, 20, 15, 2000, 5, 3, 20);
                             VictoryScreen.LoadContent(Content);
                         }
                         //IsLoading = false;
@@ -5500,7 +5543,6 @@ namespace TowerDefensePrototype
         //Handle levels
         public void LoadLevel(int number)
         {
-            Victory = false;
             CurrentWaveNumber = 0;
             //CurrentLevel = Content.Load<Level>("Levels/Level" + number);
             //var Available = CurrentProfile.GetType().GetField(WeaponName).GetValue(CurrentProfile);

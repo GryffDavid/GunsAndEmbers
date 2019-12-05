@@ -13,16 +13,29 @@ namespace TowerDefensePrototype
     {
         StaticSprite Box;
         public Button Retry, Complete, Return;
-        float ShotsFired, ShotsHit, Accuracy, TotalDamage;
+        float ShotsFired, ShotsHit, Spent, Earned, TotalInvaders, KilledInvaders,
+              DamageTaken, TrapsPlaced, TurretsPlaced, TimePlayed;
         public bool Victory;
 
-        public VictoryScreen(bool victory)
+        public VictoryScreen(bool victory, int shotsFired, int shotsHit, float totalDamage, int spent, 
+            int earned, int invaders, int killed, float damageTaken, int trapsPlaced, int turretsPlaced, float timePlayed)
         {
             Victory = victory;
+            ShotsFired = shotsFired;
+            ShotsHit = shotsHit;
+            DamageTaken = totalDamage;
+            Spent = spent;
+            Earned = earned;
+            TotalInvaders = invaders;
+            KilledInvaders = killed;
+            DamageTaken = damageTaken;
+            TrapsPlaced = trapsPlaced;
+            TurretsPlaced = turretsPlaced;
+            TimePlayed = timePlayed;
 
-            Box = new StaticSprite("VictoryBox", new Vector2(1280/2 - (750/2), 720/2 - (500/2)), new Vector2(1, 1));
+            Box = new StaticSprite("VictoryBox", new Vector2(1280 / 2 - (750 / 2), 720 / 2 - (500 / 2)), new Vector2(1, 1));
 
-            Retry = new Button("Buttons/ButtonLeft", new Vector2(-225+100, Box.Position.Y + 500 - 32 - 48), null, new Vector2(0.5f, 1), null, "Retry", "Fonts/ButtonFont");
+            Retry = new Button("Buttons/ButtonLeft", new Vector2(-225 + 100, Box.Position.Y + 500 - 32 - 48), null, new Vector2(0.5f, 1), null, "Retry", "Fonts/ButtonFont");
             Retry.NextScale.X = 0.5f;
             Retry.NextPosition.X = 265;
 
@@ -44,22 +57,22 @@ namespace TowerDefensePrototype
         public void LoadContent(ContentManager contentManager)
         {
             Box.LoadContent(contentManager);
-            Retry.LoadContent(contentManager);  
-   
+            Retry.LoadContent(contentManager);
+
             if (Victory == true)
-            Complete.LoadContent(contentManager);
+                Complete.LoadContent(contentManager);
             else
-            Return.LoadContent(contentManager);
+                Return.LoadContent(contentManager);
         }
 
         public void Update()
         {
             Retry.Update();
-            
+
             if (Victory == true)
-            Complete.Update();
+                Complete.Update();
             else
-            Return.Update();
+                Return.Update();
         }
 
         public void Draw(SpriteBatch spriteBatch)
@@ -68,9 +81,9 @@ namespace TowerDefensePrototype
             Retry.Draw(spriteBatch);
 
             if (Victory == true)
-            Complete.Draw(spriteBatch);
+                Complete.Draw(spriteBatch);
             else
-            Return.Draw(spriteBatch);
+                Return.Draw(spriteBatch);
         }
     }
 }
