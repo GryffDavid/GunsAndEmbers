@@ -25,7 +25,7 @@ namespace TowerDefensePrototype
         public Vector2 FireDirection;
         public float FireRotation;
         public TurretType TurretType;
-        public HorizontalBar TimingBar;
+        public HorizontalBar TimingBar, HealthBar;
         public double ElapsedTime = 0;
         public int ResourceCost;
         public Animation CurrentAnimation;
@@ -34,12 +34,14 @@ namespace TowerDefensePrototype
         public Vector2 FrameSize, BarrelEnd;
         public bool Animated, Looping;
         public Vector2 TestVector;
+        public float Health, CurrentHealth;
 
         public void LoadContent(ContentManager contentManager)
         {
             CanShoot = false;
 
             TimingBar = new HorizontalBar(contentManager, new Vector2(32, 4), (int)FireDelay, (int)ElapsedTime, Color.Green, Color.DarkRed);
+            HealthBar = new HorizontalBar(contentManager, new Vector2(32, 4), (int)Health, (int)CurrentHealth, Color.Green, Color.DarkRed);
 
             Color = Color.White;
             BaseRectangle = new Rectangle();
@@ -52,7 +54,9 @@ namespace TowerDefensePrototype
                 FrameSize = new Vector2(TurretBarrel.Width / CurrentAnimation.TotalFrames, TurretBarrel.Height);
             }
 
-            SelectBox = new Rectangle((int)Position.X, (int)Position.Y-24, 64, 64);         
+            SelectBox = new Rectangle((int)Position.X, (int)Position.Y-24, 64, 64);   
+      
+            CurrentHealth = Health;
         }
 
         public void Update(GameTime gameTime)
@@ -97,6 +101,7 @@ namespace TowerDefensePrototype
             CurrentMouseState = Mouse.GetState();
 
             TimingBar.Update(new Vector2(Position.X, Position.Y + 40), (int)ElapsedTime);
+            HealthBar.Update(new Vector2(Position.X, Position.Y + 48), (int)CurrentHealth);
 
             if (Active == true)
             {

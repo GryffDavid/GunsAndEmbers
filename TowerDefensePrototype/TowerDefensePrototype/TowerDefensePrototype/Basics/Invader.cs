@@ -28,7 +28,7 @@ namespace TowerDefensePrototype
         public float Gravity, BurnDamage, DrawDepth;
         public double BurnDelay, FreezeDelay, CurrentBurnDelay, CurrentFreezeDelay,
                         CurrentBurnInterval, BurnInterval, SlowDelay, CurrentSlowDelay;
-        HorizontalBar HPBar;
+        //HorizontalBar HPBar;
         public InvaderType InvaderType;
         public int CurrentFrame;
         public double CurrentFrameDelay;
@@ -45,7 +45,7 @@ namespace TowerDefensePrototype
             VulnerableToTrap = true;
             CurrentTexture = contentManager.Load<Texture2D>(CurrentAnimation.AssetName);
             Color = Color.White;
-            HPBar = new HorizontalBar(contentManager, new Vector2(32, 4), MaxHP, CurrentHP);
+            //HPBar = new HorizontalBar(contentManager, new Vector2(32, 4), MaxHP, CurrentHP);
             CurrentMoveDelay = MoveDelay;
             CurrentMoveVector = MoveVector;
             MaxY = Random.Next((int)YRange.X, (int)YRange.Y);
@@ -158,7 +158,7 @@ namespace TowerDefensePrototype
 
 
                 //This makes sure that the HP bar is displayed in the correct position
-                HPBar.Update(new Vector2(Position.X, Position.Y - 16), CurrentHP);                
+                //HPBar.Update(new Vector2(Position.X, Position.Y - 16), CurrentHP);                
 
                 Position += Velocity;
 
@@ -209,7 +209,7 @@ namespace TowerDefensePrototype
                 spriteBatch.Draw(CurrentTexture, DestinationRectangle, SourceRectangle, Color, MathHelper.ToRadians(0),
                     Vector2.Zero, SpriteEffects.None, DrawDepth);
 
-                HPBar.Draw(spriteBatch);
+                //HPBar.Draw(spriteBatch);
             }
         }
 

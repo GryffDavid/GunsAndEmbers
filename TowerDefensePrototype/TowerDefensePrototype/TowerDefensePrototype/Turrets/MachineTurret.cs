@@ -28,7 +28,9 @@ namespace TowerDefensePrototype
             {
                 AssetName = "Turrets/MachineTurretBarrel",
                 TotalFrames = 6
-            };            
+            };
+
+            Health = 100;      
         }
 
         public override void Draw(SpriteBatch spriteBatch)
@@ -41,9 +43,9 @@ namespace TowerDefensePrototype
                 BarrelPivot = new Vector2(32, 32);
                 BasePivot = new Vector2(40, 5);
 
-                spriteBatch.Draw(TurretBarrel, BarrelRectangle, SourceRectangle, Color, Rotation, BarrelPivot, SpriteEffects.None, 0.69f);
+                spriteBatch.Draw(TurretBarrel, BarrelRectangle, SourceRectangle, Color, Rotation, BarrelPivot, SpriteEffects.None, 0.89f);
 
-                spriteBatch.Draw(TurretBase, BaseRectangle, null, Color, 0, BasePivot, SpriteEffects.None, 0.7f);
+                spriteBatch.Draw(TurretBase, BaseRectangle, null, Color, 0, BasePivot, SpriteEffects.None, 0.90f);
             }
         }
     }

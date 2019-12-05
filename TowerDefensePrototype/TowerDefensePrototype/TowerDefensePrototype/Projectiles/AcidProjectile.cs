@@ -43,8 +43,7 @@ namespace TowerDefensePrototype
             {
                 YRange = yrange.Value;
             }
-
-
+            
             Damage = 50;
         }
     }

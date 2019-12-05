@@ -15,26 +15,26 @@ namespace TowerDefensePrototype
             WaveList = new List<Wave>();
 
             Wave Wave1 = new Wave(false, 500, 6000,
-                new Soldier(new Vector2(1300, 400)),
-                new Soldier(new Vector2(1300, 400)),
-                new Soldier(new Vector2(1300, 400)));
+                new Spider(new Vector2(1300, 400)),
+                new Spider(new Vector2(1300, 400)),
+                new Spider(new Vector2(1300, 400)));
 
-            Wave Wave2 = new Wave(false, 500, 6000,
+            Wave Wave2 = new Wave(false, 500, 5000,
+               new Spider(new Vector2(1300, 400)),
+               new Spider(new Vector2(1300, 400)),
+               new Spider(new Vector2(1300, 400)));
+
+            Wave Wave3 = new Wave(false, 500, 4000,
+               new Spider(new Vector2(1300, 400)),
+               new Spider(new Vector2(1300, 400)),
+               new Spider(new Vector2(1300, 400)));
+
+            Wave Wave4 = new Wave(false, 500, 4000,
                new Soldier(new Vector2(1300, 400)),
                new Soldier(new Vector2(1300, 400)),
                new Soldier(new Vector2(1300, 400)));
 
-            Wave Wave3 = new Wave(false, 500, 6000,
-               new Soldier(new Vector2(1300, 400)),
-               new Soldier(new Vector2(1300, 400)),
-               new Soldier(new Vector2(1300, 400)));
-
-            Wave Wave4 = new Wave(false, 500, 6000,
-               new Soldier(new Vector2(1300, 400)),
-               new Soldier(new Vector2(1300, 400)),
-               new Soldier(new Vector2(1300, 400)));
-
-            Wave Wave5 = new Wave(false, 500, 6000,
+            Wave Wave5 = new Wave(false, 500, 4000,
                new Soldier(new Vector2(1300, 400)),
                new Soldier(new Vector2(1300, 400)),
                new Soldier(new Vector2(1300, 400)));
