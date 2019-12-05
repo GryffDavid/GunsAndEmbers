@@ -111,7 +111,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Basics\RangedInvader.cs" />
+    <Compile Include="Invaders\Archer.cs" />
+    <Compile Include="Invaders\FireElemental.cs" />
+    <Compile Include="Invaders\Healer.cs" />
     <Compile Include="Invaders\Spider.cs" />
+    <Compile Include="Invaders\SuicideBomber.cs" />
+    <Compile Include="Invaders\WaterElemental.cs" />
     <Compile Include="OffenseTraps\BarrelTrap.cs" />
     <Compile Include="Basics\AnimatedSprite.cs" />
     <Compile Include="Basics\Boss.cs" />

@@ -21,8 +21,10 @@ namespace TowerDefensePrototype
         public int Burst;
         Random Random;
 
-        public Emitter(String textureName, Vector2 position, Vector2 angleRange, Vector2 speedRange, Vector2 hpRange, float startingTransparency, bool fade, Vector2 startingRotationRange,
-            Vector2 rotationIncrement, Vector2 scaleRange, Color startColor, Color endColor, float gravity, float activeSeconds, float interval, int burst, bool canBounce, Vector2 yrange, bool? shrink = null, float? drawDepth = null)
+        public Emitter(String textureName, Vector2 position, Vector2 angleRange, Vector2 speedRange, Vector2 hpRange, 
+            float startingTransparency, bool fade, Vector2 startingRotationRange, Vector2 rotationIncrement, Vector2 scaleRange, 
+            Color startColor, Color endColor, float gravity, float activeSeconds, float interval, int burst, bool canBounce, 
+            Vector2 yrange, bool? shrink = null, float? drawDepth = null)
         {
             Active = true;
             TextureName = textureName;
@@ -40,26 +42,23 @@ namespace TowerDefensePrototype
             AngleRange = angleRange;
             Gravity = gravity;
             ActiveSeconds = activeSeconds;
-            //CurrentTime = activeSeconds;
             Interval = interval;
+            IntervalTime = Interval;
             Burst = burst;
             CanBounce = canBounce;
+
             if (shrink == null)
                 Shrink = false;
             else
                 Shrink = shrink.Value;
+            
+            if (drawDepth == null)
+                DrawDepth = 0;
+            else
+                DrawDepth = drawDepth.Value;
+
             Random = new Random();
             MaxY = Random.Next((int)yrange.X, (int)yrange.Y);
-
-            if (drawDepth == null)
-            {
-                DrawDepth = 0;
-            }
-            else
-            {
-                DrawDepth = drawDepth.Value;
-            }
-
             AddMore = true;
         }
 
@@ -101,7 +100,8 @@ namespace TowerDefensePrototype
 
                     if (IntervalTime > Interval && AddMore == true)
                     {
-                        ParticleList.Add(new Particle(Texture, Position, angle, speed, hp, Transparency, Fade, startingRotation, rotation, scale, StartColor, EndColor, Gravity, CanBounce, MaxY, Shrink, DrawDepth));
+                        ParticleList.Add(new Particle(Texture, Position, angle, speed, hp, Transparency, Fade, startingRotation,
+                            rotation, scale, StartColor, EndColor, Gravity, CanBounce, MaxY, Shrink, DrawDepth));
                         IntervalTime = 0;
                     }
                 }
@@ -121,7 +121,8 @@ namespace TowerDefensePrototype
                             rotation = (float)DoubleRange(RotationIncrementRange.X, RotationIncrementRange.Y);
                             speed = (float)DoubleRange(SpeedRange.X, SpeedRange.Y);
                             startingRotation = (float)DoubleRange(StartingRotationRange.X, StartingRotationRange.Y);
-                            ParticleList.Add(new Particle(Texture, Position, angle, speed, hp, Transparency, Fade, startingRotation, rotation, scale, StartColor, EndColor, Gravity, CanBounce, MaxY, Shrink, DrawDepth));
+                            ParticleList.Add(new Particle(Texture, Position, angle, speed, hp, Transparency, Fade, startingRotation, 
+                                rotation, scale, StartColor, EndColor, Gravity, CanBounce, MaxY, Shrink, DrawDepth));
                         }
                         IntervalTime = 0;
                     }

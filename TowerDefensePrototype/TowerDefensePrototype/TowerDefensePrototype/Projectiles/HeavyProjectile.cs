@@ -13,13 +13,14 @@ namespace TowerDefensePrototype
         public Texture2D Texture;
         public string TextureName;
         public Emitter Emitter;
-        public Vector2 Velocity, Position;
-        public float Angle, Speed, Gravity, Rotation, CurrentTransparency;
+        public Vector2 Velocity, Position, YRange;
+        public float Angle, Speed, Gravity, Rotation, CurrentTransparency, MaxY;
         public bool Active, Rotate, Fade;
         public Color CurrentColor;
         public HeavyProjectileType HeavyProjectileType;
         public Rectangle DestinationRectangle, CollisionRectangle;
         public int Damage;
+        public Random Random;
 
         public void LoadContent(ContentManager contentManager)
         {            
@@ -28,7 +29,11 @@ namespace TowerDefensePrototype
             if (Emitter != null)
             Emitter.LoadContent(contentManager);
 
-            CurrentTransparency = 0;            
+            CurrentTransparency = 0;
+
+            Random = new Random();
+
+            MaxY = Random.Next((int)YRange.X, (int)YRange.Y);
         }
 
         public void Update(GameTime gameTime)
@@ -62,7 +67,7 @@ namespace TowerDefensePrototype
                 DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, Texture.Width, Texture.Height);
                 CollisionRectangle = new Rectangle(DestinationRectangle.X, DestinationRectangle.Y, DestinationRectangle.Width / 2, DestinationRectangle.Height / 2);
                 spriteBatch.Draw(Texture, DestinationRectangle, null, CurrentColor, Rotation, 
-                    new Vector2(Texture.Width/2, Texture.Height/2), SpriteEffects.None, 1f);
+                    new Vector2(Texture.Width/2, Texture.Height/2), SpriteEffects.None, MaxY/720);
             }
 
             if (Emitter != null)

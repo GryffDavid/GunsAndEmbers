@@ -29,8 +29,8 @@ namespace TowerDefensePrototype
             TotalFrames = 3;
             CurrentFrame = 0;
             InvaderType = InvaderType.Spider;
-            YRange = new Vector2(475, 560);
-
+            YRange = new Vector2(420, 530);
+            RangedAttackPower = 20;
             Range = new Vector2(200, 600); 
             AngleRange = new Vector2(110, 160);
             PowerRange = new Vector2(9, 12);            

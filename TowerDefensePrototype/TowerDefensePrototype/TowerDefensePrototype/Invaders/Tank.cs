@@ -30,7 +30,7 @@ namespace TowerDefensePrototype
             CurrentFrame = 0;
             InvaderType = InvaderType.Tank;
             Scale = new Vector2(1.5f, 1.5f);
-            YRange = new Vector2(475, 560);
+            YRange = new Vector2(420, 530);
         }
 
         public override void TrapDamage(TrapType trapType)
@@ -40,7 +40,8 @@ namespace TowerDefensePrototype
                 switch (trapType)
                 {
                     case TrapType.Fire:
-
+                        CurrentHP -= 10;
+                        DamageOverTime(3000, 2, 300, Color.Red);
                         break;
 
                     case TrapType.Spikes:

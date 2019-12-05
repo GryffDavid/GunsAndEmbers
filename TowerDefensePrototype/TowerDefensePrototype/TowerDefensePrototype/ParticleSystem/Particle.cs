@@ -52,13 +52,9 @@ namespace TowerDefensePrototype
             MaxY = maxY;
 
             if (drawDepth == null)
-            {
                 DrawDepth = 0;
-            }
             else
-            {
                 DrawDepth = drawDepth.Value;
-            }
         }
 
         public void Update()

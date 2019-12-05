@@ -14,7 +14,7 @@ namespace TowerDefensePrototype
         public Texture2D CurrentTexture;
         public Rectangle DestinationRectangle, SourceRectangle;
         public Vector2 Position, MoveVector, ResourceMinMax, Velocity;
-        public bool Active, CanMove, VulnerableToTurret, VulnerableToTrap, CanAttack, Burning, Frozen, Slow;
+        public bool Active, VulnerableToTurret, VulnerableToTrap, CanAttack, Burning, Frozen, Slow;//, CanMove;
         public Color Color, BurnColor, FrozenColor, AcidColor;
         public BoundingBox BoundingBox;
         public Double CurrentMoveDelay, MoveDelay, CurrentDelay, AttackDelay, CurrentAttackDelay;
@@ -32,6 +32,7 @@ namespace TowerDefensePrototype
         public double CurrentFrameDelay, FrameDelay;
         public Vector2 FrameSize;
         public Vector2 Scale = new Vector2(1, 1);
+        public float Bottom;
 
         public void LoadContent(ContentManager contentManager)
         {
@@ -167,7 +168,8 @@ namespace TowerDefensePrototype
 
                 BoundingBox = new BoundingBox(new Vector3(Position.X, Position.Y, 0), new Vector3(Position.X + FrameSize.X, Position.Y + FrameSize.Y, 0));
 
-                DrawDepth = (YRange.Y - MaxY) / 100;
+                Bottom = DestinationRectangle.Bottom;
+                DrawDepth = Bottom / 720;
             }
         }
 
@@ -178,7 +180,7 @@ namespace TowerDefensePrototype
                 BoundingBox = new BoundingBox(new Vector3(Position.X, Position.Y, 0), 
                               new Vector3(Position.X + (FrameSize.X * Scale.X), Position.Y + (FrameSize.Y * Scale.Y), 0));
 
-                spriteBatch.Draw(CurrentTexture, DestinationRectangle, SourceRectangle, Color, MathHelper.ToRadians(0), 
+                spriteBatch.Draw(CurrentTexture, DestinationRectangle, SourceRectangle, Color, MathHelper.ToRadians(0),
                     Vector2.Zero, SpriteEffects.None, DrawDepth);
 
                 HPBar.Draw(spriteBatch);

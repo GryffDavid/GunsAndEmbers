@@ -14,7 +14,7 @@ namespace TowerDefensePrototype
         {
             Position = position;
             Solid = true;
-            MaxHP = 50;
+            MaxHP = 100;
             AssetName = "Wall";
             TrapType = TrapType.Wall;
             DetonateLimit = -1;

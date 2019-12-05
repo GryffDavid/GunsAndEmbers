@@ -30,6 +30,10 @@ namespace TowerDefensePrototype
                 new Vector2(-20, 20), new Vector2(-4, 4), new Vector2(0.1f, 0.3f), Color.White, Color.WhiteSmoke, 0.0f, -1, 1, 10, false, new Vector2(0, 720), true);
 
             Rotation = (float)Math.Atan2(Velocity.Y, Velocity.X);
+
+            YRange = new Vector2(420, 530);
+
+            Damage = 100;
         }
     }
 }

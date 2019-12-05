@@ -49,8 +49,8 @@ namespace TowerDefensePrototype
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(Box, new Rectangle((int)Position.X, (int)Position.Y, (int)MaxSize.X, (int)MaxSize.Y), BackColor);
-            spriteBatch.Draw(Box, new Rectangle((int)Position.X, (int)Position.Y, CurrentLength, (int)MaxSize.Y), FrontColor);            
+            spriteBatch.Draw(Box, new Rectangle((int)Position.X, (int)Position.Y, (int)MaxSize.X, (int)MaxSize.Y), null, BackColor, 0, Vector2.Zero, SpriteEffects.None, 1);
+            spriteBatch.Draw(Box, new Rectangle((int)Position.X, (int)Position.Y, CurrentLength, (int)MaxSize.Y), null, FrontColor, 0, Vector2.Zero, SpriteEffects.None, 1);           
         }
     }
 }
