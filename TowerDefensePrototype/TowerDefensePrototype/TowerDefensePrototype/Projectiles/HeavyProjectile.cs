@@ -14,41 +14,49 @@ namespace TowerDefensePrototype
         public string TextureName;
         public Emitter Emitter;
         public Vector2 Velocity, Position;
-        public float Angle, Speed, Gravity;
-        public bool Active;
+        public float Angle, Speed, Gravity, Rotation, CurrentTransparency;
+        public bool Active, Rotate, Fade;
+        public Color CurrentColor;
         public HeavyProjectileType HeavyProjectileType;
+        public Rectangle DestinationRectangle, CollisionRectangle;
 
         public void LoadContent(ContentManager contentManager)
         {            
             Texture = contentManager.Load<Texture2D>(TextureName);
             Emitter.LoadContent(contentManager);
+            CurrentTransparency = 0;            
         }
 
         public void Update(GameTime gameTime)
         {
             if (Active == true)
             {
-                Speed = 0;
                 Position += Velocity;
                 Velocity.Y += Gravity;
 
-                Emitter.Position = new Vector2(Position.X + Texture.Width / 2, Position.Y + Texture.Height / 2);      
+                Emitter.Position = new Vector2(Position.X, Position.Y);                                
             }
 
-            Emitter.Update(gameTime);         
+            if (Rotate == true)
+                Rotation = (float)Math.Atan2(Velocity.Y, Velocity.X);
+
+            Emitter.Update(gameTime);
+
+            if (Fade == true)
+            {
+                CurrentTransparency += 0.1f;
+            }
         }
 
         public void Draw(SpriteBatch spriteBatch)
-        {
-            if (Position.Y > 482)
-            {
-                Active = false;
-                Emitter.HPRange = new Vector2(0, 0);
-            }
-
+        {           
             if (Active == true)
             {
-                spriteBatch.Draw(Texture, new Rectangle((int)Position.X - Texture.Width / 2, (int)Position.Y - Texture.Height/2, Texture.Width, Texture.Height), Color.White);
+                CurrentColor = Color.Lerp(Color.White, Color.Transparent, CurrentTransparency);
+                DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, Texture.Width, Texture.Height);
+                CollisionRectangle = new Rectangle(DestinationRectangle.X, DestinationRectangle.Y, DestinationRectangle.Width / 2, DestinationRectangle.Height / 2);
+                spriteBatch.Draw(Texture, DestinationRectangle, null, CurrentColor, Rotation, 
+                    new Vector2(Texture.Width/2, Texture.Height/2), SpriteEffects.None, 1f);
             }
 
             Emitter.Draw(spriteBatch);

@@ -8,34 +8,24 @@ using Microsoft.Xna.Framework.Content;
 
 namespace TowerDefensePrototype
 {
-    class Airship : Invader
+    class Archer : RangedInvader
     {
-        public Airship(Vector2 position)
+        public Archer(Vector2 position)
         {
             Active = true;
             CanMove = true;
             MoveVector = new Vector2(-1, 0);
             Position = position;
-            AssetName = "Airship";
-            MaxHP = 300;
-            CurrentHP = MaxHP;
-            MoveDelay = 20;
+            AssetName = "Star";
+            CurrentHP = 50;
+            MaxHP = 50;
+            MoveDelay = 50;
             ResourceMinMax = new Vector2(1, 5);
             CurrentAttackDelay = 0;
             AttackDelay = 1500;
             AttackPower = 4;
-
-            InvaderType = TowerDefensePrototype.InvaderType.Airship;
-        }
-
-        public override void Update(GameTime gameTime)
-        {
-            base.Update(gameTime);
-        }
-
-        public override void TrapDamage(TrapType trapType)
-        {            
-            throw new NotImplementedException();
+            ProjectileType = HeavyProjectileType.Arrow;
+            InvaderType = TowerDefensePrototype.InvaderType.Soldier;
         }
     }
 }

@@ -110,14 +110,18 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Invaders\Archer.cs" />
     <Compile Include="Basics\AnimatedSprite.cs" />
+    <Compile Include="Basics\Boss.cs" />
     <Compile Include="Basics\Button.cs" />
     <Compile Include="Basics\BlankTrap.cs" />
     <Compile Include="Basics\Invader.cs" />
     <Compile Include="Basics\HorizontalBar.cs" />
     <Compile Include="Basics\Camera.cs" />
+    <Compile Include="Basics\RangedInvader.cs" />
     <Compile Include="Invaders\Airship.cs" />
     <Compile Include="Basics\Profile.cs" />
+    <Compile Include="Projectiles\Arrow.cs" />
     <Compile Include="Projectiles\CannonBall.cs" />
     <Compile Include="Projectiles\FlameProjectile.cs" />
     <Compile Include="Projectiles\HeavyProjectile.cs" />

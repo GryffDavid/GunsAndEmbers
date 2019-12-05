@@ -15,12 +15,12 @@ namespace TowerDefensePrototype
         public float Angle, Speed, CurrentHP, MaxHP, CurrentTransparency, Scale;
         public float RotationIncrement, CurrentRotation, Gravity;
         public Color CurrentColor, EndColor;
-        public bool Active, Fade, BouncedOnGround, CanBounce;
+        public bool Active, Fade, BouncedOnGround, CanBounce, Shrink;
         
 
         public Particle(Texture2D texture, Vector2 position, float angle, float speed, float maxHP,
             float startingTransparency, bool fade, float startingRotation, float rotationChange,
-            float scale, Color startColor, Color endColor, float gravity, bool canBounce)
+            float scale, Color startColor, Color endColor, float gravity, bool canBounce, bool shrink)
         {
             Active = true;
             Texture = texture;
@@ -35,7 +35,8 @@ namespace TowerDefensePrototype
             Scale = scale;
             Fade = fade;
             Gravity = gravity;
-            CanBounce = canBounce; 
+            CanBounce = canBounce;
+            Shrink = shrink;
 
             CurrentRotation = MathHelper.ToRadians(startingRotation);
             RotationIncrement = MathHelper.ToRadians(rotationChange);
@@ -82,6 +83,11 @@ namespace TowerDefensePrototype
             if (Fade == true)
             {
                 CurrentTransparency = MathHelper.Lerp(PercentageHP, CurrentTransparency, PercentageHP);
+            }
+
+            if (Shrink == true)
+            {
+                Scale = MathHelper.Lerp(0, Scale, PercentageHP);
             }
 
             CurrentColor = Color.Lerp(CurrentColor, EndColor, PercentageHP / (CurrentHP * 0.5f));

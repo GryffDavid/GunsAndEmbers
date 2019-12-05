@@ -17,7 +17,8 @@ namespace TowerDefensePrototype
 {
     public enum TrapType { Blank, Wall, Spikes, Catapult, Fire };
     public enum TurretType { Blank, Basic, Cannon, FlameThrower };
-    public enum HeavyProjectileType { CannonBall, FlameThrower };
+    public enum InvaderType { Soldier, BatteringRam, Airship };
+    public enum HeavyProjectileType { CannonBall, FlameThrower, Arrow };
     public enum GameState { Menu, Loading, Playing, Paused, ProfileSelect, Options, ProfileManagement };
 
     public class Game1 : Microsoft.Xna.Framework.Game
@@ -55,6 +56,9 @@ namespace TowerDefensePrototype
             
         List<HeavyProjectile> HeavyProjectileList;
         List<LightProjectile> LightProjectileList;
+
+        List<HeavyProjectile> EnemyHeavyProjectileList;
+        List<LightProjectile> EnemyLightProjectileList;
         
         List<Emitter> EmitterList;
         List<Emitter> EmitterList2;
@@ -130,12 +134,12 @@ namespace TowerDefensePrototype
             ProfileDeleteList = new List<Button>();
             for (int i = 0; i < 6; i++)
             {
-                ProfileDeleteList.Add(new Button("SmallButtonStrip", new Vector2(32, 72 + (i * 100)), "DeleteIcon"));                
+                ProfileDeleteList.Add(new Button("SmallButtonStrip", new Vector2(32, 72 + (i * 100)), null, null, null, "x", "MenuFont"));                
                 ProfileDeleteList[i].LoadContent(SecondaryContent);
             }
 
-            ProfileBackButton = new Button("MenuButtonStrip", new Vector2(1280-32-210, 720-32-70), null, null, null, "Back", "MenuFont", null);
-            ProfileBackButton.LoadContent(Content);                      
+            ProfileBackButton = new Button("MenuButtonStrip", new Vector2(1280-32-210, 720-32-70), null, null, null, "Back", "MenuFont");
+            ProfileBackButton.LoadContent(SecondaryContent);                      
 
             IsLoading = false;
 
@@ -171,6 +175,11 @@ namespace TowerDefensePrototype
             CurrentMouseState = Mouse.GetState();
             CursorPosition = new Vector2(CurrentMouseState.X, CurrentMouseState.Y);
             CurrentKeyboardState = Keyboard.GetState();
+
+            if (gameTime.IsRunningSlowly == true)
+            {
+                slow = true;
+            }
 
             if (GameState == GameState.Playing && IsLoading == false)
             {
@@ -241,6 +250,12 @@ namespace TowerDefensePrototype
                         HeavyProjectileList.RemoveAt(i);
                 }
 
+                for (int i = 0; i < HeavyProjectileList.Count; i++)
+                {
+                    if (HeavyProjectileList[i].CurrentColor == Color.Transparent)
+                        HeavyProjectileList.RemoveAt(i);                    
+                }
+
                 for (int i = 0; i < ShellCasingList.Count; i++)
                 {
                     if (ShellCasingList[i].Active == false)
@@ -252,7 +267,6 @@ namespace TowerDefensePrototype
                     if (TrapList[i].Active == false)
                         TrapList.RemoveAt(i);
                 }
-
 
                 foreach (Turret turret in TurretList)
                 {
@@ -266,7 +280,7 @@ namespace TowerDefensePrototype
                                 TurretShoot();
                             }
                         }
-                }
+                }                
 
                 foreach (Turret turret in TurretList)
                 {
@@ -305,8 +319,8 @@ namespace TowerDefensePrototype
 
             #region Main Spritebatch
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, null, null, Camera.Transformation(GraphicsDevice));
-            
-                if (GameState == GameState.Playing || GameState == GameState.Paused && IsLoading == false)
+                  
+            if (GameState == GameState.Playing || GameState == GameState.Paused && IsLoading == false)
                 {                  
                     MoveInvaders();                             
 
@@ -352,7 +366,14 @@ namespace TowerDefensePrototype
                     foreach (Trap Trap in TrapList)
                     {
                         if (Trap.DetonateDelay > 0)
-                        Trap.TimingBar.Draw(spriteBatch);
+                        {
+                            Trap.TimingBar.Draw(spriteBatch);                            
+                        }
+
+                        if (Trap.MaxHP > 0)
+                        {
+                            Trap.HealthBar.Draw(spriteBatch);
+                        }                        
                     }
 
                     //This draws the timing bar for the turrets, but also makes 
@@ -363,14 +384,14 @@ namespace TowerDefensePrototype
                         if (turret.TurretType != TurretType.Blank)
                         turret.TimingBar.Draw(spriteBatch);
                     }                    
-                }            
+                }
 
             spriteBatch.End();
 
             #endregion
             
             #region Secondary Spritebatch
-                spriteBatch2.Begin();
+                spriteBatch2.Begin();                
 
                 if (GameState == GameState.Playing || GameState == GameState.Paused && IsLoading == false)
                 {
@@ -400,7 +421,6 @@ namespace TowerDefensePrototype
                         shellCasing.Draw(spriteBatch2);
                     }   
                 }
-
 
                 #region Draw Main Menu
                 if (GameState == GameState.Menu)
@@ -436,9 +456,7 @@ namespace TowerDefensePrototype
                 }
                 #endregion
 
-                #region Draw HUD
-                if (slow == true)
-                    spriteBatch2.DrawString(ResourceFont, "Slow: " + slow.ToString(), new Vector2(0, 64), Color.Red);
+                #region Draw HUD                
 
                 if (GameState == GameState.Playing || GameState == GameState.Paused && IsLoading == false)
                 {
@@ -452,6 +470,8 @@ namespace TowerDefensePrototype
                     PercentageHP = (100d / (double)Tower.MaxHP) * (double)Tower.CurrentHP;
 
                     spriteBatch2.DrawString(ResourceFont, ((int)PercentageHP).ToString() + "%", new Vector2(180, 16), Color.White);
+
+                    spriteBatch2.DrawString(ResourceFont, slow.ToString(), new Vector2(100, 100), Color.Red);
                 }
                 #endregion
 
@@ -473,7 +493,7 @@ namespace TowerDefensePrototype
                     CursorDraw(spriteBatch2);
                 }
                 #endregion                
-
+            
             spriteBatch2.End();
             #endregion
 
@@ -515,10 +535,7 @@ namespace TowerDefensePrototype
                 PauseMenuNameList.Add("Options");
                 PauseMenuNameList.Add("Main Menu");
                 PauseMenuNameList.Add("Exit");
-                #endregion
-
-                //TrapCursor = Content.Load<Texture2D>("FireIcon");
-                
+                #endregion                
 
                 CloudList = new List<StaticSprite>();
                 CloudList.Add(new StaticSprite("Cloud1", new Vector2(0, 32), null, null, new Vector2(1, 0), true, false, 40));
@@ -587,10 +604,21 @@ namespace TowerDefensePrototype
                 }
 
                 InvaderList = new List<Invader>();
+                for (int i = 0; i < 1; i++)
+                {
+                    InvaderList.Add(new Airship(new Vector2(1240 + (46 * i), 128)));
+                    //InvaderList[i].LoadContent(Content);
+                }
+
                 for (int i = 0; i < 30; i++)
                 {
-                    InvaderList.Add(new Soldier(new Vector2(1240 + (46 * i), 720 - 160 - 32 - 65)));
-                    InvaderList[i].LoadContent(Content);
+                    InvaderList.Add(new Soldier(new Vector2(1240 + (46 * i), 720-300)));
+                    //InvaderList[i].LoadContent(Content);
+                }
+
+                foreach (Invader invader in InvaderList)
+                {
+                    invader.LoadContent(Content);
                 }
 
                 HeavyProjectileList = new List<HeavyProjectile>();
@@ -947,10 +975,21 @@ namespace TowerDefensePrototype
 
                 if (invader.CurrentHP <= 0)
                 {
-                    EmitterList2.Add(new Emitter("Splodge", new Vector2(invader.Position.X, invader.DestinationRectangle.Center.Y),
-                        new Vector2(0, 360), new Vector2(1, 2), new Vector2(50, 100), 0.5f, true, new Vector2(0, 360), new Vector2(1, 3),
-                        new Vector2(0.02f, 0.06f), Color.DarkRed, Color.Red, 0.1f, 0.2f, 20, 10, true));
-                    EmitterList2[EmitterList2.Count - 1].LoadContent(Content);
+                    if (invader.InvaderType == InvaderType.Soldier)
+                    {
+                        EmitterList2.Add(new Emitter("Splodge", new Vector2(invader.Position.X, invader.DestinationRectangle.Center.Y),
+                            new Vector2(0, 360), new Vector2(1, 2), new Vector2(50, 100), 0.5f, true, new Vector2(0, 360), new Vector2(1, 3),
+                            new Vector2(0.02f, 0.06f), Color.DarkRed, Color.Red, 0.1f, 0.2f, 20, 10, true));
+                        EmitterList2[EmitterList2.Count - 1].LoadContent(Content);
+                    }
+
+                    if (invader.InvaderType == InvaderType.Airship)
+                    {
+                        EmitterList2.Add(new Emitter("Splodge", new Vector2(invader.Position.X, invader.DestinationRectangle.Center.Y),
+                            new Vector2(0, 360), new Vector2(1, 2), new Vector2(50, 100), 0.5f, true, new Vector2(0, 360), new Vector2(1, 3),
+                            new Vector2(0.02f, 0.06f), Color.Orange, Color.DarkOrange, 0.1f, 0.2f, 1, 10, true));
+                        EmitterList2[EmitterList2.Count - 1].LoadContent(Content);
+                    }
                 }
             }
 
@@ -965,16 +1004,19 @@ namespace TowerDefensePrototype
 
             foreach (Invader invader in InvaderList)
             {
-                if ((invader.DestinationRectangle.Bottom + invader.Velocity.Y) > 495)
+                if (invader.InvaderType == InvaderType.Soldier)
                 {
-                    invader.Trajectory(Vector2.Zero);
-                    invader.Position = new Vector2(invader.Position.X, 495 - invader.DestinationRectangle.Height);
-                    invader.Gravity = 0;
-                }
+                    if ((invader.DestinationRectangle.Bottom + invader.Velocity.Y) > 495)
+                    {
+                        invader.Trajectory(Vector2.Zero);
+                        invader.Position = new Vector2(invader.Position.X, 495 - invader.DestinationRectangle.Height);
+                        invader.Gravity = 0;
+                    }
 
-                if (invader.DestinationRectangle.Bottom < 495)
-                {
-                    invader.Gravity = 0.2f;
+                    if (invader.DestinationRectangle.Bottom < 495)
+                    {
+                        invader.Gravity = 0.2f;
+                    }
                 }
             }
         }
@@ -1078,15 +1120,34 @@ namespace TowerDefensePrototype
                         switch (turret.TurretType)
                         {
                             case TurretType.Basic:
-                                {
+                                {                                    
+                                    Color FireColor = Color.DarkOrange;
+                                    FireColor.A = 200;
+
+                                    Color FireColor2 = Color.DarkOrange;
+                                    FireColor2.A = 90;
+
+                                    Vector2 BarrelEnd = new Vector2((float)Math.Cos(turret.Rotation) * (turret.BarrelRectangle.Width - 25),
+                                                                     (float)Math.Sin(turret.Rotation) * (turret.BarrelRectangle.Height + 25));
+
                                     CurrentProjectile = new LightProjectile(new Vector2(turret.BarrelRectangle.X, 
                                         turret.BarrelRectangle.Y), Direction);
                                     LightProjectileList.Add(CurrentProjectile);
+
+                                    Emitter FlashEmitter = new Emitter("star", new Vector2(turret.BarrelRectangle.X + BarrelEnd.X, turret.BarrelRectangle.Y + BarrelEnd.Y),
+                                new Vector2(
+                                    MathHelper.ToDegrees(-(float)Math.Atan2(turret.Direction.Y, turret.Direction.X)),
+                                    MathHelper.ToDegrees(-(float)Math.Atan2(turret.Direction.Y, turret.Direction.X))),
+                                    new Vector2(20, 30), new Vector2(1, 6), 0.01f, true, new Vector2(0, 360),
+                                new Vector2(-10, 10), new Vector2(2, 3), FireColor, FireColor2, 0.0f, 0.05f, 1, 10, false, true);
+                                    EmitterList.Add(FlashEmitter);
+                                    EmitterList[EmitterList.IndexOf(FlashEmitter)].LoadContent(Content);
+
                                     ShellCasingList.Add(new Particle(ShellCasing,
                                         new Vector2(turret.BarrelRectangle.X, turret.BarrelRectangle.Y), 
                                         turret.Rotation - MathHelper.ToRadians((float)DoubleRange(175, 185)), 
                                         (float)DoubleRange(2, 4), 500, 1f, false, (float)DoubleRange(-10, 10), 
-                                        (float)DoubleRange(-3, 6), 1, Color.White, Color.White, 0.09f, true));
+                                        (float)DoubleRange(-3, 6), 1, Color.White, Color.White, 0.09f, true, false));
                                 }
                                 break;
 
@@ -1095,10 +1156,26 @@ namespace TowerDefensePrototype
                                     HeavyProjectile heavyProjectile;
                                     Vector2 BarrelEnd;
 
+                                    Color FireColor = Color.DarkOrange;
+                                    FireColor.A = 200;
+
+                                    Color FireColor2 = Color.DarkOrange;
+                                    FireColor2.A = 90;
+
                                     BarrelEnd = new Vector2((float)Math.Cos(turret.Rotation) * (turret.BarrelRectangle.Width - 20),
                                                             (float)Math.Sin(turret.Rotation) * (turret.BarrelRectangle.Height + 20));
 
-                                    heavyProjectile = new CannonBall(new Vector2(turret.BarrelRectangle.X + BarrelEnd.X, 
+                                    Emitter FlashEmitter = new Emitter("star", 
+                                        new Vector2(turret.BarrelRectangle.X + BarrelEnd.X, turret.BarrelRectangle.Y + BarrelEnd.Y),
+                                new Vector2(
+                                    MathHelper.ToDegrees(-(float)Math.Atan2(turret.Direction.Y, turret.Direction.X)), 
+                                    MathHelper.ToDegrees(-(float)Math.Atan2(turret.Direction.Y, turret.Direction.X))), 
+                                    new Vector2(10, 20), new Vector2(1, 6), 0.01f, true, new Vector2(0, 360),
+                                new Vector2(-2, 2), new Vector2(3, 4), FireColor, FireColor2, 0.0f, 0.2f, 1, 5, false, true);
+                                    EmitterList.Add(FlashEmitter);
+                                    EmitterList[EmitterList.IndexOf(FlashEmitter)].LoadContent(Content);
+
+                                    heavyProjectile = new Arrow(new Vector2(turret.BarrelRectangle.X + BarrelEnd.X, 
                                         turret.BarrelRectangle.Y + BarrelEnd.Y), 12, turret.Rotation, 0.2f);
                                     heavyProjectile.LoadContent(Content);
                                     HeavyProjectileList.Add(heavyProjectile);
@@ -1113,8 +1190,10 @@ namespace TowerDefensePrototype
                                     BarrelEnd = new Vector2((float)Math.Cos(turret.Rotation) * (turret.BarrelRectangle.Width-20),
                                                             (float)Math.Sin(turret.Rotation) * (turret.BarrelRectangle.Height+20));
 
-                                    heavyProjectile = new FlameProjectile(new Vector2(turret.BarrelRectangle.X + BarrelEnd.X, 
-                                        turret.BarrelRectangle.Y + BarrelEnd.Y), (float)DoubleRange(7,9), turret.Rotation, 0.3f);
+                                    heavyProjectile = new FlameProjectile(new Vector2(turret.BarrelRectangle.X + BarrelEnd.X-2, 
+                                        turret.BarrelRectangle.Y + BarrelEnd.Y-2), (float)DoubleRange(7,9), turret.Rotation, 0.3f);
+                                    heavyProjectile.Emitter.AngleRange = new Vector2(-(MathHelper.ToDegrees((float)Math.Atan2(-heavyProjectile.Velocity.Y, -heavyProjectile.Velocity.X))) - 20,
+                                -(MathHelper.ToDegrees((float)Math.Atan2(-heavyProjectile.Velocity.Y, -heavyProjectile.Velocity.X))) + 20); 
                                     heavyProjectile.LoadContent(Content);
                                     HeavyProjectileList.Add(heavyProjectile);
                                 }
@@ -1131,27 +1210,54 @@ namespace TowerDefensePrototype
             {
                 heavyProjectile.Update(gameTime);
 
-                if (TrapList.Any(Trap => Trap.DestinationRectangle.Left - 16 < heavyProjectile.Position.X
-                    && Trap.DestinationRectangle.Top < heavyProjectile.Position.Y
-                    && Trap.DestinationRectangle.Right - 16 > heavyProjectile.Position.X && Trap.TrapType == TrapType.Wall))
+                int ArrowCount = HeavyProjectileList.Count(HeavyProjectile => HeavyProjectile.HeavyProjectileType == HeavyProjectileType.Arrow);
+
+                if (ArrowCount > 10)
                 {
-                    if (heavyProjectile.Active == true)
+                    HeavyProjectileList[HeavyProjectileList.IndexOf(HeavyProjectileList.First(HeavyProjectile => HeavyProjectile.HeavyProjectileType == HeavyProjectileType.Arrow))].Fade = true;
+                }
+
+                    heavyProjectile.Emitter.AngleRange = new Vector2(-(MathHelper.ToDegrees((float)Math.Atan2(-heavyProjectile.Velocity.Y, -heavyProjectile.Velocity.X))) - 20,
+                                -(MathHelper.ToDegrees((float)Math.Atan2(-heavyProjectile.Velocity.Y, -heavyProjectile.Velocity.X))) + 20);
+
+                if (heavyProjectile.Position.Y > 492)
+                {
+                    if (heavyProjectile.HeavyProjectileType == HeavyProjectileType.CannonBall || 
+                        heavyProjectile.HeavyProjectileType == HeavyProjectileType.FlameThrower)
                     {
-                        heavyProjectile.Active = false;
+                        heavyProjectile.Emitter.AddMore = false;
+                    }
 
-                        Emitter newEmitter = new Emitter("Splodge", new Vector2(heavyProjectile.Position.X+4, heavyProjectile.Position.Y),
-                        new Vector2(90,270 ), new Vector2(2, 3), new Vector2(25, 50), 2f, true, new Vector2(0, 360), new Vector2(1, 3),
-                        new Vector2(0.03f, 0.09f), Color.SlateGray, Color.SlateGray, 0.2f, 0.05f, 20, 10, true);
-
-                        EmitterList2.Add(newEmitter);
-
-                        EmitterList2[EmitterList2.IndexOf(newEmitter)].LoadContent(Content);
-                        
-                        heavyProjectile.Emitter.HPRange = new Vector2(0, 0);
+                    if (heavyProjectile.HeavyProjectileType == HeavyProjectileType.Arrow)
+                    {                     
+                        heavyProjectile.Emitter.AddMore = false;
+                        heavyProjectile.Rotate = false;
+                        heavyProjectile.Velocity = Vector2.Zero;
                     }
                 }
 
-                if (heavyProjectile.Position.Y > 482)
+                if (TrapList.Any(Trap => Trap.DestinationRectangle.Intersects(heavyProjectile.CollisionRectangle) && 
+                    Trap.TrapType == TrapType.Wall))
+                {
+                    if (heavyProjectile.Active == true)
+                    {                       
+                        Emitter newEmitter = new Emitter("Splodge", new Vector2(heavyProjectile.Position.X + 4, heavyProjectile.Position.Y),
+                        new Vector2(-(MathHelper.ToDegrees((float)Math.Atan2(-heavyProjectile.Velocity.Y, -heavyProjectile.Velocity.X)))-45, 
+                            -(MathHelper.ToDegrees((float)Math.Atan2(-heavyProjectile.Velocity.Y, -heavyProjectile.Velocity.X)))+45),                            
+                            new Vector2(2, 3), new Vector2(25, 50), 2f, true, new Vector2(0, 360), new Vector2(1, 3),
+                        new Vector2(0.03f, 0.09f), Color.SlateGray, Color.SlateGray, 0.2f, 0.05f, 20, 10, true);
+                                                  
+                        EmitterList2.Add(newEmitter);
+
+                        EmitterList2[EmitterList2.IndexOf(newEmitter)].LoadContent(Content);
+
+                        heavyProjectile.Active = false;
+
+                        heavyProjectile.Emitter.AddMore = false;
+                    }
+                }
+
+                if (heavyProjectile.Position.Y > 492)
                 {
                     if (heavyProjectile.Active == true && heavyProjectile.HeavyProjectileType == HeavyProjectileType.CannonBall)
                     {
@@ -1164,23 +1270,56 @@ namespace TowerDefensePrototype
                         Color FireColor2 = FireColor;                        
                         FireColor2.A = 125;
 
-                        Vector2 HeavyProjectileCollision = new Vector2(heavyProjectile.Position.X + 16, 492);
+                        Vector2 HeavyProjectileCollision = new Vector2(heavyProjectile.Position.X + 16, 492);                        
 
                         foreach (Invader invader in InvaderList)
                         {
-                            if (Vector2.Distance(invader.Position, HeavyProjectileCollision) <= 72)
+                            if (Vector2.Distance(new Vector2(invader.Position.X + 16, invader.Position.Y), HeavyProjectileCollision) <= 72 
+                                && invader.InvaderType == InvaderType.Soldier)
                             {
                                 float DistanceToCollision = Vector2.Distance(HeavyProjectileCollision, invader.Position);
                                 invader.CurrentHP -= (int)((2/DistanceToCollision)*(32*20));
-                                invader.Trajectory(new Vector2(((2 / DistanceToCollision) * (32 * 20)/8), (-(2 / DistanceToCollision) * (32 * 20))/8));
+
+                                if (invader.Position.X + 16 > HeavyProjectileCollision.X)
+                                    invader.Trajectory(new Vector2(((2 / DistanceToCollision) * (32 * 20) / 8), (-(2 / DistanceToCollision) * (32 * 20)) / 8));
+
+                                if (invader.Position.X + 16 < HeavyProjectileCollision.X)
+                                    invader.Trajectory(new Vector2(-((2 / DistanceToCollision) * (32 * 20) / 8), (-(2 / DistanceToCollision) * (32 * 20)) / 8));
+
+                                if (invader.Position.X + 16 == HeavyProjectileCollision.X)
+                                    invader.Trajectory(new Vector2(0, (-(2 / DistanceToCollision) * (32 * 20)) / 8));
+                            }
+                        }
+
+                        foreach (Trap trap in TrapList)
+                        {
+                            if (Vector2.Distance(new Vector2(trap.Position.X+16, trap.Position.Y), HeavyProjectileCollision) <= 72
+                                && trap.TrapType == TrapType.Fire)
+                            {
+                                if (trap.Position.X + 16 > HeavyProjectileCollision.X)
+                                {
+                                    trap.CurrentAffectedTime = 0;
+
+                                    foreach (Emitter emitter in trap.TrapEmitterList)
+                                        emitter.AngleRange = new Vector2(0, 45);
+                                }
+
+                                if (trap.Position.X + 16 <= HeavyProjectileCollision.X)
+                                {
+                                    trap.CurrentAffectedTime = 0;
+
+                                    foreach (Emitter emitter in trap.TrapEmitterList)
+                                        emitter.AngleRange = new Vector2(135, 180);
+                                }
                             }
                         }
 
                         Emitter newEmitter = new Emitter("Splodge", new Vector2(heavyProjectile.Position.X + 16, 492),
-                        new Vector2(0, 180), new Vector2(2, 3), new Vector2(25, 50), 2f, true, new Vector2(0, 360), new Vector2(1, 3),
-                        new Vector2(0.03f, 0.09f), FireColor, FireColor2, 0.2f, 0.2f, 20, 10, true);
+                        new Vector2(0, 180), new Vector2(3, 4), new Vector2(25, 50), 2f, true, new Vector2(0, 360), new Vector2(1, 3),
+                        new Vector2(0.02f, 0.06f), FireColor, FireColor2, 0.2f, 0.2f, 20, 10, true);
                         EmitterList2.Add(newEmitter);
                         EmitterList2[EmitterList2.IndexOf(newEmitter)].LoadContent(Content);
+                        heavyProjectile.Emitter.AddMore = false;
                         heavyProjectile.Active = false;
                     }
 
@@ -1191,11 +1330,28 @@ namespace TowerDefensePrototype
                         Color FireColor2 = Color.DarkGray;
 
                         Emitter newEmitter = new Emitter("smoke", new Vector2(heavyProjectile.Position.X + 16,
-                            heavyProjectile.Position.Y + 16), new Vector2(20, 160), new Vector2(0.5f, 1), new Vector2(10, 12), 0.25f, false,
-                            new Vector2(-20, 20), new Vector2(-4, 4), new Vector2(0.5f, 0.75f), FireColor, FireColor2, -0.2f, 0.5f, 3, 1, false);
+                            heavyProjectile.Position.Y + 16), new Vector2(20, 160), new Vector2(1f, 1.6f), new Vector2(10, 12), 0.25f, false,
+                            new Vector2(-20, 20), new Vector2(-4, 4), new Vector2(0.6f, 0.8f), FireColor, FireColor2, -0.2f, 0.5f, 3, 1, false);
                         EmitterList.Add(newEmitter);                        
                         EmitterList[EmitterList.IndexOf(newEmitter)].LoadContent(Content);
+                        heavyProjectile.Emitter.AddMore = false;
                         heavyProjectile.Active = false;
+                    }
+                }                
+
+                if (InvaderList.Any(Invader2 => Invader2.DestinationRectangle.Intersects(heavyProjectile.DestinationRectangle)))
+                {
+                    if (heavyProjectile.Active == true && heavyProjectile.HeavyProjectileType == HeavyProjectileType.CannonBall)
+                    {
+                        int index;
+                        index = InvaderList.IndexOf(InvaderList.First(Invader2 => Invader2.DestinationRectangle.Intersects(heavyProjectile.DestinationRectangle)));
+                        if (InvaderList[index].InvaderType == InvaderType.Airship)
+                        {
+                            InvaderList[index].CurrentHP -= 200;
+                            heavyProjectile.Active = false;
+                            heavyProjectile.Emitter.AddMore = false;
+                        }
+                        
                     }
                 }
             }
@@ -1307,8 +1463,9 @@ namespace TowerDefensePrototype
                                             Color DirtColor2 = DirtColor;
                                             DirtColor2.A = 125;
 
-                                            DirtEmitter = new Emitter("smoke", new Vector2(GroundCollisionPoint.X, GroundCollisionPoint.Y), new Vector2(90, 90), new Vector2(0.5f, 1f), new Vector2(20, 30), 1f, true, new Vector2(0, 0), new Vector2(0, 2), new Vector2(0.5f, 1f), DirtColor, DirtColor2, 0f, 0.01f, 1, 1, false);
-
+                                            DirtEmitter = new Emitter("smoke", new Vector2(GroundCollisionPoint.X, GroundCollisionPoint.Y), 
+                                                new Vector2(90, 90), new Vector2(0.5f, 1f), new Vector2(20, 30), 1f, true, new Vector2(0, 0), 
+                                                new Vector2(-2, 2), new Vector2(0.5f, 1f), DirtColor, DirtColor2, 0f, 0.02f, 10, 1, false, false);
                                             EmitterList.Add(DirtEmitter);
                                             EmitterList[EmitterList.IndexOf(DirtEmitter)].LoadContent(Content);
                                         }
@@ -1374,12 +1531,12 @@ namespace TowerDefensePrototype
                             Color SmokeColor2 = Color.WhiteSmoke;
                             SmokeColor.A = 170;
 
-                            Emitter newEmitter = new Emitter("star", new Vector2(NewTrap.Position.X + 16, NewTrap.Position.Y + 4),
+                            Emitter newEmitter = new Emitter("star", new Vector2(NewTrap.Position.X+16, NewTrap.Position.Y + 4),
                                 new Vector2(70, 110), new Vector2(0.5f, 0.75f), new Vector2(40, 60), 0.01f, true, new Vector2(-20, 20),
-                                new Vector2(-4, 4), new Vector2(1, 2f), FireColor, FireColor2, 0.0f, -1, 8, 1, false);
+                                new Vector2(-4, 4), new Vector2(1, 2f), FireColor, FireColor2, 0.0f, -1, 10, 1, false, false);
                             NewTrap.TrapEmitterList.Add(newEmitter);
 
-                            Emitter newEmitter2 = new Emitter("smoke", new Vector2(NewTrap.Position.X + 16, NewTrap.Position.Y + 4),
+                            Emitter newEmitter2 = new Emitter("smoke", new Vector2(NewTrap.Position.X+16, NewTrap.Position.Y + 4),
                                 new Vector2(70, 110), new Vector2(0.2f, 0.5f), new Vector2(250, 350), 1f, true, new Vector2(-20, 20),
                                 new Vector2(-4, 4), new Vector2(0.5f, 0.5f), SmokeColor, SmokeColor2, 0.0f, -1, 300, 1, false);                            
 
@@ -1423,12 +1580,29 @@ namespace TowerDefensePrototype
                 }
             }
         }
-
+        
         private void TrapUpdate(GameTime gameTime)
-        {
+        {           
             foreach (Trap trap in TrapList)
             {
                 trap.Update(gameTime);
+
+                if (trap.TrapType == TrapType.Fire)
+                {
+                    if (trap.Affected == false)
+                    {
+                        foreach (Emitter emitter in trap.TrapEmitterList)
+                            emitter.AngleRange = Vector2.Lerp(emitter.AngleRange, new Vector2(70, 110), 0.02f);
+                    }
+                }
+
+                foreach (Emitter emitter in trap.TrapEmitterList)
+                {
+                    if (emitter.AddMore == false && emitter.ParticleList.Count == 0)
+                    {
+                        trap.Active = false;
+                    }
+                }
             }
 
             for (int i = 0; i < TrapList.Count; i++)
@@ -1450,9 +1624,8 @@ namespace TowerDefensePrototype
                         invader.TrapDamage(HitTrap.TrapType);
                         HitTrap.CurrentDetonateDelay = 0;
 
-                        if (HitTrap.DetonateLimit > 0)
-                        HitTrap.DetonateLimit -= 1;
-                        //invader.VulnerableToTrap = false;
+                        if (HitTrap.CurrentDetonateLimit > 0)
+                            HitTrap.CurrentDetonateLimit -= 1;
                     }
                 }
 
@@ -1617,7 +1790,7 @@ namespace TowerDefensePrototype
             {
                 CurrentProfile = new Profile()
                 {
-                    Name = "Darthmarshie",
+                    Name = "Sabretkila",
                     LevelNumber = 1,
                     ProfileNumber = 1
                 };
@@ -1732,6 +1905,7 @@ namespace TowerDefensePrototype
                 ProfileButtonList[i].Text = ProfileName;
             }
         }        
+
 
          public void ControlWaves(GameTime gameTime)
         {

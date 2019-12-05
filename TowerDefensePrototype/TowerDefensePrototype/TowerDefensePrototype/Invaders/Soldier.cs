@@ -24,6 +24,8 @@ namespace TowerDefensePrototype
             CurrentAttackDelay = 0;
             AttackDelay = 1500;
             AttackPower = 4;
+
+            InvaderType = TowerDefensePrototype.InvaderType.Soldier;
         }
 
         public override void Update(GameTime gameTime)

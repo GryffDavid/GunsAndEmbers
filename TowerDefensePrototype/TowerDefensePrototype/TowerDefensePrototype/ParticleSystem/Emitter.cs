@@ -16,13 +16,13 @@ namespace TowerDefensePrototype
         public Vector2 ScaleRange, HPRange, RotationIncrementRange, SpeedRange, StartingRotationRange;
         public float Transparency, Gravity, ActiveSeconds, CurrentTime, Interval, IntervalTime;
         public Color StartColor, EndColor;
-        public bool Active, Fade, CanBounce;
+        public bool Active, Fade, CanBounce, AddMore, Shrink;
         public string TextureName;
         public int Burst;
         Random Random;
 
         public Emitter(String textureName, Vector2 position, Vector2 angleRange, Vector2 speedRange, Vector2 hpRange, float startingTransparency, bool fade, Vector2 startingRotationRange,
-            Vector2 rotationIncrement, Vector2 scaleRange, Color startColor, Color endColor, float gravity, float activeSeconds, float interval, int burst, bool canBounce)
+            Vector2 rotationIncrement, Vector2 scaleRange, Color startColor, Color endColor, float gravity, float activeSeconds, float interval, int burst, bool canBounce, bool? shrink = null)
         {
             Active = true;
             TextureName = textureName;
@@ -39,11 +39,17 @@ namespace TowerDefensePrototype
             ParticleList = new List<Particle>();
             AngleRange = angleRange;
             Gravity = gravity;
-            ActiveSeconds = activeSeconds;;
+            ActiveSeconds = activeSeconds;
+            //CurrentTime = activeSeconds;
             Interval = interval;
             Burst = burst;
             CanBounce = canBounce;
+            if (shrink == null)
+                Shrink = false;
+            else
+                Shrink = shrink.Value;
             Random = new Random();
+            AddMore = true;
         }
 
         public void LoadContent(ContentManager contentManager)
@@ -66,7 +72,7 @@ namespace TowerDefensePrototype
 
                     if (CurrentTime > ActiveSeconds)
                     {
-                        Active = false;
+                        AddMore = false;
                     }
                 }
 
@@ -82,9 +88,9 @@ namespace TowerDefensePrototype
 
                     IntervalTime += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
 
-                    if (IntervalTime > Interval)
+                    if (IntervalTime > Interval && AddMore == true)
                     {
-                        ParticleList.Add(new Particle(Texture, Position, angle, speed, hp, Transparency, Fade, startingRotation, rotation, scale, StartColor, EndColor, Gravity, CanBounce));
+                        ParticleList.Add(new Particle(Texture, Position, angle, speed, hp, Transparency, Fade, startingRotation, rotation, scale, StartColor, EndColor, Gravity, CanBounce, Shrink));
                         IntervalTime = 0;
                     }
                 }
@@ -92,7 +98,7 @@ namespace TowerDefensePrototype
                 {
                     IntervalTime += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
 
-                    if (IntervalTime > Interval)
+                    if (IntervalTime > Interval && AddMore == true)
                     {
                         for (int i = 0; i < Burst; i++)
                         {
@@ -104,7 +110,7 @@ namespace TowerDefensePrototype
                             rotation = (float)DoubleRange(RotationIncrementRange.X, RotationIncrementRange.Y);
                             speed = (float)DoubleRange(SpeedRange.X, SpeedRange.Y);
                             startingRotation = (float)DoubleRange(StartingRotationRange.X, StartingRotationRange.Y);
-                            ParticleList.Add(new Particle(Texture, Position, angle, speed, hp, Transparency, Fade, startingRotation, rotation, scale, StartColor, EndColor, Gravity, CanBounce));
+                            ParticleList.Add(new Particle(Texture, Position, angle, speed, hp, Transparency, Fade, startingRotation, rotation, scale, StartColor, EndColor, Gravity, CanBounce, Shrink));
                         }
                         IntervalTime = 0;
                     }
