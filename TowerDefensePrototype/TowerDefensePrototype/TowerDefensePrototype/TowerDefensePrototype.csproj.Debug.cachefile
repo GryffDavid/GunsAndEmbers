@@ -67,6 +67,7 @@ Content\Particles\Cap.xnb
 Content\Particles\Segment.xnb
 Content\Backgrounds\GradientBackground.xnb
 Content\Buttons\TurretSlotButton.xnb
+Content\Icons\MachineGunIcon.xnb
 Content\Levels\Level1.xnb
 Content\Levels\Level6.xnb
 Content\Fonts\ButtonFont.xnb
@@ -76,4 +77,8 @@ Content\Sounds\MenuClick.xnb
 Content\Sounds\FireTrapStart.xnb
 Content\Sounds\MenuAmbiance.xnb
 Content\Sounds\LightningSound.xnb
-Content\Icons\MachineGunIcon.xnb
+Content\Buttons\TextBox.xnb
+Content\Icons\LockIcon.xnb
+Content\Buttons\ButtonStrip.xnb
+Content\Fonts\ButtonFont2.xnb
+Content\DialogBox.xnb

@@ -29,7 +29,7 @@ namespace TowerDefensePrototype
         #region Variable declarations
         GraphicsDeviceManager graphics;
         ContentManager SecondaryContent;
-        SpriteBatch spriteBatch, spriteBatch2, spriteBatch3, spriteBatch4, spriteBatch5;
+        SpriteBatch spriteBatch, spriteBatch2, spriteBatch3, spriteBatch4, spriteBatch5, spriteBatch6;
 
         //XNA Declarations
         Texture2D BlankTexture, HUDBarTexture, ShellCasing, BigShellCasing, PauseMenuBackground, HealthBarSprite, ShieldBarSprite;
@@ -54,11 +54,16 @@ namespace TowerDefensePrototype
         //Sound effects
         SoundEffect MenuClick, FireTrapStart, LightningSound;
 
-        Color HalfWhite = Color.Lerp(Color.White, Color.Transparent, 0.5f);
+        public Color HalfWhite = Color.Lerp(Color.White, Color.Transparent, 0.5f);
 
+        Effect HealthBarEffect;
+
+        static Random Random = new Random();
         #region List declarations
-        List<Button> SelectButtonList, TowerButtonList, MainMenuButtonList, PauseButtonList, 
+        List<Button> SelectButtonList, TowerButtonList, MainMenuButtonList, PauseButtonList,
                      ProfileButtonList, ProfileDeleteList, UpgradesButtonList;
+
+        List<List<Button>> ChooseWeaponList;
 
         List<Trap> TrapList;// = new List<Trap>();
         List<Turret> TurretList;// = new List<Turret>();
@@ -86,10 +91,11 @@ namespace TowerDefensePrototype
         #endregion
 
         #region Custom class declarations
-        Button ProfileBackButton, ProfileManagementPlay, ProfileManagementBack, 
-               OptionsBack, OptionsSFXUp, OptionsSFXDown, OptionsMusicUp, OptionsMusicDown;
+        Button ProfileBackButton, ProfileManagementPlay, ProfileManagementBack,
+               OptionsBack, OptionsSFXUp, OptionsSFXDown, OptionsMusicUp, OptionsMusicDown,
+               GetNameOK, GetNameBack;
         Tower Tower;
-        StaticSprite Ground, TestBackground, ProfileMenuTitle, MainMenuBackground, SkyBackground;
+        StaticSprite Ground, TestBackground, ProfileMenuTitle, MainMenuBackground, SkyBackground, TextBox;
         AnimatedSprite LoadingAnimation;
         TrapType SelectedTrap;
         TurretType SelectedTurret;
@@ -105,9 +111,10 @@ namespace TowerDefensePrototype
         World CurrentWorld;
         Level CurrentLevel;
         Settings CurrentSettings, DefaultSettings;          
-        Wave CurrentWave;          
-        Effect HealthBarEffect;
-        static Random Random = new Random();
+        Wave CurrentWave;
+        TextInput NameInput;
+        DialogBox ExitDialog, DeleteProfileDialog;
+        bool DialogVisible = false;
         #endregion                
         #endregion
 
@@ -131,7 +138,7 @@ namespace TowerDefensePrototype
 
         protected override void Initialize()
         {
-            SecondaryContent = new ContentManager(Content.ServiceProvider, Content.RootDirectory);            
+            SecondaryContent = new ContentManager(Content.ServiceProvider, Content.RootDirectory);
             GameState = GameState.Menu;
             ContainerName = "Profiles";
             TrapLimit = 8;
@@ -149,20 +156,20 @@ namespace TowerDefensePrototype
             MainMenuButtonList.Add(new Button("Buttons/ButtonLeft", new Vector2(0, 130 + ((64 + 50) * 1)), null, null, null, "TUTORIAL", "Fonts/ButtonFont", "Left", Color.White));
             MainMenuButtonList.Add(new Button("Buttons/ButtonLeft", new Vector2(0, 130 + ((64 + 50) * 2)), null, null, null, "OPTIONS", "Fonts/ButtonFont", "Left", Color.White));
             MainMenuButtonList.Add(new Button("Buttons/ButtonLeft", new Vector2(0, 130 + ((64 + 50) * 3)), null, null, null, "CREDITS", "Fonts/ButtonFont", "Left", Color.White));
-            MainMenuButtonList.Add(new Button("Buttons/ButtonLeft", new Vector2(0, 720-50-32), null, null, null, "EXIT", "Fonts/ButtonFont", "Left", Color.White));
+            MainMenuButtonList.Add(new Button("Buttons/ButtonLeft", new Vector2(0, 720 - 50 - 32), null, null, null, "EXIT", "Fonts/ButtonFont", "Left", Color.White));
 
             MainMenuBackground = new StaticSprite("Backgrounds/MainMenuBackground", new Vector2(0, 0));
 
-            OptionsSFXUp = new Button("Buttons/RightArrow", new Vector2(640+32, 316));
+            OptionsSFXUp = new Button("Buttons/RightArrow", new Vector2(640 + 32, 316));
             OptionsSFXUp.LoadContent(SecondaryContent);
 
-            OptionsSFXDown = new Button("Buttons/LeftArrow", new Vector2(640-50-32, 316));
+            OptionsSFXDown = new Button("Buttons/LeftArrow", new Vector2(640 - 50 - 32, 316));
             OptionsSFXDown.LoadContent(SecondaryContent);
 
-            OptionsMusicUp = new Button("Buttons/RightArrow", new Vector2(640+32, 380));
+            OptionsMusicUp = new Button("Buttons/RightArrow", new Vector2(640 + 32, 380));
             OptionsMusicUp.LoadContent(SecondaryContent);
 
-            OptionsMusicDown = new Button("Buttons/LeftArrow", new Vector2(640-50-32, 380));
+            OptionsMusicDown = new Button("Buttons/LeftArrow", new Vector2(640 - 50 - 32, 380));
             OptionsMusicDown.LoadContent(SecondaryContent);
 
             foreach (Button button in MainMenuButtonList)
@@ -180,19 +187,46 @@ namespace TowerDefensePrototype
             ProfileDeleteList = new List<Button>();
             for (int i = 0; i < 4; i++)
             {
-                ProfileDeleteList.Add(new Button("Buttons/SmallButton", new Vector2(0, 130 + (i * 114)), null, null, null, "X", "Fonts/ButtonFont", "Left", Color.White));                
+                ProfileDeleteList.Add(new Button("Buttons/SmallButton", new Vector2(0, 130 + (i * 114)), null, null, null, "X", "Fonts/ButtonFont", "Left", Color.White));
                 ProfileDeleteList[i].LoadContent(SecondaryContent);
             }
 
             UpgradesButtonList = new List<Button>();
             for (int i = 0; i < 6; i++)
             {
-                UpgradesButtonList.Add(new Button("Buttons/NewButton", new Vector2(100 + 96 * i, 100)));
+                UpgradesButtonList.Add(new Button("Buttons/ButtonStrip", new Vector2(100 + (80 * i), 100)));
                 UpgradesButtonList[i].LoadContent(SecondaryContent);
             }
 
+            ChooseWeaponList = new List<List<Button>>();
+
+            for (int i = 0; i < 2; i++)//Columns
+            {
+                List<Button> SubList = new List<Button>();
+                for (int k = 0; k < 8; k++) //Rows
+                {
+                    Button button = new Button("Buttons/ButtonStrip", new Vector2(32 + (80 * k), 720 - 272 + (70 * i)), "Icons/LockIcon");
+                    button.LoadContent(SecondaryContent);
+                    SubList.Add(button);
+                }
+
+                ChooseWeaponList.Add(SubList);
+            }
+
+            TextBox = new StaticSprite("Buttons/TextBox", new Vector2((1280 / 2) - 225, (720 / 2) - 50));
+            TextBox.LoadContent(SecondaryContent);
+
             ProfileBackButton = new Button("Buttons/ButtonRight", new Vector2(1280 - 450, 720 - 32 - 50), null, null, null, "Back", "Fonts/ButtonFont", "Right", Color.White);
             ProfileBackButton.LoadContent(SecondaryContent);
+
+            NameInput = new TextInput(new Vector2(415 + 4, 310 + 4), 350, "Fonts/ButtonFont", Color.White);
+            NameInput.LoadContent(SecondaryContent);
+
+            GetNameBack = new Button("Buttons/ButtonLeft", new Vector2(0, 720 - 32 - 50), null, null, null, "Back", "Fonts/ButtonFont", "Left", Color.White);
+            GetNameBack.LoadContent(SecondaryContent);
+
+            GetNameOK = new Button("Buttons/ButtonRight", new Vector2(1280 - 450, 720 - 32 - 50), null, null, null, "Create", "Fonts/ButtonFont", "Right", Color.White);
+            GetNameOK.LoadContent(SecondaryContent);
 
             ProfileManagementPlay = new Button("Buttons/ButtonRight", new Vector2(1280 - 450, 720 - 32 - 50), null, null, null, "Play", "Fonts/ButtonFont", "Right", Color.White);
             ProfileManagementPlay.LoadContent(SecondaryContent);
@@ -208,11 +242,11 @@ namespace TowerDefensePrototype
 
             ScreenRectangle = new Rectangle(-128, -128, 1408, 848);
 
-            LoadingAnimation = new AnimatedSprite("LoadingAnimation", new Vector2(640-65, 320-65), new Vector2(131, 131), 17, 30, HalfWhite, Vector2.One, true);
+            LoadingAnimation = new AnimatedSprite("LoadingAnimation", new Vector2(640 - 65, 320 - 65), new Vector2(131, 131), 17, 30, HalfWhite, Vector2.One, true);
             LoadingAnimation.LoadContent(SecondaryContent);
 
             IsLoading = false;
-           
+
             base.Initialize();
         }
 
@@ -412,7 +446,7 @@ namespace TowerDefensePrototype
         {
             #region Spritebatch
             spriteBatch.Begin();
-            
+
             Color backgroundColor = new Color(22, 60, 90);
             GraphicsDevice.Clear(backgroundColor);
 
@@ -448,8 +482,18 @@ namespace TowerDefensePrototype
                 {
                     button.Draw(spriteBatch);
                 }
+
+                foreach (List<Button> list in ChooseWeaponList)
+                {
+                    foreach (Button button in list)
+                    {
+                        button.Draw(spriteBatch);
+                    }
+                }
+
                 ProfileManagementPlay.Draw(spriteBatch);
                 ProfileManagementBack.Draw(spriteBatch);
+               
             }
             #endregion
 
@@ -565,8 +609,7 @@ namespace TowerDefensePrototype
             #region Draw Main Menu
             if (GameState == GameState.Menu)
             {
-                MainMenuBackground.Draw(spriteBatch);
-
+                MainMenuBackground.Draw(spriteBatch);  
                 foreach (Button button in MainMenuButtonList)
                 {
                     button.Draw(spriteBatch);
@@ -592,103 +635,120 @@ namespace TowerDefensePrototype
             }
             #endregion
 
+            #region Draw GetName Menu
+            if (GameState == GameState.GettingName)
+            {
+                MainMenuBackground.Draw(spriteBatch);
+
+                TextBox.Draw(spriteBatch);
+
+                GetNameBack.Draw(spriteBatch);
+                GetNameOK.Draw(spriteBatch);
+
+                NameInput.Draw(spriteBatch);
+            }
+            #endregion
+
+            if (ExitDialog != null)
+                ExitDialog.Draw(spriteBatch);
+
+            if (DeleteProfileDialog != null)
+                DeleteProfileDialog.Draw(spriteBatch);
+
             spriteBatch.End();
             #endregion
 
-            #region Spritebatch2
+            #region Draw things sorted according to their Y value - To create depth illusion
             //This second spritebatch sorts everthing Back to Front, 
             //to make sure that the invaders are drawn correctly according to their Y value
-            spriteBatch2.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend);
+            spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend);
 
             if (GameState == GameState.Playing && IsLoading == false)
             {
                 foreach (Invader invader in InvaderList)
                 {
-                    invader.Draw(spriteBatch2);
+                    invader.Draw(spriteBatch);
                 }
 
                 foreach (Emitter emitter in EmitterList)
                 {
-                    emitter.Draw(spriteBatch2);
+                    emitter.Draw(spriteBatch);
                 }
 
                 foreach (Trap trap in TrapList)
                 {
-                    trap.Draw(spriteBatch2);
+                    trap.Draw(spriteBatch);
                 }
 
                 foreach (HeavyProjectile heavyProjectile in HeavyProjectileList)
                 {
-                    heavyProjectile.Draw(spriteBatch2);
+                    heavyProjectile.Draw(spriteBatch);
                 }
 
                 foreach (HeavyProjectile heavyProjectile in InvaderHeavyProjectileList)
                 {
-                    heavyProjectile.Draw(spriteBatch2);
+                    heavyProjectile.Draw(spriteBatch);
                 }
 
                 foreach (TimerHeavyProjectile timedProjectile in TimedProjectileList)
                 {
-                    timedProjectile.Draw(spriteBatch2);
+                    timedProjectile.Draw(spriteBatch);
                 }
 
 
-                CursorDraw(spriteBatch2);
+                CursorDraw(spriteBatch);
             }
 
-            CursorDraw(spriteBatch2);
+            CursorDraw(spriteBatch);
 
-            spriteBatch2.End();
+            spriteBatch.End();
             #endregion                            
 
-            #region SpriteBatch5
-            spriteBatch5.Begin(SpriteSortMode.Texture, BlendState.Additive);
+            #region Draw the lightning with additive blending
+            spriteBatch.Begin(SpriteSortMode.Texture, BlendState.Additive);
             if (GameState == GameState.Playing || GameState == GameState.Paused && IsLoading == false)
             {
                 foreach (LightningBolt lightningBolt in LightningList)
                 {
-                    lightningBolt.Draw(spriteBatch5);
+                    lightningBolt.Draw(spriteBatch);
                 }
             }
-            spriteBatch5.End();
+            spriteBatch.End();
             #endregion
 
             double HealthValue;
-            #region Health SpriteBatch - SpriteBatch3
+            #region Health SpriteBatch
             if (GameState == GameState.Playing || GameState == GameState.Paused && IsLoading == false)
             {
                 HealthValue = (double)Tower.CurrentHP / (double)Tower.MaxHP;
 
                 HealthBarEffect.Parameters["meterValue"].SetValue((float)HealthValue);
 
-                spriteBatch3.Begin(SpriteSortMode.BackToFront, BlendState.NonPremultiplied, SamplerState.LinearWrap,
+                spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.NonPremultiplied, SamplerState.LinearWrap,
                     DepthStencilState.None, RasterizerState.CullCounterClockwise, HealthBarEffect);
 
-                spriteBatch3.Draw(HealthBarSprite, new Vector2(80, 80), null, Color.White, MathHelper.ToRadians(-90), new Vector2(HealthBarSprite.Width / 2, HealthBarSprite.Height / 2), 1f, SpriteEffects.None, 1);
+                spriteBatch.Draw(HealthBarSprite, new Vector2(80, 80), null, Color.White, MathHelper.ToRadians(-90), new Vector2(HealthBarSprite.Width / 2, HealthBarSprite.Height / 2), 1f, SpriteEffects.None, 1);
 
-                spriteBatch3.End();
+                spriteBatch.End();
             }
             #endregion
 
             double ShieldValue;
-            #region Shield SpriteBatch - SpriteBatch4
+            #region Shield SpriteBatch
             if (GameState == GameState.Playing || GameState == GameState.Paused && IsLoading == false)
             {
                 ShieldValue = (double)Tower.CurrentShield / (double)Tower.MaxShield;
 
                 HealthBarEffect.Parameters["meterValue"].SetValue((float)ShieldValue);
 
-                spriteBatch4.Begin(SpriteSortMode.BackToFront, BlendState.NonPremultiplied, SamplerState.LinearWrap,
+                spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.NonPremultiplied, SamplerState.LinearWrap,
                     DepthStencilState.None, RasterizerState.CullCounterClockwise, HealthBarEffect);
          
-                spriteBatch4.Draw(ShieldBarSprite, new Vector2(80, 80), null, Color.White, MathHelper.ToRadians(90), new Vector2(HealthBarSprite.Width / 2, HealthBarSprite.Height / 2), 1f, SpriteEffects.None, 1);
+                spriteBatch.Draw(ShieldBarSprite, new Vector2(80, 80), null, Color.White, MathHelper.ToRadians(90), new Vector2(HealthBarSprite.Width / 2, HealthBarSprite.Height / 2), 1f, SpriteEffects.None, 1);
 
-                spriteBatch4.End();
+                spriteBatch.End();
             }
             #endregion
-            
-            //Draws invaders in correct z-order
-            
         }
 
         #region Handle Game Content
@@ -699,6 +759,7 @@ namespace TowerDefensePrototype
             spriteBatch3 = new SpriteBatch(GraphicsDevice);
             spriteBatch4 = new SpriteBatch(GraphicsDevice);
             spriteBatch5 = new SpriteBatch(GraphicsDevice);
+            spriteBatch6 = new SpriteBatch(GraphicsDevice);
 
             MainMenuBackground.LoadContent(SecondaryContent);
 
@@ -755,7 +816,7 @@ namespace TowerDefensePrototype
                     UpgradesList.Add(new Upgrade1());
 
                 HUDBarTexture = Content.Load<Texture2D>("Backgrounds/NewInterface");
-
+                                
                 HealthBarEffect = Content.Load<Effect>("HealthBarEffect");
                 HealthBarSprite = Content.Load<Texture2D>("HealthBar");
                 ShieldBarSprite = Content.Load<Texture2D>("ShieldBar");
@@ -1213,7 +1274,7 @@ namespace TowerDefensePrototype
         private void MenuButtonsUpdate()
         {
             #region Handling Main Menu Button Presses
-            if (GameState == GameState.Menu)
+            if (GameState == GameState.Menu && DialogVisible == false)
             {
                 int Index;
 
@@ -1234,7 +1295,7 @@ namespace TowerDefensePrototype
                                 break;
 
                             case 1:
-                                
+  
                                 break;
 
                             case 2:
@@ -1249,7 +1310,10 @@ namespace TowerDefensePrototype
                                 break;
 
                             case 4:
-                                this.Exit();
+                                //this.Exit();
+                                ExitDialog = new DialogBox(new Vector2(1280/2, 720/2), "Yes", "Are you sure?", "No" );
+                                ExitDialog.LoadContent(SecondaryContent);
+                                DialogVisible = true;
                                 break;
                         }
                     }
@@ -1265,7 +1329,7 @@ namespace TowerDefensePrototype
             #endregion
 
             #region Handling Pause Menu Button Presses
-            if (GameState == GameState.Paused)
+            if (GameState == GameState.Paused && DialogVisible == false)
             {
                 int Index;
 
@@ -1297,7 +1361,9 @@ namespace TowerDefensePrototype
                                 break;
 
                             case 3:
-                                this.Exit();
+                                ExitDialog = new DialogBox(new Vector2(1280/2, 720/2), "Yes", "Are you sure?", "No" );
+                                ExitDialog.LoadContent(SecondaryContent);
+                                DialogVisible = true;
                                 break;
                         }
                     }
@@ -1306,7 +1372,7 @@ namespace TowerDefensePrototype
             #endregion
 
             #region Handling Profile Select Menu Button Presses
-            if (GameState == GameState.ProfileSelect)
+            if (GameState == GameState.ProfileSelect && DialogVisible == false)
             {
                 int Index;
 
@@ -1326,42 +1392,36 @@ namespace TowerDefensePrototype
                                 ProfileNumber = 1;
                                 FileName = "Profile1.sav";
                                 StorageDevice.BeginShowSelector(this.HandleProfile, null);
-                                SetProfileNames();
                                 break;
 
                             case 1:
                                 ProfileNumber = 2;
                                 FileName = "Profile2.sav";
                                 StorageDevice.BeginShowSelector(this.HandleProfile, null);
-                                SetProfileNames();
                                 break;
 
                             case 2:
                                 ProfileNumber = 3;
                                 FileName = "Profile3.sav";
                                 StorageDevice.BeginShowSelector(this.HandleProfile, null);
-                                SetProfileNames();
                                 break;
 
                             case 3:
                                 ProfileNumber = 4;
                                 FileName = "Profile4.sav";
                                 StorageDevice.BeginShowSelector(this.HandleProfile, null);
-                                SetProfileNames();
                                 break;
 
                             case 4:
                                 ProfileNumber = 5;
                                 FileName = "Profile5.sav";
                                 StorageDevice.BeginShowSelector(this.HandleProfile, null);
-                                SetProfileNames();
                                 break;
 
                             case 5:
                                 ProfileNumber = 6;
                                 FileName = "Profile6.sav";
                                 StorageDevice.BeginShowSelector(this.HandleProfile, null);
-                                SetProfileNames();
                                 break;
                         }
                     }
@@ -1372,47 +1432,29 @@ namespace TowerDefensePrototype
                     button.Update();
 
                     if (button.JustClicked == true)
-                    {
-                        MenuClick.Play();
-
+                    {                      
                         Index = ProfileDeleteList.IndexOf(button);
 
                         switch (Index)
                         {
                             case 0:
                                 FileName = "Profile1.sav";
-                                StorageDevice.BeginShowSelector(this.DeleteProfile, null);
-                                SetProfileNames();
+                                StorageDevice.BeginShowSelector(this.CheckFileDelete, null);
                                 break;
 
                             case 1:
                                 FileName = "Profile2.sav";
-                                StorageDevice.BeginShowSelector(this.DeleteProfile, null);
-                                SetProfileNames();
+                                StorageDevice.BeginShowSelector(this.CheckFileDelete, null);
                                 break;
 
                             case 2:
                                 FileName = "Profile3.sav";
-                                StorageDevice.BeginShowSelector(this.DeleteProfile, null);
-                                SetProfileNames();
+                                StorageDevice.BeginShowSelector(this.CheckFileDelete, null);
                                 break;
 
                             case 3:
                                 FileName = "Profile4.sav";
-                                StorageDevice.BeginShowSelector(this.DeleteProfile, null);
-                                SetProfileNames();
-                                break;
-
-                            case 4:
-                                FileName = "Profile5.sav";
-                                StorageDevice.BeginShowSelector(this.DeleteProfile, null);
-                                SetProfileNames();
-                                break;
-
-                            case 5:
-                                FileName = "Profile6.sav";
-                                StorageDevice.BeginShowSelector(this.DeleteProfile, null);
-                                SetProfileNames();
+                                StorageDevice.BeginShowSelector(this.CheckFileDelete, null);
                                 break;
                         }
                     }
@@ -1436,6 +1478,154 @@ namespace TowerDefensePrototype
 
                 ProfileManagementPlay.Update();
                 ProfileManagementBack.Update();
+
+                foreach (List<Button> list in ChooseWeaponList)
+                {
+                    foreach (Button button in list)
+                    {
+                        if (button.JustClicked == true)
+                            MenuClick.Play();
+
+                        button.Update();
+                    }
+                }
+
+                foreach (List<Button> list in ChooseWeaponList)
+                {
+                    foreach (Button button in list)
+                    {
+                        button.IconName = "Icons/LockIcon";
+                        button.LoadContent(SecondaryContent);
+                    }
+                }
+
+                foreach (List<Button> list in ChooseWeaponList)
+                {
+                    switch (ChooseWeaponList.IndexOf(list))
+                    {
+                        case 0:
+                            foreach (Button button in list)
+                            {
+                                switch (list.IndexOf(button))
+                                {
+                                    case 0:
+                                        if (CurrentProfile.MachineGun == true)
+                                        {
+                                            button.IconName = "blank";
+                                            button.LoadContent(SecondaryContent);
+                                        }
+                                        break;
+
+                                    case 1:
+                                        if (CurrentProfile.LightningTurret == true)
+                                        {
+                                            button.IconName = "blank";
+                                            button.LoadContent(SecondaryContent);
+                                        }
+                                        break;
+
+                                    case 2:
+                                        if (CurrentProfile.SawBlade == true)
+                                        {
+                                            button.IconName = "blank";
+                                            button.LoadContent(SecondaryContent);
+                                        }
+                                        break;
+
+                                    case 3:
+                                        if (CurrentProfile.Spikes == true)
+                                        {
+                                            button.IconName = "blank";
+                                            button.LoadContent(SecondaryContent);
+                                        }
+                                        break;
+
+                                    case 4:
+                                        if (CurrentProfile.Wall == true)
+                                        {
+                                            button.IconName = "blank";
+                                            button.LoadContent(SecondaryContent);
+                                        }
+                                        break;
+
+                                    case 5:
+                                        if (CurrentProfile.Cannon == true)
+                                        {
+                                            button.IconName = "blank";
+                                            button.LoadContent(SecondaryContent);
+                                        }
+                                        break;
+
+                                    case 6:
+                                        if (CurrentProfile.Catapult == true)
+                                        {
+                                            button.IconName = "blank";
+                                            button.LoadContent(SecondaryContent);
+                                        }
+                                        break;
+
+                                    case 7:
+                                        if (CurrentProfile.Fire == true)
+                                        {
+                                            button.IconName = "blank";
+                                            button.LoadContent(SecondaryContent);
+                                        }
+                                        break;
+                                }
+
+                            }
+                            break;
+
+                        case 1:
+                            foreach (Button button in list)
+                            {
+                                switch (list.IndexOf(button))
+                                {
+                                    case 0:
+                                        if (CurrentProfile.FlameThrower == true)
+                                        {
+                                            button.IconName = "blank";
+                                            button.LoadContent(SecondaryContent);
+                                        }
+                                        break;
+
+                                    case 1:
+                                        if (CurrentProfile.Ice == true)
+                                        {
+                                            button.IconName = "blank";
+                                            button.LoadContent(SecondaryContent);
+                                        }
+                                        break;
+
+                                    case 2:
+
+                                        break;
+
+                                    case 3:
+
+                                        break;
+
+                                    case 4:
+
+                                        break;
+
+                                    case 5:
+
+                                        break;
+
+                                    case 6:
+
+                                        break;
+
+                                    case 7:
+
+                                        break;
+                                }
+
+                            }
+                            break;
+                    }                    
+                }
 
                 foreach (Button button in UpgradesButtonList)
                 {
@@ -1471,6 +1661,7 @@ namespace TowerDefensePrototype
                 if (ProfileManagementBack.JustClicked == true)
                 {
                     MenuClick.Play();
+                    SetProfileNames();
                     GameState = GameState.ProfileSelect;
                 }
 
@@ -1549,6 +1740,109 @@ namespace TowerDefensePrototype
                         MediaPlayer.Volume = CurrentSettings.MusicVolume;
                         MenuClick.Play();
                     }
+                }
+            }
+            #endregion
+
+            #region Handling GetName Button Presses
+            if (GameState == GameState.GettingName)
+            {
+                GetNameBack.Update();
+                GetNameOK.Update();
+                NameInput.Update();
+                NameInput.Active = true;
+
+                if (GetNameBack.JustClicked == true)
+                {
+                    MenuClick.Play();
+                    NameInput.TypePosition = 0;
+                    NameInput.RealString = "";
+                    GameState = GameState.ProfileSelect;                    
+                }
+
+                if ((GetNameOK.JustClicked == true) || 
+                    (CurrentKeyboardState.IsKeyUp(Keys.Enter) && PreviousKeyboardState.IsKeyDown(Keys.Enter)) &&
+                    (NameInput.RealString.Length >= 3))
+                {
+                    MenuClick.Play();
+
+                    List<string> TempList = new List<string>();
+                    TempList.Add("MachineGun");
+                    TempList.Add("FireTrap");
+                    TempList.Add("Wall");
+                    TempList.Add("Cannon");
+                    TempList.Add("FlameThrower");
+                    TempList.Add("LightningTurret");
+
+                    CurrentProfile = new Profile()
+                    {
+                        Name = NameInput.RealString,
+                        LevelNumber = 1,
+                        Points = 10,
+                        Fire = true,
+                        Cannon = false,
+                        MachineGun = true,
+                        Catapult = false,
+                        FlameThrower = true,
+                        Spikes = false,
+                        LightningTurret = true,
+                        SawBlade = false,
+                        Wall = true,
+                        Buttons = TempList,
+                        Upgrade1 = false,
+                        Upgrade2 = false,
+                        Upgrade3 = false,
+                        Credits = 10
+                    };
+
+                    StorageDevice.BeginShowSelector(this.NewProfile, null);
+
+                    NameInput.RealString = "";
+                    NameInput.TypePosition = 0;
+
+                    GameState = GameState.ProfileManagement;
+                }
+            }
+            #endregion
+
+            #region Handling DialogBox Button Presses
+            if (ExitDialog != null)
+            {
+                ExitDialog.Update();
+
+                if (ExitDialog.LeftButton.JustClicked == true)
+                {
+                    MenuClick.Play();
+                    this.Exit();
+                }
+
+                if (ExitDialog.RightButton.JustClicked == true)
+                {
+                    MenuClick.Play();
+                    DialogVisible = false;
+                    ExitDialog = null;
+                }
+            }
+
+            if (DeleteProfileDialog != null)
+            {
+                DeleteProfileDialog.Update();
+
+                if (DeleteProfileDialog.LeftButton.JustClicked == true)
+                {
+                    MenuClick.Play();
+                    StorageDevice.BeginShowSelector(this.DeleteProfile, null);
+                    SetProfileNames();
+                    DialogVisible = false;
+                    DeleteProfileDialog = null;
+                    return;
+                }
+
+                if (DeleteProfileDialog.RightButton.JustClicked == true)
+                {
+                    MenuClick.Play();
+                    DialogVisible = false;
+                    DeleteProfileDialog = null;
                 }
             }
             #endregion
@@ -3070,35 +3364,7 @@ namespace TowerDefensePrototype
                 }
                 else
                 {
-                    //Get input from the user
-                    List<string> TempList = new List<string>();
-                    TempList.Add("MachineGun");
-                    TempList.Add("FireTrap");
-                    TempList.Add("Wall");
-                    TempList.Add("Cannon");
-                    TempList.Add("FlameThrower");
-                    TempList.Add("LightningTurret");
-
-                    CurrentProfile = new Profile()
-                    {
-                        Name = "Sabretkila", //Use the input over here.
-                        LevelNumber = 1,
-                        Points = 10,
-                        Fire = true,
-                        Cannon = true,
-                        MachineGun = true,
-                        Catapult = true,
-                        FlameThrower = true,
-                        Spikes = true,
-                        LightningTurret = true,
-                        SawBlade = true,
-                        Wall = true,
-                        Buttons = TempList,
-                        Upgrade1 = false, Upgrade2 = false, Upgrade3 = false, 
-                        Credits = 10
-                    };
-
-                    StorageDevice.BeginShowSelector(this.NewProfile, null);
+                    GameState = TowerDefensePrototype.GameState.GettingName;
                 }
             }
         }
@@ -3247,6 +3513,43 @@ namespace TowerDefensePrototype
                 StorageDevice.BeginShowSelector(this.GetProfileName, null);
                 ProfileButtonList[i].Text = ProfileName;
             }
+        }
+
+        public void CheckFileDelete(IAsyncResult result)
+        {
+            Profile ThisProfile;
+
+            Device = StorageDevice.EndShowSelector(result);
+
+            result = Device.BeginOpenContainer(ContainerName, null, null);
+            result.AsyncWaitHandle.WaitOne();
+
+            StorageContainer container = Device.EndOpenContainer(result);
+
+            result.AsyncWaitHandle.Close();
+
+            if (container.FileExists(FileName))
+            {
+                MenuClick.Play();
+
+                OpenFile = container.OpenFile(FileName, FileMode.Open);
+
+                XmlSerializer serializer = new XmlSerializer(typeof(Profile));
+
+                ThisProfile = (Profile)serializer.Deserialize(OpenFile);
+
+                OpenFile.Close();
+
+                container.Dispose();
+
+                ProfileName = ThisProfile.Name;
+
+                DeleteProfileDialog = new DialogBox(new Vector2(1280 / 2, 720 / 2), "Delete", "Do you want to delete " + ThisProfile.Name + "?", "Cancel");
+                DeleteProfileDialog.LoadContent(SecondaryContent);
+                DialogVisible = true;
+            }
+            else
+                return;
         }
         #endregion
 

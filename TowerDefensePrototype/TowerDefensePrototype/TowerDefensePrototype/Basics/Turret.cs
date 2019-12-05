@@ -13,8 +13,7 @@ namespace TowerDefensePrototype
     {
         public String TurretAsset, BaseAsset;
         public Texture2D TurretBase, TurretBarrel, Line, TurretAnimationTexture;
-        public Vector2 Direction, Position, MousePosition;
-        public Vector2 BarrelPivot, BasePivot;
+        public Vector2 Direction, Position, MousePosition, BarrelPivot, BasePivot;
         public Rectangle BaseRectangle, BarrelRectangle, SelectBox, SourceRectangle;
         MouseState CurrentMouseState, PreviousMouseState;
         public float Rotation;

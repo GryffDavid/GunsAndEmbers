@@ -110,6 +110,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Basics\DialogBox.cs" />
     <Compile Include="Basics\Explosion.cs" />
     <Compile Include="Basics\LightningBolt.cs" />
     <Compile Include="Basics\RangedInvader.cs" />

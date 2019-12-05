@@ -11,21 +11,22 @@ namespace TowerDefensePrototype
 {
     public class TextInput
     {
-        string CurrentString = "", FontName;
+        public string CurrentString = "", RealString = "", FontName;
         KeyboardState CurrentKeyState, PreviousKeyState;
         SpriteFont Font;
         public bool Active = true;
 
         Vector2 Position;
-        int CharacterLimit;
+        public int SpaceLimit, TypePosition, PreviousTypePosition;
         Color Color;
 
-        public TextInput(Vector2 position, int characterLimit, string fontName, Color color)
+        public TextInput(Vector2 position, int spaceLimit, string fontName, Color color)
         {
             Position = position;
-            CharacterLimit = characterLimit;
+            SpaceLimit = spaceLimit;
             FontName = fontName;
             Color = color;
+            TypePosition = 0;
         }
 
         public void LoadContent(ContentManager contentManager)
@@ -33,7 +34,7 @@ namespace TowerDefensePrototype
             Font = contentManager.Load<SpriteFont>(FontName);
         }
 
-        public void Update(GameTime gameTime)
+        public void Update()
         {
             CurrentKeyState = Keyboard.GetState();
 
@@ -45,12 +46,44 @@ namespace TowerDefensePrototype
                         switch (key)
                         {
                             case Keys.Back:
-                                if (CurrentString.Length > 0)
-                                    CurrentString = CurrentString.Remove(CurrentString.Length - 1, 1);
+                                if (RealString.Length > 0 && TypePosition > 0)
+                                {
+                                    RealString = RealString.Remove(TypePosition - 1, 1);
+                                    TypePosition--;
+                                }
                                 break;
 
                             case Keys.Space:
-                                CurrentString += " ";
+                                if (Font.MeasureString(RealString).X < SpaceLimit)
+                                {
+                                    RealString = RealString.Insert(TypePosition, " ");
+                                    TypePosition++;
+                                }
+                                break;
+
+                            case Keys.Left:
+                                if (TypePosition > 0)
+                                    TypePosition--;
+                                break;
+
+                            case Keys.Right:
+                                if (TypePosition < RealString.Length)
+                                    TypePosition++;
+                                break;
+
+                            case Keys.Home:
+                                TypePosition = 0;
+                                break;
+
+                            case Keys.End:
+                                TypePosition = RealString.Length;
+                                break;
+
+                            case Keys.Delete:
+                                if (RealString.Length > 0 && TypePosition != RealString.Length)
+                                {
+                                    RealString = RealString.Remove(TypePosition, 1);
+                                }
                                 break;
 
                             case Keys.A:
@@ -81,19 +114,29 @@ namespace TowerDefensePrototype
                             case Keys.Z:
                                 if (CurrentKeyState.IsKeyDown(Keys.LeftShift) || CurrentKeyState.IsKeyDown(Keys.RightShift))
                                 {
-                                    if (CurrentString.Length < CharacterLimit)
-                                        CurrentString += key.ToString();
+                                    if (Font.MeasureString(RealString).X < SpaceLimit)
+                                    {
+                                        RealString = RealString.Insert(TypePosition, key.ToString());
+                                        TypePosition++;
+                                    }
                                 }
                                 else
                                 {
-                                    if (CurrentString.Length < CharacterLimit)
-                                        CurrentString += key.ToString().ToLower();
+                                    if (Font.MeasureString(RealString).X < SpaceLimit)
+                                    {
+                                        RealString = RealString.Insert(TypePosition, key.ToString().ToLower());
+                                        TypePosition++;
+                                    }
                                 }
                                 break;
                         }
                     }
                 }
+            CurrentString = RealString.Insert(TypePosition, "|");
 
+            MathHelper.Clamp(TypePosition, 0, CurrentString.Length);
+
+            PreviousTypePosition = TypePosition;
             PreviousKeyState = CurrentKeyState;
         }
 

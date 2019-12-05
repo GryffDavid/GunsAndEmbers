@@ -185,10 +185,9 @@ namespace TowerDefensePrototype
             drawColor = TextColor;
 
             if (ButtonActive == true)
-            {
-                
-
+            {                
                 spriteBatch.Draw(ButtonStrip, DestinationRectangle, SourceRectangle, Color, MathHelper.ToRadians(0), Vector2.Zero, SpriteEffects.None, 0.99f);
+
                 if (IconName != null)
                 {
                     if (CurrentButtonState != ButtonSpriteState.Pressed)                    
