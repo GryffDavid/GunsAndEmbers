@@ -20,7 +20,8 @@ namespace TowerDefensePrototype
 
         public Particle(Texture2D texture, Vector2 position, float angle, float speed, float maxHP,
             float startingTransparency, bool fade, float startingRotation, float rotationChange,
-            float scale, Color startColor, Color endColor, float gravity, bool canBounce, float maxY, bool shrink, float? drawDepth = null, bool? stopBounce = false, bool? hardBounce = true, bool? shadow = false)
+            float scale, Color startColor, Color endColor, float gravity, bool canBounce, float maxY, bool shrink, 
+            float? drawDepth = null, bool? stopBounce = false, bool? hardBounce = true, bool? shadow = false)
         {
             Active = true;
             Texture = texture;
@@ -193,6 +194,15 @@ namespace TowerDefensePrototype
         { 
             if (Active == true)
             {
+                spriteBatch.Draw(Texture, DestinationRectangle, null, Color.Lerp(Color.Transparent, CurrentColor, CurrentTransparency),
+                                 MathHelper.ToRadians(CurrentRotation), Origin, SpriteEffects.None, DrawDepth);
+            }
+        }
+
+        public void DrawShadow(SpriteBatch spriteBatch)
+        {
+            if (Active == true)
+            {
                 if (Shadow == true)
                 {
                     float YDist = CurrentPosition.Y - MaxY;
@@ -210,9 +220,6 @@ namespace TowerDefensePrototype
                         null, Color.Lerp(Color.Transparent, ShadowColor, CurrentTransparency),
                         MathHelper.ToRadians(CurrentRotation), Origin, SpriteEffects.None, (DestinationRectangle.Bottom / 1080));
                 }
-
-                spriteBatch.Draw(Texture, DestinationRectangle, null, Color.Lerp(Color.Transparent, CurrentColor, CurrentTransparency),
-                    MathHelper.ToRadians(CurrentRotation), Origin, SpriteEffects.None, DrawDepth);
             }
         }
     }

@@ -4,7 +4,7 @@ Content\Particles\Splodge.xnb
 Content\WhiteBlock.xnb
 Content\Particles\FireParticle.xnb
 Content\Projectiles\CannonBall.xnb
-Content\Particles\Smoke.xnb
+Content\Particles\Smoke2.xnb
 Content\Backgrounds\PauseMenuBackground.xnb
 Content\Projectiles\Arrow.xnb
 Content\Projectiles\AcidProjectileSprite.xnb
@@ -73,7 +73,9 @@ Content\Invaders\Invader.xnb
 Content\Buttons\WeaponBox.xnb
 Content\HealthBarSprite.xnb
 Content\Invaders\BlankTank.xnb
+Content\Particles\Smoke.xnb
 Content\HealthBarEffect.xnb
+Content\GaussianBlurEffect.xnb
 Content\Fonts\DefaultFont.xnb
 Content\Fonts\ButtonFont.xnb
 Content\Fonts\TooltipFont.xnb
@@ -100,5 +102,3 @@ Content\Sounds\MenuMusic1.xnb
 Content\Sounds\Implosion.xnb
 Content\Sounds\Implosion2.xnb
 Content\Sounds\TurretOverheat.xnb
-Content\Particles\Smoke2.xnb
-Content\GaussianBlurEffect.xnb

@@ -174,6 +174,8 @@ namespace TowerDefensePrototype
         Viewport DefaultViewport = new Viewport(0, 0, 1920, 1080);
         Vector2 ActualResolution;
 
+        RenderTarget2D renderTarget;
+
         #endregion
 
         public Game1()
@@ -184,7 +186,7 @@ namespace TowerDefensePrototype
             {
                 FullScreen = false,
                 SFXVolume = 1.0f,
-                MusicVolume = 1.0f, 
+                MusicVolume = 1.1f, 
                 TimesPlayed = 0,
                 ResHeight = 720,
                 ResWidth = 1280
@@ -229,6 +231,8 @@ namespace TowerDefensePrototype
             
             graphics.ApplyChanges();
             #endregion
+
+            
         }
 
         protected override void Initialize()
@@ -420,6 +424,11 @@ namespace TowerDefensePrototype
                 UpgradeButtonList[i].LoadContent(SecondaryContent);
             }
             #endregion
+
+            renderTarget = new RenderTarget2D(
+                GraphicsDevice,
+                GraphicsDevice.PresentationParameters.BackBufferWidth,
+                GraphicsDevice.PresentationParameters.BackBufferHeight);
 
             LoadingAnimation = new AnimatedSprite("LoadingAnimation", new Vector2(640 - 65, 320 - 65), new Vector2(131, 131), 17, 30, HalfWhite, Vector2.One, true);
             LoadingAnimation.LoadContent(SecondaryContent);
@@ -1065,9 +1074,9 @@ namespace TowerDefensePrototype
                             null,
                             Camera.Transformation(GraphicsDevice));
 
-                SkyBackground.Draw(spriteBatch);
+                //SkyBackground.Draw(spriteBatch);
                 //TestBackground.Draw(spriteBatch);
-                Ground.Draw(spriteBatch);
+                //Ground.Draw(spriteBatch);
 
                 Tower.Draw(spriteBatch);
 
@@ -1155,10 +1164,10 @@ namespace TowerDefensePrototype
                     invader.Draw(spriteBatch);
                 }
 
-                foreach (Particle shellCasing in ShellCasingList)
-                {
-                    shellCasing.Draw(spriteBatch);
-                }
+                //foreach (Particle shellCasing in ShellCasingList)
+                //{
+                //    shellCasing.Draw(spriteBatch);
+                //}
 
                 foreach (Emitter emitter in EmitterList)
                 {
@@ -1405,9 +1414,28 @@ namespace TowerDefensePrototype
             spriteBatch.End();
             #endregion
 
+            #region Draw stuff blurry
+            if (GameState == GameState.Playing && IsLoading == false)
+            {
+                spriteBatch.Begin();
+                foreach (Particle shell in ShellCasingList)
+                {
+                    shell.Draw(spriteBatch);
+                }
+                spriteBatch.End();
+
+                spriteBatch.Begin();
+                foreach (Particle shell in ShellCasingList)
+                {
+                    shell.DrawShadow(spriteBatch);
+                }
+                spriteBatch.End();
+            }
+            #endregion
+
             GraphicsDevice.SetRenderTarget(null);
 
-            //render target to back buffer
+            //targetBatch.Begin(SpriteSortMode.Texture, null, null, null, null, GaussianBlurEffect);
             targetBatch.Begin();
             GraphicsDevice.Clear(Color.Black);
             targetBatch.Draw(target, new Rectangle(0, (int)(ActualResolution.Y-CurrentSettings.ResHeight)/2, CurrentSettings.ResWidth, CurrentSettings.ResHeight), Color.White);
@@ -1606,7 +1634,6 @@ namespace TowerDefensePrototype
             TurretOverheat = Content.Load<SoundEffect>("Sounds/TurretOverheat");
         }
         #endregion
-
 
         #region BUTTON stuff that needs to be done every step
         private void TowerButtonUpdate()
@@ -3781,12 +3808,14 @@ namespace TowerDefensePrototype
                                 EmitterList.Add(FlashEmitter);
                                 EmitterList[EmitterList.IndexOf(FlashEmitter)].LoadContent(Content);
 
-                                ShellCasingList.Add(new Particle(ShellCasing,
+                                Particle NewShellCasing = new Particle(ShellCasing,
                                     new Vector2(turret.BarrelCenter.X, turret.BarrelCenter.Y),
                                     turret.Rotation - MathHelper.ToRadians((float)RandomDouble(175, 185)),
                                     (float)RandomDouble(4, 6), 500, 1f, true, (float)RandomDouble(-10, 10),
                                     (float)RandomDouble(-6, 6), 0.7f, Color.Orange, Color.Lerp(Color.White, Color.Transparent, 0.25f), 0.2f, true, Random.Next(Tower.DestinationRectangle.Bottom, Tower.DestinationRectangle.Bottom+32),
-                                    false, 0.998f, true, true, true));
+                                    false, 0.998f, true, true, true);
+
+                                ShellCasingList.Add(NewShellCasing);                                
 
                                 turret.Rotation -= MathHelper.ToRadians(10);
                                 turret.CurrentHeat += turret.ShotHeat;
@@ -3837,7 +3866,7 @@ namespace TowerDefensePrototype
                                     turret.Rotation - MathHelper.ToRadians((float)RandomDouble(175, 185)),
                                     (float)RandomDouble(4, 6), 500, 1f, true, (float)RandomDouble(-10, 10),
                                     (float)RandomDouble(-6, 6), 1f, Color.Orange, Color.Lerp(Color.White, Color.Transparent, 0.25f), 0.2f, true, Random.Next(Tower.DestinationRectangle.Bottom, Tower.DestinationRectangle.Bottom + 32),
-                                    false, null, true, true, true));
+                                    false, null, true, true));
                             }
                             break;
                         #endregion

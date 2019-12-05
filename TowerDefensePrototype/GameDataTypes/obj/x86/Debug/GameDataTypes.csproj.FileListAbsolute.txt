@@ -196,3 +196,9 @@ C:\Users\Gryff\Desktop\TowerDefensePrototype 55\GameDataTypes\obj\x86\Debug\Game
 C:\Users\Gryff\Desktop\TowerDefensePrototype 55\GameDataTypes\obj\x86\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
 C:\Users\Gryff\Desktop\TowerDefensePrototype 55\GameDataTypes\obj\x86\Debug\GameDataTypes.dll
 C:\Users\Gryff\Desktop\TowerDefensePrototype 55\GameDataTypes\obj\x86\Debug\GameDataTypes.pdb
+D:\Google Drive\Tower Defense Backups\TowerDefensePrototype 56\GameDataTypes\bin\x86\Debug\GameDataTypes.dll
+D:\Google Drive\Tower Defense Backups\TowerDefensePrototype 56\GameDataTypes\bin\x86\Debug\GameDataTypes.pdb
+D:\Google Drive\Tower Defense Backups\TowerDefensePrototype 56\GameDataTypes\obj\x86\Debug\GameDataTypes.csprojResolveAssemblyReference.cache
+D:\Google Drive\Tower Defense Backups\TowerDefensePrototype 56\GameDataTypes\obj\x86\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
+D:\Google Drive\Tower Defense Backups\TowerDefensePrototype 56\GameDataTypes\obj\x86\Debug\GameDataTypes.dll
+D:\Google Drive\Tower Defense Backups\TowerDefensePrototype 56\GameDataTypes\obj\x86\Debug\GameDataTypes.pdb
