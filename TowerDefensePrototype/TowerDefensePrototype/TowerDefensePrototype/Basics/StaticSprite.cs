@@ -13,16 +13,17 @@ namespace TowerDefensePrototype
         public Texture2D Texture;
         string AssetName;
         public Vector2 Position, Scale, Move;
-        public Color Color;
+        public Color Color, StartColor;
         public Rectangle DestinationRectangle;
         public BoundingBox BoundingBox;
-        public bool VerticalLooping, HorizontalLooping;
+        public bool VerticalLooping, HorizontalLooping, FadeIn;
         public double CurrentTime, UpdateDelay, FadeTime, CurrentFadeTime;
         public float Rotation, DrawDepth;
         public float Transparency = 0;
 
         public StaticSprite(string assetName, Vector2 position, Vector2? scale = null, Color? color = null, 
-            Vector2? move = null, bool? horizontalLooping = null, bool? verticalLooping = null, double? updateDelay = null, float? rotation = null, float? fadeTime = null)
+                            Vector2? move = null, bool? horizontalLooping = null, bool? verticalLooping = null, 
+                            double? updateDelay = null, float? rotation = null, float? fadeTime = null, bool fadeIn = false)
         {
             AssetName = assetName;
             Position = position;
@@ -69,10 +70,13 @@ namespace TowerDefensePrototype
                 FadeTime = fadeTime.Value;
                 CurrentFadeTime = 0;
             }
+
+            StartColor = Color;
         }
 
         public StaticSprite(Texture2D texture, Vector2 position, Vector2? scale = null, Color? color = null,
-                            Vector2? move = null, bool? horizontalLooping = null, bool? verticalLooping = null, double? updateDelay = null, float? rotation = null, float? fadeTime = null)
+                            Vector2? move = null, bool? horizontalLooping = null, bool? verticalLooping = null, 
+                            double? updateDelay = null, float? rotation = null, float? fadeTime = null, bool fadeIn = false)
         {
             Texture = texture;
             Position = position;
@@ -120,6 +124,9 @@ namespace TowerDefensePrototype
                 CurrentFadeTime = 0;
             }
 
+            StartColor = Color;
+            FadeIn = fadeIn;
+
             DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, (int)(Texture.Width * Scale.X), (int)(Texture.Height * Scale.Y));
         }
 
@@ -132,14 +139,42 @@ namespace TowerDefensePrototype
         public void Update(GameTime gameTime)
         {
             CurrentTime += gameTime.ElapsedGameTime.TotalMilliseconds;
-            CurrentFadeTime += gameTime.ElapsedGameTime.TotalMilliseconds;
 
-            if (CurrentFadeTime > 10 && Transparency <= 1)
+            if (CurrentFadeTime < FadeTime)
+                CurrentFadeTime += gameTime.ElapsedGameTime.TotalMilliseconds;
+
+            //if (CurrentFadeTime > 10 && Transparency <= 1)
+            //{
+            //    Transparency += 0.01f;
+            //    Color = Color.Lerp(Color.White, Color.Transparent, Transparency);
+            //    CurrentFadeTime = 0;
+            //}
+
+            double PercentFade = CurrentFadeTime / FadeTime;
+
+            if (FadeIn == false)
             {
-                Transparency += 0.01f;
-                Color = Color.Lerp(Color.White, Color.Transparent, Transparency);
-                CurrentFadeTime = 0;
+                if (FadeTime > 0)
+                {
+                    Color = Color.Lerp(Color.White, Color.Transparent, (float)(CurrentFadeTime / FadeTime));
+                }
             }
+            else
+            {
+                if (FadeTime > 0)
+                {
+                    float percent = (float)((CurrentFadeTime / FadeTime) * Math.PI);
+                    float SinPercent = (float)Math.Sin(percent);
+                    Color = Color.Lerp(Color.Transparent, StartColor, SinPercent);
+                    //Color = Color.White;
+                }
+            }
+
+            if (CurrentFadeTime > FadeTime)
+            {
+                Color = Color.Transparent;
+            }
+
 
             if (CurrentTime > UpdateDelay)
             {                

@@ -115,12 +115,12 @@
   <ItemGroup>
     <Compile Include="Basics\BulletTrail.cs" />
     <Compile Include="Basics\CooldownButton.cs" />
+    <Compile Include="Basics\GrassBlade.cs" />
     <Compile Include="Basics\UIBar.cs" />
     <Compile Include="Basics\Decal.cs" />
     <Compile Include="Basics\DialogBox.cs" />
     <Compile Include="Basics\Explosion.cs" />
     <Compile Include="Basics\FrameRateCounter.cs" />
-    <Compile Include="Basics\GrassBlade.cs" />
     <Compile Include="Basics\LightRangedInvader.cs" />
     <Compile Include="Basics\ProgressBar.cs" />
     <Compile Include="Basics\LightningBolt.cs" />
@@ -217,7 +217,6 @@
     <Compile Include="Basics\Wave.cs" />
     <Compile Include="Basics\WeaponBox.cs" />
     <Compile Include="Basics\Weapon.cs" />
-    <Compile Include="Weather\SnowWeather.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Service References\aOtherStuff\Game.ico" />

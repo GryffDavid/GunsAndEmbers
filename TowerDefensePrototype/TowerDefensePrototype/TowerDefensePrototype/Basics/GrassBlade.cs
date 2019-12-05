@@ -4,24 +4,23 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Input;
 
 namespace TowerDefensePrototype
 {
     class GrassBlade
     {
-        public VertexPositionColor[] Vertices = new VertexPositionColor[7];
-        public List<Vector2> Tangents = new List<Vector2>();
-        public List<Vector2> Normals = new List<Vector2>();
+        public Texture2D Base, Center, Tip;
+        public Rectangle BaseRectangle, CenterRectangle, TipRectangle;
+
         public List<Vector2> Curve = new List<Vector2>();
         public List<Vector2> ThreePoints = new List<Vector2>();
-        public float BaseWidth, DrawDepth;
-        public GrassState OriginalState, CurrentState, PreviousState;
-        static Random Random = new Random();
+
+        float BaseLength, CenterLength, TipLength, DrawDepth;
 
         public GrassBlade(Vector2 basePosition, Vector2 tipPosition, Vector2 controlPoint, float baseWidth)
         {
-            BaseWidth = baseWidth;
-
             #region Set up the 3 points of the Bezier curve
             //The base of the blade
             ThreePoints.Add(new Vector2(basePosition.X, basePosition.Y));
@@ -31,18 +30,7 @@ namespace TowerDefensePrototype
             ThreePoints.Add(new Vector2(basePosition.X + tipPosition.X, basePosition.Y + tipPosition.Y));
             #endregion
 
-            OriginalState = new GrassState()
-            {
-                basePosition = ThreePoints[0],
-                controlPoint = ThreePoints[1],
-                tipPosition = ThreePoints[2]
-            };
-
-            CurrentState = OriginalState;
-            PreviousState = CurrentState;
-
             #region Set up the actual curve
-
             Curve.Add(ThreePoints[0]);
 
             for (float t = 0.33f; t < 0.9; t += 0.33f)
@@ -57,113 +45,52 @@ namespace TowerDefensePrototype
             Curve.Add(ThreePoints[2]);
             #endregion
 
-            #region Create the tangents
-            for (int i = 0; i < Curve.Count - 2; i++)
-            {
-                Tangents.Add(new Vector2((Curve[i].X - Curve[i + 2].X), (Curve[i].Y - Curve[i + 2].Y)));
-            }
-
-            foreach (Vector2 point in Tangents)
-            {
-                point.Normalize();
-            }
-            #endregion
-
-            #region Create the normals
-            foreach (Vector2 tangent in Tangents)
-            {
-                Normals.Add(new Vector2(
-                    (float)Math.Cos(Math.Atan2(tangent.Y, tangent.X) - MathHelper.ToRadians(90)),
-                    (float)Math.Sin(Math.Atan2(tangent.Y, tangent.X) - MathHelper.ToRadians(90))));
-            }
-
-            foreach (Vector2 point in Normals)
-            {
-                point.Normalize();
-            }
-            #endregion
-
-            #region Set up the vertices that determine the shape of the blade
-            Vertices[0].Position = new Vector3(Curve[0].X + MathHelper.Lerp(0, BaseWidth, 0.75f), Curve[0].Y, 0);
-            Vertices[0].Color = Color.DarkGreen;
-
-            Vertices[1].Position = new Vector3(Curve[0].X - MathHelper.Lerp(0, BaseWidth, 0.75f), Curve[0].Y, 0);
-            Vertices[1].Color = Color.DarkGreen;
-
-            Vertices[2].Position = new Vector3(Curve[1].X + (MathHelper.Lerp(0, BaseWidth, 0.5f) * Normals[0].X), Curve[1].Y + (MathHelper.Lerp(0, BaseWidth, 0.5f) * Normals[0].Y), 0);
-            Vertices[2].Color = Color.Green;
-
-            Vertices[3].Position = new Vector3(Curve[1].X - (MathHelper.Lerp(0, BaseWidth, 0.5f) * Normals[0].X), Curve[1].Y - (MathHelper.Lerp(0, BaseWidth, 0.5f) * Normals[0].Y), 0);
-            Vertices[3].Color = Color.Green;
-
-            Vertices[4].Position = new Vector3(Curve[2].X + (MathHelper.Lerp(0, BaseWidth, 0.25f) * Normals[1].X), Curve[2].Y + (MathHelper.Lerp(0, BaseWidth, 0.25f) * Normals[1].Y), 0);
-            Vertices[4].Color = Color.LawnGreen;
-
-            Vertices[5].Position = new Vector3(Curve[2].X - (MathHelper.Lerp(0, BaseWidth, 0.25f) * Normals[1].X), Curve[2].Y - (MathHelper.Lerp(0, BaseWidth, 0.25f) * Normals[1].Y), 0);
-            Vertices[5].Color = Color.LawnGreen;
-
-            Vertices[6].Position = new Vector3(Curve[3].X, Curve[3].Y, 0);
-            Vertices[6].Color = Color.LightGreen;
-            #endregion
-
-            DrawDepth = basePosition.Y / 1080;
+            DrawDepth = ThreePoints[0].Y / 1080;
         }
 
-        public void Draw(SpriteBatch spriteBatch, GraphicsDevice graphicsDevice)
+        public void LoadContent(ContentManager contentManager)
         {
-            graphicsDevice.DrawUserPrimitives<VertexPositionColor>(PrimitiveType.TriangleStrip, Vertices, 0, 5, VertexPositionColor.VertexDeclaration);
+            Base = contentManager.Load<Texture2D>("GrassBase2");
+            Center = contentManager.Load<Texture2D>("GrassCenter2");
+            Tip = contentManager.Load<Texture2D>("GrassTip2");
         }
 
         public void Update(GameTime gameTime)
         {
-            if (!CurrentState.Equals(PreviousState))
-                CreateCurve();
+            BaseLength = Vector2.Distance(Curve[0], Curve[1]);
+            BaseRectangle = new Rectangle((int)Curve[0].X, (int)Curve[0].Y, (int)BaseLength, Math.Min((int)(Base.Height / (Base.Width / BaseLength)), Base.Height));
 
-            PreviousState = CurrentState;
+
+            CenterLength = Vector2.Distance(Curve[1], Curve[2]);
+            CenterRectangle = new Rectangle((int)Curve[1].X, (int)(Curve[1].Y + (CenterLength / 10)), (int)CenterLength, Math.Min((int)(Center.Height / (Center.Width / CenterLength)), Center.Height));
+
+            TipLength = Vector2.Distance(Curve[2], Curve[3]);
+            TipRectangle = new Rectangle((int)Curve[2].X, (int)(Curve[2].Y + (TipLength / 10)), (int)TipLength, Math.Min((int)(Tip.Height / (Tip.Width / TipLength)), Tip.Height));
         }
 
-        public void CreateCurve()
+        public void Draw(SpriteBatch spriteBatch)
         {
-            //-----------Set up all the points along the curve--------------//            
-            ThreePoints[0] = CurrentState.basePosition;
-            ThreePoints[1] = CurrentState.controlPoint;
-            ThreePoints[2] = CurrentState.tipPosition;
+            Vector2 BaseDirection = Curve[0] - Curve[1];
+            BaseDirection.Normalize();
+            float BaseRotation = (float)(Math.Atan2(BaseDirection.Y, BaseDirection.X));
 
-            //New basePoint from CurrentState input
-            Curve[0] = ThreePoints[0];
 
-            Curve[1] = new Vector2(
-                    (float)Math.Pow(1 - 0.33f, 2) * ThreePoints[0].X + (2 * 0.33f * (1 - 0.33f)) * (ThreePoints[1].X) + (float)Math.Pow(0.33f, 2) * ThreePoints[2].X,
-                    (float)Math.Pow(1 - 0.33f, 2) * ThreePoints[0].Y + (2 * 0.33f * (1 - 0.33f)) * (ThreePoints[1].Y) + (float)Math.Pow(0.33f, 2) * ThreePoints[2].Y);
+            spriteBatch.Draw(Base, BaseRectangle, null, Color.White, BaseRotation,
+                             new Vector2(Base.Width, Base.Height / 2), SpriteEffects.None, DrawDepth);
 
-            Curve[2] = new Vector2(
-                    (float)Math.Pow(1 - 0.66f, 2) * ThreePoints[0].X + (2 * 0.66f * (1 - 0.66f)) * (ThreePoints[1].X) + (float)Math.Pow(0.66f, 2) * ThreePoints[2].X,
-                    (float)Math.Pow(1 - 0.66f, 2) * ThreePoints[0].Y + (2 * 0.66f * (1 - 0.66f)) * (ThreePoints[1].Y) + (float)Math.Pow(0.66f, 2) * ThreePoints[2].Y);
+            Vector2 CenterDirection = Curve[1] - Curve[2];
+            CenterDirection.Normalize();
+            float CenterRotation = (float)(Math.Atan2(CenterDirection.Y, CenterDirection.X));
 
-            //New tipPoint from CurrentState input
-            Curve[3] = ThreePoints[2];
+            spriteBatch.Draw(Center, CenterRectangle, null, Color.White, CenterRotation,
+                             new Vector2(Center.Width, Center.Height / 2), SpriteEffects.None, DrawDepth);
 
-            //Set up the vertices based on CurrentState input
-            Vertices[0].Position = new Vector3(Curve[0].X + MathHelper.Lerp(0, BaseWidth, 0.75f), Curve[0].Y, 0);
-            Vertices[0].Color = Color.DarkGreen;
+            Vector2 TipDirection = Curve[2] - Curve[3];
+            TipDirection.Normalize();
+            float TipRotation = (float)(Math.Atan2(TipDirection.Y, TipDirection.X));
 
-            Vertices[1].Position = new Vector3(Curve[0].X - MathHelper.Lerp(0, BaseWidth, 0.75f), Curve[0].Y, 0);
-            Vertices[1].Color = Color.DarkGreen;
-
-            Vertices[2].Position = new Vector3(Curve[1].X + (MathHelper.Lerp(0, BaseWidth, 0.5f) * Normals[0].X), Curve[1].Y + (MathHelper.Lerp(0, BaseWidth, 0.5f) * Normals[0].Y), 0);
-            Vertices[2].Color = Color.Green;
-
-            Vertices[3].Position = new Vector3(Curve[1].X - (MathHelper.Lerp(0, BaseWidth, 0.5f) * Normals[0].X), Curve[1].Y - (MathHelper.Lerp(0, BaseWidth, 0.5f) * Normals[0].Y), 0);
-            Vertices[3].Color = Color.Green;
-
-            Vertices[4].Position = new Vector3(Curve[2].X + (MathHelper.Lerp(0, BaseWidth, 0.25f) * Normals[1].X), Curve[2].Y + (MathHelper.Lerp(0, BaseWidth, 0.25f) * Normals[1].Y), 0);
-            Vertices[4].Color = Color.LawnGreen;
-
-            Vertices[5].Position = new Vector3(Curve[2].X - (MathHelper.Lerp(0, BaseWidth, 0.25f) * Normals[1].X), Curve[2].Y - (MathHelper.Lerp(0, BaseWidth, 0.25f) * Normals[1].Y), 0);
-            Vertices[5].Color = Color.LawnGreen;
-
-            Vertices[6].Position = new Vector3(Curve[3].X, Curve[3].Y, 0);
-            Vertices[6].Color = Color.LightGreen;
+            spriteBatch.Draw(Tip, TipRectangle, null, Color.White, TipRotation,
+                             new Vector2(Tip.Width, Tip.Height / 2), SpriteEffects.None, DrawDepth);
         }
     }
 }

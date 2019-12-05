@@ -31,6 +31,7 @@ namespace TowerDefensePrototype
     public enum ProfileState { Standard, Upgrades, Stats };
     public enum SpecialType { AirStrike };
     public enum DamageType { Fire, Electric, Concussive, Kinetic, Radiation };
+    public enum Weather { Snow };
     
     public struct GrassState
     {
@@ -54,6 +55,7 @@ namespace TowerDefensePrototype
         SpriteBatch spriteBatch, targetBatch;
         RenderTarget2D GameRenderTarget, MenuRenderTarget, UIRenderTarget;
         RenderTarget2D ShaderTarget1, ShaderTarget2;
+        RenderTarget2D CrepuscularMap;
         Texture2D ScreenTex;
         
         string Error = "";
@@ -148,7 +150,15 @@ namespace TowerDefensePrototype
         public Color MenuColor = Color.White;
         #endregion        
 
-        Texture2D TerrainShrub1, TooltipBox;
+        #region Weather Sprites
+        Texture2D SnowDust1, SnowDust2, SnowDust3, SnowDust4, SnowDust5;
+        #endregion
+
+        #region Grass sprites
+        Texture2D GrassBase, GrassCenter, GrassTip;
+        #endregion
+
+        Texture2D TerrainShrub1, TooltipBox, FlareMap1;
 
         Vector2 CursorPosition, ActualResolution;
         Rectangle ScreenRectangle;
@@ -174,8 +184,8 @@ namespace TowerDefensePrototype
         float MenuSFXVolume, MenuMusicVolume, VictoryTime, CurrentInvaderTime, CurrentWaveTime, CurrentWavePauseTime;
 
         double Seconds, ResolutionOffsetRatio;
-        
-        Effect HealthBarEffect, ShockWaveEffect, ShieldBubbleEffect, BackgroundEffect, ButtonBlurEffect;
+
+        Effect HealthBarEffect, ShockWaveEffect, ShieldBubbleEffect, BackgroundEffect, ButtonBlurEffect, CrepuscularEffect;
         Color CursorColor = Color.White;
         Matrix Projection, MouseTransform, QuadProjection;
         #endregion
@@ -215,12 +225,10 @@ namespace TowerDefensePrototype
 
         List<NumberChange> NumberChangeList = new List<NumberChange>();
 
-        List<StaticSprite> TerrainSpriteList;
+        List<StaticSprite> TerrainSpriteList, WeatherSpriteList;
 
         List<Decal> DecalList = new List<Decal>();
         List<Light> LightList = new List<Light>();
-
-        List<GrassBlade> GrassBladeList = new List<GrassBlade>();
         #endregion
 
         #region Custom class declarations
@@ -276,6 +284,10 @@ namespace TowerDefensePrototype
         FrameRateCounter FPSCounter = new FrameRateCounter();
 
         SpecialAbility CurrentSpecialAbility;
+
+        List<GrassBlade> GrassBladeList = new List<GrassBlade>();
+
+        float CurrentWeatherTime;
         #endregion
 
         public Game1()
@@ -573,7 +585,7 @@ namespace TowerDefensePrototype
             #endregion
 
             GraphicsDevice.SetRenderTarget(GameRenderTarget);
-            GraphicsDevice.Clear(Color.Black);
+            GraphicsDevice.Clear(Color.Transparent);
 
             #region Draw things in game that SHOULD be shaken - Non-diegetic elements
             if (GameState == GameState.Playing || GameState == GameState.Paused || GameState == GameState.Victory && IsLoading == false)
@@ -652,11 +664,6 @@ namespace TowerDefensePrototype
                             turret.Draw(spriteBatch);
                 }
 
-                foreach (StaticSprite terrainSprite in TerrainSpriteList)
-                {
-                    terrainSprite.Draw(spriteBatch);
-                }
-
                 foreach (Invader invader in InvaderList)
                 {
                     invader.Draw(spriteBatch);
@@ -697,15 +704,11 @@ namespace TowerDefensePrototype
                     timedProjectile.Draw(spriteBatch);
                 }
 
+                foreach (GrassBlade blade in GrassBladeList)
+                {
+                    blade.Draw(spriteBatch);
+                }
 
-                //foreach (EffectPass pass in BasicEffect.CurrentTechnique.Passes)
-                //{
-                //    pass.Apply();
-                //    foreach (GrassBlade blade in GrassBladeList)
-                //    {
-                //        blade.Draw(spriteBatch, GraphicsDevice);
-                //    }
-                //}
                 if (CurrentSpecialAbility != null)
                     CurrentSpecialAbility.Draw(spriteBatch);
 
@@ -748,10 +751,19 @@ namespace TowerDefensePrototype
                 {
                     emitter.Draw(spriteBatch);
                 }
-
                 spriteBatch.End();
             }
             #endregion
+
+            spriteBatch.Begin(SpriteSortMode.Texture, BlendState.AlphaBlend);
+            if (GameState == GameState.Playing || GameState == GameState.Paused || GameState == GameState.Victory && IsLoading == false)
+            {
+                foreach (StaticSprite weatherSprite in WeatherSpriteList)
+                {
+                    weatherSprite.Draw(spriteBatch);
+                }
+            }
+            spriteBatch.End();
             
             
             GraphicsDevice.SetRenderTarget(MenuRenderTarget);
@@ -1176,6 +1188,19 @@ namespace TowerDefensePrototype
             #endregion
 
 
+            ScreenTex = GameRenderTarget;
+
+            GraphicsDevice.SetRenderTarget(CrepuscularMap);
+            GraphicsDevice.Clear(Color.Black);
+
+            //if (GameState == GameState.Playing || GameState == GameState.Paused || GameState == GameState.Victory && IsLoading == false)
+            //{
+            //    spriteBatch.Begin();
+            //    spriteBatch.Draw(FlareMap1, new Rectangle(0, 0, 1920, 1080), Color.White);
+            //    spriteBatch.Draw(GameRenderTarget, new Rectangle(0, 0, 1920, 1080), Color.Black);
+            //    spriteBatch.End();
+            //}
+
             #region Apply pixel shaders to game world
             //Layer up all the shaders that need to be applied to the game world - Not including the interface
             if (GameState == GameState.Playing || GameState == GameState.Paused)
@@ -1207,7 +1232,9 @@ namespace TowerDefensePrototype
             {
                 if (ScreenTex != null)
                 {
+                    //CrepuscularEffect.Parameters["ColorMap"].SetValue(ScreenTex);
                     targetBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, null, null);
+                    //CrepuscularEffect.CurrentTechnique.Passes[0].Apply();
                     targetBatch.Draw(ScreenTex, new Rectangle(0, (int)(ActualResolution.Y - CurrentSettings.ResHeight) / 2,
                                      CurrentSettings.ResWidth, CurrentSettings.ResHeight), null, Color.White, 0, Vector2.Zero,
                                      SpriteEffects.None, 0);
@@ -1501,6 +1528,8 @@ namespace TowerDefensePrototype
                 TimedProjectileUpdate(gameTime);
                 LightProjectileUpdate();
 
+                ExplosionsUpdate(gameTime);
+
                 InvaderHeavyProjectileUpdate(gameTime);
                 InvaderLightProjectileUpdate(gameTime);
 
@@ -1646,6 +1675,11 @@ namespace TowerDefensePrototype
                 UpdateSpecialAbilities(gameTime);
                 #endregion
 
+                foreach (GrassBlade blade in GrassBladeList)
+                {
+                    blade.Update(gameTime);
+                }
+
                 if (InGameInformation != null)
                     InGameInformation.Update(CursorPosition, gameTime);
                 
@@ -1686,6 +1720,8 @@ namespace TowerDefensePrototype
 
                 if (CurrentSpecialAbility != null)
                     CurrentSpecialAbility.Update(gameTime);
+
+                UpdateWeather(gameTime);
             }
 
             MenuButtonsUpdate(gameTime);
@@ -1706,6 +1742,7 @@ namespace TowerDefensePrototype
             targetBatch = new SpriteBatch(GraphicsDevice);
 
             GameRenderTarget = new RenderTarget2D(GraphicsDevice, 1920, 1080);
+            CrepuscularMap = new RenderTarget2D(GraphicsDevice, 1920, 1080);
 
             UIRenderTarget = new RenderTarget2D(GraphicsDevice, 1920, 1080, 
                 false, SurfaceFormat.Rgba64, DepthFormat.Depth24Stencil8, 0, RenderTargetUsage.DiscardContents);
@@ -1843,6 +1880,8 @@ namespace TowerDefensePrototype
                 SkyBackground = new StaticSprite("Backgrounds/Sky", new Vector2(0, 0));
                 SkyBackground.LoadContent(Content);
 
+                FlareMap1 = Content.Load<Texture2D>("FlareMap1");
+
                 LoadGameSounds();
 
                 //Resources = 1800;
@@ -1945,8 +1984,12 @@ namespace TowerDefensePrototype
                 CoinList = new List<Particle>();
                 LightProjectileList = new List<LightProjectile>();
                 TerrainSpriteList = new List<StaticSprite>();
+                WeatherSpriteList = new List<StaticSprite>();
                 //NumberChangeList = new List<NumberChange>();
                 #endregion
+
+                CrepuscularEffect = Content.Load<Effect>("Shaders/CrepuscularRaysEffect");
+                CrepuscularEffect.Parameters["Projection"].SetValue(Matrix.CreateOrthographicOffCenter(0, 1920, 1080, 0, 0, 1));
 
                 HealthBarEffect = Content.Load<Effect>("Shaders/HealthBarEffect");
                 HealthBarEffect.Parameters["MatrixTransform"].SetValue(Projection);
@@ -1988,27 +2031,51 @@ namespace TowerDefensePrototype
 
                 TerrainShrub1 = Content.Load<Texture2D>("Terrain/Shrub");
 
-                for (int i = 0; i < 15; i++)
-                {
-                    Vector2 newPos = new Vector2(Random.Next(0, 1920), Random.Next(690, 930));
+                GrassBase = Content.Load<Texture2D>("GrassBase2");
+                GrassCenter = Content.Load<Texture2D>("GrassCenter2");
+                GrassTip = Content.Load<Texture2D>("GrassTip2");
 
-                    if (TerrainSpriteList.Any(Sprite => Vector2.Distance(Sprite.Position, newPos) < 150))
-                    {
-                        newPos = new Vector2(Random.Next(0, 1920), Random.Next(690, 930));
-                    }
-
-                    StaticSprite terrainSprite = new StaticSprite(TerrainShrub1, newPos);
-                    terrainSprite.DrawDepth = (float)(terrainSprite.DestinationRectangle.Bottom / 1080.0);
-                    TerrainSpriteList.Add(terrainSprite);                    
-                }
-
-                //for (int x = 250; x < 1920; x += 20)
+                //for (int i = 0; i < 15; i++)
                 //{
-                //    for (int y = 690; y < 930; y += 20)
+                //    Vector2 newPos = new Vector2(Random.Next(0, 1920), Random.Next(690, 930));
+
+                //    if (TerrainSpriteList.Any(Sprite => Vector2.Distance(Sprite.Position, newPos) < 150))
                 //    {
-                //        GrassBladeList.Add(new GrassBlade(new Vector2(x + Random.Next(-20, 20), y + Random.Next(-20, 20)), new Vector2(Random.Next(-10, 10), -(15 + Random.Next(0, 50))), new Vector2(Random.Next(-3, 3), -(10 + Random.Next(0, 8))), Random.Next(1, 4)));
+                //        newPos = new Vector2(Random.Next(0, 1920), Random.Next(690, 930));
+                //    }
+
+                //    StaticSprite terrainSprite = new StaticSprite(TerrainShrub1, newPos);
+                //    terrainSprite.DrawDepth = (float)(terrainSprite.DestinationRectangle.Bottom / 1080.0);
+                //    TerrainSpriteList.Add(terrainSprite);                    
+                //}
+
+                //for (int x = 250; x < 1920; x += 100)
+                //{
+                //    for (int y = 690; y < 930; y += 100)
+                //    {
+                //        for (int i = 0; i < 10; i++)
+                //        {
+                //            GrassBladeList.Add(new GrassBlade(new Vector2(x + Random.Next(-20, 20), y + Random.Next(-20, 20)), new Vector2(Random.Next(-10, 10), -(15 + Random.Next(0, 50))), new Vector2(Random.Next(-3, 3), -(10 + Random.Next(0, 8))), Random.Next(1, 4)));
+                //        }
                 //    }
                 //}
+                
+                for (int xy = 0; xy < 40; xy++)
+                {
+                    Vector2 clumpPosition = new Vector2(Random.Next(250, 1920), Random.Next(690, 930));
+
+                    for (int i = 0; i < 5; i++)
+                    {
+                        GrassBladeList.Add(new GrassBlade(new Vector2(clumpPosition.X + Random.Next(-5, 5), clumpPosition.Y + Random.Next(-5, 5)), new Vector2(Random.Next(-30, 30), -(15 + Random.Next(0, 50))), new Vector2(Random.Next(-10, 10), -(10 + Random.Next(0, 8))), Random.Next(1, 4)));
+                    }
+                }
+
+                foreach (GrassBlade blade in GrassBladeList)
+                {
+                    blade.Base = GrassBase;
+                    blade.Center = GrassCenter;
+                    blade.Tip = GrassTip;
+                }
 
                 //DrawableList.AddRange(GrassBladeList);
 
@@ -2030,6 +2097,7 @@ namespace TowerDefensePrototype
                 LoadInvaderSprites();
                 LoadTurretSprites();
                 LoadTrapSprites();
+                LoadWeatherSprites();
 
                 UITurretInfo = new UITurretInfo();
                 UITurretInfo.Texture = WhiteBlock;
@@ -2162,6 +2230,15 @@ namespace TowerDefensePrototype
 
             LightningTurretBase = Content.Load<Texture2D>("Turrets/MachineTurretBase");
             LightningTurretBarrel = Content.Load<Texture2D>("Turrets/MachineTurretBarrel");
+        }
+
+        private void LoadWeatherSprites()
+        {
+            SnowDust1 = Content.Load<Texture2D>("Weather/SnowDust1");
+            SnowDust2 = Content.Load<Texture2D>("Weather/SnowDust2");
+            SnowDust3 = Content.Load<Texture2D>("Weather/SnowDust3");
+            SnowDust4 = Content.Load<Texture2D>("Weather/SnowDust4");
+            SnowDust5 = Content.Load<Texture2D>("Weather/SnowDust5");
         }
         #endregion
 
@@ -4897,6 +4974,12 @@ namespace TowerDefensePrototype
 
                                 EmitterList2.Add(newEmitter2);
 
+
+                                Decal NewDecal = new Decal(ExplosionDecal1, new Vector2(heavyProjectile.Position.X, heavyProjectile.Position.Y),
+                                                         (float)RandomDouble(0, 0), heavyProjectile.YRange, heavyProjectile.MaxY, 0.3f);
+
+                                DecalList.Add(NewDecal);
+
                                 ExplosionList.Add(new Explosion(heavyProjectile.Position, 300, heavyProjectile.Damage));
                             }
                             break;
@@ -5783,6 +5866,32 @@ namespace TowerDefensePrototype
                     LightProjectileList.RemoveAt(i);
             }
         }
+
+        private void ExplosionsUpdate(GameTime gameTime)
+        {
+            //This just controls random behaviour that occurs when an explosion happens, such as grass moving etc.
+            foreach (Explosion explosion in ExplosionList)
+            {
+                foreach (GrassBlade blade in GrassBladeList)
+                {
+                    if (Vector2.Distance(new Vector2(blade.BaseRectangle.Center.X, blade.BaseRectangle.Center.Y), explosion.Position) < explosion.BlastRadius / 5)
+                    {
+                        Vector2 explosionDelta = new Vector2(blade.BaseRectangle.Center.X, blade.BaseRectangle.Center.Y) - explosion.Position;
+                        float Angle = (float)Math.Atan2(explosionDelta.Y, explosionDelta.X);
+
+                        Emitter newEmitter = new Emitter(GrassCenter, new Vector2(blade.BaseRectangle.Center.X, blade.BaseRectangle.Bottom),
+                            new Vector2(Angle - Random.Next(10), Angle + Random.Next(10)), new Vector2(2, 5), new Vector2(500, 1000), 1f, true,
+                            new Vector2(0, 360), new Vector2(0, 3), new Vector2(0.05f, 0.2f), Color.White, Color.White,
+                            0.2f, 0.1f, 100, 1, true,
+                            new Vector2(explosion.Position.Y + 5, explosion.Position.Y + 15), false, null, true, true);
+                        YSortedEmitterList.Add(newEmitter);
+                    }
+                }
+
+                GrassBladeList.RemoveAll(GrassBlade => Vector2.Distance(new Vector2(GrassBlade.BaseRectangle.Center.X, GrassBlade.BaseRectangle.Center.Y), explosion.Position) < explosion.BlastRadius / 5);
+            }
+
+        }
         #endregion
 
         #region TRAP stuff that needs to be called every step
@@ -6259,6 +6368,27 @@ namespace TowerDefensePrototype
             }
         }
         #endregion
+
+        private void UpdateWeather(GameTime gameTime)
+        {
+            //Update the weather effects such as snow, sun, rain etc.
+            CurrentWeatherTime += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+
+            if (CurrentWeatherTime > 250)
+            {
+                CurrentWeatherTime = 0;
+                WeatherSpriteList.Add(
+                    new StaticSprite(RandomTexture(SnowDust1, SnowDust2, SnowDust3, SnowDust4, SnowDust5), 
+                        new Vector2(Random.Next(250, 1920), Random.Next(690, 930)), 
+                        new Vector2(0.5f, 0.5f), HalfWhite, 
+                        new Vector2((float)RandomDouble(0.01f, 0.07f), 0), false, false, null, null, 2500, true));
+            }
+
+            foreach (StaticSprite sprite in WeatherSpriteList)
+            {
+                sprite.Update(gameTime);
+            }
+        }
 
 
         #region Handling player profile data
@@ -7083,14 +7213,16 @@ namespace TowerDefensePrototype
 
         private Color RandomColor(params Color[] colors)
         {
-            List<Color> ColorList = new List<Color>();
-
-            foreach (Color color in colors)
-            {
-                ColorList.Add(color);
-            }
+            List<Color> ColorList = colors.ToList();
 
             return ColorList[Random.Next(0, ColorList.Count)];
+        }
+
+        private Texture2D RandomTexture(params Texture2D[] textures)
+        {
+            List<Texture2D> TextureList = textures.ToList();
+
+            return TextureList[Random.Next(0, TextureList.Count)];
         }
         #endregion
 
