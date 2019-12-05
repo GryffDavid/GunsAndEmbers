@@ -130,9 +130,33 @@ G:\Google Drive\Tower Defense Backups\TowerDefensePrototype 89\GameDataTypes\obj
 G:\Google Drive\Tower Defense Backups\TowerDefensePrototype 89\GameDataTypes\obj\x86\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
 G:\Google Drive\Tower Defense Backups\TowerDefensePrototype 89\GameDataTypes\obj\x86\Debug\GameDataTypes.dll
 G:\Google Drive\Tower Defense Backups\TowerDefensePrototype 89\GameDataTypes\obj\x86\Debug\GameDataTypes.pdb
-G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 89\GameDataTypes\bin\x86\Debug\GameDataTypes.dll
-G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 89\GameDataTypes\bin\x86\Debug\GameDataTypes.pdb
-G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 89\GameDataTypes\obj\x86\Debug\GameDataTypes.csprojResolveAssemblyReference.cache
-G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 89\GameDataTypes\obj\x86\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
-G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 89\GameDataTypes\obj\x86\Debug\GameDataTypes.dll
-G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 89\GameDataTypes\obj\x86\Debug\GameDataTypes.pdb
+C:\Users\Gryff\Desktop\Testing for TDP\TowerDefensePrototype 89\GameDataTypes\bin\x86\Debug\GameDataTypes.dll
+C:\Users\Gryff\Desktop\Testing for TDP\TowerDefensePrototype 89\GameDataTypes\bin\x86\Debug\GameDataTypes.pdb
+C:\Users\Gryff\Desktop\Testing for TDP\TowerDefensePrototype 89\GameDataTypes\obj\x86\Debug\GameDataTypes.csprojResolveAssemblyReference.cache
+C:\Users\Gryff\Desktop\Testing for TDP\TowerDefensePrototype 89\GameDataTypes\obj\x86\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
+C:\Users\Gryff\Desktop\Testing for TDP\TowerDefensePrototype 89\GameDataTypes\obj\x86\Debug\GameDataTypes.dll
+C:\Users\Gryff\Desktop\Testing for TDP\TowerDefensePrototype 89\GameDataTypes\obj\x86\Debug\GameDataTypes.pdb
+C:\Users\Gryff\Desktop\Testing for TDP\Lighting Test 1\GameDataTypes\bin\x86\Debug\GameDataTypes.dll
+C:\Users\Gryff\Desktop\Testing for TDP\Lighting Test 1\GameDataTypes\bin\x86\Debug\GameDataTypes.pdb
+C:\Users\Gryff\Desktop\Testing for TDP\Lighting Test 1\GameDataTypes\obj\x86\Debug\GameDataTypes.csprojResolveAssemblyReference.cache
+C:\Users\Gryff\Desktop\Testing for TDP\Lighting Test 1\GameDataTypes\obj\x86\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
+C:\Users\Gryff\Desktop\Testing for TDP\Lighting Test 1\GameDataTypes\obj\x86\Debug\GameDataTypes.dll
+C:\Users\Gryff\Desktop\Testing for TDP\Lighting Test 1\GameDataTypes\obj\x86\Debug\GameDataTypes.pdb
+C:\Users\Gryff\Desktop\Testing for TDP\Lighting Test 1 - WORKING!\GameDataTypes\bin\x86\Debug\GameDataTypes.dll
+C:\Users\Gryff\Desktop\Testing for TDP\Lighting Test 1 - WORKING!\GameDataTypes\bin\x86\Debug\GameDataTypes.pdb
+C:\Users\Gryff\Desktop\Testing for TDP\Lighting Test 1 - WORKING!\GameDataTypes\obj\x86\Debug\GameDataTypes.csprojResolveAssemblyReference.cache
+C:\Users\Gryff\Desktop\Testing for TDP\Lighting Test 1 - WORKING!\GameDataTypes\obj\x86\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
+C:\Users\Gryff\Desktop\Testing for TDP\Lighting Test 1 - WORKING!\GameDataTypes\obj\x86\Debug\GameDataTypes.dll
+C:\Users\Gryff\Desktop\Testing for TDP\Lighting Test 1 - WORKING!\GameDataTypes\obj\x86\Debug\GameDataTypes.pdb
+G:\Google Drive\Tower Defense Backups\TowerDefensePrototype 90 (With lighting working)\GameDataTypes\bin\x86\Debug\GameDataTypes.dll
+G:\Google Drive\Tower Defense Backups\TowerDefensePrototype 90 (With lighting working)\GameDataTypes\bin\x86\Debug\GameDataTypes.pdb
+G:\Google Drive\Tower Defense Backups\TowerDefensePrototype 90 (With lighting working)\GameDataTypes\obj\x86\Debug\GameDataTypes.csprojResolveAssemblyReference.cache
+G:\Google Drive\Tower Defense Backups\TowerDefensePrototype 90 (With lighting working)\GameDataTypes\obj\x86\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
+G:\Google Drive\Tower Defense Backups\TowerDefensePrototype 90 (With lighting working)\GameDataTypes\obj\x86\Debug\GameDataTypes.dll
+G:\Google Drive\Tower Defense Backups\TowerDefensePrototype 90 (With lighting working)\GameDataTypes\obj\x86\Debug\GameDataTypes.pdb
+G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 90 (With lighting working)\GameDataTypes\bin\x86\Debug\GameDataTypes.dll
+G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 90 (With lighting working)\GameDataTypes\bin\x86\Debug\GameDataTypes.pdb
+G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 90 (With lighting working)\GameDataTypes\obj\x86\Debug\GameDataTypes.csprojResolveAssemblyReference.cache
+G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 90 (With lighting working)\GameDataTypes\obj\x86\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
+G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 90 (With lighting working)\GameDataTypes\obj\x86\Debug\GameDataTypes.dll
+G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 90 (With lighting working)\GameDataTypes\obj\x86\Debug\GameDataTypes.pdb

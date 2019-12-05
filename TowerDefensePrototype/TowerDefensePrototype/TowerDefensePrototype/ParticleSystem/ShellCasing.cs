@@ -17,7 +17,7 @@ namespace TowerDefensePrototype
         float CurrentTime, MaxTime;
         float Transparency;
 
-        Color Color = Color.White;
+        public Color Color = Color.White;
                 
         public ShellCasing(Vector2 position, Vector2 velocity, Texture2D shellTexture)
         {
@@ -74,7 +74,10 @@ namespace TowerDefensePrototype
                 Vector2 dir = stick.Point2.CurrentPosition - stick.Point1.CurrentPosition;
                 float rot = (float)Math.Atan2(dir.Y, dir.X);
 
-                spriteBatch.Draw(ShellTexture, new Rectangle((int)stick.Point1.CurrentPosition.X, (int)stick.Point1.CurrentPosition.Y, ShellTexture.Width / 2, ShellTexture.Height / 2), null, Color, rot, new Vector2(0, ShellTexture.Height / 2), SpriteEffects.None, 0);
+                spriteBatch.Draw(ShellTexture, 
+                    new Rectangle((int)stick.Point1.CurrentPosition.X, (int)stick.Point1.CurrentPosition.Y, 
+                        ShellTexture.Width / 2, ShellTexture.Height / 2), 
+                        null, Color, rot, new Vector2(0, ShellTexture.Height / 2), SpriteEffects.None, 0);
             }
         }
     }

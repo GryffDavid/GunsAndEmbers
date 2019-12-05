@@ -103,7 +103,7 @@ namespace TowerDefensePrototype
             base.Update(gameTime, cursorPosition);
         }
 
-        public override void Draw(SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, BasicEffect basicEffect)
+        public override void Draw(SpriteBatch spriteBatch)
         {
             if (HealTarget != null)
                 DrawDepth = HealTarget.DrawDepth;
@@ -111,7 +111,7 @@ namespace TowerDefensePrototype
             //if (Jet != null)
             //    Jet.Draw(spriteBatch);
 
-            base.Draw(spriteBatch, graphicsDevice, basicEffect);
+            base.Draw(spriteBatch);
         }
 
         public override void TrapDamage(Trap trap)

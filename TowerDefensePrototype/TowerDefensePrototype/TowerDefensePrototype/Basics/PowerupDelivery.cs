@@ -22,6 +22,7 @@ namespace TowerDefensePrototype
         float OpeningDelay, CurrentDelay;
         public List<Emitter> EmitterList = new List<Emitter>();
         public UIBar HealthBar;
+        public Color Color = Color.White;
 
         public class Fin
         {
@@ -191,13 +192,13 @@ namespace TowerDefensePrototype
                              new Rectangle(
                                  (int)Fin1.Position.X, (int)Fin1.Position.Y,
                                  (int)Fin1.FinTexture.Width, (int)Fin1.FinTexture.Height),
-                             null, Color.White, Fin1.Rotation, Fin1.Origin, SpriteEffects.None, (MaxY - 5) / 1080);
+                             null, Color, Fin1.Rotation, Fin1.Origin, SpriteEffects.None, (MaxY - 5) / 1080);
 
             spriteBatch.Draw(Fin2.FinTexture,
                              new Rectangle(
                                  (int)Fin2.Position.X, (int)Fin2.Position.Y,
                                  (int)Fin2.FinTexture.Width, (int)Fin2.FinTexture.Height),
-                             null, Color.White, Fin2.Rotation, Fin2.Origin, SpriteEffects.FlipVertically, (MaxY - 5) / 1080);
+                             null, Color, Fin2.Rotation, Fin2.Origin, SpriteEffects.FlipVertically, (MaxY - 5) / 1080);
 
             //spriteBatch.Draw(Fin3.FinTexture,
             //                 new Rectangle(

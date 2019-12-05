@@ -117,12 +117,12 @@ namespace TowerDefensePrototype
             }
         }
 
-        public override void Draw(SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, BasicEffect basicEffect)
+        public override void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(BarrelAnimation.Texture, BarrelDestinationRectangle, BarrelAnimation.SourceRectangle,
                              Color, CurrentAngle, BarrelPivot, SpriteEffects.None, DrawDepth-0.001f);
 
-            base.Draw(spriteBatch, graphicsDevice, basicEffect);
+            base.Draw(spriteBatch);
         }
     }
 }

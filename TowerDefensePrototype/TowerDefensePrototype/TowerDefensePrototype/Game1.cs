@@ -103,9 +103,10 @@ namespace TowerDefensePrototype
         GraphicsDeviceManager graphics;
         ContentManager SecondaryContent;
         SpriteBatch spriteBatch, targetBatch;
-        RenderTarget2D GameRenderTarget, MenuRenderTarget, UIRenderTarget;
+        RenderTarget2D GameRenderTarget1, GameRenderTarget2, GameRenderTarget3;
+        RenderTarget2D MenuRenderTarget, UIRenderTarget;
         RenderTarget2D ShaderTarget1, ShaderTarget2;
-        RenderTarget2D CrepuscularMap;
+        RenderTarget2D CrepuscularMap, LightMap;
         Texture2D ScreenTex;
         
         string Error = "";
@@ -345,7 +346,6 @@ namespace TowerDefensePrototype
         TextInput NameInput;
         DialogBox ExitDialog, DeleteProfileDialog, MainMenuDialog, ProfileMenuDialog, NoWeaponsDialog, NameLengthDialog;
         Tooltip InGameInformation;
-        Camera Camera;
         public StackedUpgrade StackedUpgrade = new StackedUpgrade();
         Level CurrentLevel;
         Wave CurrentWave = null;
@@ -398,8 +398,11 @@ namespace TowerDefensePrototype
         List<Emitter> GasEmitterList = new List<Emitter>();
 
         List<SoundEffectInstance> LevelAmbience = new List<SoundEffectInstance>();
+        DepthStencilState dsState = new DepthStencilState() { StencilEnable = false, DepthBufferEnable = true, DepthBufferWriteEnable = true };
+        Texture2D JetTexture, LightTexture, BaseLightTexture;
+        BlendState Multiply = new BlendState() { ColorSourceBlend = Blend.DestinationColor, AlphaSourceBlend = Blend.DestinationAlpha };
 
-        Texture2D JetTexture;
+        Effect DrawBlack;
         public Game1()
         {
             DefaultSettings = new Settings
@@ -468,7 +471,6 @@ namespace TowerDefensePrototype
             ProfileManagementState = ProfileManagementState.Loadout;
             ContainerName = "Profiles";
             TrapLimit = 8;
-            Camera = new Camera();
             Tower = new Tower("Tower", new Vector2(100, 500), 350, 120, 3, 5000);
             TowerButtons = (int)Tower.Slots;
             ScreenRectangle = new Rectangle(-256, -256, 1920 + 256, 1080 + 256);
@@ -690,10 +692,10 @@ namespace TowerDefensePrototype
             CursorPosition.Y = worldMouse.Y;
             #endregion
 
+            #region Draw menus
             GraphicsDevice.SetRenderTarget(MenuRenderTarget);
             GraphicsDevice.Clear(Color.Transparent);
-            #region Draw menus
-            
+
             if (GameState != GameState.Playing)
             {
                 spriteBatch.Begin();
@@ -910,19 +912,15 @@ namespace TowerDefensePrototype
             }
             #endregion
 
-            //This line is to stop the "unexpected error has occurred" bug
-            if (GameState != GameState.Loading)
-            {
-                GraphicsDevice.SetRenderTarget(GameRenderTarget);
-                GraphicsDevice.Clear(Color.Transparent);
+            #region Draw actual game
+            GraphicsDevice.SetRenderTarget(GameRenderTarget1);
+            GraphicsDevice.Clear(Color.Transparent);
 
-                #region Draw things in game that SHOULD be shaken - Non-diegetic elements
+            #region Draw the background type stuff - ground, tower, sky, snow etc.
                 if (GameState == GameState.Playing || GameState == GameState.Paused || GameState == GameState.Victory && IsLoading == false)
                 {
-                    spriteBatch.Begin(SpriteSortMode.Deferred,
-                                      BlendState.AlphaBlend,
-                                      null, null, null, null,
-                                      Camera.Transformation(GraphicsDevice));
+                    spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend,
+                                      null, null, null, null);
 
                     SkyBackground.Draw(spriteBatch);
                     Ground.Draw(spriteBatch);
@@ -947,13 +945,12 @@ namespace TowerDefensePrototype
                 }
                 #endregion
 
-                #region Draw stuff that SHOULD be shaken with ADDITIVE blending
+            #region Draw additive emitter behind the invaders
                 if (GameState == GameState.Playing || GameState == GameState.Paused || GameState == GameState.Victory && IsLoading == false)
                 {
                     spriteBatch.Begin(SpriteSortMode.Immediate,
                                       BlendState.Additive,
-                                      null, null, null, null,
-                                      Camera.Transformation(GraphicsDevice));
+                                      null, null, null, null);
 
                     foreach (Emitter emitter in AlphaEmitterList)
                     {
@@ -964,7 +961,10 @@ namespace TowerDefensePrototype
                 }
                 #endregion
 
-                #region Draw things sorted according to their Y value - To create depth illusion... Also can be shaken
+
+            GraphicsDevice.SetRenderTarget(GameRenderTarget2);
+            GraphicsDevice.Clear(Color.Transparent);
+            #region Draw things sorted according to their Y value - To create depth illusion
                 //This second spritebatch sorts everthing Back to Front, 
                 //to make sure that the invaders are drawn correctly according to their Y value
                 if (GameState == GameState.Playing || GameState == GameState.Paused || GameState == GameState.Victory && IsLoading == false)
@@ -972,8 +972,7 @@ namespace TowerDefensePrototype
                     spriteBatch.Begin(
                         SpriteSortMode.FrontToBack,
                         BlendState.AlphaBlend,
-                        null, null, null, null,
-                        Camera.Transformation(GraphicsDevice));
+                        null, null, null, null);
 
                     if (PowerupDelivery != null)
                     {
@@ -996,11 +995,6 @@ namespace TowerDefensePrototype
                         emitter.Draw(spriteBatch);
                     }
 
-                    foreach (GrassBlade blade in GrassBladeList)
-                    {
-                        blade.Draw(spriteBatch);
-                    }
-
                     #region Draw turrets
                     foreach (Turret turret in TurretList)
                     {
@@ -1011,12 +1005,10 @@ namespace TowerDefensePrototype
                     }
                     #endregion
 
-                    GraphicsDevice.BlendState = BlendState.AlphaBlend;
-
                     #region Draw invaders
                     foreach (Invader invader in InvaderList)
                     {
-                        invader.Draw(spriteBatch, GraphicsDevice, QuadEffect);
+                        invader.Draw(spriteBatch);
                     }
                     #endregion
 
@@ -1057,7 +1049,110 @@ namespace TowerDefensePrototype
                 }
                 #endregion
 
-                #region Draw with additive blending - Makes stuff look glowy
+            GraphicsDevice.SetRenderTarget(LightMap);
+            GraphicsDevice.Clear(Color.Black);
+
+            #region DrawBlack
+            //This second spritebatch sorts everthing Back to Front, 
+            //to make sure that the invaders are drawn correctly according to their Y value
+            if (GameState == GameState.Playing || GameState == GameState.Paused || GameState == GameState.Victory && IsLoading == false)
+            {
+                spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearClamp, dsState, RasterizerState.CullCounterClockwise, DrawBlack);
+                //GraphicsDevice.DepthStencilState = new DepthStencilState() { DepthBufferEnable = true, DepthBufferWriteEnable = false };
+
+
+                //DrawBlack.Parameters["diff"].SetValue(1);
+                ////GraphicsDevice.DepthStencilState = new DepthStencilState { DepthBufferEnable = true, DepthBufferWriteEnable = false, StencilDepthBufferFail = StencilOperation.Invert };
+                ////GraphicsDevice.DepthStencilState = dsState;
+                //GraphicsDevice.BlendState = BlendState.AlphaBlend;
+
+                //if (PowerupDelivery != null)
+                //{
+                //    PowerupDelivery.Draw(spriteBatch);
+                //}
+
+                //foreach (Particle shellCasing in ShellCasingList)
+                //{
+                //    shellCasing.Draw(spriteBatch);
+                //}
+
+                //foreach (ShellCasing shell in VerletShells)
+                //{
+                //    shell.Draw(spriteBatch);
+                //}
+
+                //foreach (Emitter emitter in YSortedEmitterList)
+                //{
+                //    emitter.Draw(spriteBatch);
+                //}
+
+                //#region Draw turrets
+                //foreach (Turret turret in TurretList)
+                //{
+                //    if (turret != null && turret.Active == true)
+                //    {
+                //        turret.Draw(spriteBatch);
+                //    }
+                //}
+                //#endregion
+
+                //#region Draw invaders
+                //foreach (Invader invader in InvaderList)
+                //{
+                //    invader.Draw(spriteBatch);
+                //}
+                //#endregion
+
+                //#region Draw traps
+                //foreach (Trap trap in TrapList)
+                //{
+                //    trap.Draw(spriteBatch);
+                //}
+                //#endregion
+
+                //#region Draw heavy projectiles
+                //foreach (HeavyProjectile heavyProjectile in HeavyProjectileList)
+                //{
+                //    if (heavyProjectile.HeavyProjectileType != HeavyProjectileType.FelProjectile)
+                //    {
+                //        heavyProjectile.Draw(spriteBatch);
+                //    }
+                //}
+
+                //foreach (HeavyProjectile heavyProjectile in InvaderHeavyProjectileList)
+                //{
+                //    heavyProjectile.Draw(spriteBatch);
+                //}
+
+                //foreach (TimerHeavyProjectile timedProjectile in TimedProjectileList)
+                //{
+                //    timedProjectile.Draw(spriteBatch);
+                //}
+                //#endregion
+
+                //if (CurrentSpecialAbility != null)
+                //    CurrentSpecialAbility.Draw(spriteBatch);
+
+                
+
+                GraphicsDevice.BlendState = BlendState.Additive;
+                DrawBlack.Parameters["diff"].SetValue(0);
+                foreach (Light light in LightList)
+                {
+                    light.Draw(spriteBatch);
+                }
+
+                //DrawBlack.Parameters["diff"].SetValue(0);
+                //GraphicsDevice.BlendState = BlendState.Additive;
+                spriteBatch.Draw(BaseLightTexture, new Rectangle(0, 0, 1920, 1080), null, Color.White, 0, Vector2.Zero, SpriteEffects.FlipHorizontally, 1);
+
+                spriteBatch.End();
+            }
+            #endregion
+
+            GraphicsDevice.SetRenderTarget(GameRenderTarget3);
+            GraphicsDevice.Clear(Color.Transparent);
+            #region Draw with additive blending - Makes stuff look glowy
                 if (GameState == GameState.Playing || GameState == GameState.Paused || GameState == GameState.Victory && IsLoading == false)
                 {
                     spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, null, null, null, null);
@@ -1113,19 +1208,20 @@ namespace TowerDefensePrototype
                 }
                 #endregion
 
-                #region Draw stuff that on top of the game (Not UI) that isn't additive blended and not y-sorted
+            #region Draw weather on top of invaders
                 spriteBatch.Begin(SpriteSortMode.Texture, BlendState.AlphaBlend);
-                //if (GameState == GameState.Playing || GameState == GameState.Paused || GameState == GameState.Victory && IsLoading == false)
-                //{
-                //  foreach (StaticSprite weatherSprite in WeatherSpriteList)
-                //    {
-                //        weatherSprite.Draw(spriteBatch);
-                //    }
-                //}
+                if (GameState == GameState.Playing || GameState == GameState.Paused || GameState == GameState.Victory && IsLoading == false)
+                {
+                  foreach (StaticSprite weatherSprite in WeatherSpriteList)
+                    {
+                        weatherSprite.Draw(spriteBatch);
+                    }
+                }
                 spriteBatch.End();
-                #endregion
-            }
+                #endregion            
+            #endregion
 
+            #region Draw UI
             GraphicsDevice.SetRenderTarget(UIRenderTarget);
             GraphicsDevice.Clear(Color.Transparent);
 
@@ -1402,59 +1498,66 @@ namespace TowerDefensePrototype
             }
             #endregion
             #endregion
+            #endregion
 
-            ScreenTex = GameRenderTarget;
+            //#region Apply pixel shaders to game world
+            ////Layer up all the shaders that need to be applied to the game world - Not including the interface
+            //ScreenTex = GameRenderTarget;
 
-            #region Draw the crepusuclar rays
-            //GraphicsDevice.SetRenderTarget(CrepuscularMap);
-            //GraphicsDevice.Clear(Color.Black);
-
-            //if (GameState == GameState.Playing || GameState == GameState.Paused || GameState == GameState.Victory && IsLoading == false)
+            //if (GameState == GameState.Playing || GameState == GameState.Paused)
             //{
-            //    spriteBatch.Begin();
-            //    spriteBatch.Draw(FlareMap1, new Rectangle(0, 0, 1920, 1080), Color.White);
-            //    spriteBatch.Draw(GameRenderTarget, new Rectangle(0, 0, 1920, 1080), Color.Black);
-            //    spriteBatch.End();
+            //    ShieldBubbleEffect.Parameters["ScreenTexture"].SetValue(GameRenderTarget);
+            //    ShockWaveEffect.Parameters["ScreenTexture"].SetValue(GameRenderTarget);
+
+            //    if (Tower.CurrentShield > 0)
+            //    {
+            //        ScreenTex = HandleShaders(GameRenderTarget
+            //                                  , ShockWaveEffect.CurrentTechnique.Passes[0]
+            //                                  //, ShieldBubbleEffect.CurrentTechnique.Passes[0]
+            //                                  );
+            //    }
+            //    else
+            //    {
+            //        ScreenTex = HandleShaders(GameRenderTarget
+            //                                  , ShockWaveEffect.CurrentTechnique.Passes[0]
+            //                                  );
+            //    }
             //}
-            #endregion
-
-            #region Apply pixel shaders to game world
-            //Layer up all the shaders that need to be applied to the game world - Not including the interface
-            if (GameState == GameState.Playing || GameState == GameState.Paused)
-            {
-                ShieldBubbleEffect.Parameters["ScreenTexture"].SetValue(GameRenderTarget);
-                ShockWaveEffect.Parameters["ScreenTexture"].SetValue(GameRenderTarget);
-
-                if (Tower.CurrentShield > 0)
-                {
-                    ScreenTex = HandleShaders(GameRenderTarget
-                                              , ShockWaveEffect.CurrentTechnique.Passes[0]
-                                              //, ShieldBubbleEffect.CurrentTechnique.Passes[0]
-                                              );
-                }
-                else
-                {
-                    ScreenTex = HandleShaders(GameRenderTarget
-                                              , ShockWaveEffect.CurrentTechnique.Passes[0]
-                                              );
-                }
-            }
-            #endregion
-
+            //#endregion
             
+            #region Draw everything to the backbuffer
             GraphicsDevice.SetRenderTarget(null);
             GraphicsDevice.Clear(Color.Black);
+
             #region DRAW ACTUAL GAME
             if (GameState == GameState.Playing || GameState == GameState.Paused || GameState == GameState.Victory)
             {
-                if (ScreenTex != null)
+                //if (ScreenTex != null)
                 {
                     //CrepuscularEffect.Parameters["ColorMap"].SetValue(ScreenTex);
-                    targetBatch.Begin(SpriteSortMode.Texture, BlendState.AlphaBlend, null, null, null, null);
+                    targetBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, null, null);
                     //CrepuscularEffect.CurrentTechnique.Passes[0].Apply();
-                    targetBatch.Draw(ScreenTex, new Rectangle(0, (int)(ActualResolution.Y - CurrentSettings.ResHeight) / 2,
+
+
+
+                    targetBatch.Draw(GameRenderTarget1, new Rectangle(0, (int)(ActualResolution.Y - CurrentSettings.ResHeight) / 2,
                                      CurrentSettings.ResWidth, CurrentSettings.ResHeight), null, Color.White, 0, Vector2.Zero,
-                                     SpriteEffects.None, 0);
+                                     SpriteEffects.None, 1f);
+
+                    targetBatch.Draw(GameRenderTarget2, new Rectangle(0, (int)(ActualResolution.Y - CurrentSettings.ResHeight) / 2,
+                                     CurrentSettings.ResWidth, CurrentSettings.ResHeight), null, Color.White, 0, Vector2.Zero,
+                                     SpriteEffects.None, 0.5f);
+
+                    targetBatch.GraphicsDevice.BlendState = Multiply;
+                    targetBatch.Draw(LightMap, new Rectangle(0, (int)(ActualResolution.Y - CurrentSettings.ResHeight) / 2,
+                    CurrentSettings.ResWidth, CurrentSettings.ResHeight), null, Color.White, 0, Vector2.Zero,
+                    SpriteEffects.None, 1f);
+
+                    targetBatch.GraphicsDevice.BlendState = BlendState.Additive;
+                    targetBatch.Draw(GameRenderTarget3, new Rectangle(0, (int)(ActualResolution.Y - CurrentSettings.ResHeight) / 2,
+                                     CurrentSettings.ResWidth, CurrentSettings.ResHeight), null, Color.White, 0, Vector2.Zero,
+                                     SpriteEffects.None, 1);
+
                     targetBatch.DrawString(DefaultFont, Error, new Vector2(100, 100), Color.Red);
                     targetBatch.End();
                 }
@@ -1492,7 +1595,7 @@ namespace TowerDefensePrototype
                 targetBatch.End();
             }
             #endregion
-
+            #endregion
             base.Draw(gameTime);
         }
 
@@ -1808,8 +1911,9 @@ namespace TowerDefensePrototype
                     }
                 }
 
+                LightList.RemoveAll(Light => Light.TrapAnchor != null && Light.TrapAnchor.Active == false);
                 TrapList.RemoveAll(Trap => Trap.Active == false);
-
+                
                 //for (int i = 0; i < TrapList.Count; i++)
                 //{
                 //    if (TrapList[i].Active == false)
@@ -2003,6 +2107,9 @@ namespace TowerDefensePrototype
                 }
                 #endregion
 
+
+                LightList = LightList.OrderBy(Light => Light.DrawDepth).ToList();                
+                
                 //Powerups have to be applied before the invaders are updates and after the explosions and projectiles are updated
                 //Create explosions/projectiles
                 //Powerup explosions/projectiles
@@ -2032,7 +2139,11 @@ namespace TowerDefensePrototype
             spriteBatch = new SpriteBatch(GraphicsDevice);
             targetBatch = new SpriteBatch(GraphicsDevice);
 
-            GameRenderTarget = new RenderTarget2D(GraphicsDevice, 1920, 1080);
+            GameRenderTarget1 = new RenderTarget2D(GraphicsDevice, 1920, 1080);
+            GameRenderTarget2 = new RenderTarget2D(GraphicsDevice, 1920, 1080);
+            GameRenderTarget3 = new RenderTarget2D(GraphicsDevice, 1920, 1080);
+            LightMap = new RenderTarget2D(GraphicsDevice, 1920, 1080, false, SurfaceFormat.Rgba64, DepthFormat.Depth24Stencil8, 8, RenderTargetUsage.PreserveContents);
+
             CrepuscularMap = new RenderTarget2D(GraphicsDevice, 1920, 1080);
 
             UIRenderTarget = new RenderTarget2D(GraphicsDevice, 1920, 1080, 
@@ -2132,13 +2243,16 @@ namespace TowerDefensePrototype
             //MenuMusicInstance.Play();
             #endregion
 
-            Projection = Matrix.CreateOrthographicOffCenter(0, 1920, 1080, 0, 0, 1);
+            Projection = Matrix.CreateOrthographicOffCenter(0, 1920, 1080, 0, -1.0f, 1.0f);
 
             BackgroundEffect = SecondaryContent.Load<Effect>("Shaders/BackgroundEffect");
             BackgroundEffect.Parameters["MatrixTransform"].SetValue(Projection);
 
             ButtonBlurEffect = SecondaryContent.Load<Effect>("Shaders/ButtonBlurEffect");
             ButtonBlurEffect.Parameters["MatrixTransform"].SetValue(Projection);
+
+            DrawBlack = SecondaryContent.Load<Effect>("Shaders/DrawBlack");
+            DrawBlack.Parameters["MatrixTransform"].SetValue(Projection);
 
             FPSCounter.spriteFont = DefaultFont;
         }
@@ -2379,7 +2493,18 @@ namespace TowerDefensePrototype
                 PowerupDeliveryFin = Content.Load<Texture2D>("PowerupDeliveryFin");
 
                 JetTexture = Content.Load<Texture2D>("JetSprite3");
+                LightTexture = Content.Load<Texture2D>("SmallLight");
+                BaseLightTexture = Content.Load<Texture2D>("BaseLight");
 
+                //LightList.Add(new Light(LightTexture, new Vector2(900, 800), new Vector2(1, 1), Color.White));
+
+                //Light baseLight = new Light(BaseLightTexture, new Vector2(1920/2, 1080/2), new Vector2(1, 1), Color.Lerp(Color.White, Color.Transparent, 0.5f));
+                //baseLight.DrawDepth = 0f;
+                //LightList.Add(baseLight);
+               
+                
+                //LightList.Add(baseLight);
+                
                 //for (int i = 0; i < 15; i++)
                 //{
                 //    Vector2 newPos = new Vector2(Random.Next(0, 1920), Random.Next(690, 930));
@@ -8463,6 +8588,10 @@ namespace TowerDefensePrototype
                         NewTrap.TrapEmitterList.Add(SmokeEmitter);
                         NewTrap.TrapEmitterList.Add(FireEmitter);
                         NewTrap.TrapEmitterList.Add(SparkEmitter);
+
+                        LightList.Add(new Light(LightTexture, 
+                            new Vector2(PointToVector(NewTrap.DestinationRectangle.Center).X, NewTrap.DestinationRectangle.Bottom - 8), 
+                            new Vector2(1.5f, 0.75f), Color.Orange, NewTrap.DestinationRectangle.Bottom/1080f, NewTrap));
                     }
                     break;
                 #endregion

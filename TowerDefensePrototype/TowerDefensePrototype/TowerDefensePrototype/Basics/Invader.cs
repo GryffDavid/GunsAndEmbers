@@ -324,7 +324,7 @@ namespace TowerDefensePrototype
                 //}
 
                 Bottom = DestinationRectangle.Bottom;
-                DrawDepth = Bottom / 1080;
+                DrawDepth = Bottom / 1080.0f;
 
                 PreviousInvaderState = CurrentInvaderState;
 
@@ -335,7 +335,7 @@ namespace TowerDefensePrototype
             }
         }
 
-        public virtual void Draw(SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, BasicEffect basicEffect)
+        public virtual void Draw(SpriteBatch spriteBatch)
         {
             if (Active == true)
             {
