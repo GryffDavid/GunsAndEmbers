@@ -13,7 +13,7 @@ namespace TowerDefensePrototype
         public string AssetName;
         public Texture2D Texture;
         public Rectangle DestinationRectangle;
-        public Vector2 Position, MoveVector, ResourceMinMax;
+        public Vector2 Position, MoveVector, ResourceMinMax, Velocity;
         public bool Active, CanMove, VulnerableToTurret, VulnerableToTrap, CanAttack;
         public Color Color;
         public BoundingBox BoundingBox;
@@ -21,7 +21,9 @@ namespace TowerDefensePrototype
         public int MaxHP, CurrentHP, ResourceValue;
         HorizontalBar HPBar;
         public abstract void TrapDamage(TrapType trapType);
+        public int AttackPower;
         public Random Random;
+        public float Gravity;
 
         public void LoadContent(ContentManager contentManager)
         {            
@@ -62,7 +64,16 @@ namespace TowerDefensePrototype
                     CanAttack = false;
                 }
 
-                HPBar.Update(new Vector2(Position.X, Position.Y - 16), CurrentHP);
+                HPBar.Update(new Vector2(Position.X, Position.Y - 16), CurrentHP);                
+
+                Position += Velocity;
+
+                Velocity.Y += Gravity;
+
+                if (CanMove == false)
+                {
+
+                }
             }
         }
 
@@ -85,6 +96,11 @@ namespace TowerDefensePrototype
                 if (VulnerableToTurret == true)
                     CurrentHP += change;
             }
+        }
+
+        public void Trajectory(Vector2 velocity)
+        {
+            Velocity = velocity;
         }
                
         public void Move()

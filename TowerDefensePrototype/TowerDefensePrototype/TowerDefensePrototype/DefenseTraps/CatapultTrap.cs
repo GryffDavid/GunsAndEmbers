@@ -8,8 +8,16 @@ using Microsoft.Xna.Framework.Content;
 
 namespace TowerDefensePrototype
 {
-    class CatapultTrap
+    class CatapultTrap : Trap
     {
-
+        public CatapultTrap(Vector2 position)
+        {
+            Position = position;
+            Solid = false;
+            AssetName = "FireTrap";
+            CurrentHP = 50;
+            TrapType = TrapType.Catapult;
+            DetonateDelay = 10000;
+        }
     }
 }

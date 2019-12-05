@@ -12,15 +12,27 @@ namespace TowerDefensePrototype
     {
         Texture2D Texture;
         string AssetName;
-        public Vector2 Position, Scale;
+        public Vector2 Position, Scale, Move;
         Color Color;
         Rectangle DestinationRectangle;
         public BoundingBox BoundingBox;
+        public bool VerticalLooping, HorizontalLooping;
+        public double CurrentTime, UpdateDelay;
 
-        public StaticSprite(string assetName, Vector2 position, Vector2? scale = null, Color? color = null)
+        public StaticSprite(string assetName, Vector2 position, Vector2? scale = null, Color? color = null, Vector2? move = null, bool? horizontalLooping = null, bool? verticalLooping = null, double? updateDelay = null)
         {
             AssetName = assetName;
             Position = position;
+
+            if (horizontalLooping == null)
+                HorizontalLooping = false;
+            else
+                HorizontalLooping = horizontalLooping.Value;
+
+            if (verticalLooping == null)
+                VerticalLooping = false;
+            else
+                VerticalLooping = verticalLooping.Value;
 
             if (scale == null)
                 Scale = new Vector2(1, 1);
@@ -30,12 +42,55 @@ namespace TowerDefensePrototype
             if (color == null)
                 Color = Color.White;
             else
-                Color = color.Value;           
+                Color = color.Value;
+
+            if (move == null)
+                Move = Vector2.Zero;
+            else
+                Move = move.Value;
+
+            if (updateDelay == null)
+                UpdateDelay = 1;
+            else
+                UpdateDelay = updateDelay.Value;
         }
 
         public void LoadContent(ContentManager contentManager)
         {
             Texture = contentManager.Load<Texture2D>(AssetName);
+        }
+
+        public void Update(GameTime gameTime)
+        {
+            CurrentTime += gameTime.ElapsedGameTime.TotalMilliseconds;
+
+            if (CurrentTime > UpdateDelay)
+            {
+
+                if (HorizontalLooping == true && DestinationRectangle.Left > 1280 && Move.X > 0)
+                {
+                    Position.X = 0 - DestinationRectangle.Width;
+                }
+
+                if (HorizontalLooping == true && DestinationRectangle.Right < 0 && Move.X < 0)
+                {
+                    Position.X = 1280;
+                }
+
+                if (VerticalLooping == true && DestinationRectangle.Top > 720 && Move.Y > 0)
+                {
+                    Position.Y = 0 - DestinationRectangle.Height;
+                }
+
+                if (VerticalLooping == true && DestinationRectangle.Bottom < 0 && Move.Y < 0)
+                {
+                    Position.Y = 720;
+                }
+
+                Position += Move;
+
+                CurrentTime = 0;
+            }
         }
 
         public void Draw(SpriteBatch spriteBatch)

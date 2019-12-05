@@ -23,6 +23,7 @@ namespace TowerDefensePrototype
             ResourceMinMax = new Vector2(1, 5);
             CurrentAttackDelay = 0;
             AttackDelay = 1500;
+            AttackPower = 4;
         }
 
         public override void Update(GameTime gameTime)
@@ -41,7 +42,11 @@ namespace TowerDefensePrototype
                         break;
 
                     case TrapType.Spikes:
-                        CurrentHP -= 25;
+                        CurrentHP -= 10;
+                        break;
+
+                    case TrapType.Catapult:
+                        Trajectory(new Vector2(5, -10));
                         break;
                 }
             }

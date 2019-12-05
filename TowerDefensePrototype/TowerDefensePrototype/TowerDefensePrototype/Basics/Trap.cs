@@ -27,6 +27,7 @@ namespace TowerDefensePrototype
             Texture = contentManager.Load<Texture2D>(AssetName);
             BoundingBox = new BoundingBox(new Vector3((int)Position.X, (int)Position.Y, 0), new Vector3((int)Position.X + Texture.Width, (int)Position.Y - Texture.Height, 0));
             DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y - Texture.Height, (int)(Texture.Width), (int)(Texture.Height));
+            CurrentDetonateDelay = DetonateDelay;
         }
 
         public virtual void Update(GameTime gameTime)
@@ -35,8 +36,7 @@ namespace TowerDefensePrototype
 
             if (CurrentDetonateDelay >= DetonateDelay)
             {
-                CanTrigger = true;
-                CurrentDetonateDelay = 0;
+                CanTrigger = true;                
             }
             else
             {

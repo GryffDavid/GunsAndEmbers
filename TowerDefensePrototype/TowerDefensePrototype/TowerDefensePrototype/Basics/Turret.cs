@@ -14,6 +14,7 @@ namespace TowerDefensePrototype
         public String TurretAsset, BaseAsset;
         public Texture2D TurretBase, TurretBarrel, Line;
         public Vector2 Direction, Position, MousePosition;
+        public Vector2 BarrelPivot, BasePivot;
         public Rectangle BaseRectangle, BarrelRectangle;
         MouseState CurrentMouseState, PreviousMouseState;
         public float Rotation;
@@ -24,7 +25,6 @@ namespace TowerDefensePrototype
         public Random Random;
         public Vector2 FireDirection;
         public float FireRotation;
-        public Projectile Projectile;
         public TurretType TurretType;
 
         public double ElapsedTime = 0;
@@ -42,7 +42,6 @@ namespace TowerDefensePrototype
                 TurretBase = contentManager.Load<Texture2D>(BaseAsset);
                 TurretBarrel = contentManager.Load<Texture2D>(TurretAsset);
             }
-
             //Line = contentManager.Load<Texture2D>("Projectile");
         }
 
@@ -129,11 +128,6 @@ namespace TowerDefensePrototype
         public virtual void Draw(SpriteBatch spriteBatch)
         {
 
-        }
-
-        public virtual Projectile Shoot()
-        {
-            return Projectile;
         }
     }
 }
