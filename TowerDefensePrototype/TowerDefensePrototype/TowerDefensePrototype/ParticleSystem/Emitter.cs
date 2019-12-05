@@ -26,6 +26,8 @@ namespace TowerDefensePrototype
         public SpriteEffects Orientation = SpriteEffects.None;
         public Invader Anchor;
 
+       
+
         public Emitter(String textureName, Vector2 position, Vector2 angleRange, Vector2 speedRange, Vector2 hpRange,
             float startingTransparency, bool fade, Vector2 startingRotationRange, Vector2 rotationIncrement, Vector2 scaleRange,
             Color startColor, Color endColor, float gravity, float activeSeconds, float interval, int burst, bool canBounce,
@@ -277,7 +279,7 @@ namespace TowerDefensePrototype
                 {
                     CurrentTime += gameTime.ElapsedGameTime.TotalMilliseconds;
 
-                    if (CurrentTime > ActiveSeconds*1000)
+                    if (CurrentTime > ActiveSeconds * 1000)
                     {
                         AddMore = false;
                     }
@@ -291,7 +293,7 @@ namespace TowerDefensePrototype
 
                     if (PercentageThrough >= 50)
                         Interval = StartingInterval + (Interval / 100 * PercentageThrough);
-                    
+
                 }
 
                 if (EmitterSpeed != 0)
@@ -422,6 +424,7 @@ namespace TowerDefensePrototype
             {
                 particle.Update(gameTime);
             }
+            
         }
 
         public void Draw(SpriteBatch spriteBatch)
