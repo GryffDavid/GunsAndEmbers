@@ -33,11 +33,11 @@ namespace TowerDefensePrototype
         SpriteBatch spriteBatch;
 
         //XNA Declarations
-        Texture2D BlankTexture, HUDBarTexture, ShellCasing, BigShellCasing, PauseMenuBackground, HealthBarSprite, ShieldBarSprite;
+        Texture2D BlankTexture, HUDBarTexture, ShellCasing, Coin, BigShellCasing, PauseMenuBackground, HealthBarSprite, ShieldBarSprite;
 
         Texture2D DefaultCursor, CrosshairCursor, FireCursor, WallCursor, SpikesCursor, BasicTurretCursor,
                   CannonTurretCursor, FlameThrowerCursor, CurrentCursorTexture, PrimaryCursorTexture,
-                  SawbladeCursor;
+                  SawbladeCursor, IceCursor;
         Vector2 CursorPosition, GroundCollisionPoint;
         Rectangle ScreenRectangle;
         SpriteFont ResourceFont;
@@ -65,30 +65,28 @@ namespace TowerDefensePrototype
                      ProfileButtonList, ProfileDeleteList, UpgradesButtonList;
 
         List<List<Button>> ChooseWeaponList;
+        List<Button> ChooseWeaponSlots;
 
-        List<Trap> TrapList;// = new List<Trap>();
-        List<Turret> TurretList;// = new List<Turret>();
-        List<Invader> InvaderList;// = new List<Invader>();
+        List<Trap> TrapList;
+        List<Turret> TurretList;
+        List<Invader> InvaderList;
 
-        List<HeavyProjectile> HeavyProjectileList;// = new List<HeavyProjectile>();
-        List<HeavyProjectile> InvaderHeavyProjectileList;// = new List<HeavyProjectile>();
-        List<LightProjectile> LightProjectileList;// = new List<LightProjectile>();
-        List<TimerHeavyProjectile> TimedProjectileList;// = new List<TimerHeavyProjectile>();
+        List<HeavyProjectile> HeavyProjectileList, InvaderHeavyProjectileList;
+        List<LightProjectile> LightProjectileList;
+        List<TimerHeavyProjectile> TimedProjectileList;
 
-        List<Emitter> EmitterList;// = new List<Emitter>();
-        List<Emitter> EmitterList2;// = new List<Emitter>();
-        List<Particle> ShellCasingList;// = new List<Particle>();
+        List<Emitter> EmitterList, EmitterList2;
+        List<Particle> ShellCasingList, CoinList;
 
         List<string> MainMenuNameList, PauseMenuNameList, IconNameList, ProfileWeaponList;
 
-        List<Explosion> ExplosionList;// = new List<Explosion>();
-        List<Explosion> EnemyExplosionList;// = new List<Explosion>();
+        List<Explosion> ExplosionList, EnemyExplosionList;
 
         List<Upgrade> UpgradesList;
 
-        List<Wave> WaveList;// = new List<Wave>();
+        List<Wave> WaveList;
 
-        List<LightningBolt> LightningList;// = new List<LightningBolt>();
+        List<LightningBolt> LightningList;
         List<BulletTrail> TrailList;
         #endregion
 
@@ -99,8 +97,8 @@ namespace TowerDefensePrototype
         Tower Tower;
         StaticSprite Ground, TestBackground, ProfileMenuTitle, MainMenuBackground, SkyBackground, TextBox;
         AnimatedSprite LoadingAnimation;
-        Nullable<TrapType> SelectedTrap, ChosenTrap;
-        Nullable<TurretType> SelectedTurret, ChosenTurret;
+        Nullable<TrapType> SelectedTrap;
+        Nullable<TurretType> SelectedTurret;
         HorizontalBar TowerHealthBar;
         LightProjectile CurrentProjectile;
         Emitter DirtEmitter;      
@@ -229,6 +227,14 @@ namespace TowerDefensePrototype
                 ChooseWeaponList.Add(SubList);
             }
 
+            ChooseWeaponSlots = new List<Button>();
+            for (int i = 0; i < 10; i++)
+            {
+                Button button = new Button("Buttons/NewButton", new Vector2(64 + (80 * i), 360), null, null, null, "", "", null, null, true);
+                button.LoadContent(SecondaryContent);
+                ChooseWeaponSlots.Add(button);
+            }
+
             TextBox = new StaticSprite("Buttons/TextBox", new Vector2((1280 / 2) - 225, (720 / 2) - 50));
             TextBox.LoadContent(SecondaryContent);
 
@@ -260,6 +266,12 @@ namespace TowerDefensePrototype
 
             LoadingAnimation = new AnimatedSprite("LoadingAnimation", new Vector2(640 - 65, 320 - 65), new Vector2(131, 131), 17, 30, HalfWhite, Vector2.One, true);
             LoadingAnimation.LoadContent(SecondaryContent);
+
+            ProfileWeaponList = new List<string>();
+            for (int i = 0; i < 10; i++)
+            {
+                ProfileWeaponList.Add(null);
+            }
 
             IsLoading = false;
 
@@ -313,6 +325,12 @@ namespace TowerDefensePrototype
                         ShellCasingList.RemoveAt(i);
                 }
 
+                for (int i = 0; i < CoinList.Count; i++)
+                {
+                    if (CoinList[i].Active == false)
+                        CoinList.RemoveAt(i);
+                }
+
                 foreach (Emitter emitter in EmitterList2)
                 {
                     emitter.Update(gameTime);
@@ -323,7 +341,6 @@ namespace TowerDefensePrototype
                     if (EmitterList2[i].Active == false)
                         EmitterList2.RemoveAt(i);
                 }
-
 
                 foreach (Emitter emitter in EmitterList)
                 {
@@ -341,6 +358,11 @@ namespace TowerDefensePrototype
                 foreach (Particle shellCasing in ShellCasingList)
                 {
                     shellCasing.Update();
+                }
+
+                foreach (Particle coin in CoinList)
+                {
+                    coin.Update();
                 }
                 #endregion
 
@@ -497,7 +519,8 @@ namespace TowerDefensePrototype
                 //spriteBatch.DrawString(ProfileFont, "Level: " + CurrentProfile.LevelNumber.ToString(), new Vector2(500, 16), Color.White);
                 spriteBatch.DrawString(ButtonFont, "Points: " + CurrentProfile.Points.ToString(), new Vector2(640, 64), Color.White);
                 spriteBatch.DrawString(ButtonFont, "Shots: " + CurrentProfile.ShotsFired.ToString(), new Vector2(640, 128), Color.White);
-                spriteBatch.DrawString(ButtonFont, ChosenTurret.ToString(), new Vector2(0, 0), Color.Red);
+                spriteBatch.DrawString(ButtonFont, SelectedTurret.ToString(), new Vector2(0, 0), Color.Red);
+                spriteBatch.DrawString(ButtonFont, SelectedTrap.ToString(), new Vector2(0, 0), Color.Red);
                 foreach (Button button in UpgradesButtonList)
                 {
                     button.Draw(spriteBatch);
@@ -511,9 +534,13 @@ namespace TowerDefensePrototype
                     }
                 }
 
+                foreach (Button button in ChooseWeaponSlots)
+                {
+                    button.Draw(spriteBatch);
+                }
+
                 ProfileManagementPlay.Draw(spriteBatch);
-                ProfileManagementBack.Draw(spriteBatch);
-               
+                ProfileManagementBack.Draw(spriteBatch);               
             }
             #endregion
 
@@ -525,11 +552,13 @@ namespace TowerDefensePrototype
                 Ground.Draw(spriteBatch);
                 Tower.Draw(spriteBatch);
 
+                
+
                 #region Draw Traps, Invaders and Turrets
-                foreach (Invader invader in InvaderList)
-                {
-                    invader.Draw(spriteBatch);
-                }                
+                //foreach (Invader invader in InvaderList)
+                //{
+                //    invader.Draw(spriteBatch);
+                //}                
 
                 foreach (Turret turret in TurretList)
                 {
@@ -583,12 +612,6 @@ namespace TowerDefensePrototype
                 {
                     emitter.Draw(spriteBatch);
                 }
-
-                foreach (Particle shellCasing in ShellCasingList)
-                {
-                    shellCasing.Draw(spriteBatch);
-                }
-
 
                 spriteBatch.DrawString(HUDFont, HeavyProjectileList.Count.ToString(), new Vector2(10, 720-30), Color.White);
 
@@ -671,6 +694,28 @@ namespace TowerDefensePrototype
             UpgradeInformation.Draw(spriteBatch);
 
             spriteBatch.End();
+            #endregion                       
+
+            #region Draw the lightning with additive blending
+            spriteBatch.Begin(SpriteSortMode.Texture, BlendState.Additive);
+            if (GameState == GameState.Playing || GameState == GameState.Paused && IsLoading == false)
+            {
+                foreach (LightningBolt lightningBolt in LightningList)
+                {
+                    lightningBolt.Draw(spriteBatch);
+                }
+
+                foreach (BulletTrail trail in TrailList)
+                {
+                    trail.Draw(spriteBatch);
+                }
+
+                foreach (Particle coin in CoinList)
+                {
+                    coin.Draw(spriteBatch);
+                }
+            }
+            spriteBatch.End();
             #endregion
 
             #region Draw things sorted according to their Y value - To create depth illusion
@@ -679,10 +724,15 @@ namespace TowerDefensePrototype
             spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend);
 
             if (GameState == GameState.Playing && IsLoading == false)
-            {
+            {               
                 foreach (Invader invader in InvaderList)
                 {
                     invader.Draw(spriteBatch);
+                }
+
+                foreach (Particle shellCasing in ShellCasingList)
+                {
+                    shellCasing.Draw(spriteBatch);
                 }
 
                 foreach (Emitter emitter in EmitterList)
@@ -716,23 +766,6 @@ namespace TowerDefensePrototype
             spriteBatch.End();
             #endregion                            
 
-            #region Draw the lightning with additive blending
-            spriteBatch.Begin(SpriteSortMode.Texture, BlendState.Additive);
-            if (GameState == GameState.Playing || GameState == GameState.Paused && IsLoading == false)
-            {
-                foreach (LightningBolt lightningBolt in LightningList)
-                {
-                    lightningBolt.Draw(spriteBatch);
-                }
-
-                foreach (BulletTrail trail in TrailList)
-                {
-                    trail.Draw(spriteBatch);
-                }
-            }
-            spriteBatch.End();
-            #endregion
-
             double HealthValue;
             #region Health SpriteBatch
             if (GameState == GameState.Playing || GameState == GameState.Paused && IsLoading == false)
@@ -741,7 +774,7 @@ namespace TowerDefensePrototype
 
                 HealthBarEffect.Parameters["meterValue"].SetValue((float)HealthValue);
 
-                spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.NonPremultiplied, SamplerState.LinearWrap,
+                spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.Additive, SamplerState.LinearWrap,
                     DepthStencilState.None, RasterizerState.CullCounterClockwise, HealthBarEffect);
 
                 spriteBatch.Draw(HealthBarSprite, new Vector2(80, 80), null, Color.White, MathHelper.ToRadians(-90), new Vector2(HealthBarSprite.Width / 2, HealthBarSprite.Height / 2), 1f, SpriteEffects.None, 1);
@@ -758,7 +791,7 @@ namespace TowerDefensePrototype
 
                 HealthBarEffect.Parameters["meterValue"].SetValue((float)ShieldValue);
 
-                spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.NonPremultiplied, SamplerState.LinearWrap,
+                spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.Additive, SamplerState.LinearWrap,
                     DepthStencilState.None, RasterizerState.CullCounterClockwise, HealthBarEffect);
          
                 spriteBatch.Draw(ShieldBarSprite, new Vector2(80, 80), null, Color.White, MathHelper.ToRadians(90), new Vector2(HealthBarSprite.Width / 2, HealthBarSprite.Height / 2), 1f, SpriteEffects.None, 1);
@@ -832,6 +865,7 @@ namespace TowerDefensePrototype
             WallCursor = SecondaryContent.Load<Texture2D>("Icons/WallIcon");
             SpikesCursor = SecondaryContent.Load<Texture2D>("Icons/SpikesIcon");
             SawbladeCursor = SecondaryContent.Load<Texture2D>("Icons/SawbladeIcon");
+            IceCursor = SecondaryContent.Load<Texture2D>("Icons/SnowFlakeIcon");
 
             BasicTurretCursor = SecondaryContent.Load<Texture2D>("Icons/BasicTurretIcon2");
             CannonTurretCursor = SecondaryContent.Load<Texture2D>("Icons/CannonTurretIcon");
@@ -960,6 +994,7 @@ namespace TowerDefensePrototype
 
                 TowerHealthBar = new HorizontalBar(Content, new Vector2(220, 20), (int)Tower.MaxHP, (int)Tower.CurrentHP);                
                 ShellCasing = Content.Load<Texture2D>("Particles/Shell");
+                Coin = Content.Load<Texture2D>("Particles/Coin");
                 BigShellCasing = Content.Load<Texture2D>("Particles/BigShell");
                 ResourceFont = Content.Load<SpriteFont>("Fonts/ButtonFont");
 
@@ -1027,7 +1062,9 @@ namespace TowerDefensePrototype
                 EmitterList = new List<Emitter>();
                 EmitterList2 = new List<Emitter>();
                 ExplosionList = new List<Explosion>();
-                EnemyExplosionList = new List<Explosion>(); ShellCasingList = new List<Particle>();
+                EnemyExplosionList = new List<Explosion>(); 
+                ShellCasingList = new List<Particle>();
+                CoinList = new List<Particle>();
                 WaveList = new List<Wave>();
                 #endregion
 
@@ -1318,45 +1355,50 @@ namespace TowerDefensePrototype
 
                     switch (Index)
                     {
-                        case 0:
+                        default:
                             CheckLayout();
                             ReadyToPlace = true;
                             break;
 
-                        case 1:
-                            CheckLayout();
-                            ReadyToPlace = true;
-                            break;
+                        //case 1:
+                        //    CheckLayout();
+                        //    ReadyToPlace = true;
+                        //    break;
 
-                        case 2:
-                            CheckLayout();
-                            ReadyToPlace = true;
-                            break;
+                        //case 2:
+                        //    CheckLayout();
+                        //    ReadyToPlace = true;
+                        //    break;
 
-                        case 3:
-                            CheckLayout();
-                            ReadyToPlace = true;
-                            break;
+                        //case 3:
+                        //    CheckLayout();
+                        //    ReadyToPlace = true;
+                        //    break;
 
-                        case 4:
-                            CheckLayout();
-                            ReadyToPlace = true;
-                            break;
+                        //case 4:
+                        //    CheckLayout();
+                        //    ReadyToPlace = true;
+                        //    break;
 
-                        case 5:
-                            CheckLayout();
-                            ReadyToPlace = true;
-                            break;
+                        //case 5:
+                        //    CheckLayout();
+                        //    ReadyToPlace = true;
+                        //    break;
 
-                        case 6:
-                            CheckLayout();
-                            ReadyToPlace = true;
-                            break;
+                        //case 6:
+                        //    CheckLayout();
+                        //    ReadyToPlace = true;
+                        //    break;
 
-                        case 7:
-                            CheckLayout();
-                            ReadyToPlace = true;
-                            break;
+                        //case 7:
+                        //    CheckLayout();
+                        //    ReadyToPlace = true;
+                        //    break;
+
+                        //case 7:
+                        //    CheckLayout();
+                        //    ReadyToPlace = true;
+                        //    break;
                     }
                 }
             }
@@ -1576,6 +1618,68 @@ namespace TowerDefensePrototype
                 ProfileManagementPlay.Update();
                 ProfileManagementBack.Update();
 
+                foreach (Button button in ChooseWeaponSlots)
+                {
+                    int index = ChooseWeaponSlots.IndexOf(button);
+
+                    button.Update();
+                    
+                    switch (ProfileWeaponList[index])
+                    {
+                        case "MachineGunTurret":
+                            ChooseWeaponSlots[index].IconName = "Icons/BasicTurretIcon2";
+                            ChooseWeaponSlots[index].LoadContent(SecondaryContent);
+                            break;
+                            
+                        case "CannonTurret":
+                            ChooseWeaponSlots[index].IconName = "Icons/CannonTurretIcon";
+                            ChooseWeaponSlots[index].LoadContent(SecondaryContent);
+                            break;
+
+                        case "IceTrap":
+                            ChooseWeaponSlots[index].IconName = "Icons/SnowFlakeIcon";
+                            ChooseWeaponSlots[index].LoadContent(SecondaryContent);
+                            break;
+                    }
+
+                    if (button.JustClicked == true)
+                    {
+                        switch (SelectedTurret)
+                        {
+                            case TurretType.MachineGun:
+                                ChooseWeaponSlots[index].IconName = "Icons/BasicTurretIcon2";
+                                ChooseWeaponSlots[index].LoadContent(SecondaryContent);
+                                ProfileWeaponList[index] = "MachineGunTurret";
+                                break;
+
+                            case TurretType.Cannon:
+                                ChooseWeaponSlots[index].IconName = "Icons/CannonTurretIcon";
+                                ChooseWeaponSlots[index].LoadContent(SecondaryContent);
+                                ProfileWeaponList[index] = "CannonTurret";
+                                break;
+                        }
+
+                        switch (SelectedTrap)
+                        {
+                            case TrapType.Fire:
+                                ChooseWeaponSlots[index].IconName = "Icons/Fire";
+                                ChooseWeaponSlots[index].LoadContent(SecondaryContent);
+                                ProfileWeaponList[index] = "IceTrap";
+                                break;
+                        }
+
+                        SelectedTrap = null;
+                        SelectedTurret = null;
+                    }
+
+                    if (button.JustRightClicked == true)
+                    {
+                        ProfileWeaponList[index] = "";
+                        ChooseWeaponSlots[index].IconName = "Blank";
+                        ChooseWeaponSlots[index].LoadContent(SecondaryContent);
+                    }
+                }
+
                 foreach (List<Button> list in ChooseWeaponList)
                 {
                     switch (ChooseWeaponList.IndexOf(list))
@@ -1587,13 +1691,13 @@ namespace TowerDefensePrototype
                                     switch (list.IndexOf(button))
                                     {
                                         case 0:
-                                            ChosenTrap = null;
-                                            ChosenTurret = TurretType.MachineGun;
+                                            SelectedTrap = null;
+                                            SelectedTurret = TurretType.MachineGun;
                                             break;
 
                                         case 1:
-                                            ChosenTrap = null;
-                                            ChosenTurret = TurretType.Cannon;
+                                            SelectedTrap = null;
+                                            SelectedTurret = TurretType.Cannon;
                                             break;
                                     }
                             }
@@ -1606,13 +1710,13 @@ namespace TowerDefensePrototype
                                     switch (list.IndexOf(button))
                                     {
                                         case 0:
-                                            ChosenTrap = null;
-                                            ChosenTurret = TurretType.FlameThrower;
+                                            SelectedTrap = null;
+                                            SelectedTurret = TurretType.FlameThrower;
                                             break;
 
                                         case 1:
-                                            ChosenTurret = null;
-                                            ChosenTrap = TrapType.Ice;
+                                            SelectedTurret = null;
+                                            SelectedTrap = TrapType.Ice;
                                             break;
                                     }
                             }
@@ -1658,6 +1762,7 @@ namespace TowerDefensePrototype
                     }
                 }
 
+                #region The list of weapons to choose from
                 foreach (List<Button> list in ChooseWeaponList)
                 {
                     switch (ChooseWeaponList.IndexOf(list))
@@ -1670,64 +1775,88 @@ namespace TowerDefensePrototype
                                     case 0:
                                         if (CurrentProfile.MachineGun == true)
                                         {
-                                            button.IconName = "Icons/BasicTurretIcon2";
-                                            button.LoadContent(SecondaryContent); 
+                                            if (button.IconName == "Icons/LockIcon")
+                                            {
+                                                button.IconName = "Icons/BasicTurretIcon2";
+                                                button.LoadContent(SecondaryContent);
+                                            }
                                         }
                                         break;
 
                                     case 1:
                                         if (CurrentProfile.Cannon == true)
                                         {
-                                            button.IconName = "Icons/CannonTurretIcon";
-                                            button.LoadContent(SecondaryContent);
+                                            if (button.IconName == "Icons/LockIcon")
+                                            {
+                                                button.IconName = "Icons/CannonTurretIcon";
+                                                button.LoadContent(SecondaryContent);
+                                            }
                                         }
                                         break;
 
                                     case 2:
                                         if (CurrentProfile.SawBlade == true)
                                         {
-                                            button.IconName = "Icons/SawbladeIcon";
-                                            button.LoadContent(SecondaryContent);
+                                            if (button.IconName == "Icons/LockIcon")
+                                            {
+                                                button.IconName = "Icons/SawbladeIcon";
+                                                button.LoadContent(SecondaryContent);
+                                            }
                                         }
                                         break;
 
                                     case 3:
                                         if (CurrentProfile.Spikes == true)
                                         {
-                                            button.IconName = "Icons/SpikesIcon";
-                                            button.LoadContent(SecondaryContent);
+                                            if (button.IconName == "Icons/LockIcon")
+                                            {
+                                                button.IconName = "Icons/SpikesIcon";
+                                                button.LoadContent(SecondaryContent);
+                                            }
                                         }
                                         break;
 
                                     case 4:
                                         if (CurrentProfile.Wall == true)
                                         {
-                                            button.IconName = "Icons/WallIcon";
-                                            button.LoadContent(SecondaryContent);
+                                            if (button.IconName == "Icons/LockIcon")
+                                            {
+                                                button.IconName = "Icons/WallIcon";
+                                                button.LoadContent(SecondaryContent);
+                                            }
                                         }
                                         break;
 
                                     case 5:
                                         if (CurrentProfile.LightningTurret == true)
                                         {
-                                            button.IconName = "blank";
-                                            button.LoadContent(SecondaryContent);
+                                            if (button.IconName == "Icons/LockIcon")
+                                            {
+                                                button.IconName = "blank";
+                                                button.LoadContent(SecondaryContent);
+                                            }
                                         }
                                         break;
 
                                     case 6:
                                         if (CurrentProfile.Catapult == true)
                                         {
-                                            button.IconName = "blank";
-                                            button.LoadContent(SecondaryContent);
+                                            if (button.IconName == "Icons/LockIcon")
+                                            {
+                                                button.IconName = "blank";
+                                                button.LoadContent(SecondaryContent);
+                                            }
                                         }
                                         break;
 
                                     case 7:
                                         if (CurrentProfile.Fire == true)
                                         {
-                                            button.IconName = "Icons/FireIcon";
-                                            button.LoadContent(SecondaryContent);
+                                            if (button.IconName == "Icons/LockIcon")
+                                            {
+                                                button.IconName = "Icons/FireIcon";
+                                                button.LoadContent(SecondaryContent);
+                                            }
                                         }
                                         break;
                                 }
@@ -1743,16 +1872,22 @@ namespace TowerDefensePrototype
                                     case 0:
                                         if (CurrentProfile.FlameThrower == true)
                                         {
-                                            button.IconName = "blank";
-                                            button.LoadContent(SecondaryContent);
+                                            if (button.IconName == "Icons/LockIcon")
+                                            {
+                                                button.IconName = "blank";
+                                                button.LoadContent(SecondaryContent);
+                                            }
                                         }
                                         break;
 
                                     case 1:
                                         if (CurrentProfile.Ice == true)
                                         {
-                                            button.IconName = "Icons/SnowFlakeIcon";
-                                            button.LoadContent(SecondaryContent);
+                                            if (button.IconName == "Icons/LockIcon")
+                                            {
+                                                button.IconName = "Icons/SnowFlakeIcon";
+                                                button.LoadContent(SecondaryContent);
+                                            }
                                         }
                                         break;
 
@@ -1780,11 +1915,11 @@ namespace TowerDefensePrototype
 
                                         break;
                                 }
-
                             }
                             break;
-                    }                    
+                    }
                 }
+                #endregion
 
                 foreach (Button button in UpgradesButtonList)
                 {
@@ -1819,8 +1954,11 @@ namespace TowerDefensePrototype
                 {
                     MenuClick.Play();
                     SetProfileNames();
+                    SelectedTrap = null;
+                    SelectedTurret = null;
+                    CurrentProfile.Buttons = ProfileWeaponList;
+                    StorageDevice.BeginShowSelector(this.SaveProfile, null);
                     GameState = GameState.ProfileSelect;
-                    RightClickClearSelected();
                 }
 
                 if (ProfileManagementPlay.JustClicked == true)
@@ -1828,8 +1966,10 @@ namespace TowerDefensePrototype
                     MenuClick.Play();                
                     if (CurrentProfile != null)
                     {
-                        RightClickClearSelected();
+                        SelectedTrap = null;
+                        SelectedTurret = null;
                         LoadUpgrades();
+                        CurrentProfile.Buttons = ProfileWeaponList;
                         StorageDevice.BeginShowSelector(this.SaveProfile, null);
                         GameState = GameState.Loading;
                         LoadingThread = new Thread(LoadGameContent);
@@ -2042,10 +2182,17 @@ namespace TowerDefensePrototype
                 #region This controls what happens when the invaders die, depending on their type
                 if (invader.CurrentHP <= 0)
                 {
+                    for (int i = 0; i < invader.ResourceValue; i++)
+                    {
+                        CoinList.Add(new Particle(Coin, new Vector2(invader.DestinationRectangle.Center.X, invader.DestinationRectangle.Center.Y),
+                            (float)RandomDouble(90, 270), (float)RandomDouble(6, 8), 200f, 1f, true, (float)RandomDouble(0, 360), (float)RandomDouble(-5, 5), 0.75f,
+                            Color.White, Color.White, 0.2f, true, MathHelper.Clamp(invader.MaxY+(float)RandomDouble(-32,32), 525, 630), false, null, true));
+                    }
+                    
                     switch (invader.InvaderType)
                     {
                         case InvaderType.Soldier: 
-                        case InvaderType.SuicideBomber:                        
+                        case InvaderType.SuicideBomber:
                             EmitterList2.Add(new Emitter("Particles/Splodge", new Vector2(invader.DestinationRectangle.Center.X, invader.DestinationRectangle.Center.Y),
                             new Vector2(0, 360), new Vector2(1, 2), new Vector2(50, 100), 0.5f, true, new Vector2(0, 360), new Vector2(1, 3),
                             new Vector2(0.02f, 0.06f), Color.DarkRed, Color.Red, 0.1f, 0.2f, 20, 10, true, new Vector2(invader.MaxY, invader.MaxY)));
@@ -2645,8 +2792,8 @@ namespace TowerDefensePrototype
                                     ShellCasingList.Add(new Particle(ShellCasing,
                                         new Vector2(turret.BarrelRectangle.X, turret.BarrelRectangle.Y), 
                                         turret.Rotation - MathHelper.ToRadians((float)RandomDouble(175, 185)), 
-                                        (float)RandomDouble(2, 4), 500, 1f, false, (float)RandomDouble(-10, 10), 
-                                        (float)RandomDouble(-3, 6), 1, Color.White, Color.White, 0.09f, true, Random.Next(600, 630), false));
+                                        (float)RandomDouble(2, 4), 500, 1f, true, (float)RandomDouble(-10, 10), 
+                                        (float)RandomDouble(-3, 6), 1, Color.White, Color.White, 0.09f, true, Random.Next(600, 630), false, 1, true));
                                 }
                                 break;
 
@@ -2683,8 +2830,8 @@ namespace TowerDefensePrototype
                                     ShellCasingList.Add(new Particle(BigShellCasing,
                                         new Vector2(turret.BarrelRectangle.X, turret.BarrelRectangle.Y),
                                         turret.Rotation - MathHelper.ToRadians((float)RandomDouble(175, 185)),
-                                        (float)RandomDouble(3, 6), 500, 1f, false, (float)RandomDouble(-10, 10),
-                                        (float)RandomDouble(-6, 6), 1f, Color.White, Color.White, 0.09f, true, Random.Next(600, 630), false));
+                                        (float)RandomDouble(3, 6), 500, 1f, true, (float)RandomDouble(-10, 10),
+                                        (float)RandomDouble(-6, 6), 1f, Color.White, Color.White, 0.09f, true, Random.Next(600, 630), false, null, true));
 
                                 }
                                 break;
@@ -2758,8 +2905,8 @@ namespace TowerDefensePrototype
                                         ShellCasingList.Add(new Particle(BigShellCasing,
                                             new Vector2(turret.BarrelRectangle.X, turret.BarrelRectangle.Y),
                                             turret.Rotation - MathHelper.ToRadians((float)RandomDouble(175, 185)),
-                                            (float)RandomDouble(3, 6), 500, 1f, false, (float)RandomDouble(-10, 10),
-                                            (float)RandomDouble(-6, 6), 1f, Color.White, Color.White, 0.09f, true, Random.Next(600, 630), false));
+                                            (float)RandomDouble(3, 6), 500, 1f, true, (float)RandomDouble(-10, 10),
+                                            (float)RandomDouble(-6, 6), 1f, Color.White, Color.White, 0.09f, true, Random.Next(600, 630), false, null, true));
 
                                     }
                                 }
@@ -2805,8 +2952,8 @@ namespace TowerDefensePrototype
                         {
                             case HeavyProjectileType.CannonBall:
                                 Emitter newEmitter = new Emitter("Particles/Splodge", new Vector2(heavyProjectile.Position.X, heavyProjectile.Position.Y),
-                                                     new Vector2(-(MathHelper.ToDegrees((float)Math.Atan2(-heavyProjectile.Velocity.Y, -heavyProjectile.Velocity.X))) - 45,
-                                                     -(MathHelper.ToDegrees((float)Math.Atan2(-heavyProjectile.Velocity.Y, -heavyProjectile.Velocity.X))) + 45),
+                                                     new Vector2(-(float)Math.Atan2(-heavyProjectile.Velocity.Y, -heavyProjectile.Velocity.X) - 45,
+                                                     -(float)Math.Atan2(-heavyProjectile.Velocity.Y, -heavyProjectile.Velocity.X) + 45),
                                                      new Vector2(2, 3), new Vector2(100, 200), 2f, true, new Vector2(0, 360), new Vector2(1, 3),
                                                      new Vector2(0.03f, 0.09f), Color.SlateGray, Color.SlateGray, 0.2f, 0.05f, 20, 10, true,
                                                      new Vector2(TrapList[index].DestinationRectangle.Bottom, TrapList[index].DestinationRectangle.Bottom));
@@ -3336,6 +3483,27 @@ namespace TowerDefensePrototype
                                         TrailList.Add(trail);
 
                                         CurrentProjectile.Active = false;
+
+                                        //new Vector2(-(float)Math.Atan2(-heavyProjectile.Velocity.Y, -heavyProjectile.Velocity.X) - 45,
+                                        //             -(float)Math.Atan2(-heavyProjectile.Velocity.Y, -heavyProjectile.Velocity.X) + 45)
+
+                                        switch (HitInvader.InvaderType)
+                                        {
+                                            case InvaderType.Soldier:
+                                            case InvaderType.SuicideBomber:
+                                                EmitterList2.Add(new Emitter("Particles/Splodge", new Vector2(CollisionEnd.X, CollisionEnd.Y),
+                            new Vector2((float)Math.Atan2(turret.FireDirection.Y, turret.FireDirection.X) - 45,
+                                        (float)Math.Atan2(turret.FireDirection.Y, turret.FireDirection.X) + 45),
+                                        new Vector2(1, 2), new Vector2(50, 100), 0.5f, true, new Vector2(0, 360),
+                                        new Vector2(1, 3), new Vector2(0.02f, 0.06f), Color.DarkRed, Color.Red,
+                                        0.1f, 0.2f, 10, 1, true, new Vector2(HitInvader.MaxY, HitInvader.MaxY), false, null, true));
+
+                                                EmitterList2[EmitterList2.Count - 1].LoadContent(Content);
+                                                break;
+                                        }    
+
+                                        EmitterList2[EmitterList2.Count - 1].LoadContent(Content);
+
                                         HitInvader.TurretDamage(-turret.Damage);
                                         if (HitInvader.CurrentHP <= 0)
                                             Resources += HitInvader.ResourceValue;                                        
@@ -3417,6 +3585,22 @@ namespace TowerDefensePrototype
                                         TrailList.Add(trail);
 
                                         CurrentProjectile.Active = false;
+
+                                        switch (HitInvader.InvaderType)
+                                        {
+                                            case InvaderType.Soldier:
+                                            case InvaderType.SuicideBomber:
+                                                EmitterList2.Add(new Emitter("Particles/Splodge", new Vector2(CollisionEnd.X, CollisionEnd.Y),
+                            new Vector2((float)Math.Atan2(turret.FireDirection.Y, turret.FireDirection.X) - 45,
+                                        (float)Math.Atan2(turret.FireDirection.Y, turret.FireDirection.X) + 45),
+                                        new Vector2(1, 2), new Vector2(50, 100), 0.5f, true, new Vector2(0, 360),
+                                        new Vector2(1, 3), new Vector2(0.02f, 0.06f), Color.DarkRed, Color.Red,
+                                        0.1f, 0.2f, 10, 1, true, new Vector2(HitInvader.MaxY, HitInvader.MaxY), false, null, true));
+
+                                                EmitterList2[EmitterList2.Count - 1].LoadContent(Content);
+                                                break;
+                                        }                                        
+
                                         HitInvader.TurretDamage(-turret.Damage);
                                         if (HitInvader.CurrentHP <= 0)
                                             Resources += HitInvader.ResourceValue;                                        
@@ -3842,6 +4026,12 @@ namespace TowerDefensePrototype
 
             CurrentProfile = (Profile)serializer.Deserialize(OpenFile);
 
+            //ProfileWeaponList = CurrentProfile.Buttons;
+            for (int i = 0; i < CurrentProfile.Buttons.Count; i++)
+            {
+                ProfileWeaponList[i] = CurrentProfile.Buttons[i];
+            }
+
             OpenFile.Close();
 
             container.Dispose();            
@@ -3980,16 +4170,21 @@ namespace TowerDefensePrototype
         }
 
         public void AddNewProfile()
-        {
-            ProfileWeaponList = new List<string>();
-            ProfileWeaponList.Add("MachineGunTurret");
-            ProfileWeaponList.Add("ClusterTurret");
-            ProfileWeaponList.Add("CannonTurret");
-            ProfileWeaponList.Add("FireTrap");
+        {            
+            //ProfileWeaponList.Add("MachineGunTurret");
+            //ProfileWeaponList.Add("ClusterTurret");
+            //ProfileWeaponList.Add("CannonTurret");
+            //ProfileWeaponList.Add("FireTrap");
             //TempList.Add("Wall");
             //TempList.Add("Cannon");
             //TempList.Add("FlameThrower");
             //TempList.Add("LightningTurret");
+            List<string> TempList = new List<string>();
+
+            for (int i = 0; i < 10; i++)
+            {
+                TempList.Add(null);
+            }
 
             CurrentProfile = new Profile()
             {
@@ -4011,7 +4206,7 @@ namespace TowerDefensePrototype
                 Wall = false,
                 Ice = true,
 
-                Buttons = ProfileWeaponList,
+                Buttons = TempList,
 
                 Upgrade1 = false,
                 Upgrade2 = false,
@@ -4197,20 +4392,30 @@ namespace TowerDefensePrototype
         //Draw the correct cursor
         private void CursorDraw(SpriteBatch spriteBatch)
         {
-            if (GameState == GameState.Playing)
+            if (GameState != GameState.Playing)
             {
-                if (TurretList.Any(Turret => Turret != null && Turret.Selected == true))
+                CurrentCursorTexture = BlankTexture;
+                PrimaryCursorTexture = DefaultCursor;
+            }
+
+            if (GameState == GameState.Playing || GameState == GameState.ProfileManagement)
+            {
+                if (GameState == GameState.Playing)
                 {
-                    PrimaryCursorTexture = CrosshairCursor;
-                }
-                else
-                {
-                    PrimaryCursorTexture = DefaultCursor;
+                    if (TurretList.Any(Turret => Turret != null && Turret.Selected == true))
+                    {
+                        PrimaryCursorTexture = CrosshairCursor;
+                    }
+                    else
+                    {
+                        PrimaryCursorTexture = DefaultCursor;
+                    }
                 }
 
                 switch (SelectedTrap)
                 {
                     case null:
+                        if (SelectedTurret == null)
                         CurrentCursorTexture = BlankTexture;
                         break;
 
@@ -4227,7 +4432,7 @@ namespace TowerDefensePrototype
                         break;
 
                     case TrapType.Ice:
-                        CurrentCursorTexture = WallCursor;
+                        CurrentCursorTexture = IceCursor;
                         break;
 
                     case TrapType.SawBlade:
@@ -4238,6 +4443,7 @@ namespace TowerDefensePrototype
                 switch (SelectedTurret)
                 {
                     case null:
+                        if (SelectedTrap == null)
                         CurrentCursorTexture = BlankTexture;
                         break;
 
@@ -4253,19 +4459,22 @@ namespace TowerDefensePrototype
                         CurrentCursorTexture = FlameThrowerCursor;
                         break;
                 }
-            }
+            }            
 
 
             if (GameState != GameState.Loading)
             {
-                if (GameState != GameState.Playing && GameState != GameState.ProfileManagement)
+                if (GameState != GameState.Playing)
                 {
-                    PrimaryCursorTexture = DefaultCursor;
+                    spriteBatch.Draw(CurrentCursorTexture, new Rectangle((int)CursorPosition.X - (CurrentCursorTexture.Width / 2),
+                        (int)CursorPosition.Y - CurrentCursorTexture.Height, CurrentCursorTexture.Width, CurrentCursorTexture.Height), null,
+                        Color.White, MathHelper.ToRadians(0), Vector2.Zero, SpriteEffects.None, 1);
+
                     spriteBatch.Draw(PrimaryCursorTexture, new Rectangle((int)CursorPosition.X, (int)CursorPosition.Y,
-                                PrimaryCursorTexture.Width, PrimaryCursorTexture.Height), null, Color.White, MathHelper.ToRadians(0), Vector2.Zero, SpriteEffects.None, 1);
+                                                    PrimaryCursorTexture.Width, PrimaryCursorTexture.Height), null,
+                                            Color.White, MathHelper.ToRadians(0), Vector2.Zero, SpriteEffects.None, 1);
                 }
                 else
-                if (GameState == GameState.Playing)
                 {
                     spriteBatch.Draw(CurrentCursorTexture, new Rectangle((int)CursorPosition.X - (CurrentCursorTexture.Width / 2),
                         (int)CursorPosition.Y - CurrentCursorTexture.Height, CurrentCursorTexture.Width, CurrentCursorTexture.Height), null,
@@ -4280,65 +4489,6 @@ namespace TowerDefensePrototype
                             PrimaryCursorTexture.Width, PrimaryCursorTexture.Height), null,
                         Color.White, MathHelper.ToRadians(0), Vector2.Zero, SpriteEffects.None, 1);
                 }
-            }
-
-            if (GameState == GameState.ProfileManagement)
-            {
-                PrimaryCursorTexture = DefaultCursor;
-
-                switch (ChosenTrap)
-                {
-                    case null:
-                        CurrentCursorTexture = BlankTexture;
-                        break;
-
-                    case TrapType.Fire:
-                        CurrentCursorTexture = FireCursor;
-                        break;
-
-                    case TrapType.Spikes:
-                        CurrentCursorTexture = SpikesCursor;
-                        break;
-
-                    case TrapType.Wall:
-                        CurrentCursorTexture = WallCursor;
-                        break;
-
-                    case TrapType.Ice:
-                        CurrentCursorTexture = WallCursor;
-                        break;
-
-                    case TrapType.SawBlade:
-                        CurrentCursorTexture = SawbladeCursor;
-                        break;
-                }
-
-                switch (ChosenTurret)
-                {
-                    case null:
-                        CurrentCursorTexture = BlankTexture;
-                        break;
-
-                    case TurretType.MachineGun:
-                        CurrentCursorTexture = BasicTurretCursor;
-                        break;
-
-                    case TurretType.Cannon:
-                        CurrentCursorTexture = CannonTurretCursor;
-                        break;
-
-                    case TurretType.FlameThrower:
-                        CurrentCursorTexture = FlameThrowerCursor;
-                        break;
-                }
-
-                spriteBatch.Draw(CurrentCursorTexture, new Rectangle((int)CursorPosition.X - (CurrentCursorTexture.Width / 2),
-                        (int)CursorPosition.Y - CurrentCursorTexture.Height, CurrentCursorTexture.Width, CurrentCursorTexture.Height), null,
-                        Color.White, MathHelper.ToRadians(0), Vector2.Zero, SpriteEffects.None, 1);
-
-                spriteBatch.Draw(PrimaryCursorTexture, new Rectangle((int)CursorPosition.X, (int)CursorPosition.Y,
-                                                PrimaryCursorTexture.Width, PrimaryCursorTexture.Height), null,
-                                        Color.White, MathHelper.ToRadians(0), Vector2.Zero, SpriteEffects.None, 1);
             }
         }        
 
@@ -4358,15 +4508,11 @@ namespace TowerDefensePrototype
         {
             if (CurrentMouseState.RightButton == ButtonState.Released && PreviousMouseState.RightButton == ButtonState.Pressed)
             {
-                
-                ChosenTrap = null;
-                ChosenTurret = null;
+                SelectedTurret = null;
+                SelectedTrap = null;
 
                 if (GameState == GameState.Playing)
                 {
-                    SelectedTurret = null;
-                    SelectedTrap = null;
-
                     ReadyToPlace = false;
 
                     foreach (Turret turret in TurretList)

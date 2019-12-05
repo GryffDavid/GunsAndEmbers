@@ -20,7 +20,7 @@ namespace TowerDefensePrototype
 
         Vector2 IconPosition;
         Color Color, TextColor;
-        Texture2D ButtonStrip, IconTexture;        
+        Texture2D ButtonStrip, IconTexture;       
         Rectangle IconRectangle;
         SpriteFont Font;        
 
@@ -29,13 +29,13 @@ namespace TowerDefensePrototype
         public ButtonSpriteState CurrentButtonState;
 
         int CurrentFrame;
-        public bool Active, JustClicked;
+        public bool Active, CanBeRightClicked, JustClicked, JustRightClicked;
         public bool ButtonActive;
 
         string Alignment;
 
         public Button(string assetName, Vector2 position, string iconName = null, Vector2? scale = null, 
-            Color? color = null, string text = "", string fontName = "", string alignment = "Left", Color? textColor = null)
+            Color? color = null, string text = "", string fontName = "", string alignment = "Left", Color? textColor = null, bool? canBeRightClicked = null)
         {
             ButtonActive = true;
 
@@ -63,6 +63,12 @@ namespace TowerDefensePrototype
             else
                 TextColor = textColor.Value;
 
+            //if (canBeRightClicked == null)
+            //    CanBeRightClicked = false;
+            //else
+            //    CanBeRightClicked = canBeRightClicked.Value;
+            CanBeRightClicked = true;
+
             Alignment = alignment;
 
             CurrentButtonState = ButtonSpriteState.Released;
@@ -76,7 +82,7 @@ namespace TowerDefensePrototype
 
                 FrameSize = new Vector2((int)(ButtonStrip.Width / 3f), ButtonStrip.Height);
                 DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, (int)(FrameSize.X * Scale.X), (int)(FrameSize.Y * Scale.Y));
-                
+
                 if (IconName != null)
                 {
                     IconTexture = contentManager.Load<Texture2D>(IconName);
@@ -124,17 +130,40 @@ namespace TowerDefensePrototype
                 CurrentMousePosition = MousePosition.Outside;
             }
 
-            if (PreviousMousePosition == MousePosition.Outside && CurrentMousePosition == MousePosition.Inside && CurrentMouseState.LeftButton == ButtonState.Pressed && PreviousMouseState.LeftButton == ButtonState.Pressed)
+            if (PreviousMousePosition == MousePosition.Outside &&
+                CurrentMousePosition == MousePosition.Inside)
             {
-                Active = false;
+                if (CurrentMouseState.LeftButton == ButtonState.Pressed &&
+                    PreviousMouseState.LeftButton == ButtonState.Pressed)
+                {
+                    Active = false;
+                }
+
+                if (CurrentMouseState.RightButton == ButtonState.Pressed &&
+                    PreviousMouseState.RightButton == ButtonState.Pressed && CanBeRightClicked == true)
+                {                    
+                    Active = false;
+                }
             }
 
-            if (PreviousMousePosition == MousePosition.Inside && CurrentMousePosition == MousePosition.Inside && CurrentMouseState.LeftButton == ButtonState.Pressed && PreviousMouseState.LeftButton == ButtonState.Released)
+            if (PreviousMousePosition == MousePosition.Inside &&
+                CurrentMousePosition == MousePosition.Inside)
             {
-                Active = true;
+                if (CurrentMouseState.LeftButton == ButtonState.Pressed &&
+                    PreviousMouseState.LeftButton == ButtonState.Released)
+                {
+                    Active = true;
+                }
+
+                if (CurrentMouseState.RightButton == ButtonState.Pressed &&
+                    PreviousMouseState.RightButton == ButtonState.Released && CanBeRightClicked == true)
+                {
+                    Active = true;
+                }
             }
 
-            if (PreviousMousePosition == MousePosition.Inside && CurrentMousePosition == MousePosition.Outside)
+            if (PreviousMousePosition == MousePosition.Inside && 
+                CurrentMousePosition == MousePosition.Outside)
             {
                 Active = false;
             }
@@ -146,7 +175,7 @@ namespace TowerDefensePrototype
                     PreviousMouseState.LeftButton == ButtonState.Pressed
                     )
                 {
-                    if (ButtonActive == true)
+                    if (ButtonActive == true && GetColor() != Color.Transparent)
                     JustClicked = true;
                 }
             }
@@ -158,20 +187,64 @@ namespace TowerDefensePrototype
 
             if (DestinationRectangle.Contains(new Point((int)CursorPosition.X, (int)CursorPosition.Y)))
             {
-                if (CurrentMouseState.LeftButton == ButtonState.Pressed && PreviousMouseState.LeftButton == ButtonState.Released)
+                if (GetColor() != Color.Transparent)
                 {
-                    CurrentButtonState = ButtonSpriteState.Pressed;
-                }
+                    if (CurrentMouseState.LeftButton == ButtonState.Pressed)
+                    {
+                        if (PreviousMouseState.LeftButton == ButtonState.Released)
+                            CurrentButtonState = ButtonSpriteState.Pressed;
+                    }
 
-                if (CurrentMouseState.LeftButton == ButtonState.Released)
+                    if (CurrentMouseState.LeftButton == ButtonState.Released)
+                    {
+                        if (CanBeRightClicked == true)
+                        {
+                            if (CurrentMouseState.RightButton == ButtonState.Released)
+                                CurrentButtonState = ButtonSpriteState.Hover;
+                        }
+                        else
+                        {
+                            CurrentButtonState = ButtonSpriteState.Hover;
+                        }
+                    }
+
+                    if (CanBeRightClicked == true)
+                        if (CurrentMouseState.RightButton == ButtonState.Pressed)
+                        {
+                            if (PreviousMouseState.RightButton == ButtonState.Released)
+                                CurrentButtonState = ButtonSpriteState.Pressed;
+                        }
+                }
+                else
                 {
-                    CurrentButtonState = ButtonSpriteState.Hover;
+                    CurrentButtonState = ButtonSpriteState.Released;
                 }
             }
             else
             {
                 CurrentButtonState = ButtonSpriteState.Released;
             }
+
+            #region Right Click
+            if (Active == true && CanBeRightClicked == true)
+            {
+                if (DestinationRectangle.Contains(new Point((int)CursorPosition.X, (int)CursorPosition.Y)) &&
+                    CurrentMouseState.RightButton == ButtonState.Released &&
+                    PreviousMouseState.RightButton == ButtonState.Pressed
+                    )
+                {
+                    if (ButtonActive == true && GetColor() != Color.Transparent)
+                        JustRightClicked = true;
+                }
+            }
+
+            if (PreviousMouseState.RightButton == ButtonState.Released
+                && CurrentMouseState.RightButton == ButtonState.Released
+                && CanBeRightClicked == true)
+            {
+                JustRightClicked = false;
+            }
+            #endregion
 
             PreviousMousePosition = CurrentMousePosition;
             PreviousMouseState = CurrentMouseState;            
@@ -267,6 +340,19 @@ namespace TowerDefensePrototype
                     }
                 }                
             }
+        }
+
+        public Color GetColor()
+        {
+            Color[] retrievedColor = new Color[1];
+
+            if (CurrentMousePosition == MousePosition.Inside)
+            {
+                Vector2 pos = new Vector2((1 / Scale.X) * (Mouse.GetState().X - Position.X), (1 / Scale.Y) * (Mouse.GetState().Y - Position.Y));
+                ButtonStrip.GetData<Color>(0, new Rectangle((int)(pos.X), (int)(pos.Y), 1, 1), retrievedColor, 0, 1);
+            }
+
+            return retrievedColor[0];
         }
     }
 }

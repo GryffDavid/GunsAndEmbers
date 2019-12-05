@@ -15,11 +15,12 @@ namespace TowerDefensePrototype
         public float Angle, Speed, CurrentHP, MaxHP, CurrentTransparency, Scale, MaxY;
         public float RotationIncrement, CurrentRotation, Gravity, DrawDepth;
         public Color CurrentColor, EndColor;
-        public bool Active, Fade, BouncedOnGround, CanBounce, Shrink;
+        public bool Active, Fade, BouncedOnGround, CanBounce, Shrink, StopBounce;
+        static Random Random = new Random();
 
         public Particle(Texture2D texture, Vector2 position, float angle, float speed, float maxHP,
             float startingTransparency, bool fade, float startingRotation, float rotationChange,
-            float scale, Color startColor, Color endColor, float gravity, bool canBounce, float maxY, bool shrink, float? drawDepth = null)
+            float scale, Color startColor, Color endColor, float gravity, bool canBounce, float maxY, bool shrink, float? drawDepth = null, bool? stopBounce = false)
         {
             Active = true;
             Texture = texture;
@@ -37,8 +38,10 @@ namespace TowerDefensePrototype
             CanBounce = canBounce;
             Shrink = shrink;
 
-            CurrentRotation = MathHelper.ToRadians(startingRotation);
-            RotationIncrement = MathHelper.ToRadians(rotationChange);
+            //CurrentRotation = MathHelper.ToRadians(startingRotation);
+            //RotationIncrement = MathHelper.ToRadians(rotationChange);
+            RotationIncrement = rotationChange;
+            CurrentRotation = startingRotation;
 
             Direction.X = (float)Math.Sin(MathHelper.ToRadians(Angle));
             Direction.Y = (float)Math.Cos(MathHelper.ToRadians(Angle));
@@ -54,6 +57,8 @@ namespace TowerDefensePrototype
                 DrawDepth = 0;
             else
                 DrawDepth = drawDepth.Value;
+
+            StopBounce = stopBounce.Value;
         }
 
         public void Update()
@@ -73,11 +78,81 @@ namespace TowerDefensePrototype
                     Velocity.X = Velocity.X / 3;
                     RotationIncrement = RotationIncrement * 3;
                     BouncedOnGround = true;
-                }        
+                }
+
+            if (StopBounce == true && BouncedOnGround == true && CurrentPosition.Y > MaxY+10)
+            {
+                Velocity.Y = -Velocity.Y / 2;
+
+                Velocity.X *= 0.9f;
+
+                RotationIncrement = MathHelper.Lerp(RotationIncrement, 0, 0.2f);
+
+                if (Velocity.Y < 0.2f && Velocity.Y > 0)
+                {
+                    Velocity.Y = 0;
+                }
+
+                if (Velocity.Y > -0.2f && Velocity.Y < 0)
+                {
+                    Velocity.Y = 0;
+                }
+
+                if (Velocity.X < 0.2f && Velocity.X > 0)
+                {
+                    Velocity.X = 0;
+                }
+
+                if (Velocity.X > -0.2f && Velocity.X < 0)
+                {
+                    Velocity.X = 0;
+                }
+
+                DrawDepth = 0;
+            }
+
+            if (Velocity.Y == 0)
+            {               
+                if (CurrentRotation < 0)
+                    CurrentRotation += 360;
+
+                if (CurrentRotation > 270 && CurrentRotation <= 360)
+                {
+                    if (MathHelper.Distance(CurrentRotation, 360) >= 45)
+                        CurrentRotation = MathHelper.Lerp(CurrentRotation, 360, 0.5f);
+                    else
+                        CurrentRotation = MathHelper.Lerp(CurrentRotation, 360, 0.2f);
+                }
+
+                if (CurrentRotation > 180 && CurrentRotation <= 270)
+                {
+                    if (MathHelper.Distance(CurrentRotation, 180) >= 45)
+                        CurrentRotation = MathHelper.Lerp(CurrentRotation, 180, 0.5f);
+                    else
+                    CurrentRotation = MathHelper.Lerp(CurrentRotation, 180, 0.2f);
+                }
+
+                if (CurrentRotation > 90 && CurrentRotation <= 180)
+                {
+                    if (MathHelper.Distance(CurrentRotation, 180) >= 45)
+                        CurrentRotation = MathHelper.Lerp(CurrentRotation, 180, 0.5f);
+                    else
+                        CurrentRotation = MathHelper.Lerp(CurrentRotation, 180, 0.2f);
+                }
+
+                if (CurrentRotation >= 0 && CurrentRotation <= 90)
+                {
+                    if (MathHelper.Distance(CurrentRotation, 0) >= 45)
+                        CurrentRotation = MathHelper.Lerp(CurrentRotation, 0, 0.5f);
+                        else
+                    CurrentRotation = MathHelper.Lerp(CurrentRotation, 0, 0.2f);
+                }
+            }
 
             if (Active == true)
             {
                 CurrentRotation += RotationIncrement;
+                CurrentRotation = CurrentRotation % 360;
                 CurrentPosition += Velocity;
                 Velocity.Y += Gravity;
                 DestinationRectangle = new Rectangle((int)CurrentPosition.X, (int)CurrentPosition.Y, (int)(Texture.Width * Scale), (int)(Texture.Height * Scale));
@@ -103,7 +178,7 @@ namespace TowerDefensePrototype
             if (Active == true)
             {         
                 spriteBatch.Draw(Texture, DestinationRectangle, null, Color.Lerp(Color.Transparent, CurrentColor, CurrentTransparency),
-                    CurrentRotation, new Vector2(Texture.Width / 2, Texture.Height / 2), SpriteEffects.None, DrawDepth);
+                    MathHelper.ToRadians(CurrentRotation), new Vector2(Texture.Width/2, Texture.Height/2), SpriteEffects.None, DrawDepth);
             }
         }
     }
