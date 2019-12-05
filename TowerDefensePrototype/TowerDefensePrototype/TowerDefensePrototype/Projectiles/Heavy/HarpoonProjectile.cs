@@ -15,6 +15,7 @@ namespace TowerDefensePrototype
             : base(source, texture, position, speed, angle, gravity, damage, yrange, blastRadius, false)        
         {
             HeavyProjectileType = HeavyProjectileType.Harpoon;
+            ShieldSolid = false;
         }
     }
 }

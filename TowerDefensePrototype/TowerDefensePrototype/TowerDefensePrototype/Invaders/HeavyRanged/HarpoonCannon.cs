@@ -15,6 +15,7 @@ namespace TowerDefensePrototype
         float RopeDelay, MaxRopeDelay;
         public Rope Rope;
         public Turret HarpoonedTurret; //The turret that has been harpooned
+        
 
         public HarpoonCannon(Vector2 position, Vector2? yRange = null)
             : base(position, yRange)
@@ -160,6 +161,12 @@ namespace TowerDefensePrototype
                                                     HarpoonCannonBehaviour = SpecificBehaviour.Attached;
                                                     ResetCollisions();
                                                 }
+
+                                                if (HitScreen == 1)
+                                                {
+                                                    HarpoonCannonBehaviour = SpecificBehaviour.Retract;
+                                                    ResetCollisions();
+                                                }
                                             }
                                         }
                                     }
@@ -205,7 +212,7 @@ namespace TowerDefensePrototype
                         if (HarpoonedTurret.CurrentHealth == 0)
                         {
                             Rope.Sticks.RemoveAt(0);
-                            HarpoonCannonBehaviour = SpecificBehaviour.Unattached;
+                            HarpoonCannonBehaviour = SpecificBehaviour.Retract;
                             break;
                         }
 
@@ -213,7 +220,7 @@ namespace TowerDefensePrototype
                         {
                             Rope.Sticks.RemoveAt(0);
                             HarpoonedTurret.CurrentHealth = 0;
-                            HarpoonCannonBehaviour = SpecificBehaviour.Unattached;
+                            HarpoonCannonBehaviour = SpecificBehaviour.Retract;
                             break;
                         }
                     }
@@ -227,7 +234,29 @@ namespace TowerDefensePrototype
 
                 case SpecificBehaviour.Retract:
                     {
+                        if (Rope != null)
+                        {
+                            RopeDelay += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
 
+
+                            if (Rope.Sticks.Count > 1 &&
+                                RopeDelay > MaxRopeDelay)
+                            {
+                                Rope.Sticks.RemoveAt(0);
+                                
+                                if (Rope.Segments > 0)
+                                    Rope.Segments = Rope.Sticks.Count - 1;
+                                Rope.Sticks.RemoveAt(Rope.Sticks.Count - 1);
+                                Rope.StartPoint = BarrelEnd;
+                                RopeDelay = 0;
+                            }
+
+                            if (Rope.Sticks.Count == 1)
+                            {
+                                Rope = null;
+                                HarpoonCannonBehaviour = SpecificBehaviour.Unattached;
+                            }
+                        }
                     }
                     break;
             }

@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace TowerDefensePrototype
 {
-    class Rope
+    class Rope : Drawable
     {
         public Texture2D StickTexture;
         float Bounce = 0.25f;
@@ -82,9 +82,11 @@ namespace TowerDefensePrototype
                 Nodes[0].Tether = true;
             }
 
-
-            Nodes[Segments-1].CurrentPosition = StartPoint;
-            Nodes[Segments-1].Tether = true;
+            if ((Segments - 1) > 0)
+            {
+                Nodes[Segments - 1].CurrentPosition = StartPoint;
+                Nodes[Segments - 1].Tether = true;
+            }
 
 
             foreach (Node node in Nodes)
@@ -97,15 +99,15 @@ namespace TowerDefensePrototype
                     node.CurrentPosition.Y += Gravity;
 
                     #region Handle bouncing
-                    if (node.CurrentPosition.X > 1920-8)
+                    if (node.CurrentPosition.X > 1920 - 8)
                     {
                         node.CurrentPosition.X = 1920 - 8;
                         node.PreviousPosition.X = (node.CurrentPosition.X + node.Velocity.X * Bounce);
                     }
 
-                    if (node.CurrentPosition.X < 0)
+                    if (node.CurrentPosition.X < -1920)
                     {
-                        node.CurrentPosition.X = 0;
+                        node.CurrentPosition.X = -1920;
                         node.PreviousPosition.X = (node.CurrentPosition.X + node.Velocity.X * Bounce);
                     }
 

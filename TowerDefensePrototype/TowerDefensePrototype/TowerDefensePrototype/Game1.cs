@@ -1200,6 +1200,9 @@ namespace TowerDefensePrototype
                 if (DrawableList.Count > 0)
                     DrawableList.Clear();
 
+                if (RopeList.Count > 0)
+                    RopeList.Clear();
+
                 Content.Unload();
 
             }
@@ -2412,6 +2415,9 @@ namespace TowerDefensePrototype
                     spriteBatch.DrawString(TooltipFont, "CurrentPowerUnits:" + Tower.CurrentPowerUnits.ToString(), new Vector2(0, yPos), Color.Lime);
                     yPos += yInc;
 
+                    spriteBatch.DrawString(TooltipFont, "Ropes:" + RopeList.Count.ToString(), new Vector2(0, yPos), Color.Lime);
+                    yPos += yInc;
+
                     foreach (Invader invader in InvaderList)
                     {
                         int yPos2 = 0;
@@ -2433,11 +2439,21 @@ namespace TowerDefensePrototype
                         yPos2 += yInc2;
                     }
 
-                    foreach (Turret turret in TurretList.Where(Turret => Turret != null))
+                    foreach (Emitter emitter in YSortedEmitterList)
                     {
-                        spriteBatch.DrawString(RobotoRegular20_0, MathHelper.ToDegrees(turret.Rotation).ToString(), turret.Position, Color.White);
+                        spriteBatch.DrawString(TooltipFont, "DrawDepth: " + emitter.DrawDepth.ToString(), emitter.Position, Color.White);
                     }
 
+                    foreach (HeavyProjectile heavyProjectile in HeavyProjectileList)
+                    {
+                        spriteBatch.DrawString(TooltipFont, "Rotation: " + heavyProjectile.CurrentRotation, heavyProjectile.Position, Color.White);
+                    }
+
+                    foreach (Turret turret in TurretList.Where(Turret => Turret != null))
+                    {
+                        spriteBatch.DrawString(TooltipFont, "Rotation: " + MathHelper.ToDegrees(turret.Rotation).ToString(), turret.Position, Color.White);
+                    }
+                    
                     //foreach (HeavyRangedInvader invader in InvaderList.Where(Invader => Invader.InvaderType == InvaderType.StationaryCannon))
                     //{
                     //    spriteBatch.DrawString(RobotoRegular20_0, MathHelper.ToDegrees(invader.CurrentAngle).ToString(), invader.Position, Color.White);
@@ -2504,7 +2520,7 @@ namespace TowerDefensePrototype
                         spriteBatch.DrawString(TooltipFont, "State: " + trap.TrapState, trap.Position, Color.White);
                         spriteBatch.DrawString(TooltipFont, "CurrentFrame: " + trap.CurrentAnimation.CurrentFrame, trap.Position + new Vector2(0, 10), Color.White);
                         spriteBatch.DrawString(TooltipFont, "FrameDelay: " + trap.CurrentAnimation.CurrentFrameDelay, trap.Position + new Vector2(0, 20), Color.White);
-
+                        spriteBatch.DrawString(TooltipFont, "DrawDepth: " + trap.DrawDepth.ToString(), trap.Position + new Vector2(0, 30), Color.White);
                     }
                 }
                 #endregion
@@ -2660,6 +2676,31 @@ namespace TowerDefensePrototype
                 {
                     //Draw the shield debug box
                     spriteBatch.Draw(ShieldBoundingSphere, new Rectangle((int)Tower.DestinationRectangle.Center.X - 300, (int)Tower.DestinationRectangle.Center.Y - 300, 600, 600), Color.White);
+
+                    foreach (Invader invader in InvaderList)
+                    {
+                        spriteBatch.Draw(WhiteBlock, new Rectangle((int)invader.Position.X, (int)invader.Position.Y, 4, 4), Color.Red);
+                        spriteBatch.Draw(WhiteBlock, new Rectangle((int)invader.Center.X, (int)invader.Center.Y, 4, 4), Color.Yellow);
+                    }
+
+                    foreach (Emitter emitter in YSortedEmitterList)
+                    {
+                        spriteBatch.Draw(WhiteBlock, new Rectangle((int)emitter.Position.X, (int)emitter.MaxY, 4, 4), Color.Red);
+                    }
+
+                    foreach (HeavyProjectile heavyProjectile in HeavyProjectileList)
+                    {
+                        spriteBatch.Draw(WhiteBlock, new Rectangle((int)heavyProjectile.Position.X, (int)heavyProjectile.Position.Y, 4, 4), Color.Red);
+                        spriteBatch.Draw(WhiteBlock, new Rectangle((int)heavyProjectile.TipPosition.X, (int)heavyProjectile.TipPosition.Y, 4, 4), Color.Yellow);
+                        spriteBatch.Draw(WhiteBlock, new Rectangle((int)heavyProjectile.BasePosition.X, (int)heavyProjectile.BasePosition.Y, 4, 4), Color.Purple);
+                    }
+
+                    foreach (Turret turret in TurretList.Where(Turret => Turret != null))
+                    {
+                        spriteBatch.Draw(WhiteBlock, new Rectangle((int)turret.Position.X, (int)turret.Position.Y, 4, 4), Color.Red);
+                        spriteBatch.Draw(WhiteBlock, new Rectangle((int)turret.BarrelCenter.X, (int)turret.BarrelCenter.Y, 4, 4), Color.Yellow);
+                        spriteBatch.Draw(WhiteBlock, new Rectangle((int)turret.BasePivot.X, (int)turret.BasePivot.Y, 4, 4), Color.Purple);
+                    }
 
                     BasicEffect2.TextureEnabled = true;
                     BasicEffect2.Texture = WhiteBlock;
@@ -3124,7 +3165,60 @@ namespace TowerDefensePrototype
                 }
             }
             #endregion
-            
+
+
+            if (CurrentKeyboardState.IsKeyDown(Keys.LeftControl) &&
+                CurrentKeyboardState.IsKeyDown(Keys.F) &&
+                PreviousKeyboardState.IsKeyUp(Keys.F))
+            {
+                int stop = 0;
+                stop++;
+            }
+
+            #region Show diagnostics
+            if (CurrentMouseState.LeftButton == ButtonState.Released &&
+               CurrentKeyboardState.IsKeyUp(Keys.F1) &&
+               PreviousKeyboardState.IsKeyDown(Keys.F1))
+            {
+                Diagnostics = !Diagnostics;
+            }
+
+            if (CurrentMouseState.LeftButton == ButtonState.Released &&
+               CurrentKeyboardState.IsKeyUp(Keys.F3) &&
+               PreviousKeyboardState.IsKeyDown(Keys.F3))
+            {
+                BoundingBoxes = !BoundingBoxes;
+            }
+
+            if (CurrentMouseState.RightButton == ButtonState.Released &&
+                PreviousMouseState.RightButton == ButtonState.Pressed &&
+                CurrentKeyboardState.IsKeyDown(Keys.LeftShift))
+            {
+                CreateExplosion(new Explosion(CursorPosition, 400, 5), new CannonTurret(Vector2.Zero));
+            }
+
+            //Hold left control and click on an invader to show its diagnostics
+            if (InvaderList != null && InvaderList.Count > 0)
+            foreach (Invader invader in InvaderList)
+            {
+                if (CurrentMouseState.LeftButton == ButtonState.Released &&
+                    PreviousMouseState.LeftButton == ButtonState.Pressed &&
+                    CurrentKeyboardState.IsKeyDown(Keys.LeftControl) &&
+                    invader.DestinationRectangle.Contains(VectorToPoint(CursorPosition)))
+                {
+                    invader.ShowDiagnostics = !invader.ShowDiagnostics;
+                }
+
+                if (CurrentMouseState.RightButton == ButtonState.Released &&
+                    PreviousMouseState.RightButton == ButtonState.Pressed &&
+                    CurrentKeyboardState.IsKeyDown(Keys.LeftControl) &&
+                    invader.DestinationRectangle.Contains(VectorToPoint(CursorPosition)))
+                {
+                    invader.CurrentHP = 0;
+                }
+            }
+            #endregion
+
             switch (GameState)
             {
                 #region In Game Update
@@ -3132,56 +3226,6 @@ namespace TowerDefensePrototype
                     {
                         GameButtonsUpdate(gameTime);
 
-                        if (CurrentKeyboardState.IsKeyDown(Keys.LeftControl) &&
-                            CurrentKeyboardState.IsKeyDown(Keys.F) &&
-                            PreviousKeyboardState.IsKeyUp(Keys.F))
-                        {
-                            int stop = 0;
-                            stop++;
-                        }
-
-                        #region Show diagnostics
-                        if (CurrentMouseState.LeftButton == ButtonState.Released &&
-                           CurrentKeyboardState.IsKeyUp(Keys.F1) &&
-                           PreviousKeyboardState.IsKeyDown(Keys.F1))
-                        {
-                            Diagnostics = !Diagnostics;
-                        }
-
-                        if (CurrentMouseState.LeftButton == ButtonState.Released &&
-                           CurrentKeyboardState.IsKeyUp(Keys.F3) &&
-                           PreviousKeyboardState.IsKeyDown(Keys.F3))
-                        {
-                            BoundingBoxes = !BoundingBoxes;
-                        }
-
-                        if (CurrentMouseState.RightButton == ButtonState.Released &&
-                            PreviousMouseState.RightButton == ButtonState.Pressed &&
-                            CurrentKeyboardState.IsKeyDown(Keys.LeftShift))
-                        {
-                            CreateExplosion(new Explosion(CursorPosition, 400, 5), new CannonTurret(Vector2.Zero));
-                        }
-
-                        //Hold left control and click on an invader to show its diagnostics
-                        foreach (Invader invader in InvaderList)
-                        {
-                            if (CurrentMouseState.LeftButton == ButtonState.Released &&
-                                PreviousMouseState.LeftButton == ButtonState.Pressed &&
-                                CurrentKeyboardState.IsKeyDown(Keys.LeftControl) &&
-                                invader.DestinationRectangle.Contains(VectorToPoint(CursorPosition)))
-                            {
-                                invader.ShowDiagnostics = !invader.ShowDiagnostics;
-                            }
-
-                            if (CurrentMouseState.RightButton == ButtonState.Released &&
-                                PreviousMouseState.RightButton == ButtonState.Pressed &&
-                                CurrentKeyboardState.IsKeyDown(Keys.LeftControl) &&
-                                invader.DestinationRectangle.Contains(VectorToPoint(CursorPosition)))
-                            {
-                                invader.CurrentHP = 0;
-                            }
-                        }
-                        #endregion
 
                         #region TEST - Create powerup delivery
                         if (CurrentMouseState.LeftButton == ButtonState.Released &&
@@ -3228,10 +3272,9 @@ namespace TowerDefensePrototype
                             engine.Update(gameTime);
                         }
 
-                        foreach (Rope rope in RopeList)
-                        {
-                            rope.Update(gameTime);
-                        }
+                        
+
+                        RopeList.RemoveAll(Rope => Rope.Sticks.Count <= 1);
 
                         foreach (ExplosionEffect effect in ExplosionEffectList)
                         {
@@ -3462,6 +3505,11 @@ namespace TowerDefensePrototype
                         if (CurrentBeam != null)
                             BeamProjectileUpdate(gameTime);
                         #endregion
+
+                        foreach (Rope rope in RopeList)
+                        {
+                            rope.Update(gameTime);
+                        }
 
                         #region Turret stuff
                         if (TurretList.Any(Turret => Turret != null))
@@ -3818,20 +3866,20 @@ namespace TowerDefensePrototype
 
                         ApplyPowerups();
 
-                        #region Sort Drawables if there is a change and overlap
-                        foreach (Drawable drawable in DrawableList)
-                        {
-                            foreach (Drawable drawable2 in DrawableList)
-                            {
-                                if (drawable != drawable2 &&
-                                    drawable.PreviousMaxY != drawable.MaxY &&
-                                    Approx(drawable.PreviousMaxY, drawable2.MaxY, 0.5f))
-                                {
-                                    SortDrawables();
-                                }
-                            }
-                        }
-                        #endregion
+                        //#region Sort Drawables if there is a change and overlap
+                        //foreach (Drawable drawable in DrawableList)
+                        //{
+                        //    foreach (Drawable drawable2 in DrawableList)
+                        //    {
+                        //        if (drawable != drawable2 &&
+                        //            drawable.PreviousMaxY != drawable.MaxY &&
+                        //            Approx(drawable.PreviousMaxY, drawable2.MaxY, 0.5f))
+                        //        {
+                        //            SortDrawables();
+                        //        }
+                        //    }
+                        //}
+                        //#endregion
                     }
                     break;
                 #endregion
@@ -5471,7 +5519,6 @@ namespace TowerDefensePrototype
                 HeavyProjectile heavyProjectile = HeavyProjectileList[i];
                 TimerHeavyProjectile timedHeavyProjectile = heavyProjectile as TimerHeavyProjectile;
 
-                heavyProjectile.Update(gameTime);
 
                 #region Remove the projectile
                 if (heavyProjectile.Active == false &&
@@ -5517,27 +5564,32 @@ namespace TowerDefensePrototype
                     if (heavyProjectile.SourceObject.GetType().BaseType == typeof(HeavyRangedInvader))
                     {
                         #region SHIELD was hit
-                        if (heavyProjectile.BoundingBox.Intersects(Tower.Shield.BoundingSphere) && Tower.Shield.ShieldOn == true)
+                        if (heavyProjectile.BoundingBox.Intersects(Tower.Shield.BoundingSphere) && 
+                            Tower.Shield.ShieldOn == true && 
+                            heavyProjectile.ShieldSolid == true)
                         {
                             CreateHeavyProjectileCollision(heavyProjectile, heavyProjectile.SourceObject, Tower.Shield);
-                            //return;
+                            return;
                         }
                         #endregion
 
-                        #region TOWER was hit
-                        if (heavyProjectile.BoundingBox.Intersects(Tower.BoundingBox))
-                        {
-                            CreateHeavyProjectileCollision(heavyProjectile, heavyProjectile.SourceObject, Tower);
-                            //return;
-                        }
-                        #endregion
+                        //#region TOWER was hit
+                        //if (heavyProjectile.BoundingBox.Intersects(Tower.BoundingBox))
+                        //{
+                        //    CreateHeavyProjectileCollision(heavyProjectile, heavyProjectile.SourceObject, Tower);
+                        //    return;
+                        //}
+                        //#endregion
 
                         #region TURRET was hit
-                        if (TurretList.Any(Turret => Turret != null && Turret.BoundingBox.Intersects(heavyProjectile.BoundingBox)))
+                        if (TurretList.Any(Turret => Turret != null && 
+                            Turret.BoundingBox.Intersects(heavyProjectile.BoundingBox)))
                         {
-                            Turret turret = TurretList.Find(Turret => Turret.BoundingBox.Intersects(heavyProjectile.BoundingBox));
+                            //Got an intersection with null turret here. Keep an eye on it.
+                            //Turret turret = TurretList.Find(Turret => Turret.BoundingBox.Intersects(heavyProjectile.BoundingBox));
+                            Turret turret = TurretList.FirstOrDefault(Turret => Turret != null && Turret.BoundingBox.Intersects(heavyProjectile.BoundingBox));
                             CreateHeavyProjectileCollision(heavyProjectile, heavyProjectile.SourceObject, turret);
-                            //return;
+                            return;
                         }
                         #endregion
                     }
@@ -5891,6 +5943,8 @@ namespace TowerDefensePrototype
                     }
                 }
                 #endregion
+
+                heavyProjectile.Update(gameTime);
             }
         }
 
@@ -6149,6 +6203,7 @@ namespace TowerDefensePrototype
                     }
 
                     DeactivateProjectile(heavyProjectile);
+                    return;
                 }
                 #endregion
             }
@@ -6342,7 +6397,7 @@ namespace TowerDefensePrototype
                         #region Harpoon Cannon
                         case InvaderType.HarpoonCannon:
                             {
-                                DeactivateProjectile(heavyProjectile);
+                                DeactivateProjectile(heavyProjectile);                                
                                 (sourceInvader as HarpoonCannon).HarpoonedTurret = collisionTurret;
                             }
                             break;
@@ -6418,6 +6473,15 @@ namespace TowerDefensePrototype
                 #region Projectile Outside Bounds
                 if ((Rectangle)e.collisionObject == ScreenRectangle)
                 {
+                    //switch ((source as Invader).InvaderType)
+                    //{
+                    //    case InvaderType.HarpoonCannon:
+                    //        {
+
+                    //        }
+                    //        break;
+                    //}
+
                     sourceInvader.HitObject = ScreenRectangle;
                     DeactivateProjectile(heavyProjectile);
                 }
@@ -6879,33 +6943,38 @@ namespace TowerDefensePrototype
                 {
                     #region MachineGun
                     case LightProjectileType.MachineGun:
-                        Emitter DebrisEmitter = new Emitter(SplodgeParticle, new Vector2(CollisionEnd.X, CollisionEnd.Y),
-                                                            new Vector2(60, 120), new Vector2(2, 4), new Vector2(320, 640), 1f, false,
-                                                            new Vector2(0, 0), new Vector2(0, 0),
-                                                            new Vector2(0.02f, 0.04f), Color.DarkSlateGray, Color.DarkSlateGray, 0.2f,
-                                                            0.1f, 5, 1, true, new Vector2(CollisionEnd.Y + 8, CollisionEnd.Y + 16), false, (CollisionEnd.Y-4) / 1080,
-                                                            true, true, null, null, null, null, null, true, true, 50f, false);
-                        YSortedEmitterList.Add(DebrisEmitter);
+                        //Emitter DebrisEmitter = new Emitter(SplodgeParticle, new Vector2(CollisionEnd.X, CollisionEnd.Y),
+                        //                                    new Vector2(60, 120), new Vector2(2, 4), new Vector2(320, 640), 1f, false,
+                        //                                    new Vector2(0, 0), new Vector2(0, 0),
+                        //                                    new Vector2(0.02f, 0.04f), Color.DarkSlateGray, Color.DarkSlateGray, 0.2f,
+                        //                                    0.1f, 5, 1, true, new Vector2(CollisionEnd.Y + 8, CollisionEnd.Y + 16), false, (CollisionEnd.Y-4) / 1080,
+                        //                                    true, true, null, null, null, null, null, true, true, 50f, false);
+                        //YSortedEmitterList.Add(DebrisEmitter);
 
-                        Emitter DebrisEmitter2 = new Emitter(SplodgeParticle, new Vector2(CollisionEnd.X, CollisionEnd.Y),
-                                                            new Vector2(80, 100), new Vector2(3, 5), new Vector2(320, 640), 1f, false,
-                                                            new Vector2(0, 0), new Vector2(0, 0),
-                                                            new Vector2(0.01f, 0.03f), Color.DarkSlateGray, Color.DarkSlateGray, 0.2f,
-                                                            0.1f, 2, 3, true, new Vector2(CollisionEnd.Y + 8, CollisionEnd.Y + 16), false, (CollisionEnd.Y-4) / 1080,
-                                                            true, true, null, null, null, null, null, true, true, 50f, false);
-                        YSortedEmitterList.Add(DebrisEmitter2);
+                        //Emitter DebrisEmitter2 = new Emitter(SplodgeParticle, new Vector2(CollisionEnd.X, CollisionEnd.Y),
+                        //                                    new Vector2(80, 100), new Vector2(3, 5), new Vector2(320, 640), 1f, false,
+                        //                                    new Vector2(0, 0), new Vector2(0, 0),
+                        //                                    new Vector2(0.01f, 0.03f), Color.DarkSlateGray, Color.DarkSlateGray, 0.2f,
+                        //                                    0.1f, 2, 3, true, new Vector2(CollisionEnd.Y + 8, CollisionEnd.Y + 16), false, (CollisionEnd.Y-4) / 1080,
+                        //                                    true, true, null, null, null, null, null, true, true, 50f, false);
+                        //YSortedEmitterList.Add(DebrisEmitter2);
 
                         Emitter DustEmitter = new Emitter(ToonDust3,
                                        new Vector2(CollisionEnd.X, CollisionEnd.Y + 2),
                                        new Vector2(70, 110), new Vector2(1f, 4f), new Vector2(1120, 1600), 1f, false, new Vector2(-10, 10),
                                        new Vector2(0f, 0f), new Vector2(0.03f, 0.04f), Color.White, Color.White, 0.03f, 0.02f, 5, 3, false,
-                                       new Vector2(0, 1080), true, CollisionEnd.Y / 1080,
+                                       new Vector2(CollisionEnd.Y + 2, CollisionEnd.Y + 2), true, CollisionEnd.Y / 1080.0f,
                                        null, null, null, null, null, null, new Vector2(0.08f, 0.08f), false, false,
                                        null, null, null, null);
 
+                        //if ((CollisionEnd.Y / 1080.0f) < 0.5f)
+                        //{
+                        //    int stop = 0;
+                        //}
+
                         YSortedEmitterList.Add(DustEmitter);
 
-                        AddDrawable(DustEmitter, DebrisEmitter, DebrisEmitter2);
+                        AddDrawable(DustEmitter);//, DebrisEmitter, DebrisEmitter2);
 
                         Decal NewDecal = new Decal(ExplosionDecal1, new Vector2(CollisionEnd.X, CollisionEnd.Y),
                                                    (float)RandomDouble(0, 0), 0.2f);
@@ -8432,10 +8501,10 @@ namespace TowerDefensePrototype
                                             trap.Position.Y + trap.CurrentAnimation.FrameSize.Y / 2),
                                 new Vector2(-5, 5), new Vector2(1.2f, 1.95f), new Vector2(2500, 3000), 1f, false,
                                 new Vector2(90, 90), new Vector2(-0.25f, 0.25f), new Vector2(0.05f, 0.1f), FireColor2, Color.Black * 0.75f,
-                                0.0f, -1, 20, 2, false, new Vector2(0, 1080), true, (trap.DestinationRectangle.Bottom - 1.0f) / 1080f,
+                                0.0f, -1, 20, 2, false, new Vector2(trap.DestinationRectangle.Bottom - 1.0f, trap.DestinationRectangle.Bottom - 1.0f), true, (trap.DestinationRectangle.Bottom - 1.0f) / 1080f,
                                 null, null, null, null, null, null, new Vector2(0.0f, 0.001f), true, true, null, false, false, true, null);
+                                    
                                     YSortedEmitterList.Add(FireEmitter);
-
                                     AddDrawable(FireEmitter);
 
                                     FireEmitter.Tether = trap;

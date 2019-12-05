@@ -109,12 +109,14 @@ namespace TowerDefensePrototype
             Center = new Vector2(DestinationRectangle.Center.X, DestinationRectangle.Y);
 
             TimingBar = new UIBar(new Vector2(Center.X, Position.Y + CurrentAnimation.FrameSize.Y + 4), new Vector2(32, 4), Color.DodgerBlue, false, true);
-            HealthBar = new UIBar(new Vector2(Center.X, Position.Y + CurrentAnimation.FrameSize.Y + 8), new Vector2(32, 4), Color.White, false, true); 
+            HealthBar = new UIBar(new Vector2(Center.X, Position.Y + CurrentAnimation.FrameSize.Y + 8), new Vector2(32, 4), Color.White, false, true);
 
-            DrawDepth = (float)(DestinationRectangle.Bottom / 1080f);
-
-            MaxY = DestinationRectangle.Bottom;
-            PreviousMaxY = MaxY;
+            if (OnGround == false)
+            {
+                DrawDepth = (float)(DestinationRectangle.Bottom / 1080f);
+                MaxY = DestinationRectangle.Bottom;
+                PreviousMaxY = MaxY;
+            }
             //Affected = false;
         }
 
@@ -183,11 +185,15 @@ namespace TowerDefensePrototype
             Bottom = BoundingBox.Max.Y;
 
             if (OnGround == false)
+            {
                 DrawDepth = (Bottom / 1080);
+                MaxY = Bottom;
+            }
             else
+            {
                 DrawDepth = 0f;
+            }
 
-            MaxY = Bottom;
 
             //if (TrapEmitterList.Count > 0)
             //{

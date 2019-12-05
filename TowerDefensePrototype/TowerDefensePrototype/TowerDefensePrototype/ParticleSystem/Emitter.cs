@@ -41,6 +41,8 @@ namespace TowerDefensePrototype
         public Invader Anchor;
         public object Tether;
 
+        public float BounceY;
+
         //TODO Acceleration
 
 
@@ -215,7 +217,7 @@ namespace TowerDefensePrototype
                 SortParticles = sortParticles.Value;
 
             YRange = yrange;
-            MaxY = Random.Next((int)yrange.X, (int)yrange.Y);
+            BounceY = Random.Next((int)yrange.X, (int)yrange.Y);            
             AddMore = true;
         }
 
@@ -340,7 +342,7 @@ namespace TowerDefensePrototype
                 SortParticles = sortParticles.Value;
 
             YRange = yrange;
-            MaxY = Random.Next((int)yrange.X, (int)yrange.Y);
+            BounceY = Random.Next((int)yrange.X, (int)yrange.Y);
             AddMore = true;
         }
 
@@ -390,7 +392,7 @@ namespace TowerDefensePrototype
                     Position += EmitterVelocity * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
 
                     if (CanBounce == true)
-                        if (Position.Y >= MaxY && BouncedOnGround == false)
+                        if (Position.Y >= BounceY && BouncedOnGround == false)
                         {
                             if (HardBounce == true)
                                 Position.Y -= EmitterVelocity.Y * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
@@ -402,7 +404,7 @@ namespace TowerDefensePrototype
 
                     if (StopBounce == true &&
                         BouncedOnGround == true &&
-                        Position.Y > MaxY)
+                        Position.Y > BounceY)
                     {
                         EmitterVelocity.Y = (-EmitterVelocity.Y / 2) * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
 
@@ -466,14 +468,14 @@ namespace TowerDefensePrototype
                         scale = (float)DoubleRange(ScaleRange.X, ScaleRange.Y);
                         rotation = (float)DoubleRange(RotationIncrementRange.X, RotationIncrementRange.Y);
                         speed = (float)DoubleRange(SpeedRange.X, SpeedRange.Y);
-                        startingRotation = (float)DoubleRange(StartingRotationRange.X, StartingRotationRange.Y);                        
-                        MaxY = Random.Next((int)YRange.X, (int)YRange.Y);
+                        startingRotation = (float)DoubleRange(StartingRotationRange.X, StartingRotationRange.Y);
+                        BounceY = Random.Next((int)YRange.X, (int)YRange.Y);
 
                         //Vector2 vel = new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle)) * speed;
                         //MaxY += Math.Abs(vel.X * 8f);
 
                         Particle NewParticle = new Particle(Texture, Position, angle, speed, hp, Transparency, Fade, startingRotation,
-                                                            rotation, scale, StartColor, EndColor, Gravity, CanBounce, MaxY, Shrink,
+                                                            rotation, scale, StartColor, EndColor, Gravity, CanBounce, BounceY, Shrink,
                                                             DrawDepth, StopBounce, HardBounce, false, RotateVelocity, Friction, Orientation,
                                                             FadeDelay, SortParticles, Grow);
 

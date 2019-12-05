@@ -83,7 +83,7 @@ namespace TowerDefensePrototype
 
         //public bool TrapSolid = true;
         //public bool TowerSolid = true;
-        //public bool ShieldSolid = true;
+        public bool ShieldSolid;
         //public bool TurretSolid = true;
 
         public Color CurrentColor;
@@ -273,7 +273,7 @@ namespace TowerDefensePrototype
                     Rod.DestinationRectangle = new Rectangle(
                                                       (int)Rod.Point1.CurrentPosition.X,
                                                       (int)Rod.Point1.CurrentPosition.Y,
-                                                      Texture.Width, Texture.Height);
+                                                      Texture.Width, Texture.Height);                   
 
                     BoundingBox = new BoundingBox(new Vector3(Rod.Center.X - ((float)Math.Cos(Rod.Rotation) * (Texture.Width / 4)),
                                                               Rod.Center.Y - ((float)Math.Sin(Rod.Rotation) * (Texture.Width / 4)), 0),
@@ -303,16 +303,33 @@ namespace TowerDefensePrototype
                         emitter.Position = BasePosition;
                     }
 
+                    if (Rotate == true)
+                        CurrentRotation = (float)Math.Atan2(Velocity.Y, Velocity.X);
+
                     DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y,
                                                          Texture.Width * (int)Scale.X, Texture.Height * (int)Scale.Y);
 
-                    BoundingBox = new BoundingBox(new Vector3(Position.X - ((float)Math.Cos(CurrentRotation) * (Texture.Width / 4)),
-                                                              Position.Y - ((float)Math.Sin(CurrentRotation) * (Texture.Width / 4)), 0),
-                                                  new Vector3(Position.X + ((float)Math.Cos(CurrentRotation) * (Texture.Width / 4)),
-                                                              Position.Y + ((float)Math.Sin(CurrentRotation) * (Texture.Width / 4)), 0));
+                    if (CurrentRotation >= 0)
+                    {
 
-                    if (Rotate == true)
-                        CurrentRotation = (float)Math.Atan2(Velocity.Y, Velocity.X);
+                        BoundingBox = new BoundingBox(new Vector3(Position.X - ((float)Math.Cos(CurrentRotation) * (Texture.Width / 4)),
+                                                                  Position.Y - ((float)Math.Sin(CurrentRotation) * (Texture.Width / 4)), 0),
+
+                                                      new Vector3(Position.X + ((float)Math.Cos(CurrentRotation) * (Texture.Width / 4)),
+                                                                  Position.Y + ((float)Math.Sin(CurrentRotation) * (Texture.Width / 4)), 0)
+
+                                                     );
+                    }
+                    else
+                    {
+                        BoundingBox = new BoundingBox(new Vector3(Position.X + ((float)Math.Cos(CurrentRotation) * (Texture.Width / 4)),
+                                                                  Position.Y + ((float)Math.Sin(CurrentRotation) * (Texture.Width / 4)), 0),
+
+                                                      new Vector3(Position.X - ((float)Math.Cos(CurrentRotation) * (Texture.Width / 4)),
+                                                                  Position.Y - ((float)Math.Sin(CurrentRotation) * (Texture.Width / 4)), 0)
+
+                                                     );
+                    }
                 }
                 #endregion
 

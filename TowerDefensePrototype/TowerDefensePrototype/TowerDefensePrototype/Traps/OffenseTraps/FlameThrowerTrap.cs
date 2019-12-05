@@ -23,6 +23,7 @@ namespace TowerDefensePrototype
             : base(position)
         {
             Solid = true;
+            OnGround = true;
             MaxHP = 100;
             TrapType = TrapType.FlameThrower;
             DetonateLimit = -1;
@@ -43,6 +44,16 @@ namespace TowerDefensePrototype
                     OnGround = true;
                     DrawDepth = 0f;
                     Solid = false;
+                    break;
+
+                case TrapAnimationState.Triggering:
+                    OnGround = false;
+                    Solid = true;
+                    break;
+
+                case TrapAnimationState.Resetting:
+                    OnGround = false;
+                    Solid = true;
                     break;
             }
             base.Update(gameTime);

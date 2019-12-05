@@ -203,7 +203,6 @@ Content\Decals\GlueDecal1.xnb
 Content\Invaders\HarpoonCannon\HarpoonCannonBarrel.xnb
 Content\Invaders\HarpoonCannon\HarpoonCannonBase.xnb
 Content\Projectiles\HarpoonProjectile.xnb
-Content\RopeTexture.xnb
 Content\Sounds\Menu\MenuClick.xnb
 Content\Sounds\FireTrapStart.xnb
 Content\Sounds\Menu\MenuAmbiance.xnb
@@ -232,3 +231,4 @@ Content\Fonts\SpriteFont1.xnb
 Content\ParticleEffect.xnb
 Content\ShadowBlur.xnb
 Content\Shaders\HealthBarEffect.xnb
+Content\RopeTexture.xnb

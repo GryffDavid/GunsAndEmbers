@@ -23,6 +23,12 @@ namespace TowerDefensePrototype
 
                 if (_HitObject != null)
                 {
+                    if (_HitObject.GetType() == typeof(Rectangle))
+                    {
+                        HitScreen++;
+                        return;
+                    }
+
                     #region Hit the ground
                     if (_HitObject.GetType() == typeof(StaticSprite))
                     {
@@ -62,6 +68,8 @@ namespace TowerDefensePrototype
                         return;
                     }
                     #endregion
+
+                    
                 }
             }
         }
@@ -106,6 +114,7 @@ namespace TowerDefensePrototype
         public int HitShield = 0;
         public int HitTurret = 0;
         public int HitTrap = 0;
+        public int HitScreen = 0;
         #endregion        
 
         public override void Initialize()
@@ -224,6 +233,7 @@ namespace TowerDefensePrototype
             HitShield = 0;
             HitTurret = 0;
             HitTrap = 0;
+            HitScreen = 0;
         }
     }
 }

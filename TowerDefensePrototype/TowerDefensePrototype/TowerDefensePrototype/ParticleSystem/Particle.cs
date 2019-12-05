@@ -20,6 +20,7 @@ namespace TowerDefensePrototype
                      CurrentTransparency, MaxTransparency,
                      CurrentFadeDelay, FadeDelay;
         float PercentageTime;
+        float BounceY;
 
         public Color CurrentColor, EndColor, StartColor;
         public bool Fade, BouncedOnGround, CanBounce, Shrink, StopBounce, HardBounce, Shadow, RotateVelocity, SortDepth, Grow;
@@ -99,7 +100,7 @@ namespace TowerDefensePrototype
 
             Velocity = Direction * Speed;
 
-            MaxY = maxY;
+            BounceY = maxY;
 
             if (drawDepth == null)
                 DrawDepth = 0;
@@ -244,7 +245,7 @@ namespace TowerDefensePrototype
 
                 #region Handle bouncing
                 if (CanBounce == true)
-                    if (CurrentPosition.Y >= MaxY && BouncedOnGround == false)
+                    if (CurrentPosition.Y >= BounceY && BouncedOnGround == false)
                     {
                         if (HardBounce == true)
                             CurrentPosition.Y -= Velocity.Y;
@@ -257,7 +258,7 @@ namespace TowerDefensePrototype
 
                 if (StopBounce == true &&
                     BouncedOnGround == true &&
-                    CurrentPosition.Y > MaxY)
+                    CurrentPosition.Y > BounceY)
                 {
                     Velocity.Y = (-Velocity.Y / 2);
 
