@@ -41,9 +41,9 @@ namespace TowerDefensePrototype
 
         public void Draw(SpriteBatch spriteBatch)
         {            
-            spriteBatch.Draw(Background, new Rectangle((int)Position.X - Background.Width/2, (int)Position.Y, Background.Width, Background.Height), Color.White);
-            spriteBatch.Draw(ForeGround, new Rectangle((int)Position.X - ForeGround.Width / 2, (int)Position.Y, (int)BarSize, ForeGround.Height), new Rectangle(0, 0, (int)BarSize, ForeGround.Height), Color.White);
-            spriteBatch.Draw(Outline, new Rectangle((int)Position.X - Outline.Width / 2, (int)Position.Y, Outline.Width, Outline.Height), Color.White);
+            spriteBatch.Draw(Background, new Rectangle((int)Position.X - Background.Width/2, (int)Position.Y, Background.Width, Background.Height), null, Color.White, 0, Vector2.Zero, SpriteEffects.None, 0.98f);
+            spriteBatch.Draw(ForeGround, new Rectangle((int)Position.X - ForeGround.Width / 2, (int)Position.Y, (int)BarSize, ForeGround.Height), new Rectangle(0, 0, (int)BarSize, ForeGround.Height), Color.White, 0, Vector2.Zero, SpriteEffects.None, 0.99f);
+            spriteBatch.Draw(Outline, new Rectangle((int)Position.X - Outline.Width / 2, (int)Position.Y, Outline.Width, Outline.Height), null, Color.White, 0, Vector2.Zero, SpriteEffects.None, 1f);
         }
     }
 }

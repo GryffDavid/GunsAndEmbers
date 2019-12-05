@@ -7,26 +7,22 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 
 namespace TowerDefensePrototype
-{    
-    class MachineGunTurret : Turret
-    {      
-        public MachineGunTurret(Vector2 position)
+{
+    class BeamTurret : Turret
+    {
+        public BeamTurret(Vector2 position)
         {
             Active = true;
-            TurretType = TurretType.MachineGun;
+            TurretType = TurretType.Beam;
             BaseAsset = "Turrets/MachineTurretBase";
             Position = position;
             Selected = true;
-            FireDelay = 200;
-            Damage = 4;
-            AngleOffset = 4;
+            FireDelay = 1000;
+            Damage = 100;
+            AngleOffset = 0;
             Animated = false;
             Looping = false;
             ResourceCost = 200;
-            MaxHeat = 100;
-            MaxHeatTime = 2000;
-            CoolValue = 0.5f;
-            ShotHeat = 10;
 
             CurrentAnimation = new Animation()
             {
@@ -34,23 +30,18 @@ namespace TowerDefensePrototype
                 TotalFrames = 6
             };
 
-            Health = 100;      
+            Health = 100; 
         }
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            foreach (Emitter emitter in EmitterList)
-            {
-                emitter.Draw(spriteBatch);
-            }
-
             if (Active == true)
             {
-                BaseRectangle = new Rectangle((int)Position.X, (int)Position.Y, 
+                BaseRectangle = new Rectangle((int)Position.X, (int)Position.Y,
                                               TurretBase.Width, TurretBase.Height);
 
-                BarrelRectangle = new Rectangle((int)Position.X, (int)Position.Y, 
-                                                TurretBarrel.Width/CurrentAnimation.TotalFrames, TurretBarrel.Height);
+                BarrelRectangle = new Rectangle((int)Position.X, (int)Position.Y,
+                                                TurretBarrel.Width / CurrentAnimation.TotalFrames, TurretBarrel.Height);
 
                 BarrelPivot = new Vector2(32, 32);
                 BasePivot = new Vector2(40, 5);

@@ -14,7 +14,7 @@ namespace TowerDefensePrototype
         public Rectangle DestinationRectangle;
         public float Angle, Speed, CurrentHP, MaxHP, CurrentTransparency, Scale, MaxY;
         public float RotationIncrement, CurrentRotation, Gravity, DrawDepth;
-        public Color CurrentColor, EndColor;
+        public Color CurrentColor, EndColor, StartColor;
         public bool Active, Fade, BouncedOnGround, CanBounce, Shrink, StopBounce, HardBounce;
         static Random Random = new Random();
 
@@ -30,6 +30,7 @@ namespace TowerDefensePrototype
             MaxHP = maxHP;
             CurrentHP = maxHP;
             CurrentTransparency = startingTransparency;
+            StartColor = startColor;
             CurrentColor = startColor;
             EndColor = endColor;
             Scale = scale;
@@ -172,6 +173,7 @@ namespace TowerDefensePrototype
             if (Fade == true)
             {
                 CurrentTransparency = MathHelper.Lerp(PercentageHP, CurrentTransparency, PercentageHP);
+                //CurrentTransparency = MathHelper.Lerp(1, 0, ((MaxHP / 100) * CurrentHP) / 100);
             }
 
             if (Shrink == true)
@@ -180,6 +182,7 @@ namespace TowerDefensePrototype
             }
 
             CurrentColor = Color.Lerp(CurrentColor, EndColor, PercentageHP / (CurrentHP * 0.5f));
+            //CurrentColor = Color.Lerp(StartColor, EndColor, ((MaxHP/100)*CurrentHP)/100);            
         }
 
         public void Draw(SpriteBatch spriteBatch)

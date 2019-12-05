@@ -13,7 +13,7 @@ namespace TowerDefensePrototype
         public BarrelTrap(Vector2 position)
         {
             Position = position;
-            Solid = false;
+            Solid = true;
             AssetName = "Traps/LandMineGreenSmall";
             MaxHP = 50;
             TrapType = TrapType.Barrel;

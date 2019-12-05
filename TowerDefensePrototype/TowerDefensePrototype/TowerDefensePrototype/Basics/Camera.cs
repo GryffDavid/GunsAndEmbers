@@ -9,7 +9,7 @@ namespace TowerDefensePrototype
 {
     public class Camera
     {
-        protected float Zoom;
+        public float Zoom;
         public Matrix Transform;
         public Vector2 Position, Origin;
         public float Rotation;

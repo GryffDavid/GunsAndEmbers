@@ -347,7 +347,7 @@ namespace TowerDefensePrototype
                         break;
                 }
 
-                if (Text != "")
+                if (Text != "" && Text != null)
                 {
                     if (CurrentButtonState != ButtonSpriteState.Pressed)
                     {

@@ -77,7 +77,6 @@ Content\BlastRadius.xnb
 Content\Traps\LandMineGreenSmall.xnb
 Content\Traps\LandMineRedSmall.xnb
 Content\Cursors\BombCursor.xnb
-Content\BackgroundTest2.xnb
 Content\HealthBar\HealthBarForeground.xnb
 Content\HealthBar\ShieldBarForeground.xnb
 Content\HealthBar\Background.xnb
@@ -88,6 +87,12 @@ Content\ShieldIcon.xnb
 Content\Ground1.xnb
 Content\WeaponBox.xnb
 Content\Buttons\Button3.xnb
+Content\Projectiles\FelProjectile.xnb
+Content\Projectiles\FelProjectile2.xnb
+Content\Buttons\ButtonTemplate.xnb
+Content\Test2.xnb
+Content\Foreground.xnb
+Content\Midground.xnb
 Content\Fonts\BoxFont1.xnb
 Content\Fonts\HUDFont.xnb
 Content\Fonts\ButtonFont.xnb
@@ -114,8 +119,6 @@ Content\Sounds\Splat2.xnb
 Content\Sounds\MenuPing.xnb
 Content\Sounds\MenuWoosh.xnb
 Content\Sounds\MenuMusic1.xnb
-Content\Projectiles\FelProjectile.xnb
 Content\Sounds\Implosion.xnb
-Content\Projectiles\FelProjectile2.xnb
 Content\Sounds\Implosion2.xnb
-Content\Buttons\ButtonTemplate.xnb
+Content\Sounds\TurretOverheat.xnb

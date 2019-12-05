@@ -37,7 +37,7 @@ namespace TowerDefensePrototype
             Color FireColor = new Color(Color.DarkOrange.R, Color.DarkOrange.G, Color.DarkOrange.B, 200);
             Color FireColor2 = new Color(Color.DarkOrange.R, Color.DarkOrange.G, Color.DarkOrange.B, 90);
 
-            ParticleEmitter = new Emitter("Particles/FireParticle", new Vector2(DestinationRectangle.Center.X, DestinationRectangle.Top),
+            DustEmitter = new Emitter("Particles/FireParticle", new Vector2(DestinationRectangle.Center.X, DestinationRectangle.Top),
                                 new Vector2(180, 180), new Vector2(0.5f, 0.75f), new Vector2(40, 80), 0.01f, true, new Vector2(-20, 20),
                                 new Vector2(-4, 4), new Vector2(1, 2), FireColor, FireColor2, 0.2f, -1, 10, 1, true, new Vector2(MaxY + 100, MaxY + 100),
                                 false,null,true, false);
@@ -47,12 +47,12 @@ namespace TowerDefensePrototype
         {
             if (Active == true)
             {
-                if (ParticleEmitter != null)
+                if (DustEmitter != null)
                 {                    
-                    ParticleEmitter.Update(gameTime);
-                    ParticleEmitter.Position = new Vector2(DestinationRectangle.Center.X, DestinationRectangle.Top);
-                    ParticleEmitter.MaxY = MaxY;
-                    ParticleEmitter.DrawDepth = DrawDepth;
+                    DustEmitter.Update(gameTime);
+                    DustEmitter.Position = new Vector2(DestinationRectangle.Center.X, DestinationRectangle.Top);
+                    DustEmitter.MaxY = MaxY;
+                    DustEmitter.DrawDepth = DrawDepth;
                 }
             }
             base.Update(gameTime);

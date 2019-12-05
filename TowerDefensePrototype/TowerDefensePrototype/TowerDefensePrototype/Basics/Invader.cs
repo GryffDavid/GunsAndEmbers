@@ -36,7 +36,7 @@ namespace TowerDefensePrototype
         public Vector2 Scale = new Vector2(1, 1);
         public float Bottom;
         public Animation CurrentAnimation;
-        public Emitter ParticleEmitter;        
+        public Emitter DustEmitter;        
 
         public void LoadContent(ContentManager contentManager)
         {
@@ -51,8 +51,8 @@ namespace TowerDefensePrototype
             MaxY = Random.Next((int)YRange.X, (int)YRange.Y);
             FrameSize = new Vector2(CurrentTexture.Width / CurrentAnimation.TotalFrames, CurrentTexture.Height);
           
-            if (ParticleEmitter != null)
-            ParticleEmitter.LoadContent(contentManager);
+            if (DustEmitter != null)
+            DustEmitter.LoadContent(contentManager);
         }
 
         public virtual void Update(GameTime gameTime)
@@ -69,6 +69,17 @@ namespace TowerDefensePrototype
                 //This disables the invader if it has 0 health left
                 if (CurrentHP <= 0)
                     Active = false;
+
+                if (DustEmitter != null)
+                {
+                    if (Frozen == true)
+                        DustEmitter.AddMore = false;
+                    else
+                        DustEmitter.AddMore = true;
+
+                    DustEmitter.Update(gameTime);
+                    DustEmitter.Position = new Vector2(DestinationRectangle.Center.X, DestinationRectangle.Bottom);
+                }
 
                 #region This makes sure that the invader can't take damage if it's off screen (i.e. before it's visible to the player)
                     if (Position.X > 1280)
@@ -123,6 +134,7 @@ namespace TowerDefensePrototype
                 #region This controls how the invader behaves when it's frozen
                 if (Frozen == true)
                     {
+                        CanAttack = false;
                         CurrentFreezeDelay += gameTime.ElapsedGameTime.TotalMilliseconds;
                         Color = FrozenColor;
                         CurrentMoveVector = Vector2.Zero;
@@ -131,6 +143,7 @@ namespace TowerDefensePrototype
                     if (Frozen == true && CurrentFreezeDelay > FreezeDelay)
                     {
                         Frozen = false;
+                        CanAttack = true;
                         CurrentMoveVector = MoveVector;
                         CurrentFreezeDelay = 0;
                     }
@@ -200,8 +213,8 @@ namespace TowerDefensePrototype
             {               
                 spriteBatch.Draw(Shadow, new Rectangle(DestinationRectangle.Left, (int)MaxY-(DestinationRectangle.Height/8), DestinationRectangle.Width, DestinationRectangle.Height / 4), Color.Lerp(Color.White, Color.Transparent, 0.75f));
                 
-                if (ParticleEmitter != null)
-                    ParticleEmitter.Draw(spriteBatch);
+                if (DustEmitter != null)
+                    DustEmitter.Draw(spriteBatch);
 
                 BoundingBox = new BoundingBox(new Vector3(Position.X, Position.Y, 0), 
                               new Vector3(Position.X + (FrameSize.X * Scale.X), Position.Y + (FrameSize.Y * Scale.Y), 0));

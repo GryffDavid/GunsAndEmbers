@@ -19,6 +19,7 @@ namespace TowerDefensePrototype
         public bool VerticalLooping, HorizontalLooping;
         public double CurrentTime, UpdateDelay, FadeTime, CurrentFadeTime;
         public float Rotation;
+        public float Depth = 0;
         public float Transparency = 0;
 
         public StaticSprite(string assetName, Vector2 position, Vector2? scale = null, Color? color = null, 
@@ -113,16 +114,14 @@ namespace TowerDefensePrototype
                 Position += Move;
 
                 CurrentTime = 0;
-            }
-
-            
+            }            
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
             DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, (int)(Texture.Width * Scale.X), (int)(Texture.Height * Scale.Y));
             BoundingBox = new BoundingBox(new Vector3(Position.X, Position.Y, 0), new Vector3(Position.X + (Texture.Width * Scale.X), Position.Y + (Texture.Width * Scale.Y), 0));
-            spriteBatch.Draw(Texture, DestinationRectangle, null, Color, Rotation, Vector2.Zero, SpriteEffects.None, 0);
+            spriteBatch.Draw(Texture, DestinationRectangle, null, Color, Rotation, Vector2.Zero, SpriteEffects.None, Depth);
         }
     }
 }

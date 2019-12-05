@@ -9,53 +9,57 @@ using Microsoft.Xna.Framework.Content;
 
 namespace TowerDefensePrototype
 {
-    class WeaponBox
+    class WeaponBox : Button
     {
-        public Vector2 CurrentPosition, NextPosition, Scale, NextScale;
-        public Rectangle SourceRectangle, DestinationRectangle;
-        public Texture2D BoxTexture;
-        public string Text;
-        public SpriteFont Font;
-        public Button InfoButton;
-        public Color Color;
-
-        public WeaponBox(Vector2 postion, Vector2 scale)
+        public WeaponBox(string buttonName, Vector2 postion, Vector2 scale) : base(buttonName, postion, null, scale )
         {
-            CurrentPosition = postion;
-            NextPosition = postion;
-            Color = Color.White;
-            Scale = scale;
-            NextScale = Scale;         
+
         }
+        //public Vector2 CurrentPosition, NextPosition, Scale, NextScale;
+        //public Rectangle SourceRectangle, DestinationRectangle;
+        //public Texture2D BoxTexture;
+        //public string Text;
+        //public SpriteFont Font;
+        //public Button InfoButton;
+        //public Color Color;
 
-        public void LoadContent(ContentManager contentManager)
-        {
-            BoxTexture = contentManager.Load<Texture2D>("WeaponBox");
-        }
+        //public WeaponBox(Vector2 postion, Vector2 scale)
+        //{
+        //    CurrentPosition = postion;
+        //    NextPosition = postion;
+        //    Color = Color.White;
+        //    Scale = scale;
+        //    NextScale = Scale;
+        //}
 
-        public void Update()
-        {
-            if (NextPosition != CurrentPosition)
-            {
-                CurrentPosition = Vector2.Lerp(CurrentPosition, NextPosition, 0.15f);
+        //public override void LoadContent(ContentManager contentManager)
+        //{
+        //    BoxTexture = contentManager.Load<Texture2D>("WeaponBox");
+        //}
 
-                if (Math.Abs(CurrentPosition.X - NextPosition.X) < 0.5f)
-                {
-                    CurrentPosition.X = NextPosition.X;
-                }
-            }
+        //public override void Update()
+        //{
+        //    if (NextPosition != CurrentPosition)
+        //    {
+        //        CurrentPosition = Vector2.Lerp(CurrentPosition, NextPosition, 0.15f);
 
-            if (NextScale != Scale)
-            {
-                Scale = Vector2.Lerp(Scale, NextScale, 0.15f);
-            }
+        //        if (Math.Abs(CurrentPosition.X - NextPosition.X) < 0.5f)
+        //        {
+        //            CurrentPosition.X = NextPosition.X;
+        //        }
+        //    }
 
-            DestinationRectangle = new Rectangle((int)CurrentPosition.X, (int)CurrentPosition.Y, (int)(BoxTexture.Width * Scale.X), (int)(BoxTexture.Height * Scale.Y));
-        }
+        //    if (NextScale != Scale)
+        //    {
+        //        Scale = Vector2.Lerp(Scale, NextScale, 0.15f);
+        //    }
 
-        public void Draw(SpriteBatch spriteBatch)
-        {
-            spriteBatch.Draw(BoxTexture, DestinationRectangle, Color);
-        }
+        //    DestinationRectangle = new Rectangle((int)CurrentPosition.X, (int)CurrentPosition.Y, (int)(BoxTexture.Width * Scale.X), (int)(BoxTexture.Height * Scale.Y));
+        //}
+
+        //public void Draw(SpriteBatch spriteBatch)
+        //{
+        //    spriteBatch.Draw(BoxTexture, DestinationRectangle, Color);
+        //}
     }
 }
