@@ -12,7 +12,7 @@ namespace TowerDefensePrototype
     public class UIWeaponInfoTip
     {
         public SpriteFont RobotoItalic20_0, RobotoRegular20_0, RobotoBold40_2, RobotoRegular20_2;
-        Vector2 BoxSize, NameBoxSize, Position;
+        public Vector2 BoxSize, NameBoxSize, Position;
         UIBar UIBar1, UIBar2, UIBar3, UIBar4, UIBar5;
         DamageType DamageType;
         string BarText1, BarText2, BarText3, BarText4, BarText5;
@@ -26,10 +26,10 @@ namespace TowerDefensePrototype
         
         VertexPositionColor[] NameBoxVertices = new VertexPositionColor[4];
         //Change this colour based on the damage type of the weapon - fire=orange, energy=purple etc.
-        Color NameBoxColor = Color.Lerp(Color.Lerp(Color.White, Color.DodgerBlue, 0.85f), Color.Transparent, 0.5f);
+        public Color NameBoxColor = Color.Lerp(Color.Lerp(Color.White, Color.DodgerBlue, 0.85f), Color.Transparent, 0.5f);
 
         VertexPositionColor[] WeaponBoxVertices = new VertexPositionColor[4];
-        Color WeaponBoxColor = Color.Lerp(Color.Black, Color.Transparent, 0.5f);
+        public Color WeaponBoxColor = Color.Lerp(Color.Black, Color.Transparent, 0.5f);
         
         VertexPositionColor[] DividerVertices1 = new VertexPositionColor[4];
         VertexPositionColor[] DividerVertices2 = new VertexPositionColor[4];
@@ -46,6 +46,12 @@ namespace TowerDefensePrototype
         int Bar1Value, Bar2Value, Bar3Value, Bar4Value, Bar5Value;
 
         int Charges;
+
+        public Nullable<TurretType> ContainsTurret = null;
+        public Nullable<TrapType> ContainsTrap = null;
+
+        //This is only used in the profile management screen to lock weapons that aren't available
+        public bool Locked = false;
 
         public UIWeaponInfoTip(Vector2 position, Turret turret = null, Trap trap = null)
         {
@@ -244,92 +250,96 @@ namespace TowerDefensePrototype
                 spriteBatch.DrawString(RobotoBold40_2, WeaponName, new Vector2(Position.X + 4, Position.Y - BoxSize.Y - NameBoxSize.Y + 2),
                     Color.White, 0, new Vector2(0, 0), 0.5f, SpriteEffects.None, 0);
 
-                //Draw the weapon type
-                spriteBatch.DrawString(RobotoRegular20_2, WeaponType, new Vector2(Position.X + 5, Position.Y - BoxSize.Y - NameBoxSize.Y + 23),
-                    Color.White, 0, new Vector2(0, 0), 0.7f, SpriteEffects.None, 0);
+                if (Locked == false)
+                {
+                    //Draw the weapon type
+                    spriteBatch.DrawString(RobotoRegular20_2, WeaponType, new Vector2(Position.X + 5, Position.Y - BoxSize.Y - NameBoxSize.Y + 23),
+                        Color.White, 0, new Vector2(0, 0), 0.7f, SpriteEffects.None, 0);
 
-                //Draw the weapon damage
-                spriteBatch.DrawString(RobotoBold40_2, WeaponDamage.ToString(), new Vector2(Position.X + 30, Position.Y - BoxSize.Y + 2),
-                    Color.DodgerBlue, 0, new Vector2(0, 0), 1f, SpriteEffects.None, 0);
+                    //Draw the weapon damage
+                    spriteBatch.DrawString(RobotoBold40_2, WeaponDamage.ToString(), new Vector2(Position.X + 30, Position.Y - BoxSize.Y + 2),
+                        Color.DodgerBlue, 0, new Vector2(0, 0), 1f, SpriteEffects.None, 0);
 
-                //Draw the weapon tip, e.g. "Fire into a closely packed crowed for maximum carnage"
-                spriteBatch.DrawString(RobotoItalic20_0, WeaponTip, new Vector2(Position.X + 5, Position.Y - 62),
-                    Color.White, 0, new Vector2(0, 0), 0.7f, SpriteEffects.None, 0);
+                    //Draw the weapon tip, e.g. "Fire into a closely packed crowed for maximum carnage"
+                    spriteBatch.DrawString(RobotoItalic20_0, WeaponTip, new Vector2(Position.X + 5, Position.Y - 62),
+                        Color.White, 0, new Vector2(0, 0), 0.7f, SpriteEffects.None, 0);
 
 
-                spriteBatch.Draw(CurrencyIcon, 
-                    new Rectangle((int)(Position.X + 5), (int)(Position.Y - 80), 24, 24), 
-                    Color.White);
+                    spriteBatch.Draw(CurrencyIcon,
+                        new Rectangle((int)(Position.X + 5), (int)(Position.Y - 80), 24, 24),
+                        Color.White);
 
-                Vector2 NewSize = new Vector2(20, (int)((20f / DamageIcon.Width) * DamageIcon.Height));
-                spriteBatch.Draw(DamageIcon, 
-                    new Rectangle(
-                        (int)Position.X + 5, (int)(Position.Y - BoxSize.Y + 23),
-                        (int)NewSize.X, (int)NewSize.Y), null,
-                        Color.Orange, 0, new Vector2(0, DamageIcon.Height/2), SpriteEffects.None, 0);
+                    Vector2 NewSize = new Vector2(20, (int)((20f / DamageIcon.Width) * DamageIcon.Height));
+                    spriteBatch.Draw(DamageIcon,
+                        new Rectangle(
+                            (int)Position.X + 5, (int)(Position.Y - BoxSize.Y + 23),
+                            (int)NewSize.X, (int)NewSize.Y), null,
+                            Color.Orange, 0, new Vector2(0, DamageIcon.Height / 2), SpriteEffects.None, 0);
 
-                //Draw the resource cost of the weapon
-                //*****CHANGE THIS COLOUR TO GRAY IF THE PLAYER CANNOT AFFORD THE WEAPON*****//
-                spriteBatch.DrawString(RobotoRegular20_0, WeaponCost.ToString(), new Vector2(Position.X + 35, Position.Y - 78),
-                    Color.White, 0, new Vector2(0, 0), 1f, SpriteEffects.None, 0);
+                    //Draw the resource cost of the weapon
+                    //*****CHANGE THIS COLOUR TO GRAY IF THE PLAYER CANNOT AFFORD THE WEAPON*****//
+                    spriteBatch.DrawString(RobotoRegular20_0, WeaponCost.ToString(), new Vector2(Position.X + 35, Position.Y - 78),
+                        Color.White, 0, new Vector2(0, 0), 1f, SpriteEffects.None, 0);
 
-                #region Draw the names and values of the bars
-                #region Bar 1
-                //Name
-                Vector2 rateOfFireSize = RobotoRegular20_0.MeasureString(BarText1);
-                spriteBatch.DrawString(RobotoRegular20_0, BarText1, new Vector2(Position.X + 100, Position.Y - BoxSize.Y + 60),
-                    Color.White, 0, new Vector2(rateOfFireSize.X, 0), 0.8f, SpriteEffects.None, 0);
+                    #region Draw the names and values of the bars
+                    #region Bar 1
+                    //Name
+                    Vector2 rateOfFireSize = RobotoRegular20_0.MeasureString(BarText1);
+                    spriteBatch.DrawString(RobotoRegular20_0, BarText1, new Vector2(Position.X + 100, Position.Y - BoxSize.Y + 60),
+                        Color.White, 0, new Vector2(rateOfFireSize.X, 0), 0.8f, SpriteEffects.None, 0);
 
-                //Value
-                Vector2 rateOfFireValueSize = RobotoRegular20_0.MeasureString(Bar1Value.ToString());
-                spriteBatch.DrawString(RobotoRegular20_0, Bar1Value.ToString(), new Vector2(Position.X + 250 - 25, Position.Y - BoxSize.Y + 60),
-                    Color.White, 0, new Vector2(0, 0), 0.8f, SpriteEffects.None, 0);
-                #endregion
+                    //Value
+                    Vector2 rateOfFireValueSize = RobotoRegular20_0.MeasureString(Bar1Value.ToString());
+                    spriteBatch.DrawString(RobotoRegular20_0, Bar1Value.ToString(), new Vector2(Position.X + 250 - 25, Position.Y - BoxSize.Y + 60),
+                        Color.White, 0, new Vector2(0, 0), 0.8f, SpriteEffects.None, 0);
+                    #endregion
 
-                #region Bar 2
-                Vector2 impactSize = RobotoRegular20_0.MeasureString(BarText2);
-                spriteBatch.DrawString(RobotoRegular20_0, BarText2, new Vector2(Position.X + 100, Position.Y - BoxSize.Y + 85),
-                    Color.White, 0, new Vector2(impactSize.X, 0), 0.8f, SpriteEffects.None, 0);
+                    #region Bar 2
+                    Vector2 impactSize = RobotoRegular20_0.MeasureString(BarText2);
+                    spriteBatch.DrawString(RobotoRegular20_0, BarText2, new Vector2(Position.X + 100, Position.Y - BoxSize.Y + 85),
+                        Color.White, 0, new Vector2(impactSize.X, 0), 0.8f, SpriteEffects.None, 0);
 
-                Vector2 impactValueSize = RobotoRegular20_0.MeasureString(Bar2Value.ToString());
-                spriteBatch.DrawString(RobotoRegular20_0, Bar2Value.ToString(), new Vector2(Position.X + 250 - 25, Position.Y - BoxSize.Y + 85),
-                    Color.White, 0, new Vector2(0, 0), 0.8f, SpriteEffects.None, 0);
-                #endregion
+                    Vector2 impactValueSize = RobotoRegular20_0.MeasureString(Bar2Value.ToString());
+                    spriteBatch.DrawString(RobotoRegular20_0, Bar2Value.ToString(), new Vector2(Position.X + 250 - 25, Position.Y - BoxSize.Y + 85),
+                        Color.White, 0, new Vector2(0, 0), 0.8f, SpriteEffects.None, 0);
+                    #endregion
 
-                #region Bar 3
-                Vector2 rangeSize = RobotoRegular20_0.MeasureString(BarText3);
-                spriteBatch.DrawString(RobotoRegular20_0, BarText3, new Vector2(Position.X + 100, Position.Y - BoxSize.Y + 110),
-                    Color.White, 0, new Vector2(rangeSize.X, 0), 0.8f, SpriteEffects.None, 0);
+                    #region Bar 3
+                    Vector2 rangeSize = RobotoRegular20_0.MeasureString(BarText3);
+                    spriteBatch.DrawString(RobotoRegular20_0, BarText3, new Vector2(Position.X + 100, Position.Y - BoxSize.Y + 110),
+                        Color.White, 0, new Vector2(rangeSize.X, 0), 0.8f, SpriteEffects.None, 0);
 
-                Vector2 rangeValueSize = RobotoRegular20_0.MeasureString(Bar3Value.ToString());
-                spriteBatch.DrawString(RobotoRegular20_0, Bar3Value.ToString(), new Vector2(Position.X + 250 - 25, Position.Y - BoxSize.Y + 110),
-                    Color.White, 0, new Vector2(0, 0), 0.8f, SpriteEffects.None, 0);
-                #endregion
+                    Vector2 rangeValueSize = RobotoRegular20_0.MeasureString(Bar3Value.ToString());
+                    spriteBatch.DrawString(RobotoRegular20_0, Bar3Value.ToString(), new Vector2(Position.X + 250 - 25, Position.Y - BoxSize.Y + 110),
+                        Color.White, 0, new Vector2(0, 0), 0.8f, SpriteEffects.None, 0);
+                    #endregion
 
-                #region Bar 4
-                Vector2 ResponseSize = RobotoRegular20_0.MeasureString(BarText4);
-                spriteBatch.DrawString(RobotoRegular20_0, BarText4, new Vector2(Position.X + 100, Position.Y - BoxSize.Y + 135),
-                    Color.White, 0, new Vector2(ResponseSize.X, 0), 0.8f, SpriteEffects.None, 0);
+                    #region Bar 4
+                    Vector2 ResponseSize = RobotoRegular20_0.MeasureString(BarText4);
+                    spriteBatch.DrawString(RobotoRegular20_0, BarText4, new Vector2(Position.X + 100, Position.Y - BoxSize.Y + 135),
+                        Color.White, 0, new Vector2(ResponseSize.X, 0), 0.8f, SpriteEffects.None, 0);
 
-                Vector2 ResponseValueSize = RobotoRegular20_0.MeasureString(Bar4Value.ToString());
-                spriteBatch.DrawString(RobotoRegular20_0, Bar4Value.ToString(), new Vector2(Position.X + 250 - 25, Position.Y - BoxSize.Y + 135),
-                    Color.White, 0, new Vector2(0, 0), 0.8f, SpriteEffects.None, 0);
-                #endregion
+                    Vector2 ResponseValueSize = RobotoRegular20_0.MeasureString(Bar4Value.ToString());
+                    spriteBatch.DrawString(RobotoRegular20_0, Bar4Value.ToString(), new Vector2(Position.X + 250 - 25, Position.Y - BoxSize.Y + 135),
+                        Color.White, 0, new Vector2(0, 0), 0.8f, SpriteEffects.None, 0);
+                    #endregion
 
-                #region Bar 5
-                Vector2 reloadSize = RobotoRegular20_0.MeasureString(BarText5);
-                spriteBatch.DrawString(RobotoRegular20_0, BarText5, new Vector2(Position.X + 100, Position.Y - BoxSize.Y + 160),
-                    Color.White, 0, new Vector2(reloadSize.X, 0), 0.8f, SpriteEffects.None, 0);
+                    #region Bar 5
+                    Vector2 reloadSize = RobotoRegular20_0.MeasureString(BarText5);
+                    spriteBatch.DrawString(RobotoRegular20_0, BarText5, new Vector2(Position.X + 100, Position.Y - BoxSize.Y + 160),
+                        Color.White, 0, new Vector2(reloadSize.X, 0), 0.8f, SpriteEffects.None, 0);
 
-                Vector2 reloadValueSize = RobotoRegular20_0.MeasureString(Bar5Value.ToString());
-                spriteBatch.DrawString(RobotoRegular20_0, Bar5Value.ToString(), new Vector2(Position.X + 250 - 25, Position.Y - BoxSize.Y + 160),
-                    Color.White, 0, new Vector2(0, 0), 0.8f, SpriteEffects.None, 0);
-                #endregion
-                #endregion
+                    Vector2 reloadValueSize = RobotoRegular20_0.MeasureString(Bar5Value.ToString());
+                    spriteBatch.DrawString(RobotoRegular20_0, Bar5Value.ToString(), new Vector2(Position.X + 250 - 25, Position.Y - BoxSize.Y + 160),
+                        Color.White, 0, new Vector2(0, 0), 0.8f, SpriteEffects.None, 0);
+                    #endregion
+                    #endregion
 
-                Vector2 chargesSize = RobotoRegular20_0.MeasureString(Charges.ToString());
-                spriteBatch.DrawString(RobotoRegular20_0, Charges.ToString(), new Vector2(Position.X + 250 - 5, Position.Y - BoxSize.Y + 175),
-                    Color.White, 0, new Vector2(chargesSize.X, 0), 0.8f, SpriteEffects.None, 0);
+
+                    Vector2 chargesSize = RobotoRegular20_0.MeasureString(Charges.ToString());
+                    spriteBatch.DrawString(RobotoRegular20_0, Charges.ToString(), new Vector2(Position.X + 250 - 5, Position.Y - BoxSize.Y + 175),
+                        Color.White, 0, new Vector2(chargesSize.X, 0), 0.8f, SpriteEffects.None, 0);
+                }
 
                 foreach (EffectPass pass in basicEffect.CurrentTechnique.Passes)
                 {
@@ -346,23 +356,26 @@ namespace TowerDefensePrototype
                         BoxIndices, 0, 2,
                         VertexPositionColor.VertexDeclaration);
 
-                    graphics.DrawUserIndexedPrimitives(
-                       PrimitiveType.TriangleList,
-                       DividerVertices1.ToArray(), 0, 4,
-                       DividerIndices1, 0, 2,
-                       VertexPositionColor.VertexDeclaration);
+                    if (Locked == false)
+                    {
+                        graphics.DrawUserIndexedPrimitives(
+                           PrimitiveType.TriangleList,
+                           DividerVertices1.ToArray(), 0, 4,
+                           DividerIndices1, 0, 2,
+                           VertexPositionColor.VertexDeclaration);
 
-                    graphics.DrawUserIndexedPrimitives(
-                       PrimitiveType.TriangleList,
-                       DividerVertices2.ToArray(), 0, 4,
-                       DividerIndices2, 0, 2,
-                       VertexPositionColor.VertexDeclaration);
+                        graphics.DrawUserIndexedPrimitives(
+                           PrimitiveType.TriangleList,
+                           DividerVertices2.ToArray(), 0, 4,
+                           DividerIndices2, 0, 2,
+                           VertexPositionColor.VertexDeclaration);
 
-                    UIBar1.Draw(graphics);
-                    UIBar2.Draw(graphics);
-                    UIBar3.Draw(graphics);
-                    UIBar4.Draw(graphics);
-                    UIBar5.Draw(graphics);
+                        UIBar1.Draw(graphics);
+                        UIBar2.Draw(graphics);
+                        UIBar3.Draw(graphics);
+                        UIBar4.Draw(graphics);
+                        UIBar5.Draw(graphics);
+                    }
                 }
             }
         }

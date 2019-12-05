@@ -132,10 +132,57 @@ namespace TowerDefensePrototype
             DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, (int)(Texture.Width * Scale.X), (int)(Texture.Height * Scale.Y));
         }
 
+        int[] Indices = new int[6];
+        VertexPositionColorTexture[] Vertices = new VertexPositionColorTexture[4];
+
         public void LoadContent(ContentManager contentManager)
         {
             Texture = contentManager.Load<Texture2D>(AssetName);
             DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, (int)(Texture.Width * Scale.X), (int)(Texture.Height * Scale.Y));
+
+            #region This is used when drawing the static sprite using vertices
+            //Originally written so that I could draw the menu background 
+            //without messing up the draw order of the weapon info bars
+
+            //Top left
+            Vertices[0] = new VertexPositionColorTexture()
+            {
+                Position = new Vector3(Position.X, Position.Y, 0),
+                TextureCoordinate = new Vector2(0,0),
+                Color = Color.White
+            };
+
+            //Top right
+            Vertices[1] = new VertexPositionColorTexture()
+            {
+                Position = new Vector3(Position.X + DestinationRectangle.Width, Position.Y, 0),
+                TextureCoordinate = new Vector2(1, 0),
+                Color = Color.White
+            };
+
+            //Bottom right
+            Vertices[2] = new VertexPositionColorTexture()
+            {
+                Position = new Vector3(Position.X + DestinationRectangle.Width, Position.Y + DestinationRectangle.Height, 0),
+                TextureCoordinate = new Vector2(1, 1),
+                Color = Color.White
+            };
+
+            //Bottom left
+            Vertices[3] = new VertexPositionColorTexture()
+            {
+                Position = new Vector3(Position.X, Position.Y + DestinationRectangle.Height, 0),
+                TextureCoordinate = new Vector2(0, 1),
+                Color = Color.White
+            };
+
+            Indices[0] = 0;
+            Indices[1] = 1;
+            Indices[2] = 2;
+            Indices[3] = 2;
+            Indices[4] = 3;
+            Indices[5] = 0;
+            #endregion
         }
 
         public void Update(GameTime gameTime)
@@ -214,6 +261,20 @@ namespace TowerDefensePrototype
             //DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, (int)(Texture.Width * Scale.X), (int)(Texture.Height * Scale.Y));
             BoundingBox = new BoundingBox(new Vector3(Position.X, Position.Y, 0), new Vector3(Position.X + (Texture.Width * Scale.X), Position.Y + (Texture.Width * Scale.Y), 0));
             spriteBatch.Draw(Texture, DestinationRectangle, null, Color, Rotation, Vector2.Zero, SpriteEffects.None, DrawDepth);
+        }
+
+        public void Draw(GraphicsDevice graphics, BasicEffect basicEffect)
+        {
+            basicEffect.Texture = Texture;
+            basicEffect.TextureEnabled = true;
+
+            foreach (EffectPass pass in basicEffect.CurrentTechnique.Passes)
+            {
+                pass.Apply();
+                graphics.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, Vertices, 0, 4, Indices, 0, 2);
+            }
+
+            basicEffect.TextureEnabled = false;
         }
     }
 }

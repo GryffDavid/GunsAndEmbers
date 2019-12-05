@@ -42,7 +42,7 @@ namespace TowerDefensePrototype
         public int MagazineCapacity;
 
         //Range: Pixel-distance before damage drops off
-        public int Range;
+        public float Range;
 
         //Total number of times the turret can be fired before needing to be replaced.
         //This is meant for powerful weapons like the lightning turret which are slightly OP
@@ -86,6 +86,8 @@ namespace TowerDefensePrototype
 
         public void Update(GameTime gameTime, Vector2 cursorPosition)
         {
+            CurrentMouseState = Mouse.GetState();
+
             if (AmmoBelt != null)
             {
                 Vector2 direction = new Vector2((float)Math.Cos(Rotation), (float)Math.Sin(Rotation));
@@ -172,6 +174,7 @@ namespace TowerDefensePrototype
             }
             #endregion
 
+
             if (ElapsedTime > FireDelay && Overheated != true)
             {
                 CanShoot = true;
@@ -183,9 +186,6 @@ namespace TowerDefensePrototype
 
             TimingBar.Update((float)FireDelay, (float)ElapsedTime);
             HealthBar.Update((float)MaxHealth, (float)CurrentHealth);
-
-            CurrentMouseState = Mouse.GetState();
-
 
             //If this is causing problems, put it back in the IF ACTIVE check.
             //It's only here to make sure that the ammo belt behaves correctly
@@ -201,7 +201,7 @@ namespace TowerDefensePrototype
             {
                 if (Selected == true)
                 {
-                    CurrentMouseState = Mouse.GetState();
+                    //CurrentMouseState = Mouse.GetState();
 
                     if (MousePosition - new Vector2(BarrelCenter.X, BarrelCenter.Y) == Vector2.Zero)
                     {
@@ -219,7 +219,7 @@ namespace TowerDefensePrototype
                     if (double.IsNaN(Rotation) == true)
                         Rotation = -20;
 
-                    PreviousMouseState = CurrentMouseState;
+                    //PreviousMouseState = CurrentMouseState;
                 }
                 else
                 {
