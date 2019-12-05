@@ -172,9 +172,7 @@ namespace TowerDefensePrototype
         public static List<Emitter> EmitterList;
         public static List<Drawable> DrawableList;
         public static List<Light> LightList;
-
-        //public List<Emitter> InvaderEmitterList = new List<Emitter>();
-
+        
         #region Vertex declarations
         public VertexPositionColorTexture[] shadowVertices = new VertexPositionColorTexture[4];
         public int[] shadowIndices = new int[6];

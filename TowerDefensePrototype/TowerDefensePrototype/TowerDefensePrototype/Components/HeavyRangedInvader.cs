@@ -120,6 +120,8 @@ namespace TowerDefensePrototype
         public InvaderFireType FireType = InvaderFireType.Single;
         public RangedAttackTiming RangedAttackTiming;
 
+        public static List<HeavyProjectile> HeavyProjectileList;
+
         public override void Initialize()
         {
             MinTowerRange = Random.Next((int)TowerDistanceRange.X,

@@ -4766,7 +4766,8 @@ namespace TowerDefensePrototype
             };
             #endregion
 
-            if (source.GetType().BaseType != typeof(Invader))
+            if (source.GetType().BaseType != typeof(Invader) ||
+                source.GetType().BaseType != typeof(HeavyRangedInvader))
             {
                 ExplosionRays.Clear();
 
@@ -4795,7 +4796,12 @@ namespace TowerDefensePrototype
                     if (trapDist > invDist)
                     {                        
                         invader.CurrentHP -= explosion.Damage;
+
+                        //ENDED UP WITH A CRASH HERE BECAUSE THE SOURCE WAS ACTUALLY A HEAVYRANGEDINVADER
+                        //I THINK I'VE FIXED IT BY CHECKING typeof(Invader) AND typeof(HeavyRangedInvader) above,
+                        //BUT KEEP AN EYE ON IT
                         ((source as HeavyProjectile).SourceObject as Turret).TotalDamageDone += explosion.Damage;
+
                         myRay.length = invDist;
                     }
                     else
@@ -6352,6 +6358,9 @@ namespace TowerDefensePrototype
 
 
                 #region HEAVY ranged invaders fire
+                //This is done here because adding a new projectile requires access to the HeavyProjectileList
+                //as well as needing to access the textures for the projectiles and associated particle effects
+                //Cannot be moved to the Invader classes without complicating things significantly.
                 if (heavyRangedInvader != null &&
                     heavyRangedInvader.CanAttack == true &&
                     (heavyRangedInvader.InTowerRange == true || heavyRangedInvader.InTrapRange == true))
@@ -6391,11 +6400,13 @@ namespace TowerDefensePrototype
                         #region Stationary Cannon
                         case InvaderType.StationaryCannon:
                             {
-                                HeavyProjectile heavyProjectile = new CannonBall(heavyRangedInvader, CannonBallProjectileSprite, ToonSmoke3,
+                                HeavyProjectile heavyProjectile;
+                                
+                                heavyProjectile = new CannonBall(heavyRangedInvader, CannonBallProjectileSprite, ToonSmoke3,
                                            new Vector2(heavyRangedInvader.BarrelEnd.X, heavyRangedInvader.BarrelEnd.Y),
                                            Random.Next((int)(heavyRangedInvader.LaunchVelocityRange.X), (int)(heavyRangedInvader.LaunchVelocityRange.Y)),
                                            (float)Math.PI + heavyRangedInvader.CurrentAngle, 0.2f, heavyRangedInvader.RangedDamage, 40,
-                                           new Vector2(MathHelper.Clamp(heavyRangedInvader.MaxY + 32, 690, 930), 930));
+                                           new Vector2(heavyRangedInvader.MaxY, heavyRangedInvader.MaxY));
 
                                 heavyProjectile.YRange = new Vector2(invader.MaxY, invader.MaxY);
                                 HeavyProjectileList.Add(heavyProjectile);
@@ -6481,7 +6492,6 @@ namespace TowerDefensePrototype
                                 {
                                     if (YSortedEmitterList.All(Emitter => Emitter.Tether != invader))
                                     {
-
                                         Emitter Sparks1 = new Emitter(RoundSparkParticle, new Vector2(invader.Position.X + invader.CurrentAnimation.FrameSize.X - 10,
                                                 invader.Position.Y + invader.CurrentAnimation.FrameSize.Y / 2), new Vector2(-120f, -116f),
                                                 new Vector2(2.35f, 11.4f), new Vector2(900f, 1200f), 1f, false, new Vector2(-2f, 2f),
@@ -6490,8 +6500,10 @@ namespace TowerDefensePrototype
                                                 true, invader.MaxY / 1080f, true, true, new Vector2(0f, 0f), new Vector2(0f, 0f), 0f, true,
                                                 new Vector2(0.036f, 0f), false, false, 0f, false, false, true, null);
 
+                                        //Using the TextureName here so that I can cancel the FlameThrower effect later
+                                        //without removing other effects tethered to the invader
+                                        Sparks1.TextureName = "FlameThrower";
                                         Sparks1.Tether = invader;
-
                                         Sparks1.Emissive = true;
                                         YSortedEmitterList.Add(Sparks1);
 
@@ -6504,32 +6516,12 @@ namespace TowerDefensePrototype
                                             true , true, new Vector2(0f, 0f), new Vector2(0f, 0f), 0.283f, true,
                                             new Vector2(0.021f, 0.036f), false, false, 0f, false, false, true, null);
 
+                                        FireEmitter.TextureName = "FlameThrower";
                                         FireEmitter.Emissive = true;
-
                                         FireEmitter.Tether = invader;
-
                                         YSortedEmitterList.Add(FireEmitter);
 
                                         AddDrawable(FireEmitter, Sparks1);
-
-                                        //FireEmitter.Tether = trap;
-
-                                        //HeavyProjectile heavyProjectile = new FlameProjectile(invader, CannonBallProjectileSprite, ToonSmoke3,
-                                        //    new Vector2(heavyRangedInvader.Center.X, heavyRangedInvader.Center.Y),
-                                        //    Random.Next((int)(heavyRangedInvader.LaunchVelocityRange.X), (int)(heavyRangedInvader.LaunchVelocityRange.Y)),
-                                        //    (float)Math.PI + MathHelper.ToRadians(15), 0.2f, heavyRangedInvader.RangedDamage,
-                                        //    new Vector2(MathHelper.Clamp(heavyRangedInvader.MaxY + 32, 690, 930), 930));
-
-
-                                        ////HeavyProjectile heavyProjectile = new CannonBall(invader, CannonBallProjectileSprite, ToonSmoke3,
-                                        ////       new Vector2(heavyRangedInvader.Center.X, heavyRangedInvader.Center.Y),
-                                        ////       Random.Next((int)(heavyRangedInvader.LaunchVelocityRange.X), (int)(heavyRangedInvader.LaunchVelocityRange.Y)),
-                                        ////       (float)Math.PI + MathHelper.ToRadians(15), 0.2f, heavyRangedInvader.RangedDamage, 40,
-                                        ////       new Vector2(MathHelper.Clamp(heavyRangedInvader.MaxY + 32, 690, 930), 930));
-
-                                        //heavyProjectile.YRange = new Vector2(invader.MaxY, invader.MaxY);
-                                        //HeavyProjectileList.Add(heavyProjectile);
-                                        //AddDrawable(heavyProjectile);
                                     }
                                     else
                                     {

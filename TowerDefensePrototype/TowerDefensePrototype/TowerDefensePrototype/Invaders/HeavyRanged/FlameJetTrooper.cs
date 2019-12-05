@@ -11,12 +11,16 @@ namespace TowerDefensePrototype
 {
     class FlameJetTrooper : HeavyRangedInvader
     {
+        //Ray ,FlameRay; //USE THIS RAY TO CHECK IF THE TRAP IS BEING DAMAGED AND TO DETERMINE THE ANGLE OF THE FLAMES
+
         public override float OriginalSpeed { get { return 0.68f; } }
 
         enum SpecificBehaviour { None, Hovering, Landing };
         SpecificBehaviour JumpManBehaviour = SpecificBehaviour.None;
 
         public Vector2 HoverRange = new Vector2(90, 110);
+
+        public float FlameTime, CurrentFlameTime;
 
         public FlameJetTrooper(Vector2 position, Vector2? yRange = null)
             : base(position, yRange)
@@ -48,7 +52,7 @@ namespace TowerDefensePrototype
             CurrentAngle = 0;
             EndAngle = 0;
 
-            
+            FlameTime = 3500f;
         }
 
         public override void Update(GameTime gameTime, Vector2 cursorPosition)
@@ -69,8 +73,32 @@ namespace TowerDefensePrototype
 
             switch (JumpManBehaviour)
             {
+                #region Hovering
                 case SpecificBehaviour.Hovering:
                     {
+                        if (CurrentFlameTime < FlameTime)
+                        {
+                            CurrentFlameTime += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+                        }
+
+                        if (CurrentFlameTime >= FlameTime)
+                        {
+                            JumpManBehaviour = SpecificBehaviour.None;
+                            CurrentMicroBehaviour = MicroBehaviour.MovingForwards;
+                            Gravity = 0.2f;
+                            Airborne = false;
+                            CurrentFlameTime = 0;
+
+                            EmitterList.ForEach(Emitter =>
+                            {
+                                //Had to use the TextureName to make sure if an invader has another particle effect applied that
+                                //I don't cancel that out too. e.g. If the invader is already on fire/poisoned and uses the flamethrower
+                                //I don't want to also cancel out the particle effect that shows the fire/poison
+                                if (Emitter.Tether == this && Emitter.TextureName == "FlameThrower")
+                                    Emitter.AddMore = false;
+                            });
+                        }
+
                         if (Position.Y > HoverRange.X &&
                             Position.Y < HoverRange.Y)
                         {
@@ -82,7 +110,8 @@ namespace TowerDefensePrototype
                             Velocity.Y -= Gravity * 1.5f;
                         }
                     }
-                    break;
+                    break; 
+                #endregion
             }
 
             if (CurrentBehaviourDelay > MaxBehaviourDelay)
@@ -203,7 +232,7 @@ namespace TowerDefensePrototype
                                 #region Attack Traps
                                 case MacroBehaviour.AttackTraps:
                                     {
-
+                                        UpdateFireDelay(gameTime);
                                     }
                                     break;
                                 #endregion
