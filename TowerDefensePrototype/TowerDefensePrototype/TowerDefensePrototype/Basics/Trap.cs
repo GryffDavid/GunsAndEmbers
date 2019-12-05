@@ -10,23 +10,28 @@ namespace TowerDefensePrototype
 {
     public abstract class Trap
     {
-        public Texture2D Texture;
-        public Rectangle DestinationRectangle;
-        public abstract bool Solid { get; }     
-        public abstract string AssetName { get; }
-        public Vector2 Position { get; set; }
-        public abstract int HP { get; }
-        //public abstract TrapType TrapType { get; }
+        Texture2D Texture;
+        Rectangle DestinationRectangle;
+        public String AssetName;
+        public int HP;
+        public Vector2 Scale, FrameSize, Position;
+        public bool Active, Solid;
 
-        public void LoadContent(ContentManager contentManager)
+
+        public virtual void LoadContent(ContentManager contentManager)
         {
             Texture = contentManager.Load<Texture2D>(AssetName);
             DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y - Texture.Height, (int)(Texture.Width), (int)(Texture.Height));
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public virtual void Update(GameTime gameTime)
+        {
+
+        }
+
+        public virtual void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(Texture, DestinationRectangle, Color.White);
-        } 
+        }
     }
 }

@@ -13,23 +13,9 @@ namespace TowerDefensePrototype
         public SpikeTrap(Vector2 position)
         {
             Position = position;
+            Solid = false;
+            AssetName = "SpikeTrap";
+            HP = 50;
         }
-
-        public override int HP
-        {
-            get { return 50; }
-        }
-
-        public override bool Solid
-        {
-            get { return false; }
-        }
-
-        public override string AssetName { get { return "SpikeTrap"; } }
-
-        //public override TrapType TrapType
-        //{
-        //    get { return TrapType.Spikes; }
-        //}
     }
 }

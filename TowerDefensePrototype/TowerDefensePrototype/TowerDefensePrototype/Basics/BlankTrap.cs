@@ -10,26 +10,9 @@ namespace TowerDefensePrototype
 {
     class BlankTrap : Trap
     {
-        public BlankTrap(Vector2 position)
+        public BlankTrap()
         {
-            Position = position;
+            AssetName = "Blank";
         }
-
-        public override int HP
-        {
-            get { return 1; }
-        }
-
-        public override bool Solid
-        {
-            get { return false; }
-        }
-
-        public override string AssetName { get { return "Blank"; } }
-
-        //public override TrapType TrapType
-        //{
-        //    get { return TrapType.Blank; }
-        //}
     }
 }

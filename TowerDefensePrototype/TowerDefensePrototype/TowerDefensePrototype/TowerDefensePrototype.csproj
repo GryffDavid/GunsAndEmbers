@@ -107,10 +107,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Basics\AnimatedSprite.cs" />
     <Compile Include="Basics\Button.cs" />
     <Compile Include="Basics\BlankTrap.cs" />
     <Compile Include="Basics\Invader.cs" />
-    <Compile Include="Fire.cs" />
+    <Compile Include="Basics\Fire.cs" />
     <Compile Include="Invaders\BatteringRam.cs" />
     <Compile Include="Turrets\BasicTurret.cs" />
     <Compile Include="Turrets\BlankTurret.cs" />

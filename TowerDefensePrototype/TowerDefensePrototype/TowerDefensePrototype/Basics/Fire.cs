@@ -14,7 +14,7 @@ namespace TowerDefensePrototype
         Texture2D Texture;
         Rectangle DestinationRectangle;
         Vector2 Position;
-        
+
         public Fire(string assetName, Vector2 position)
         {
             Position = position;

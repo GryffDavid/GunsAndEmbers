@@ -13,23 +13,11 @@ namespace TowerDefensePrototype
         public Wall(Vector2 position)
         {
             Position = position;
+            Solid = true;
+            HP = 50;
+            AssetName = "Wall";
         }
-
-        public override int HP
-        {
-            get { return 50; }
-        }
-
-        public override bool  Solid
-        {
-            get { return true; }
-        }
-
-        public override string AssetName 
-        { 
-            get { return "Wall"; } 
-        }
-
+        
         //public override TrapType TrapType
         //{
         //    get { return TrapType.Wall; }

@@ -29,7 +29,7 @@ namespace TowerDefensePrototype
         List<Invader> InvaderList;
         List<string> IconNameList;
 
-        //Custom calss Declarations
+        //Custom class Declarations
         Tower Tower;
         StaticSprite Ground;
         TrapType SelectedTrap;
@@ -94,7 +94,7 @@ namespace TowerDefensePrototype
                 TrapList = new List<Trap>();                      
                 for (int i = 0; i < traps; i++)
                 {
-                    TrapList.Add(new BlankTrap(new Vector2(100, 100)));
+                    TrapList.Add(new BlankTrap());
                     TrapList[i].LoadContent(ContentManager);
                 }
 
@@ -124,7 +124,7 @@ namespace TowerDefensePrototype
         }
 
         public void Update(GameTime gameTime)
-        {            
+        {
             //This is just the stuff that needs to be updated every step
             //This is where I call all the smaller procedures that I broke the update into 
             CurrentMouseState = Mouse.GetState();
@@ -146,9 +146,7 @@ namespace TowerDefensePrototype
             Tower.Draw(spriteBatch);
 
             InvaderUpdate();
-            TrapUpdate();
-            TurretUpdate();
-            
+            TurretUpdate();            
 
             #region Drawing buttons
                 spriteBatch.Draw(BackgroundTexture, DestinationRectangle, Color.White);
@@ -365,9 +363,12 @@ namespace TowerDefensePrototype
             }
         }
 
-        private void TrapUpdate()
+        private void TrapUpdate(GameTime gameTime)
         {
-
+            foreach (Trap trap in TrapList)
+            {
+                trap.Update(gameTime);
+            }
         }
 
         private void CursorUpdate()

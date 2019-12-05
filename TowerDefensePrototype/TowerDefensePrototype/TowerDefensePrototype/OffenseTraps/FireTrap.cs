@@ -15,27 +15,10 @@ namespace TowerDefensePrototype
         public FireTrap(Vector2 position)
         {
             Position = position;
+            Solid = false;
+            AssetName = "FireTrap";
+            HP = 50;
         }
-
-        public override int HP
-        {
-            get { return 50; }
-        }
-
-        public override bool Solid
-        {
-            get { return false; }
-        }
-
-        public override string AssetName
-        {
-            get { return "FireTrapStrip"; }
-        }
-
-        //public override TrapType TrapType
-        //{
-        //    get { return TrapType.Fire; }
-        //}
     }
 }
 
