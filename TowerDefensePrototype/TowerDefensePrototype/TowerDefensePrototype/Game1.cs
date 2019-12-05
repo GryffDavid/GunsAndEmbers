@@ -253,7 +253,7 @@ namespace TowerDefensePrototype
 
         //Sprites
         #region Decal sprites
-        Texture2D BloodDecal1, ExplosionDecal1;
+        Texture2D BloodDecal1, ExplosionDecal1, GlueDecal1;
         #endregion
 
         #region Particle sprites
@@ -262,7 +262,7 @@ namespace TowerDefensePrototype
                   ExplosionParticle2, BallParticle, SparkParticle, BulletTrailCap, BulletTrailSegment, BlurrySnowflake,
                   FocusedSnowflake, MachineBullet, HitEffectParticle, BOOMParticle, PINGParticle, SNAPParticle,
                   WHAMParticle, BAMParticle, FWOOMParticle, SPLATParticle,
-                  ToonBloodDrip1;
+                  ToonBloodDrip1, ToonGlueDrip1;
 
         Texture2D ToonSmoke1, ToonSmoke2, ToonSmoke3, ToonSmoke4, ToonSmoke5, ToonSmoke6, ToonSmoke7;
         Texture2D ToonDust1, ToonDust2, ToonDust3, ToonDust4, ToonDust5, ToonDust6, ToonDust7;
@@ -277,7 +277,7 @@ namespace TowerDefensePrototype
 
         //Trap Icons
         public Texture2D CatapultTrapIcon, IceTrapIcon, TarTrapIcon, WallTrapIcon, BarrelTrapIcon, FireTrapIcon, LineTrapIcon, SawBladeTrapIcon,
-                         SpikesTrapIcon, LandMineTrapIcon, TriggerTrapIcon, FlameThrowerTrapIcon;
+                         SpikesTrapIcon, LandMineTrapIcon, TriggerTrapIcon, FlameThrowerTrapIcon, GlueTrapIcon;
 
         //Damage Icons
         //public Texture2D ConcussiveDamageIcon, KineticDamageIcon, FireDamageIcon, ElectricDamageIcon, RadiationDamageIcon;
@@ -295,13 +295,13 @@ namespace TowerDefensePrototype
 
         //Trap Cursors
         public Texture2D WallTrapCursor, SpikesTrapCursor, CatapultTrapCursor, FireTrapCursor, IceTrapCursor, TarTrapCursor, BarrelTrapCursor,
-                         SawBladeTrapCursor, LineTrapCursor, TriggerTrapCursor, LandMineTrapCursor, FlameThrowerTrapCursor;
+                         SawBladeTrapCursor, LineTrapCursor, TriggerTrapCursor, LandMineTrapCursor, FlameThrowerTrapCursor, GlueTrapCursor;
         #endregion
 
         #region Trap sprites
         public List<TrapAnimation> WallAnimations, BarrelTrapAnimations, CatapultTrapAnimations, IceTrapAnimations, TarTrapAnimations,
                                    LineTrapAnimations, SawBladeTrapAnimations, SpikeTrapAnimations, FireTrapAnimations, LandMineTrapAnimations,
-                                   FlameThrowerAnimations;
+                                   FlameThrowerAnimations, GlueTrapAnimations;
 
         public Texture2D WallAmbShadow;
         #endregion
@@ -958,6 +958,7 @@ namespace TowerDefensePrototype
 
                 ExplosionDecal1 = Content.Load<Texture2D>("Decals/ExplosionDecal1");
                 BloodDecal1 = Content.Load<Texture2D>("Decals/BloodDecal1");
+                GlueDecal1 = Content.Load<Texture2D>("Decals/GlueDecal1");
 
                 TerrainShrub1 = Content.Load<Texture2D>("Terrain/Shrub");
                 GrassBlade1 = Content.Load<Texture2D>("GrassBlade1");
@@ -997,6 +998,7 @@ namespace TowerDefensePrototype
                 BulletTrailCap = Content.Load<Texture2D>("Particles/Cap");
                 BulletTrailSegment = Content.Load<Texture2D>("Particles/Segment");
                 HitEffectParticle = Content.Load<Texture2D>("Particles/HitEffectParticle");
+
                 BOOMParticle = Content.Load<Texture2D>("Particles/BOOM");
                 SNAPParticle = Content.Load<Texture2D>("Particles/SNAP");
                 PINGParticle = Content.Load<Texture2D>("Particles/PING");
@@ -1004,6 +1006,7 @@ namespace TowerDefensePrototype
                 BAMParticle = Content.Load<Texture2D>("Particles/BAM");
                 FWOOMParticle = Content.Load<Texture2D>("Particles/FWOOM");
                 ToonBloodDrip1 = Content.Load<Texture2D>("Particles/ToonBloodDrip1");
+                ToonGlueDrip1 = Content.Load<Texture2D>("Particles/ToonGlueDrip1");
                 SPLATParticle = Content.Load<Texture2D>("Particles/SPLAT");
 
                 ToonSmoke1 = Content.Load<Texture2D>("Particles/ToonSmoke/ToonSmoke1");
@@ -1685,6 +1688,27 @@ namespace TowerDefensePrototype
                 animation.GetFrameSize();
             }
             #endregion
+
+            #region Glue Trap Animations
+            GlueTrapAnimations = new List<TrapAnimation>()
+            {
+                new TrapAnimation()
+                {
+                    CurrentTrapState = TrapAnimationState.Untriggered,
+                    Texture = Content.Load<Texture2D>("Traps/GlueTrap"),
+                    Animated = false,
+                    CurrentFrame = 0,
+                    TotalFrames = 1,
+                    AnimationType = AnimationType.Regular
+                }
+            };
+
+            foreach (TrapAnimation animation in GlueTrapAnimations)
+            {
+                animation.GetFrameSize();
+            }
+            #endregion
+
         }
 
         private void LoadProjectileSprites()
@@ -3154,17 +3178,39 @@ namespace TowerDefensePrototype
                             {
                                 if (TrapList.Any(Trap => 
                                     Trap.TrapType == TrapType.Wall &&
-                                    (
-                                    (Trap.CollisionBox.Max.Y > (emitter.Tether as FlameThrowerTrap).CollisionBox.Min.Y &&
-                                     Trap.CollisionBox.Max.Y < (emitter.Tether as FlameThrowerTrap).CollisionBox.Max.Y) ||
-
+                                    ((Trap.CollisionBox.Max.Y > (emitter.Tether as FlameThrowerTrap).CollisionBox.Min.Y &&
+                                      Trap.CollisionBox.Max.Y < (emitter.Tether as FlameThrowerTrap).CollisionBox.Max.Y) ||
                                      (Trap.CollisionBox.Min.Y > (emitter.Tether as FlameThrowerTrap).CollisionBox.Min.Y &&
-                                     Trap.CollisionBox.Min.Y < (emitter.Tether as FlameThrowerTrap).CollisionBox.Max.Y)
-                                    ) &&
+                                      Trap.CollisionBox.Min.Y < (emitter.Tether as FlameThrowerTrap).CollisionBox.Max.Y))
+                                     &&
                                     Trap.BoundingBox.Intersects(RectToBoundingBox(particle.DestinationRectangle))))
                                 {                                    
                                     particle.Velocity.Y *= (particle.Velocity.X*1.5f);
+                                    particle.Velocity.X = 0;
+                                    //particle.Friction.X = 0.25f;
+                                }
+
+                                Invader inv = InvaderList.FirstOrDefault(Invader =>
+                                    Invader.InvaderType == InvaderType.Soldier &&
+                                    ((Invader.CollisionBox.Max.Y > (emitter.Tether as FlameThrowerTrap).CollisionBox.Min.Y - 16 &&
+                                      Invader.CollisionBox.Max.Y < (emitter.Tether as FlameThrowerTrap).CollisionBox.Max.Y + 16) ||
+                                     (Invader.CollisionBox.Min.Y > (emitter.Tether as FlameThrowerTrap).CollisionBox.Min.Y - 16 &&
+                                      Invader.CollisionBox.Min.Y < (emitter.Tether as FlameThrowerTrap).CollisionBox.Max.Y + 16)) &&
+                                    Invader.BoundingBox.Intersects(RectToBoundingBox(particle.DestinationRectangle)));
+
+                                if (inv != null)
+                                {
+                                    particle.Velocity.Y *= (particle.Velocity.X * 1.5f);
                                     particle.Friction.X = 0.25f;
+
+                                    inv.DamageOverTime(new DamageOverTimeStruct 
+                                    { 
+                                        Color = Color.Orange, 
+                                        InitialDamage = 3, 
+                                        Damage = 2, 
+                                        MaxDelay = 1000, 
+                                        MaxInterval = 250 
+                                    }, Color.Orange);
                                 }
                             }
                         }
@@ -3538,7 +3584,7 @@ namespace TowerDefensePrototype
 
                                 PowerupDelivery.Position.Y = PowerupDelivery.MaxY;
 
-                                DecalList.Add(new Decal(ExplosionDecal1, PowerupDelivery.Position, 0, new Vector2(0, 0), PowerupDelivery.MaxY, 1));
+                                DecalList.Add(new Decal(ExplosionDecal1, PowerupDelivery.Position, 0, 1));
                             }
 
                             //This needs to be moved
@@ -5618,8 +5664,7 @@ namespace TowerDefensePrototype
 
                                     if (timedHeavyProjectile.Position.Y >= timedHeavyProjectile.MaxY)
                                     {
-                                        Decal NewDecal = new Decal(ExplosionDecal1, new Vector2(timedHeavyProjectile.Rod.Center.X, timedHeavyProjectile.Rod.Center.Y),
-                                                                   (float)RandomDouble(0, 0), timedHeavyProjectile.YRange, timedHeavyProjectile.MaxY, 0.5f);
+                                        Decal NewDecal = new Decal(ExplosionDecal1, new Vector2(timedHeavyProjectile.Rod.Center.X, timedHeavyProjectile.Rod.Center.Y), timedHeavyProjectile.MaxY, 0.5f);
 
                                         DecalList.Add(NewDecal);
 
@@ -5943,7 +5988,7 @@ namespace TowerDefensePrototype
                                 ExplosionEffectList.Add(explosionEffect);
 
                                 Decal NewDecal = new Decal(ExplosionDecal1, new Vector2(heavyProjectile.Position.X, heavyProjectile.BoundingBox.Max.Y),
-                                                          (float)RandomDouble(0, 0), heavyProjectile.YRange, heavyProjectile.MaxY, 0.75f);
+                                                          (float)RandomDouble(0, 0),  0.75f);
 
                                 DecalList.Add(NewDecal);
 
@@ -6123,7 +6168,7 @@ namespace TowerDefensePrototype
                                 #endregion                              
 
                                 Decal NewDecal = new Decal(ExplosionDecal1, new Vector2(heavyProjectile.Position.X, heavyProjectile.BoundingBox.Max.Y),
-                                                          (float)RandomDouble(0, 0), heavyProjectile.YRange, heavyProjectile.MaxY, 0.75f);
+                                                          (float)RandomDouble(0, 0), 0.75f);
 
                                 DecalList.Add(NewDecal);
 
@@ -6740,7 +6785,7 @@ namespace TowerDefensePrototype
                         AddDrawable(DustEmitter, DebrisEmitter, DebrisEmitter2);
 
                         Decal NewDecal = new Decal(ExplosionDecal1, new Vector2(CollisionEnd.X, CollisionEnd.Y),
-                                                   (float)RandomDouble(0, 0), new Vector2(690, 930), CollisionEnd.Y, 0.2f);
+                                                   (float)RandomDouble(0, 0), 0.2f);
 
                         DecalList.Add(NewDecal);
                         break;
@@ -7264,7 +7309,7 @@ namespace TowerDefensePrototype
                             AddDrawable(DebrisEmitter, DebrisEmitter2, DustEmitter);
 
                             Decal NewDecal = new Decal(ExplosionDecal1, new Vector2(CollisionEnd.X, CollisionEnd.Y),
-                                                       (float)RandomDouble(0, 0), new Vector2(690, 930), CollisionEnd.Y, 0.2f);
+                                                       (float)RandomDouble(0, 0), 0.2f);
 
                             DecalList.Add(NewDecal);
                             break;
@@ -8465,6 +8510,25 @@ namespace TowerDefensePrototype
                         break;
                     #endregion
 
+                    #region Glue Trap
+                    case TrapType.Glue:
+                        {
+                            Decal decal = new Decal(GlueDecal1, HitTrap.Center, 0, 0.2f);
+                            DecalList.Add(decal);
+                            //Emitter glueEmitter = new Emitter(ToonGlueDrip1, HitTrap.Center, new Vector2(0, 360), new Vector2(4, 5),
+                            //    new Vector2(2000, 2500), 1f, true, new Vector2(0, 0), new Vector2(0, 0),
+                            //    new Vector2(0.04f, 0.08f), Color.Purple, Color.MediumPurple, 0.2f, 0.1f, 10, 40, true,
+                            //    new Vector2(HitTrap.Position.Y, HitTrap.Position.Y + 8), false, null, true, null, null, null, null, true,
+                            //    new Vector2(0.04f, 0.00f));
+                           
+                            //YSortedEmitterList.Add(glueEmitter);
+                            //AddDrawable(glueEmitter);
+
+                            invader.Freeze(new FreezeStruct()  { MaxDelay = 2500 }, Color.Purple);
+                        }
+                        break;
+                    #endregion
+
                     #region Catapult trap
                     case TrapType.Catapult:
                         invader.Trajectory(new Vector2(4, -8));
@@ -8629,6 +8693,28 @@ namespace TowerDefensePrototype
                         }
                         break;
                     #endregion
+
+                    case TrapType.Glue:
+                        {
+                            NewTrap = trap;
+                            NewTrap.AnimationList = new List<TrapAnimation>();
+
+                            for (int i = 0; i < GlueTrapAnimations.Count; i++)
+                            {
+                                TrapAnimation animation = new TrapAnimation();
+                                animation = GlueTrapAnimations[i].ShallowCopy();
+                                NewTrap.AnimationList.Add(animation);
+                            }
+
+                            //NewTrap.AnimationList = FlameThrowerAnimations;
+                            NewTrap.TrapState = NewTrap.TrapState;
+                            //NewTrap.AmbientShadowTexture = WallAmbShadow;
+                            NewTrap.Position = trapPosition;
+                            TrapList.Add(NewTrap);
+                            AddDrawable(NewTrap);
+                            NewTrap.Initialize();
+                        }
+                        break;
 
                     #region Fire
                     case TrapType.Fire:
@@ -9601,6 +9687,7 @@ namespace TowerDefensePrototype
                         break;
 
                     default:
+
                         string WeaponName = trapBox.ContainsTrap.ToString();
                         var Available = CurrentProfile.GetType().GetField(WeaponName).GetValue(CurrentProfile);
 

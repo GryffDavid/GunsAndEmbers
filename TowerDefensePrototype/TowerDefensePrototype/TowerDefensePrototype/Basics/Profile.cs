@@ -29,15 +29,16 @@ namespace TowerDefensePrototype
                     GasGrenade;
 
         //What traps the player has access to
-        public bool Fire, 
+        public bool Fire,
                     Spikes,
-                    Wall, 
-                    Catapult, 
-                    SawBlade, 
-                    Ice, 
-                    Barrel, 
-                    Line, 
-                    Trigger, 
-                    LandMine;
+                    Wall,
+                    Catapult,
+                    SawBlade,
+                    Ice,
+                    Barrel,
+                    Line,
+                    Trigger,
+                    LandMine,
+                    Glue;
     }
 }

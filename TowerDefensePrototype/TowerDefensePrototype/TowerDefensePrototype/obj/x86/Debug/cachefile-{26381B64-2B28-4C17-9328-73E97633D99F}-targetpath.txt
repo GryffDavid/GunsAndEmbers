@@ -191,6 +191,11 @@ Content\GridTexture.xnb
 Content\Block.xnb
 Content\Circle.xnb
 Content\Traps\Wall\WallShadow.xnb
+Content\Traps\FlameThrower\FlameThrowerTrapActive.xnb
+Content\Traps\FlameThrower\FlameThrowerTrapUntriggered.xnb
+Content\Icons\TrapIcons\FlameThrowerTrapIcon.xnb
+Content\Traps\FlameThrower\FlameThrowerTrapTriggering.xnb
+Content\Traps\FlameThrower\FlameThrowerTrapResetting.xnb
 Content\Sounds\Menu\MenuClick.xnb
 Content\Sounds\FireTrapStart.xnb
 Content\Sounds\Menu\MenuAmbiance.xnb
@@ -219,8 +224,7 @@ Content\Fonts\SpriteFont1.xnb
 Content\ParticleEffect.xnb
 Content\ShadowBlur.xnb
 Content\Shaders\HealthBarEffect.xnb
-Content\Traps\FlameThrower\FlameThrowerTrapUntriggered.xnb
-Content\Icons\TrapIcons\FlameThrowerTrapIcon.xnb
-Content\Traps\FlameThrower\FlameThrowerTrapActive.xnb
-Content\Traps\FlameThrower\FlameThrowerTrapTriggering.xnb
-Content\Traps\FlameThrower\FlameThrowerTrapResetting.xnb
+Content\Traps\GlueTrap.xnb
+Content\Icons\TrapIcons\GlueTrapIcon.xnb
+Content\Particles\ToonGlueDrip1.xnb
+Content\Decals\GlueDecal1.xnb

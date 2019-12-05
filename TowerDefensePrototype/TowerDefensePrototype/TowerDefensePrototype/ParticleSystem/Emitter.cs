@@ -466,8 +466,11 @@ namespace TowerDefensePrototype
                         scale = (float)DoubleRange(ScaleRange.X, ScaleRange.Y);
                         rotation = (float)DoubleRange(RotationIncrementRange.X, RotationIncrementRange.Y);
                         speed = (float)DoubleRange(SpeedRange.X, SpeedRange.Y);
-                        startingRotation = (float)DoubleRange(StartingRotationRange.X, StartingRotationRange.Y);
+                        startingRotation = (float)DoubleRange(StartingRotationRange.X, StartingRotationRange.Y);                        
                         MaxY = Random.Next((int)YRange.X, (int)YRange.Y);
+
+                        //Vector2 vel = new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle)) * speed;
+                        //MaxY += Math.Abs(vel.X * 8f);
 
                         Particle NewParticle = new Particle(Texture, Position, angle, speed, hp, Transparency, Fade, startingRotation,
                                                             rotation, scale, StartColor, EndColor, Gravity, CanBounce, MaxY, Shrink,

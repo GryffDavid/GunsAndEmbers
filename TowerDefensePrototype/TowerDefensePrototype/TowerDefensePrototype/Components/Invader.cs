@@ -35,7 +35,8 @@ namespace TowerDefensePrototype
         HealDrone,
         JumpMan,
         RifleMan,
-        ShieldGenerator
+        ShieldGenerator,
+        HarpoonCannon
     };
     #endregion
 
@@ -86,9 +87,15 @@ namespace TowerDefensePrototype
     #endregion
 
     #region FreezeStruct
+    /// <summary>
+    /// Delay determines how long the invader stays frozen for.
+    /// UnfrozenVelocity stores the velocity of the invader before it was frozen.
+    /// </summary>
     public class FreezeStruct
     {
-        public float MaxDelay, CurrentDelay;
+        public float MaxDelay;
+        public float CurrentDelay = 0;
+        public Vector2 UnfrozenVelocity;
     }; 
     #endregion
 
@@ -510,6 +517,27 @@ namespace TowerDefensePrototype
                     ThinkingAnimation.Update(gameTime);
                 }
 
+                #region This controls how the invader behaves when it's frozen
+                if (CurrentFreeze != null)
+                {
+                    if (Frozen == true)
+                    {
+                        CanAttack = false;
+                        CurrentFreeze.CurrentDelay += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+                        Color = FrozenColor;
+                        Velocity.X = 0;
+                    }
+
+                    if (Frozen == true && CurrentFreeze.CurrentDelay > CurrentFreeze.MaxDelay)
+                    {
+                        Frozen = false;
+                        CanAttack = true;
+                        Velocity.X = CurrentFreeze.UnfrozenVelocity.X;
+                        CurrentFreeze = null;
+                    }
+                }
+                #endregion
+
                 #region Update position and vertices
                 if (Velocity != Vector2.Zero)
                 {
@@ -534,26 +562,7 @@ namespace TowerDefensePrototype
                 }
                 #endregion
 
-                #region This controls how the invader behaves when it's frozen
-                if (CurrentFreeze != null)
-                {
-                    if (Frozen == true)
-                    {
-                        CanAttack = false;
-                        CurrentFreeze.CurrentDelay += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
-                        Color = FrozenColor;
-                        Velocity.X = 0;
-                    }
-
-                    if (Frozen == true && CurrentFreeze.CurrentDelay > CurrentFreeze.MaxDelay)
-                    {
-                        Frozen = false;
-                        CanAttack = true;
-                        Velocity.X = Direction.X * Speed;
-                        CurrentFreeze = null;
-                    }
-                }
-                #endregion
+                
 
                 #region This controls how the invader behaves when it's slow
                 if (CurrentSlow != null)
@@ -993,6 +1002,7 @@ namespace TowerDefensePrototype
                 FrozenColor = frozenColor;
                 Frozen = true;
                 CurrentFreeze = freeze;
+                CurrentFreeze.UnfrozenVelocity = Velocity;
             }
         }
 

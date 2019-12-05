@@ -11,18 +11,16 @@ namespace TowerDefensePrototype
     class Decal
     {
         public Texture2D Texture;
-        public Vector2 Position, MaxV, Scale;
-        public float Rotation, MaxY;
+        public Vector2 Position, Scale;
+        public float Rotation;
         public float TransparencyPercentage, CurrentTime, MaxTime;
         float CurrentFadeDelay, FadeDelay;
         
-        public Decal(Texture2D texture, Vector2 position, float rotation, Vector2 maxV, float maxY, float imageScale)
+        public Decal(Texture2D texture, Vector2 position, float rotation, float imageScale)
         {
             Position = position;
             Texture = texture;
             Rotation = rotation;
-            MaxV = maxV;
-            MaxY = maxY;
             TransparencyPercentage = 100;
             MaxTime = 100;
             FadeDelay = 4000;
