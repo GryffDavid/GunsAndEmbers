@@ -75,11 +75,11 @@ namespace TowerDefensePrototype
                 if (CurrentHP <= 0)
                     Active = false;
 
-                foreach (Emitter emitter in EmitterList)
-                {
-                    emitter.Update(gameTime);
-                    emitter.Position = new Vector2(DestinationRectangle.Center.X, DestinationRectangle.Center.Y);
-                }
+                //foreach (Emitter emitter in EmitterList)
+                //{
+                //    emitter.Update(gameTime);
+                //    emitter.Position = new Vector2(DestinationRectangle.Center.X, DestinationRectangle.Center.Y);
+                //}
 
                 if (FireEmitter != null)
                 {

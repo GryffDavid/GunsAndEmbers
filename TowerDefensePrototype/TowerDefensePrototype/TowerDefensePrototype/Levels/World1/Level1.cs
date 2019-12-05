@@ -16,10 +16,6 @@ namespace TowerDefensePrototype
             StartDelay = 6;
 
             Wave Wave1 = new Wave(false, 200, 6000,
-                 new TestInvader(new Vector2(2050, 600)),
-                 new TestInvader(new Vector2(2050, 600)),
-                 new TestInvader(new Vector2(2050, 600)),
-                 new TestInvader(new Vector2(2050, 600)),
                  new Soldier(new Vector2(2050, 600)),
                  new Soldier(new Vector2(2050, 600)),
                  new Soldier(new Vector2(2050, 600)),

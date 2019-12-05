@@ -11,7 +11,7 @@ namespace TowerDefensePrototype
     public class Emitter
     {
         public Vector2 Position, AngleRange;
-        public List<Particle> ParticleList;       
+        public List<Particle> ParticleList;
         public Texture2D Texture;
         public Vector2 ScaleRange, HPRange, RotationIncrementRange, SpeedRange, StartingRotationRange, EmitterDirection, EmitterVelocity;
         public float Transparency, Gravity, ActiveSeconds, CurrentTime, Interval, IntervalTime, MaxY, DrawDepth, EmitterSpeed, EmitterAngle, EmitterGravity;
@@ -21,8 +21,8 @@ namespace TowerDefensePrototype
         public int Burst;
         static Random Random = new Random();
 
-        public Emitter(String textureName, Vector2 position, Vector2 angleRange, Vector2 speedRange, Vector2 hpRange, 
-            float startingTransparency, bool fade, Vector2 startingRotationRange, Vector2 rotationIncrement, Vector2 scaleRange, 
+        public Emitter(String textureName, Vector2 position, Vector2 angleRange, Vector2 speedRange, Vector2 hpRange,
+            float startingTransparency, bool fade, Vector2 startingRotationRange, Vector2 rotationIncrement, Vector2 scaleRange,
             Color startColor, Color endColor, float gravity, float activeSeconds, float interval, int burst, bool canBounce,
             Vector2 yrange, bool? shrink = null, float? drawDepth = null, bool? stopBounce = null, bool? hardBounce = null, Vector2? emitterSpeed = null,
             Vector2? emitterAngle = null, float? emitterGravity = null, bool? rotateVelocity = null)
@@ -52,7 +52,7 @@ namespace TowerDefensePrototype
                 Shrink = false;
             else
                 Shrink = shrink.Value;
-            
+
             if (drawDepth == null)
                 DrawDepth = 0;
             else
@@ -288,20 +288,20 @@ namespace TowerDefensePrototype
                         }
                         IntervalTime = 0;
                     }
-                }                                   
+                }
             }
 
             for (int i = 0; i < ParticleList.Count; i++)
             {
                 if (ParticleList[i].Active == false)
                     ParticleList.RemoveAt(i);
-            }     
+            }
 
             foreach (Particle particle in ParticleList)
             {
                 particle.Update();
             }
-        }      
+        }
 
         public void Draw(SpriteBatch spriteBatch)
         {
@@ -313,7 +313,7 @@ namespace TowerDefensePrototype
 
         public double DoubleRange(double one, double two)
         {
-            return one +   Random.NextDouble() * (two - one);
+            return one + Random.NextDouble() * (two - one);
         }
     }
 }
