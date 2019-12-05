@@ -28,7 +28,7 @@ namespace TowerDefensePrototype
             CurrentFrame = 0;
             InvaderType = InvaderType.StationaryCannon;
             YRange = new Vector2(700, 900);
-            DistanceRange = new Vector2(800, 1500);
+            DistanceRange = new Vector2(800, 950);
             CurrentAngle = 0;
             NextAngle = 0;
             FinalAngle = 45;

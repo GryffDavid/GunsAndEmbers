@@ -23,6 +23,8 @@ namespace TowerDefensePrototype
         float Scale;
         float Envelope;
         float Displacement;
+        float CurrentTime;
+        float VibrateTime = 30;
         List<float> Positions = new List<float>();
         List<Line> Results = new List<Line>();
         Vector2 Tangent;
@@ -30,9 +32,14 @@ namespace TowerDefensePrototype
         public Vector2 Point, Source, Destination;
         float Length;
         bool Vibrate;
+        
+        public bool Tethered;
+        public Invader SourceInvader, DestinationInvader;
 
         public LightningBolt(Vector2 source, Vector2 destination, Color color, float fadeRate, float? sway = null, bool? vibrate = false)
         {
+            Tethered = false;
+
             if (sway == null)
                 Sway = 500f;
             else
@@ -47,6 +54,34 @@ namespace TowerDefensePrototype
             Destination = destination;            
 
             Segments = CreateBolt(source, destination, 2);
+            Color = color;
+            Alpha = 1f;
+            AlphaMultiplier = 0.6f;
+            FadeOutRate = fadeRate;
+        }
+
+        //This is for a special lightning bolt which can be tethered between two invaders
+        public LightningBolt(Invader source, Invader destination, Color color, float fadeRate, float? sway = null, bool? vibrate = false)
+        {
+            Tethered = true;
+
+            if (sway == null)
+                Sway = 500f;
+            else
+                Sway = sway.Value;
+
+            if (vibrate == null)
+                Vibrate = false;
+            else
+                Vibrate = vibrate.Value;
+
+            SourceInvader = source;
+            DestinationInvader = destination;
+
+            Source = source.Center;
+            Destination = destination.Center;
+
+            Segments = CreateBolt(Source, Destination, 2);
             Color = color;
             Alpha = 1f;
             AlphaMultiplier = 0.6f;
@@ -68,10 +103,16 @@ namespace TowerDefensePrototype
 
             if (Vibrate == true)
             {
-                Segments.Clear();
-                Results.Clear();
-                Positions.Clear();
-                CreateBolt(Source, Destination, 1);
+                CurrentTime += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+
+                if (CurrentTime > VibrateTime)
+                {
+                    Segments.Clear();
+                    Results.Clear();
+                    Positions.Clear();
+                    CreateBolt(Source, Destination, 1);
+                    CurrentTime = 0;
+                }
             }
 
             Alpha -= FadeOutRate * (float)(gameTime.ElapsedGameTime.TotalSeconds * 60);

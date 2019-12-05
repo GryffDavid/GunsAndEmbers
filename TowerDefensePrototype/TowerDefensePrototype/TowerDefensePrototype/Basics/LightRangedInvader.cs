@@ -11,8 +11,9 @@ namespace TowerDefensePrototype
     abstract class LightRangedInvader : Invader
     {
         public int RangedAttackPower, MaxBurst, CurrentBurst;
-        public Vector2 AngleRange, Range;
-        public float MaxBurstDelay, CurrentBurstDelay;
+        public Vector2 AngleRange, DistanceRange;
+        public float MaxBurstDelay, CurrentBurstDelay, MinDistance;
+        public bool InRange = false;
 
         public override void TrapDamage(Trap trap)
         {

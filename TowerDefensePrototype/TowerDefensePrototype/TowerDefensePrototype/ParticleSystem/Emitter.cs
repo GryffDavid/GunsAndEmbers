@@ -24,6 +24,7 @@ namespace TowerDefensePrototype
         static Random Random = new Random();
         public double IntervalTime, CurrentTime;
         public SpriteEffects Orientation = SpriteEffects.None;
+        public Invader Anchor;
 
         public Emitter(String textureName, Vector2 position, Vector2 angleRange, Vector2 speedRange, Vector2 hpRange,
             float startingTransparency, bool fade, Vector2 startingRotationRange, Vector2 rotationIncrement, Vector2 scaleRange,
@@ -401,6 +402,11 @@ namespace TowerDefensePrototype
                         }
                         IntervalTime = 0;
                     }
+                }
+
+                if (Anchor != null)
+                {
+                    Position = Anchor.Center;
                 }
             }
 

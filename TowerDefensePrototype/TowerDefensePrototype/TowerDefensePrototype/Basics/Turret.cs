@@ -31,6 +31,7 @@ namespace TowerDefensePrototype
         public DamageType DamageType;
         public UIBar TimingBar, HealthBar;
         public AmmoBelt AmmoBelt;
+        public BoundingBox BoundingBox;
 
         //Chance to Effect - i.e. fire, slow, freeze etc.
         public float ChanceToEffect;
@@ -84,6 +85,7 @@ namespace TowerDefensePrototype
             ElapsedTime = FireDelay;
 
             SelectBox = new Rectangle((int)Position.X - 32, (int)Position.Y - 32, 96, 96);
+            BoundingBox = new BoundingBox(new Vector3(SelectBox.X, SelectBox.Y, 0), new Vector3(SelectBox.X + SelectBox.Width, SelectBox.Y + SelectBox.Height, 0));
 
             Direction = new Vector2(1, 1);
         }

@@ -136,7 +136,10 @@ Content\MysteryEmployer.xnb
 Content\Projectiles\Grenade.xnb
 Content\Invaders\StationaryCannon\StationaryCannonBarrel.xnb
 Content\Invaders\StationaryCannon\StationaryCannonBase.xnb
+Content\Invaders\HealDrone\HealDrone.xnb
+Content\Sounds\Menu\MenuClick.xnb
 Content\Sounds\FireTrapStart.xnb
+Content\Sounds\Menu\MenuAmbiance.xnb
 Content\Sounds\LightningSound.xnb
 Content\Sounds\CannonFire.xnb
 Content\Sounds\CannonExplosion.xnb
@@ -151,9 +154,13 @@ Content\Sounds\Ricochet2.xnb
 Content\Sounds\Ricochet3.xnb
 Content\Sounds\Splat1.xnb
 Content\Sounds\Splat2.xnb
+Content\Sounds\Menu\MenuPing.xnb
+Content\Sounds\Menu\MenuWoosh.xnb
+Content\Sounds\Menu\MenuMusic1.xnb
 Content\Sounds\Implosion.xnb
 Content\Sounds\Implosion2.xnb
 Content\Sounds\TurretOverheat.xnb
+Content\Sounds\Ambience\PolarWindAmbience.xnb
 Content\Shaders\HealthBarEffect.xnb
 Content\Shaders\ShockWaveEffect.xnb
 Content\Shaders\ShieldBubbleEffect.xnb
@@ -161,10 +168,4 @@ Content\Shaders\BackgroundEffect.xnb
 Content\Shaders\ButtonBlurEffect.xnb
 Content\Shaders\CrepuscularRaysEffect.xnb
 Content\StoryDialogue\StoryDialogue1.xnb
-Content\Invaders\HealDrone\HealDrone.xnb
-Content\Sounds\Menu\MenuClick.xnb
-Content\Sounds\Menu\MenuAmbiance.xnb
-Content\Sounds\Menu\MenuPing.xnb
-Content\Sounds\Menu\MenuWoosh.xnb
-Content\Sounds\Menu\MenuMusic1.xnb
-Content\Sounds\Ambience\PolarWindAmbience.xnb
+Content\JetSprite3.xnb

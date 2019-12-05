@@ -14,10 +14,10 @@ namespace TowerDefensePrototype
         {
             Active = true;
             Direction = new Vector2(-1f, 0);
-            Speed = 1f;
+            Speed = 0.68f;
             Position = position;
-            CurrentHP = 600;
-            MaxHP = 600;
+            CurrentHP = 40;
+            MaxHP = 40;
             ResourceMinMax = new Vector2(8, 20);
             CurrentAttackDelay = 0;
             AttackDelay = 1500;

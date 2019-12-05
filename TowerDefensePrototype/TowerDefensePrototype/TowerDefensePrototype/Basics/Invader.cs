@@ -16,7 +16,7 @@ namespace TowerDefensePrototype
         //public string AssetName;
         public Texture2D CurrentTexture, Shadow, IceBlock;
         public Rectangle DestinationRectangle;
-        public Vector2 Position, Direction, ResourceMinMax, Velocity, YRange;
+        public Vector2 Position, Direction, ResourceMinMax, Velocity, YRange, Center;
         public Vector2 Scale = new Vector2(1, 1);
         public Color Color, BurnColor, FrozenColor, AcidColor;
         public BoundingBox BoundingBox;
@@ -30,14 +30,15 @@ namespace TowerDefensePrototype
                       BurnInterval, CurrentBurnInterval,
                       FreezeDelay, CurrentFreezeDelay,
                       SlowDelay, CurrentSlowDelay,
-                      BeamDelay, CurrentBeamDelay;
+                      BeamDelay, CurrentBeamDelay,
+                      HealDelay, CurrentHealDelay;
         public bool Active, VulnerableToTurret, VulnerableToTrap, CanAttack,
-                    Burning, Frozen, Slow, Airborne, HitByBeam, InAir;
+                    Burning, Frozen, Slow, Airborne, HitByBeam, InAir, IsBeingHealed, IsTargeted;
   
         public InvaderType InvaderType;
         public Animation CurrentAnimation;
         public List<Texture2D> TextureList;
-        public Emitter FireEmitter;
+        public Emitter FireEmitter, HealthEmitter;
         public InvaderState CurrentInvaderState;
         public InvaderState? PreviousInvaderState = null;
         public InvaderBehaviour Behaviour;// = InvaderBehaviour.AttackTower;
@@ -46,6 +47,8 @@ namespace TowerDefensePrototype
         //public UIBar HealthBar;
         public UIBar HealthBar;
         public SoundEffectInstance MoveLoop;
+        public SpriteEffects Orientation = SpriteEffects.None;
+        public float Rotation = 0;
 
         private InvaderBehaviour RandomOrientation(params InvaderBehaviour[] Orientations)
         {
@@ -65,7 +68,8 @@ namespace TowerDefensePrototype
             HitByBeam = false;
             VulnerableToTurret = true;
             VulnerableToTrap = true;
-            InAir = false;
+            IsBeingHealed = false;
+            //InAir = false;
             Color = Color.White;
             MaxY = Random.Next((int)YRange.X, (int)YRange.Y);
             ResourceValue = Random.Next((int)ResourceMinMax.X, (int)ResourceMinMax.Y);
@@ -73,6 +77,12 @@ namespace TowerDefensePrototype
             if (this.GetType().BaseType.Name == "HeavyRangedInvader")
             {
                 HeavyRangedInvader rangedInvader = this as HeavyRangedInvader;
+                rangedInvader.MinDistance = Random.Next((int)rangedInvader.DistanceRange.X, (int)rangedInvader.DistanceRange.Y);
+            }
+
+            if (this.GetType().BaseType.Name == "LightRangedInvader")
+            {
+                LightRangedInvader rangedInvader = this as LightRangedInvader;
                 rangedInvader.MinDistance = Random.Next((int)rangedInvader.DistanceRange.X, (int)rangedInvader.DistanceRange.Y);
             }
 
@@ -91,11 +101,23 @@ namespace TowerDefensePrototype
         {
             if (Active == true)
             {
-                if (MoveLoop.State != SoundState.Playing)
+                if (MoveLoop != null)
                 {
-                    MoveLoop.Play();
-                    MoveLoop.IsLooped = true;
+                    if (MoveLoop.State != SoundState.Playing)
+                    {
+                        MoveLoop.Play();
+                        MoveLoop.IsLooped = true;
+                    }
                 }
+
+                //if (Velocity.X > 0)
+                //{
+                //    Orientation = SpriteEffects.FlipHorizontally;
+                //}
+                //else
+                //{
+                //    Orientation = SpriteEffects.None;
+                //}
 
                 Position += Velocity * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
                 Velocity.Y += Gravity * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
@@ -119,6 +141,15 @@ namespace TowerDefensePrototype
                     //This makes sure that the entire invader looks like it's on fire, not just part of it.
                     //Randomly jumps the emitter all around the invader rectangle while it's emitting particles
                     FireEmitter.Position = new Vector2(DestinationRectangle.Left +
+                                                       Random.Next(0, CurrentTexture.Width / CurrentAnimation.TotalFrames),
+                                                       DestinationRectangle.Bottom - Random.Next(0, CurrentTexture.Height));
+                }
+
+                if (HealthEmitter != null)
+                {
+                    HealthEmitter.Update(gameTime);
+
+                    HealthEmitter.Position = new Vector2(DestinationRectangle.Left +
                                                        Random.Next(0, CurrentTexture.Width / CurrentAnimation.TotalFrames),
                                                        DestinationRectangle.Bottom - Random.Next(0, CurrentTexture.Height));
                 }
@@ -244,6 +275,11 @@ namespace TowerDefensePrototype
                     FireEmitter = null;
                 }
 
+                if (HealthEmitter != null && HealthEmitter.ParticleList.Count == 0 && HealthEmitter.AddMore == false)
+                {
+                    HealthEmitter = null;
+                }
+
                 if (InvaderOutline != null)
                 {
                     InvaderOutline.Position = Position;
@@ -265,10 +301,22 @@ namespace TowerDefensePrototype
                 BoundingBox = new BoundingBox(new Vector3(Position.X, Position.Y, 0),
                                               new Vector3(Position.X + CurrentAnimation.FrameSize.X, Position.Y + CurrentAnimation.FrameSize.Y, 0));
 
+                Center = new Vector2(DestinationRectangle.Center.X, DestinationRectangle.Center.Y);
+
                 if (HitByBeam == true)
                 {
                     //Color = Color.Purple;
                     CurrentBeamDelay += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+                }
+
+                if (IsBeingHealed == false)
+                {
+                    CurrentHealDelay = 0;
+                }
+
+                if (IsBeingHealed == true)
+                {
+                    CurrentHealDelay += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
                 }
                 //else
                 //{
@@ -279,6 +327,11 @@ namespace TowerDefensePrototype
                 DrawDepth = Bottom / 1080;
 
                 PreviousInvaderState = CurrentInvaderState;
+
+                //if (IsBeingHealed == true)
+                //{
+                //    Color = Color.Black;
+                //}
             }
         }
 
@@ -292,15 +345,21 @@ namespace TowerDefensePrototype
                 BoundingBox = new BoundingBox(new Vector3(Position.X, Position.Y, 0),
                               new Vector3(Position.X + (CurrentAnimation.FrameSize.X * Scale.X), Position.Y + (CurrentAnimation.FrameSize.Y * Scale.Y), 0));
 
+                if (HealthEmitter != null)
+                {
+                    HealthEmitter.Draw(spriteBatch);
+                }
+
                 if (CurrentTexture != null)
-                spriteBatch.Draw(CurrentTexture, DestinationRectangle, CurrentAnimation.SourceRectangle, Color, MathHelper.ToRadians(0),
-                                 Vector2.Zero, SpriteEffects.None, DrawDepth);
+                    spriteBatch.Draw(CurrentTexture, DestinationRectangle, CurrentAnimation.SourceRectangle, Color, MathHelper.ToRadians(Rotation),
+                                 Vector2.Zero, Orientation, DrawDepth);
 
                 if (FireEmitter != null)
                 {
                     FireEmitter.Draw(spriteBatch);
                 }
 
+               
                 if (Frozen == true)
                 {
                     double IceTransparency = ((75 / FreezeDelay) * CurrentFreezeDelay) / 100;
@@ -309,8 +368,8 @@ namespace TowerDefensePrototype
                             (int)Position.X, 
                             DestinationRectangle.Bottom - IceBlock.Height + 8, 
                             IceBlock.Width, IceBlock.Height), 
-                        null, Color.Lerp(Color.White, Color.Transparent, (float)IceTransparency), 0, 
-                        Vector2.Zero, SpriteEffects.None, DrawDepth + 0.0001f);
+                        null, Color.Lerp(Color.White, Color.Transparent, (float)IceTransparency), 0,
+                        Vector2.Zero, Orientation, DrawDepth + 0.0001f);
                 }
             }
         }
@@ -321,6 +380,14 @@ namespace TowerDefensePrototype
             {
                 if (VulnerableToTurret == true)
                     CurrentHP += change;
+            }
+        }
+
+        public void HealDamage(int change)
+        {
+            if (Active == true)
+            {
+                CurrentHP += change;
             }
         }
 

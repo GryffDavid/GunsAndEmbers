@@ -12,7 +12,7 @@ namespace TowerDefensePrototype
         public InvaderHealBeam(Vector2 position, Vector2 direction, float? damage = null)
             : base(position, direction, damage)
         {
-            LightProjectileType = LightProjectileType.Beam;
+            LightProjectileType = LightProjectileType.InvaderHealBeam;
         }
     }
 }

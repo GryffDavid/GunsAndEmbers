@@ -120,8 +120,10 @@
     <Compile Include="Basics\StoryDialogueBox.cs" />
     <Compile Include="Basics\VerletProjectile.cs" />
     <Compile Include="Invaders\Airborne\HealerDrone.cs" />
+    <Compile Include="Invaders\LighRanged\JumpMan.cs" />
     <Compile Include="Invaders\LighRanged\Sapper.cs" />
     <Compile Include="ParticleSystem\AmmoBelt.cs" />
+    <Compile Include="ParticleSystem\Jet.cs" />
     <Compile Include="ParticleSystem\ShellCasing.cs" />
     <Compile Include="Basics\VerletObject.cs" />
     <Compile Include="Projectiles\Grenades\FireGrenadeProjectile.cs" />

@@ -24,9 +24,9 @@ namespace TowerDefensePrototype
             Looping = false;
             ResourceCost = 200;
             MaxHeat = 100 ;
-            ShotHeat = 10;            
+            ShotHeat = 5;            
             MaxHeatTime = 4000;
-            CoolValue = 0.25f;
+            CoolValue = 0.15f;
             Range = 500;
             TurretFireType = TurretFireType.FullAuto;
 

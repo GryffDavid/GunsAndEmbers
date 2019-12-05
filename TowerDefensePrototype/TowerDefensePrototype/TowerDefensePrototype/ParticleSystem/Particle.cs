@@ -98,7 +98,7 @@ namespace TowerDefensePrototype
                 {
                     CurrentHP -= (float)(1 * gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
                 }
-            
+
             if (CurrentFadeDelay < FadeDelay)
                 CurrentFadeDelay += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
 
@@ -110,7 +110,7 @@ namespace TowerDefensePrototype
 
             if (Active == true)
             {
-                CurrentRotation += RotationIncrement *((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
+                CurrentRotation += RotationIncrement * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
                 CurrentRotation = CurrentRotation % 360;
                 CurrentPosition += Velocity * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
                 Velocity.Y += Gravity * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
@@ -226,13 +226,13 @@ namespace TowerDefensePrototype
 
             if (Fade == true && FadeDelay == 0)
             {
-                CurrentTransparency = MaxTransparency * (PercentageHP / 100.0f);                
+                CurrentTransparency = MaxTransparency * (PercentageHP / 100.0f);
             }
 
             if (Fade == true && FadeDelay != 0)
             {
                 if (CurrentFadeDelay > FadeDelay)
-                    CurrentTransparency = MaxTransparency * (PercentageHP / 100.0f);   
+                    CurrentTransparency = MaxTransparency * (PercentageHP / 100.0f);
             }
 
             if (Shrink == true)
@@ -245,7 +245,7 @@ namespace TowerDefensePrototype
                 DrawDepth = DestinationRectangle.Center.Y / 1080.0f;
             }
 
-            CurrentColor = Color.Lerp(EndColor, StartColor, PercentageHP/100);            
+            CurrentColor = Color.Lerp(EndColor, StartColor, PercentageHP / 100);        
         }
 
         public void Draw(SpriteBatch spriteBatch)
