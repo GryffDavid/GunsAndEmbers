@@ -9,9 +9,9 @@ using Microsoft.Xna.Framework.Input;
 
 namespace TowerDefensePrototype
 {
-    class FelCannon : Turret
+    class FelCannonTurret : Turret
     {
-        public FelCannon(Vector2 position)
+        public FelCannonTurret(Vector2 position)
         {
             Active = true;
             TurretType = TurretType.FelCannon;

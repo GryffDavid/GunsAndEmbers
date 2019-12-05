@@ -34,23 +34,30 @@ namespace TowerDefensePrototype
 
         public override void Draw(SpriteBatch spriteBatch)
         {
+            foreach (Emitter emitter in EmitterList)
+            {
+                emitter.Draw(spriteBatch);
+            }
+
             if (Active == true)
             {
-                BaseRectangle = new Rectangle((int)Position.X + 20, (int)Position.Y + 8, 
-                    TurretBase.Width, TurretBase.Height);
+                BaseRectangle = new Rectangle((int)Position.X, (int)Position.Y,
+                                              TurretBase.Width, TurretBase.Height);
 
-                BarrelRectangle = new Rectangle((int)Position.X + 20, (int)Position.Y + 8, 
-                    TurretBarrel.Width / CurrentAnimation.TotalFrames, TurretBarrel.Height);
+                BarrelRectangle = new Rectangle((int)Position.X, (int)Position.Y,
+                                                TurretBarrel.Width / CurrentAnimation.TotalFrames, TurretBarrel.Height);
 
-                BarrelPivot = new Vector2(45, TurretBarrel.Height / 2);
-                BasePivot = new Vector2(TurretBase.Width / 2, TurretBase.Height / 2 - 10);
+                BarrelPivot = new Vector2(32, 32);
+                BasePivot = new Vector2(40, 5);
 
                 spriteBatch.Draw(TurretBarrel, BarrelRectangle, SourceRectangle, Color, Rotation, BarrelPivot, SpriteEffects.None, 0.89f);
 
                 spriteBatch.Draw(TurretBase, BaseRectangle, null, Color, 0, BasePivot, SpriteEffects.None, 0.90f);
+
+                spriteBatch.Draw(TurretBase, new Rectangle((int)(BasePivot.X + Position.X), (int)(BasePivot.Y + Position.Y), 1920, 4), null, Color.White, FireRotation, Vector2.Zero, SpriteEffects.None, 0);
             }
 
             base.Draw(spriteBatch);
-        }        
+        }   
     }
 }

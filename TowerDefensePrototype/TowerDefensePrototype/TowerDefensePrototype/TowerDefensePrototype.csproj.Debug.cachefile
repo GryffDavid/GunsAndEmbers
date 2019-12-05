@@ -4,7 +4,6 @@ Content\Particles\Splodge.xnb
 Content\WhiteBlock.xnb
 Content\Particles\FireParticle.xnb
 Content\Projectiles\CannonBall.xnb
-Content\Particles\Smoke2.xnb
 Content\Backgrounds\PauseMenuBackground.xnb
 Content\Projectiles\Arrow.xnb
 Content\Projectiles\AcidProjectileSprite.xnb
@@ -73,11 +72,13 @@ Content\Invaders\BlankTank.xnb
 Content\Particles\Smoke.xnb
 Content\Decal.xnb
 Content\SelectBox.xnb
-Content\Invaders\Soldier.xnb
 Content\Backgrounds\Sky.xnb
 Content\Backgrounds\Ground.xnb
 Content\Invaders\Soldier3.xnb
-Content\HealthBarEffect.xnb
+Content\lightmask.xnb
+Content\Icons\TurretIcons\ShotgunTurretIcon.xnb
+Content\Traps\Trap.xnb
+Content\IceBlock.xnb
 Content\Fonts\DefaultFont.xnb
 Content\Fonts\ButtonFont.xnb
 Content\Fonts\TooltipFont.xnb
@@ -105,7 +106,4 @@ Content\Sounds\MenuMusic1.xnb
 Content\Sounds\Implosion.xnb
 Content\Sounds\Implosion2.xnb
 Content\Sounds\TurretOverheat.xnb
-Content\lightmask.xnb
-Content\LightEffect.xnb
-Content\BloomEffect.xnb
-Content\Sounds\Traps\Trap.xnb
+Content\HealthBarEffect.xnb

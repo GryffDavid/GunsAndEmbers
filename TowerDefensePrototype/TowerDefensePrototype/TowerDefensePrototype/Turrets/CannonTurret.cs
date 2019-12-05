@@ -24,6 +24,7 @@ namespace TowerDefensePrototype
             Looping = false;
             Health = 500;
             ResourceCost = 600;
+            BlastRadius = 200;
 
             CurrentAnimation = new Animation()
             {

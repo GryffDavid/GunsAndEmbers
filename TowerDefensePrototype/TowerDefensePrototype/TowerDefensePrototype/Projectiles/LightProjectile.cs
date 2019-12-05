@@ -14,6 +14,7 @@ namespace TowerDefensePrototype
         public bool Active;
         public Vector2 Position;
         public LightProjectileType LightProjectileType;
+        public float Damage;
 
         public void Update(GameTime gameTime)
         {

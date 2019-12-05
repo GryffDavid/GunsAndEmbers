@@ -10,12 +10,17 @@ namespace TowerDefensePrototype
 {
     class MachineGunProjectile : LightProjectile
     {
-        public MachineGunProjectile(Vector2 position, Vector2 Direction)
+        public MachineGunProjectile(Vector2 position, Vector2 Direction, float? damage = null)
         {
             Active = true;
             Position = position;
             Ray = new Ray(new Vector3(Position.X, Position.Y, 0), new Vector3(Direction.X, Direction.Y, 0));
             LightProjectileType = LightProjectileType.MachineGun;
+
+            if (damage != null)
+                Damage = damage.Value;
+            else
+                Damage = 0;
         }
     }
 }

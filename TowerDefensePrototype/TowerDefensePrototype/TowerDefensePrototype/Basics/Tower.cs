@@ -18,6 +18,7 @@ namespace TowerDefensePrototype
         public bool ShieldOn;
         public double CurrentShieldTime, ShieldTime;
         public Color Color;
+        public BoundingBox BoundingBox;
         
         public Tower(string assetName, Vector2 position, int totalHitpoints, int maxShield, int slots, float shieldTime)
         {
@@ -30,13 +31,15 @@ namespace TowerDefensePrototype
             MaxShield = maxShield;
             ShieldTime = shieldTime;
             ShieldOn = true;
-            Color = Color.White;
+            Color = Color.White;            
         }
 
         public void LoadContent(ContentManager contentManager)
         {
             Texture = contentManager.Load<Texture2D>(AssetName);
             DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, Texture.Width, Texture.Height);
+            BoundingBox = new BoundingBox(new Vector3(DestinationRectangle.Left, DestinationRectangle.Top, 0),
+                                          new Vector3(DestinationRectangle.Right, DestinationRectangle.Bottom, 0));
         }
 
         public void Update(GameTime gameTime)

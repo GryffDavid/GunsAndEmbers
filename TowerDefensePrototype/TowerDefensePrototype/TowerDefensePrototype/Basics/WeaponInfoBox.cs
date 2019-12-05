@@ -111,7 +111,7 @@ namespace TowerDefensePrototype
 
                 case TurretType.FelCannon:
                     {
-                        NameText = "Energy Cannon";
+                        NameText = "fel Cannon";
                         UpdateStats(4, 1, 1, 1);
                     }
                     break;
@@ -140,6 +140,13 @@ namespace TowerDefensePrototype
                 case TurretType.Grenade:
                     {
                         NameText = "Grenade Launcher";
+                        UpdateStats(8, 1, 1, 1);
+                    }
+                    break;
+
+                case TurretType.Shotgun:
+                    {
+                        NameText = "Shotgun";
                         UpdateStats(8, 1, 1, 1);
                     }
                     break;
@@ -191,7 +198,7 @@ namespace TowerDefensePrototype
 
                 case TrapType.Tar:
                     {
-                        NameText = "Tra Trap";
+                        NameText = "Tar Trap";
                         UpdateStats(8, 1, 1, 1);
                     }
                     break;

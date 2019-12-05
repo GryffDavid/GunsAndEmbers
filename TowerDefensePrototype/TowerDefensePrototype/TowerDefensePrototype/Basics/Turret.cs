@@ -15,15 +15,16 @@ namespace TowerDefensePrototype
         public Texture2D Rect;
         public Texture2D TurretBase, TurretBarrel, TurretAnimationTexture;
         public Vector2 Direction, Position, MousePosition, BarrelPivot, BasePivot, 
-            FrameSize, BarrelEnd, BarrelCenter, FireDirection;
+                       FrameSize, BarrelEnd, BarrelCenter, FireDirection;
         public Rectangle BaseRectangle, BarrelRectangle, SelectBox, SourceRectangle;
         MouseState CurrentMouseState, PreviousMouseState;
-        public float Rotation, Health, CurrentHealth, FireRotation, CurrentHeat, MaxHeat, 
-            CurrentHeatTime, MaxHeatTime, CoolValue, ShotHeat;
+        public float Rotation, Health, CurrentHealth, FireRotation, CurrentHeat, MaxHeat,
+                     CurrentHeatTime, MaxHeatTime, CoolValue, ShotHeat, BlastRadius;
         public bool Selected, Active, JustClicked, CanShoot, Animated, Looping, Overheated;
         public double FireDelay, CurrentFrameTime;
         public double ElapsedTime = 0;
-        public int Damage, CurrentFrame, ResourceCost;
+        public int Damage, CurrentFrame;
+        public int ResourceCost;
         public float AngleOffset, MaxAngleOffset, MinAngleOffset;
         public static Random Random = new Random();
         public TurretType TurretType;

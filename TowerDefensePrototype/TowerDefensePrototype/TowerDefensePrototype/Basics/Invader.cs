@@ -11,10 +11,10 @@ namespace TowerDefensePrototype
     public abstract class Invader
     {
         //public string AssetName;
-        public Texture2D CurrentTexture, Shadow;
+        public Texture2D CurrentTexture, Shadow, IceBlock;
         public Rectangle DestinationRectangle, SourceRectangle;
         public Vector2 Position, MoveVector, CurrentMoveVector, ResourceMinMax, Velocity;
-        public bool Active, VulnerableToTurret, VulnerableToTrap, CanAttack, Burning, Frozen, Slow, Airborne;//, CanMove;
+        public bool Active, VulnerableToTurret, VulnerableToTrap, CanAttack, Burning, Frozen, Slow, Airborne, StartTiming;//, CanMove;
         public Color Color, BurnColor, FrozenColor, AcidColor;
         public BoundingBox BoundingBox;
         public Double CurrentMoveDelay, MoveDelay, CurrentDelay, AttackDelay, CurrentAttackDelay;
@@ -27,7 +27,7 @@ namespace TowerDefensePrototype
         public static Random Random = new Random();
         public float Gravity, BurnDamage, DrawDepth;
         public double BurnDelay, FreezeDelay, CurrentBurnDelay, CurrentFreezeDelay,
-                        CurrentBurnInterval, BurnInterval, SlowDelay, CurrentSlowDelay;
+                      CurrentBurnInterval, BurnInterval, SlowDelay, CurrentSlowDelay;
         //HorizontalBar HPBar;
         public InvaderType InvaderType;
         public int CurrentFrame;
@@ -37,12 +37,16 @@ namespace TowerDefensePrototype
         public float Bottom;
         public Animation CurrentAnimation;
         public Emitter DustEmitter;
+        public Emitter FireEmitter;
+        public List<Emitter> EmitterList;
 
         public void LoadContent(ContentManager contentManager)
         {
             Shadow = contentManager.Load<Texture2D>("Shadow");
+            IceBlock = contentManager.Load<Texture2D>("IceBlock");
             VulnerableToTurret = true;
             VulnerableToTrap = true;
+            StartTiming = false;
             CurrentTexture = contentManager.Load<Texture2D>(CurrentAnimation.AssetName);
             Color = Color.White;
             //HPBar = new HorizontalBar(contentManager, new Vector2(32, 4), MaxHP, CurrentHP);
@@ -52,7 +56,9 @@ namespace TowerDefensePrototype
             FrameSize = new Vector2(CurrentTexture.Width / CurrentAnimation.TotalFrames, CurrentTexture.Height);
           
             if (DustEmitter != null)
-            DustEmitter.LoadContent(contentManager);
+                DustEmitter.LoadContent(contentManager);
+
+            EmitterList = new List<Emitter>();
         }
 
         public virtual void Update(GameTime gameTime)
@@ -70,12 +76,33 @@ namespace TowerDefensePrototype
                 if (CurrentHP <= 0)
                     Active = false;
 
+                foreach (Emitter emitter in EmitterList)
+                {
+                    emitter.Update(gameTime);
+                    emitter.Position = new Vector2(DestinationRectangle.Center.X, DestinationRectangle.Center.Y);
+                }
+
+                if (FireEmitter != null)
+                {
+                    FireEmitter.Update(gameTime);
+                    
+                    //This makes sure that the entire invader looks like it's on fire, not just part of it.
+                    //Randomly jumps the emitter all around the invader rectangle while it's emitting particles
+                    FireEmitter.Position = new Vector2(DestinationRectangle.Left + 
+                        Random.Next(0, CurrentTexture.Width/CurrentAnimation.TotalFrames), 
+                        DestinationRectangle.Bottom - Random.Next(0, CurrentTexture.Height));
+                }
+
                 if (DustEmitter != null)
                 {
-                    if (Frozen == true)
+                    if (CurrentMoveVector.X == 0)
+                    {
                         DustEmitter.AddMore = false;
+                    }
                     else
+                    {
                         DustEmitter.AddMore = true;
+                    }
 
                     DustEmitter.Update(gameTime);
                     DustEmitter.Position = new Vector2(DestinationRectangle.Center.X, DestinationRectangle.Bottom);
@@ -123,6 +150,7 @@ namespace TowerDefensePrototype
                         Burning = false;
                         CurrentBurnInterval = 0;
                         CurrentBurnDelay = 0;
+                        FireEmitter.AddMore = false;
                     }                              
 
                     if (Burning == true)
@@ -196,6 +224,11 @@ namespace TowerDefensePrototype
                     }
                 }
 
+                if (FireEmitter != null && FireEmitter.ParticleList.Count == 0 && FireEmitter.AddMore == false)
+                {
+                    FireEmitter = null;
+                }
+
                 SourceRectangle = new Rectangle((int)(CurrentFrame*FrameSize.X), 0, (int)FrameSize.X, (int)FrameSize.Y);
 
                 DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, (int)(FrameSize.X*Scale.X), (int)(FrameSize.Y*Scale.Y));
@@ -216,12 +249,27 @@ namespace TowerDefensePrototype
                 if (DustEmitter != null)
                     DustEmitter.Draw(spriteBatch);
 
+                if (FireEmitter != null)
+                {
+                    FireEmitter.Draw(spriteBatch);
+                }
+
+                foreach (Emitter emitter in EmitterList)
+                {
+                    emitter.Draw(spriteBatch);
+                }
+
                 BoundingBox = new BoundingBox(new Vector3(Position.X, Position.Y, 0), 
                               new Vector3(Position.X + (FrameSize.X * Scale.X), Position.Y + (FrameSize.Y * Scale.Y), 0));
 
                 spriteBatch.Draw(CurrentTexture, DestinationRectangle, SourceRectangle, Color, MathHelper.ToRadians(0),
                     Vector2.Zero, SpriteEffects.None, DrawDepth);
 
+                if (Frozen == true)
+                {
+                    double IceTransparency = ((75 / FreezeDelay) * CurrentFreezeDelay)/100;
+                    spriteBatch.Draw(IceBlock, new Rectangle((int)Position.X, DestinationRectangle.Bottom - IceBlock.Height + 8, IceBlock.Width, IceBlock.Height), null, Color.Lerp(Color.White, Color.Transparent, (float)IceTransparency), 0, Vector2.Zero, SpriteEffects.None, DrawDepth + 0.0001f);
+                }
                 //HPBar.Draw(spriteBatch);
             }
         }

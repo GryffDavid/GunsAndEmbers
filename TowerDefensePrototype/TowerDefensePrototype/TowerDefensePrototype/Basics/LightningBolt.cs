@@ -27,8 +27,8 @@ namespace TowerDefensePrototype
         List<Line> Results = new List<Line>();
         Vector2 Tangent;
         Vector2 Normal;
-        Vector2 Point, Source, Destination;
-        float Length, Thickness;
+        public Vector2 Point, Source, Destination;
+        float Length;
 
         public LightningBolt(Vector2 source, Vector2 destination, Color color, float fadeRate, float? sway = null)
         {
@@ -52,14 +52,18 @@ namespace TowerDefensePrototype
             Segment = contentManager.Load<Texture2D>("Particles/Segment");
             Cap = contentManager.Load<Texture2D>("Particles/Cap");
         }
-
+        
         public void Update()
         {
             //Results = new List<Line>();
             //Segments = new List<Line>();
             //Positions = new List<float>();
             //Segments = CreateBolt(Source, Destination, 2);
+            Segments.Clear();
+            Results.Clear();
+            Positions.Clear();
 
+            CreateBolt(Source, Destination, 1);
             Alpha -= FadeOutRate;
         }
 
@@ -76,6 +80,10 @@ namespace TowerDefensePrototype
 
         public List<Line> CreateBolt(Vector2 source, Vector2 destination, float thickness)
         {
+            Segments.Clear();
+            Results.Clear();
+            Positions.Clear();
+
             Tangent = destination - source;
             Normal = Vector2.Normalize(new Vector2(Tangent.Y, -Tangent.X));
             Length = Tangent.Length();

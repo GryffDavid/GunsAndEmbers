@@ -10,12 +10,30 @@ namespace TowerDefensePrototype
 {
     abstract class LightRangedInvader : Invader
     {
-        public int RangedAttackPower;
-        public Vector2 AngleRange, Range, PowerRange;
+        public int RangedAttackPower, MaxBurst, CurrentBurst;
+        public Vector2 AngleRange, Range;
+        public float MaxBurstDelay, CurrentBurstDelay;
 
         public override void TrapDamage(TrapType trapType)
         {
             throw new NotImplementedException();
+        }
+
+        public override void Update(GameTime gameTime)
+        {            
+            base.Update(gameTime);
+            
+            if (CurrentBurst >= MaxBurst &&
+                CurrentBurstDelay < MaxBurstDelay)
+            {
+                CurrentBurstDelay += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+            }
+
+            if (CurrentBurstDelay >= MaxBurstDelay)
+            {
+                CurrentBurstDelay = 0;
+                CurrentBurst = 0;
+            }
         }
     }
 }

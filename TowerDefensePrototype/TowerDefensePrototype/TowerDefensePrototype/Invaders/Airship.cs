@@ -22,13 +22,14 @@ namespace TowerDefensePrototype
             CurrentAttackDelay = 0;
             AttackDelay = 1500;
             AttackPower = 4;
-            InvaderType = TowerDefensePrototype.InvaderType.Airship;
+            InvaderType = InvaderType.Airship;
             CurrentFrame = 0;
             YRange = new Vector2(60, 150);
             RangedAttackPower = 20;
             Range = new Vector2(200, 800);
             AngleRange = new Vector2(110, 160);
             PowerRange = new Vector2(9, 12);
+            Airborne = true;
 
             CurrentAnimation = new Animation()
             {

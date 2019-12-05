@@ -10,12 +10,17 @@ namespace TowerDefensePrototype
 {
     class FreezeProjectile : LightProjectile
     {
-        public FreezeProjectile(Vector2 position, Vector2 Direction)
+        public FreezeProjectile(Vector2 position, Vector2 Direction, float? damage = null)
         {
             Active = true;
             Position = position;
             Ray = new Ray(new Vector3(Position.X, Position.Y, 0), new Vector3(Direction.X, Direction.Y, 0));
             LightProjectileType = LightProjectileType.Freeze;
+
+            if (damage != null)
+                Damage = damage.Value;
+            else
+                Damage = 0;
         }
     }
 }

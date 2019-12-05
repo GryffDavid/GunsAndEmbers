@@ -15,35 +15,53 @@ namespace TowerDefensePrototype
         {
             Active = true;
             TurretType = TurretType.FlameThrower;
-            BaseAsset = "Turrets/FlameThrowerBase";
+            BaseAsset = "Turrets/MachineTurretBase";
             Position = position;
             Selected = true;
             FireDelay = 40;
             Damage = 20;
-
+            AngleOffset = 0f;
             Animated = false;
             Looping = false;
+            ResourceCost = 200;
+            MaxHeat = 150;
+            MaxHeatTime = 2000;
+            CoolValue = 0.5f;
+            ShotHeat = 10;
 
             CurrentAnimation = new Animation()
             {
-                AssetName = "Turrets/FlameThrowerBarrel",
-                TotalFrames = 1
-            }; 
+                AssetName = "Turrets/MachineTurretBarrel",
+                TotalFrames = 6
+            };
+
+            Health = 100;   
+
         }
 
         public override void Draw(SpriteBatch spriteBatch)
         {
+            foreach (Emitter emitter in EmitterList)
+            {
+                emitter.Draw(spriteBatch);
+            }
+
             if (Active == true)
             {
-                BaseRectangle = new Rectangle((int)Position.X+16, (int)Position.Y+6, TurretBase.Width, TurretBase.Height);
-                BarrelRectangle = new Rectangle((int)Position.X+18, (int)Position.Y+6, TurretBarrel.Width, TurretBarrel.Height);
+                BaseRectangle = new Rectangle((int)Position.X, (int)Position.Y,
+                                              TurretBase.Width, TurretBase.Height);
 
-                Vector2 BarrelPivot = new Vector2(18, TurretBarrel.Height / 2);
-                Vector2 BasePivot = new Vector2(TurretBase.Width / 2-8, TurretBase.Height / 2 - 10);
+                BarrelRectangle = new Rectangle((int)Position.X, (int)Position.Y,
+                                                TurretBarrel.Width / CurrentAnimation.TotalFrames, TurretBarrel.Height);
 
-                spriteBatch.Draw(TurretBarrel, BarrelRectangle, SourceRectangle, Color, Rotation, BarrelPivot, SpriteEffects.None, 0.99f);
+                BarrelPivot = new Vector2(32, 32);
+                BasePivot = new Vector2(40, 5);
 
-                spriteBatch.Draw(TurretBase, BaseRectangle, null, Color, 0, BasePivot, SpriteEffects.None, 1f);
+                spriteBatch.Draw(TurretBarrel, BarrelRectangle, SourceRectangle, Color, Rotation, BarrelPivot, SpriteEffects.None, 0.89f);
+
+                spriteBatch.Draw(TurretBase, BaseRectangle, null, Color, 0, BasePivot, SpriteEffects.None, 0.90f);
+
+                spriteBatch.Draw(TurretBase, new Rectangle((int)(BasePivot.X + Position.X), (int)(BasePivot.Y + Position.Y), 1920, 4), null, Color.White, FireRotation, Vector2.Zero, SpriteEffects.None, 0);
             }
 
             base.Draw(spriteBatch);

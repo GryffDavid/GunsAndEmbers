@@ -125,8 +125,9 @@
     <Compile Include="Basics\WeaponInfoBox.cs" />
     <Compile Include="Basics\NumberChange.cs" />
     <Compile Include="Basics\Light.cs" />
+    <Compile Include="Invaders\TestInvader.cs" />
+    <Compile Include="Levels\TutorialLevel.cs" />
     <Compile Include="Projectiles\ShotgunProjectile.cs" />
-    <Compile Include="Projectiles\PulseGunProjectile.cs" />
     <Compile Include="Projectiles\TimerHeavyProjectile.cs" />
     <Compile Include="Basics\World.cs" />
     <Compile Include="Basics\CheckBox.cs" />
@@ -158,9 +159,8 @@
     <Compile Include="Turrets\BeamTurret.cs" />
     <Compile Include="Turrets\BoomerangTurret.cs" />
     <Compile Include="Turrets\ShotgunTurret.cs" />
-    <Compile Include="Turrets\PulseGunTurret.cs" />
     <Compile Include="Turrets\FreezeTurret.cs" />
-    <Compile Include="Turrets\FelCannon.cs" />
+    <Compile Include="Turrets\FelCannonTurret.cs" />
     <Compile Include="Turrets\GrenadeTurret.cs" />
     <Compile Include="Upgrades\Upgrade2.cs" />
     <Compile Include="Invaders\Archer.cs" />

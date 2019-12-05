@@ -10,7 +10,7 @@ namespace TowerDefensePrototype
 {
     public abstract class Trap
     {
-        Texture2D Texture;
+        public Texture2D Texture;
         public Rectangle DestinationRectangle, SourceRectangle;
         public String AssetName;
         public float MaxHP, CurrentHP;
@@ -26,7 +26,7 @@ namespace TowerDefensePrototype
         public float AffectedTime, CurrentAffectedTime;
         public float DrawDepth, Bottom;
         public int ElapsedTime, FrameTime, FrameCount, CurrentFrame;
-        public int ResourceCost;
+        public int ResourceCost;       
 
         public virtual void LoadContent(ContentManager contentManager)
         {

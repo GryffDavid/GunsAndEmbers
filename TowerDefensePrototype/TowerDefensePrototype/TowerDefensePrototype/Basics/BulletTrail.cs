@@ -33,12 +33,7 @@ namespace TowerDefensePrototype
 
         public void LoadContent(ContentManager contentManager)
         {
-            Segment = contentManager.Load<Texture2D>("Particles/Segment");
-            Cap = contentManager.Load<Texture2D>("Particles/Cap");
 
-            CapOrigin = new Vector2(Cap.Width, Cap.Height / 2);
-            MiddleOrigin = new Vector2(0, Segment.Height / 2);
-            MiddleScale = new Vector2(Tangent.Length(), ThicknessScale);
         }
 
         public void Update(GameTime gameTime)
@@ -53,6 +48,15 @@ namespace TowerDefensePrototype
             spriteBatch.Draw(Segment, Source, null, Color, Theta, MiddleOrigin, MiddleScale, SpriteEffects.FlipHorizontally, 0f);
             spriteBatch.Draw(Cap, Source, null, Color, Theta, CapOrigin, ThicknessScale, SpriteEffects.None, 0f);
             spriteBatch.Draw(Cap, Destination, null, Color, Theta + MathHelper.Pi, CapOrigin, ThicknessScale, SpriteEffects.None, 0f);
+        }
+
+        public void SetUp()
+        {
+            //This is here so that I don't have to call LoadContent
+            //It gets called after Cap and Segment are set using preloaded textures
+            CapOrigin = new Vector2(Cap.Width, Cap.Height / 2);
+            MiddleOrigin = new Vector2(0, Segment.Height / 2);
+            MiddleScale = new Vector2(Tangent.Length(), ThicknessScale);
         }
     }
 }
