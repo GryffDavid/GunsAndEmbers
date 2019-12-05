@@ -24,12 +24,13 @@ namespace TowerDefensePrototype
             CurrentAttackDelay = 0;
             AttackDelay = 1500;
             AttackPower = 30;
-            FrameSize = new Vector2(64, 64);
+            FrameSize = new Vector2(37, 58);
             FrameDelay = 120;
             TotalFrames = 1;
             CurrentFrame = 0;
             InvaderType = InvaderType.Tank;
             Scale = new Vector2(1.5f, 1.5f);
+            YRange = new Vector2(510, 530);
         }
 
         public override void TrapDamage(TrapType trapType)

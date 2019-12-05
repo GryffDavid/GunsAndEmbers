@@ -177,13 +177,13 @@ namespace TowerDefensePrototype
         {
             if (ButtonActive == true)
             {
-                spriteBatch.Draw(ButtonStrip, DestinationRectangle, SourceRectangle, Color);
+                spriteBatch.Draw(ButtonStrip, DestinationRectangle, SourceRectangle, Color, MathHelper.ToRadians(0), Vector2.Zero, SpriteEffects.None, 0.99f);
                 if (IconName != null)
                 {
                     if (CurrentButtonState != ButtonSpriteState.Pressed)                    
-                        spriteBatch.Draw(IconTexture, IconRectangle, Color.White);
+                        spriteBatch.Draw(IconTexture, IconRectangle, null, Color.White, MathHelper.ToRadians(0), Vector2.Zero, SpriteEffects.None, 0.5f);
                     else
-                        spriteBatch.Draw(IconTexture, new Rectangle(IconRectangle.X+2, IconRectangle.Y+2, IconRectangle.Width, IconRectangle.Height), Color.White);                    
+                        spriteBatch.Draw(IconTexture, new Rectangle(IconRectangle.X + 2, IconRectangle.Y + 2, IconRectangle.Width, IconRectangle.Height), null, Color.White, MathHelper.ToRadians(0), Vector2.Zero, SpriteEffects.None, 0.5f);              
                 }
 
                 if (Text != "")
@@ -191,12 +191,12 @@ namespace TowerDefensePrototype
                     if (CurrentButtonState != ButtonSpriteState.Pressed)
                     {
                         Vector2 TextSize = Font.MeasureString(Text);
-                        spriteBatch.DrawString(Font, Text, new Vector2(DestinationRectangle.Center.X - (TextSize.X / 2), DestinationRectangle.Center.Y - (TextSize.Y / 2)), TextColor);
+                        spriteBatch.DrawString(Font, Text, new Vector2(DestinationRectangle.Center.X - (TextSize.X / 2), DestinationRectangle.Center.Y - (TextSize.Y / 2)), TextColor, MathHelper.ToRadians(0), Vector2.Zero, 1, SpriteEffects.None, 0.5f);
                     }
                     else
                     {
                         Vector2 TextSize = Font.MeasureString(Text);
-                        spriteBatch.DrawString(Font, Text, new Vector2(DestinationRectangle.Center.X - (TextSize.X / 2)+2, DestinationRectangle.Center.Y - (TextSize.Y / 2)+2), TextColor);
+                        spriteBatch.DrawString(Font, Text, new Vector2(DestinationRectangle.Center.X - (TextSize.X / 2)+2, DestinationRectangle.Center.Y - (TextSize.Y / 2)+2), TextColor, MathHelper.ToRadians(0), Vector2.Zero, 1, SpriteEffects.None, 0.5f);
                     }
                 }                
             }

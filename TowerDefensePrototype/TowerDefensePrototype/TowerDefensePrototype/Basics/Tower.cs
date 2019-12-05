@@ -37,7 +37,7 @@ namespace TowerDefensePrototype
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(Texture, DestinationRectangle, Color.White);
+            spriteBatch.Draw(Texture, DestinationRectangle, null, Color.White, MathHelper.ToRadians(0), Vector2.Zero, SpriteEffects.None, 1);
         }
     }
 }

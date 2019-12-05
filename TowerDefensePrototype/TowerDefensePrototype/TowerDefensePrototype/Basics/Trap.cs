@@ -21,7 +21,7 @@ namespace TowerDefensePrototype
         public List<Emitter> TrapEmitterList;
         public float DetonateDelay, CurrentDetonateDelay;
         public HorizontalBar TimingBar, HealthBar, DetonateBar;
-        public float DetonateLimit, CurrentDetonateLimit;
+        public float DetonateLimit, CurrentDetonateLimit, DrawDepth;
         public bool Affected;
         public float AffectedTime, CurrentAffectedTime;
 
@@ -40,7 +40,7 @@ namespace TowerDefensePrototype
             CurrentDetonateDelay = DetonateDelay;
             Affected = false;
             CurrentAffectedTime = AffectedTime;
-
+            DrawDepth = (560 - Position.Y) / 100;
             CurrentHP = MaxHP;
         }
 
@@ -102,17 +102,18 @@ namespace TowerDefensePrototype
         {
             if (CurrentHP <= 0)
                 Active = false;
-
-            if (Active == true)
-                spriteBatch.Draw(Texture, DestinationRectangle, Color.White);
-
+            
             if (TrapEmitterList.Count > 0)
             {
                 foreach (Emitter emitter in TrapEmitterList)
                 {
                     emitter.Draw(spriteBatch);
                 }
-            }            
+            }
+
+            if (Active == true)
+                spriteBatch.Draw(Texture, DestinationRectangle, null, Color.White, MathHelper.ToRadians(0), Vector2.Zero, SpriteEffects.None, DrawDepth);
+
         }
     }
 }

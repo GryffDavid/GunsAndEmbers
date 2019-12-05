@@ -29,6 +29,7 @@ namespace TowerDefensePrototype
             FrameDelay = 120;
             TotalFrames = 1;
             CurrentFrame = 0;
+            YRange = new Vector2(60, 150);
         }
 
         public override void Update(GameTime gameTime)

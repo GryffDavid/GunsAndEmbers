@@ -110,7 +110,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BarrelTrap.cs" />
+    <Compile Include="OffenseTraps\BarrelTrap.cs" />
     <Compile Include="Basics\AnimatedSprite.cs" />
     <Compile Include="Basics\Boss.cs" />
     <Compile Include="Basics\Button.cs" />
@@ -121,6 +121,7 @@
     <Compile Include="DefenseTraps\IceTrap.cs" />
     <Compile Include="Invaders\Airship.cs" />
     <Compile Include="Basics\Profile.cs" />
+    <Compile Include="Projectiles\AcidProjectile.cs" />
     <Compile Include="Projectiles\Arrow.cs" />
     <Compile Include="Projectiles\CannonBall.cs" />
     <Compile Include="Projectiles\FlameProjectile.cs" />
@@ -130,7 +131,7 @@
     <Compile Include="Projectiles\LightProjectile.cs" />
     <Compile Include="ParticleSystem\Particle.cs" />
     <Compile Include="DefenseTraps\TarTrap.cs" />
-    <Compile Include="Tank.cs" />
+    <Compile Include="Invaders\Tank.cs" />
     <Compile Include="Turrets\BasicTurret.cs" />
     <Compile Include="Turrets\BlankTurret.cs" />
     <Compile Include="DefenseTraps\CatapultTrap.cs" />

@@ -19,7 +19,8 @@ namespace TowerDefensePrototype
         public bool VerticalLooping, HorizontalLooping;
         public double CurrentTime, UpdateDelay;
 
-        public StaticSprite(string assetName, Vector2 position, Vector2? scale = null, Color? color = null, Vector2? move = null, bool? horizontalLooping = null, bool? verticalLooping = null, double? updateDelay = null)
+        public StaticSprite(string assetName, Vector2 position, Vector2? scale = null, Color? color = null, 
+            Vector2? move = null, bool? horizontalLooping = null, bool? verticalLooping = null, double? updateDelay = null)
         {
             AssetName = assetName;
             Position = position;

@@ -29,6 +29,7 @@ namespace TowerDefensePrototype
             TotalFrames = 9;
             CurrentFrame = 0;
             InvaderType = InvaderType.Soldier;
+            YRange = new Vector2(475, 560);          
         }
 
         public override void Update(GameTime gameTime)
@@ -44,7 +45,7 @@ namespace TowerDefensePrototype
                 {
                     case TrapType.Fire:
                         CurrentHP -= 10;
-                        Burn(3000, 2, 300);
+                        DamageOverTime(3000, 2, 300, Color.Lime);
                         break;
 
                     case TrapType.Spikes:

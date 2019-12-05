@@ -15,14 +15,15 @@ namespace TowerDefensePrototype
         public Rectangle DestinationRectangle, SourceRectangle;
         public Vector2 Position, MoveVector, ResourceMinMax, Velocity;
         public bool Active, CanMove, VulnerableToTurret, VulnerableToTrap, CanAttack, Burning, Frozen, Slow;
-        public Color Color;
+        public Color Color, BurnColor, FrozenColor, AcidColor;
         public BoundingBox BoundingBox;
         public Double CurrentMoveDelay, MoveDelay, CurrentDelay, AttackDelay, CurrentAttackDelay;
-        public int MaxHP, CurrentHP, ResourceValue;        
+        public int MaxHP, CurrentHP, ResourceValue, MaxY;
+        public Vector2 YRange;
         public abstract void TrapDamage(TrapType trapType);
         public int AttackPower;
         public Random Random;
-        public float Gravity, BurnDamage;
+        public float Gravity, BurnDamage, DrawDepth;
         public double BurnDelay, FreezeDelay, CurrentBurnDelay, CurrentFreezeDelay,
                         CurrentBurnInterval, BurnInterval, SlowDelay, CurrentSlowDelay;
         HorizontalBar HPBar;
@@ -31,17 +32,17 @@ namespace TowerDefensePrototype
         public double CurrentFrameDelay, FrameDelay;
         public Vector2 FrameSize;
         public Vector2 Scale = new Vector2(1, 1);
-        public List<Emitter> InvaderEmitterList;
 
         public void LoadContent(ContentManager contentManager)
-        {            
+        {
+            Random = new System.Random();
             VulnerableToTurret = true;
             VulnerableToTrap = true;
             CurrentTexture = contentManager.Load<Texture2D>(AssetName);
             Color = Color.White;
             HPBar = new HorizontalBar(contentManager, new Vector2(32, 4), MaxHP, CurrentHP);
-            InvaderEmitterList = new List<Emitter>();
             CurrentMoveDelay = MoveDelay;
+            MaxY = Random.Next((int)YRange.X, (int)YRange.Y); 
         }
 
         public virtual void Update(GameTime gameTime)
@@ -102,13 +103,13 @@ namespace TowerDefensePrototype
 
                 if (Burning == true)
                 {
-                    Color = Color.Red;
+                    Color = BurnColor;
                 }
 
                 if (Frozen == true)
                 {
                     CurrentFreezeDelay += gameTime.ElapsedGameTime.TotalMilliseconds;
-                    Color = Color.LightBlue;
+                    Color = FrozenColor;
                     CanMove = false;
                 }
 
@@ -165,6 +166,8 @@ namespace TowerDefensePrototype
                 DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, (int)(FrameSize.X*Scale.X), (int)(FrameSize.Y*Scale.Y));
 
                 BoundingBox = new BoundingBox(new Vector3(Position.X, Position.Y, 0), new Vector3(Position.X + FrameSize.X, Position.Y + FrameSize.Y, 0));
+
+                DrawDepth = (YRange.Y - MaxY) / 100;
             }
         }
 
@@ -175,14 +178,10 @@ namespace TowerDefensePrototype
                 BoundingBox = new BoundingBox(new Vector3(Position.X, Position.Y, 0), 
                               new Vector3(Position.X + (FrameSize.X * Scale.X), Position.Y + (FrameSize.Y * Scale.Y), 0));
 
-                spriteBatch.Draw(CurrentTexture, DestinationRectangle, SourceRectangle, Color);
+                spriteBatch.Draw(CurrentTexture, DestinationRectangle, SourceRectangle, Color, MathHelper.ToRadians(0), 
+                    Vector2.Zero, SpriteEffects.None, DrawDepth);
 
                 HPBar.Draw(spriteBatch);
-            }
-
-            foreach (Emitter emitter in InvaderEmitterList)
-            {
-                emitter.Draw(spriteBatch);
             }
         }
 
@@ -221,7 +220,7 @@ namespace TowerDefensePrototype
             }
         }
 
-        public void Burn(float milliseconds, float damage, float interval)
+        public void DamageOverTime(float milliseconds, float damage, float interval, Color color)
         {
             if (Burning == false)
             {
@@ -229,6 +228,7 @@ namespace TowerDefensePrototype
                 BurnDelay = milliseconds;
                 BurnDamage = damage;
                 BurnInterval = interval;
+                BurnColor = color;
             }
         }
 
