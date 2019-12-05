@@ -131,7 +131,6 @@
     <Compile Include="Basics\AnimatedSprite.cs" />
     <Compile Include="Basics\Boss.cs" />
     <Compile Include="Basics\Button.cs" />
-    <Compile Include="Basics\BlankTrap.cs" />
     <Compile Include="Basics\Invader.cs" />
     <Compile Include="Basics\HorizontalBar.cs" />
     <Compile Include="Basics\Camera.cs" />
@@ -141,6 +140,7 @@
     <Compile Include="Projectiles\AcidProjectile.cs" />
     <Compile Include="Projectiles\Arrow.cs" />
     <Compile Include="Projectiles\CannonBall.cs" />
+    <Compile Include="Projectiles\ClusterBombShell.cs" />
     <Compile Include="Projectiles\ClusterBomb.cs" />
     <Compile Include="Projectiles\Torpedo.cs" />
     <Compile Include="Projectiles\FlameProjectile.cs" />
@@ -154,8 +154,8 @@
     <Compile Include="Invaders\Tank.cs" />
     <Compile Include="Projectiles\MachineGunProjectile.cs" />
     <Compile Include="Basics\TextInput.cs" />
+    <Compile Include="Turrets\ClusterTurret.cs" />
     <Compile Include="Turrets\MachineTurret.cs" />
-    <Compile Include="Turrets\BlankTurret.cs" />
     <Compile Include="DefenseTraps\CatapultTrap.cs" />
     <Compile Include="OffenseTraps\FireTrap.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -40,3 +40,15 @@ C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype
 C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 36\GameDataTypes\obj\x86\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
 C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 36\GameDataTypes\obj\x86\Debug\GameDataTypes.dll
 C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 36\GameDataTypes\obj\x86\Debug\GameDataTypes.pdb
+C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 37\GameDataTypes\bin\x86\Debug\GameDataTypes.dll
+C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 37\GameDataTypes\bin\x86\Debug\GameDataTypes.pdb
+C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 37\GameDataTypes\obj\x86\Debug\GameDataTypes.csprojResolveAssemblyReference.cache
+C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 37\GameDataTypes\obj\x86\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
+C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 37\GameDataTypes\obj\x86\Debug\GameDataTypes.dll
+C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 37\GameDataTypes\obj\x86\Debug\GameDataTypes.pdb
+C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 37\GameDataTypes\bin\x86\Debug\GameDataTypes.dll
+C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 37\GameDataTypes\bin\x86\Debug\GameDataTypes.pdb
+C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 37\GameDataTypes\obj\x86\Debug\GameDataTypes.csprojResolveAssemblyReference.cache
+C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 37\GameDataTypes\obj\x86\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
+C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 37\GameDataTypes\obj\x86\Debug\GameDataTypes.dll
+C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 37\GameDataTypes\obj\x86\Debug\GameDataTypes.pdb

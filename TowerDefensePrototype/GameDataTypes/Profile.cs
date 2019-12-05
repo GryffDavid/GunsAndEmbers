@@ -14,7 +14,7 @@ namespace TowerDefensePrototype
         public List<string> Buttons;
 
         //What turrets the player has access to
-        public bool FlameThrower, MachineGun, Cannon, LightningTurret;
+        public bool FlameThrower, MachineGun, Cannon, LightningTurret, ClusterTurret;
 
         //What traps the player has access to
         public bool Fire, Spikes, Wall, Catapult, SawBlade, Ice;
