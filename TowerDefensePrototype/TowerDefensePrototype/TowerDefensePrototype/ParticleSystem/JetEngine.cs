@@ -15,11 +15,9 @@ namespace TowerDefensePrototype
         //public float Rotation;
         public Emitter JetEmitter;
 
-        public JetEngine(Vector2 position, Vector2 size, Texture2D texture, Color color) 
-            : base(position, size, texture, color)
+        public JetEngine(Vector2 position, Vector2 size, Texture2D texture, Color color) : base(position, size, texture, color)
         {
-            Rotation = -75f;
-            
+            Rotation = -75f;            
         }
 
         public void Update(GameTime gameTime)
@@ -42,12 +40,9 @@ namespace TowerDefensePrototype
                     JetEmitter.AngleRange = new Vector2(-15, -15);
                 }
             }
-
-
-                        
-            DrawDepth = (Tether as Invader).DrawDepth + (1f / 1080f);
-            JetEmitter.DrawDepth = DrawDepth;
             
+            DrawDepth = (Tether as Invader).DrawDepth + (1f / 1080f);
+            JetEmitter.DrawDepth = DrawDepth;            
 
             JetEmitter.Update(gameTime);
             //Rotation += 0.5f;

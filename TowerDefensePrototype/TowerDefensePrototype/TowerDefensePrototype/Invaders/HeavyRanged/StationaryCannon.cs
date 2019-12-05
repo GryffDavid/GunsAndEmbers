@@ -35,8 +35,7 @@ namespace TowerDefensePrototype
 
         //What happens when the player removes the trap that is currently targetted? The invader needs to react to that too
 
-        public StationaryCannon(Vector2 position, Vector2? yRange = null)
-            : base(position, yRange)
+        public StationaryCannon(Vector2 position, Vector2? yRange = null) : base(position, yRange)
         {
             MaxHP = 40;
             ResourceMinMax = new Vector2(8, 20);
@@ -49,7 +48,7 @@ namespace TowerDefensePrototype
             CurrentMicroBehaviour = MicroBehaviour.MovingForwards;
 
             AngleRange = new Vector2(30, 60);
-            TowerDistanceRange = new Vector2(450, 580);
+            TowerDistanceRange = new Vector2(800, 900);
             TrapDistanceRange = new Vector2(250, 350);
             LaunchVelocityRange = new Vector2(12, 17);
 

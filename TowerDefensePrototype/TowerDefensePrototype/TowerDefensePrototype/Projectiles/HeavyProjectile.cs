@@ -317,30 +317,27 @@ namespace TowerDefensePrototype
                     if (Rotate == true)
                         CurrentRotation = (float)Math.Atan2(Velocity.Y, Velocity.X);
 
-                    DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y,
-                                                         Texture.Width * (int)Scale.X, Texture.Height * (int)Scale.Y);
+                    DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, Texture.Width * (int)Scale.X, Texture.Height * (int)Scale.Y);
 
-                    if (CurrentRotation >= 0)
-                    {
 
-                        BoundingBox = new BoundingBox(new Vector3(Position.X - ((float)Math.Cos(CurrentRotation) * (Texture.Width / 4)),
-                                                                  Position.Y - ((float)Math.Sin(CurrentRotation) * (Texture.Width / 4)), 0),
+                    //Work out the corners of the projectile bounding box, 
+                    //then order them by size to make sure that min is never bigger than max for the bounding box
+                    //or else collisions aren't handled at all. 
+                    Vector2 corner1, corner2;
 
-                                                      new Vector3(Position.X + ((float)Math.Cos(CurrentRotation) * (Texture.Width / 4)),
-                                                                  Position.Y + ((float)Math.Sin(CurrentRotation) * (Texture.Width / 4)), 0)
+                    float cosR = (float)Math.Cos(CurrentRotation);
+                    float sinR = (float)Math.Sin(CurrentRotation);
+                    float size = Texture.Width / 4;
 
-                                                     );
-                    }
-                    else
-                    {
-                        BoundingBox = new BoundingBox(new Vector3(Position.X + ((float)Math.Cos(CurrentRotation) * (Texture.Width / 4)),
-                                                                  Position.Y + ((float)Math.Sin(CurrentRotation) * (Texture.Width / 4)), 0),
+                    corner1 = new Vector2(Position.X - (cosR * size), Position.Y - (sinR * size));
+                    corner2 = new Vector2(Position.X + (cosR * size), Position.Y + (sinR * size));
 
-                                                      new Vector3(Position.X - ((float)Math.Cos(CurrentRotation) * (Texture.Width / 4)),
-                                                                  Position.Y - ((float)Math.Sin(CurrentRotation) * (Texture.Width / 4)), 0)
+                    Vector3 max, min;
 
-                                                     );
-                    }
+                    min = new Vector3(Math.Min(corner1.X, corner2.X), Math.Min(corner1.Y, corner2.Y), 0);
+                    max = new Vector3(Math.Max(corner1.X, corner2.X), Math.Max(corner1.Y, corner2.Y), 0);
+
+                    BoundingBox = new BoundingBox(min, max);
                 }
                 #endregion
 

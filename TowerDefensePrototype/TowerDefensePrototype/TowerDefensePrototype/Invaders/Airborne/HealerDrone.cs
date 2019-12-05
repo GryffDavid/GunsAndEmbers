@@ -10,8 +10,8 @@ namespace TowerDefensePrototype
 {
     class HealDrone : LightRangedInvader
     {
-        enum SpecificBehaviour { Heal, GetTarget, Circle };
-        SpecificBehaviour HealerBehaviour;
+        public enum SpecificBehaviour { Heal, GetTarget, Circle };
+        public SpecificBehaviour HealerBehaviour;
         public override float OriginalSpeed { get { return 1.5f; } }
 
         public Vector2 HealHeightRange = new Vector2(400, 500);
@@ -28,8 +28,7 @@ namespace TowerDefensePrototype
 
         //When shot down, this and other airborne invaders should have an explosion followed by smoke and then
         //falling to the ground, but maintaining the same X velocity
-        public HealDrone(Vector2 position, Vector2? yRange = null)
-            : base(position, yRange)
+        public HealDrone(Vector2 position, Vector2? yRange = null) : base(position, yRange)
         {
             CurrentHeight = position.Y;   
             MaxHP = 30;

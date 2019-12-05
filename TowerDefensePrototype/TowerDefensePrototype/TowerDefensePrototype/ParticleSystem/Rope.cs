@@ -40,13 +40,16 @@ namespace TowerDefensePrototype
         public HeavyProjectile TetherProjectile;
         public Vector2 StartPoint, EndPoint;
 
+        public object SourceObject;
         //public float MaxY;
         //public static Random Random = new Random();
 
-        public Rope(Vector2 startPoint, object tether, float maxY)
+        public Rope(Vector2 startPoint, object tether, object sourceObject, float maxY)
         {
             MaxY = maxY;
             StartPoint = startPoint;
+
+            SourceObject = sourceObject;
 
             if (tether as HeavyProjectile != null)
             {

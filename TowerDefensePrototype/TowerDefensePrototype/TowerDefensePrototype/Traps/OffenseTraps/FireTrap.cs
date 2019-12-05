@@ -16,8 +16,7 @@ namespace TowerDefensePrototype
             get { return _ResourceCost; }
         }
 
-        public FireTrap(Vector2 position)
-            : base(position)
+        public FireTrap(Vector2 position) : base(position)
         {
             Solid = false;
             MaxHP = 50;
