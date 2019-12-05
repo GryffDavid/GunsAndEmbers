@@ -272,3 +272,4 @@ Content\Shaders\NoBlack.xnb
 Content\StoryDialogue\Level1Dialogue.xnb
 Content\StoryDialogue\Level2Dialogue.xnb
 Content\StoryDialogue\LoadoutMenuDialogue.xnb
+Content\Backgrounds\GroundNormalMap.xnb

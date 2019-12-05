@@ -7,5 +7,6 @@ namespace TowerDefensePrototype
 {
     class Occluder
     {
+
     }
 }

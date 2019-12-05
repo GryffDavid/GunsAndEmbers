@@ -252,6 +252,8 @@ namespace TowerDefensePrototype
         BinaryFormatter formatter = new BinaryFormatter();
 
         //Sprites
+        Texture2D GroundNormalTexture;
+
         #region Decal sprites
         Texture2D BloodDecal1, ExplosionDecal1, GlueDecal1;
         #endregion
@@ -522,7 +524,7 @@ namespace TowerDefensePrototype
                GetNameOK, GetNameBack, MoveTurretsLeft, MoveTurretsRight, MoveTrapsLeft, MoveTrapsRight,
                VictoryContinue;
         Tower Tower;
-        StaticSprite Ground, ForeGround, SkyBackground, TextBox, MenuTower;
+        StaticSprite Ground, GroundNormalMap, ForeGround, SkyBackground, TextBox, MenuTower;
         StaticSprite MenuBackground1;
         AnimatedSprite LoadingAnimation;
         public static Nullable<TrapType> SelectedTrap;
@@ -586,7 +588,6 @@ namespace TowerDefensePrototype
 
         List<Light> LightList = new List<Light>();
         List<CrepuscularLight> CrepLightList = new List<CrepuscularLight>();
-        List<Solid> SolidList = new List<Solid>();
         List<PolygonShadow> ShadowList = new List<PolygonShadow>();
         List<myRay> RayList = new List<myRay>();
         Texture2D CrepuscularLightTexture;
@@ -1011,7 +1012,7 @@ namespace TowerDefensePrototype
                 //    Position = new Vector3(500, 500, 100),
                 //    Size = 1600
                 //});
-
+                
                 #region Prepare Render Targets
                 Buffer2 = new RenderTarget2D(GraphicsDevice, 1920, 1080, false, SurfaceFormat.Rgba64, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
                 Buffer1 = new RenderTarget2D(GraphicsDevice, 1920, 1080);
@@ -1292,7 +1293,7 @@ namespace TowerDefensePrototype
 
                 #endregion
 
-                SolidList.Add(new Solid(WhiteBlock, new Vector2(Tower.DestinationRectangle.Left, Tower.DestinationRectangle.Bottom - 86), new Vector2(168, 86)));
+                //SolidList.Add(new ShadowCaster(WhiteBlock, new Vector2(Tower.DestinationRectangle.Left, Tower.DestinationRectangle.Bottom - 86), new Vector2(168, 86)));
 
                 ResourceCounter = new ResourceCounter();
                 ResourceCounter.Font = DefaultFont;
@@ -2847,15 +2848,20 @@ namespace TowerDefensePrototype
 
                 #region Draw to NormalMap
                 GraphicsDevice.SetRenderTarget(NormalMap);
-                GraphicsDevice.Clear(new Color(128, 128, 255));
+                //GraphicsDevice.Clear(new Color(128, 128, 255));
+                GraphicsDevice.Clear(Color.Black);
                 spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
-                //foreach (Drawable drawable in DrawableList)
-                //{
-                //    //if (drawable.Normal == true)
-                //    {
-                //        drawable.DrawSpriteNormal(GraphicsDevice, BasicEffect);
-                //    }
-                //}
+
+                GroundNormalMap.Draw(spriteBatch);
+                foreach (Drawable drawable in DrawableList)
+                {
+                    if (drawable.Normal == true)
+                    {
+                        drawable.DrawSpriteNormal(GraphicsDevice, BasicEffect);
+                    }
+                }
+
+                Tower.DrawSpriteNormal(spriteBatch);
                 spriteBatch.End();
                 #endregion
 
@@ -3958,7 +3964,7 @@ namespace TowerDefensePrototype
                 {
                     spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.PointClamp, null, null, null, Camera.Transform);
                     spriteBatch.Draw(FinalMap, FinalMap.Bounds, Color.White);
-                    spriteBatch.Draw(Buffer2, FinalMap.Bounds, Color.White);
+                    //spriteBatch.Draw(Buffer2, FinalMap.Bounds, Color.White);
                     spriteBatch.End();
 
                     spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, null, null, null);
@@ -4159,10 +4165,10 @@ namespace TowerDefensePrototype
                             light.Update(gameTime);
                         }
 
-                        foreach (Solid solid in SolidList)
-                        {
-                            solid.Update(gameTime);
-                        }
+                        //foreach (Solid solid in SolidList)
+                        //{
+                        //    solid.Update(gameTime);
+                        //}
 
                         #region TEST - Create powerup delivery
                         if (CurrentMouseState.LeftButton == ButtonState.Released &&
@@ -10967,7 +10973,10 @@ namespace TowerDefensePrototype
                     case TrapType.Wall:
                         {
                             //NewTrap.AmbientShadowTexture = WallAmbShadow;
-                            SolidList.Add(new Solid(WhiteBlock, new Vector2(NewTrap.DestinationRectangle.Left, NewTrap.DestinationRectangle.Bottom - NewTrap.ZDepth), new Vector2(NewTrap.DestinationRectangle.Width, NewTrap.ZDepth)));
+                            //SolidList.Add(new Solid(WhiteBlock, new Vector2(NewTrap.DestinationRectangle.Left, NewTrap.DestinationRectangle.Bottom - NewTrap.ZDepth), new Vector2(NewTrap.DestinationRectangle.Width, NewTrap.ZDepth)));
+                            NewTrap.ShadowCaster = new ShadowCaster(WhiteBlock, new Vector2(NewTrap.DestinationRectangle.Left, NewTrap.DestinationRectangle.Bottom - NewTrap.ZDepth), new Vector2(NewTrap.DestinationRectangle.Width, NewTrap.ZDepth));
+                            //NewTrap.ShadowCaster =
+
                         }
                         break;
                     #endregion
@@ -11646,10 +11655,16 @@ namespace TowerDefensePrototype
 
             //Load the resources used for this specific level (Can't be generalised) i.e. backgroung textures
             CurrentLevel.LoadContent(Content);
+            GroundNormalTexture = Content.Load<Texture2D>("Backgrounds/GroundNormalMap");
+
             CurrentWeather = CurrentLevel.StartWeather;
 
 
             #region Use those resources to create the background and foreground sprites
+            GroundNormalMap = new StaticSprite(GroundNormalTexture, new Vector2(0, 1080 - 500 + 70));
+            GroundNormalMap.DrawDepth = 1.0f;
+            GroundNormalMap.BoundingBox = new BoundingBox(new Vector3(0, MathHelper.Clamp(CursorPosition.Y, 690, 1080), 0), new Vector3(1920, MathHelper.Clamp(CursorPosition.Y + 1, 800, 1080), 0));
+            
             Ground = new StaticSprite(CurrentLevel.GroundTexture, new Vector2(0, 1080 - 500 + 70));
             Ground.DrawDepth = 1.0f;
             Ground.BoundingBox = new BoundingBox(new Vector3(0, MathHelper.Clamp(CursorPosition.Y, 690, 1080), 0), new Vector3(1920, MathHelper.Clamp(CursorPosition.Y + 1, 800, 1080), 0));
@@ -13034,8 +13049,10 @@ namespace TowerDefensePrototype
             RayList.Clear();
             ShadowList.Clear();
 
-            foreach (Solid solid in SolidList)
+            foreach (Drawable drawable in DrawableList.Where(Drawable => Drawable.ShadowCaster != null))
             {
+                ShadowCaster solid = drawable.ShadowCaster;
+
                 Vector3 lightVector, check1, check2, thing, thing2;
 
                 for (int i = 0; i < solid.vertices.Count(); i++)

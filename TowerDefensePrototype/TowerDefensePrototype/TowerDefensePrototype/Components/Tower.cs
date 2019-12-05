@@ -46,14 +46,13 @@ namespace TowerDefensePrototype
             Color = Color.White;
             MaxPowerUnits = powerUnits;
             CurrentPowerUnits = powerUnits;
-
-
+            //Normal = true;
         }
 
         public void LoadContent(ContentManager contentManager)
         {
             Texture = contentManager.Load<Texture2D>(AssetName);
-            DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, Texture.Width, Texture.Height);
+            DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, Texture.Width, Texture.Height/2);
             BoundingBox = new BoundingBox(new Vector3(DestinationRectangle.Left, DestinationRectangle.Top, 0),
                                           new Vector3(DestinationRectangle.Right, DestinationRectangle.Bottom, 0));
 
@@ -76,8 +75,15 @@ namespace TowerDefensePrototype
 
         public void Update(GameTime gameTime)
         {
-            DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, Texture.Width, Texture.Height);
+            DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, Texture.Width, Texture.Height/2);
             Shield.Update(gameTime, new Vector2(DestinationRectangle.Center.X, DestinationRectangle.Center.Y));
+        }
+
+        public override void DrawSpriteNormal(SpriteBatch spriteBatch)
+        {
+            spriteBatch.Draw(Texture, DestinationRectangle, new Rectangle(0, Texture.Height / 2, Texture.Width, Texture.Height / 2), Color, 0, Vector2.Zero, SpriteEffects.None, 1);
+
+            //base.DrawSpriteNormal(spriteBatch);
         }
 
         //public override void Draw(SpriteBatch spriteBatch)
@@ -107,7 +113,7 @@ namespace TowerDefensePrototype
         public void Draw(SpriteBatch spriteBatch)
         {
             //DRAW SHADOW HERE
-            spriteBatch.Draw(Texture, DestinationRectangle, null, Color, 0, Vector2.Zero, SpriteEffects.None, 1);
+            spriteBatch.Draw(Texture, DestinationRectangle, new Rectangle(0, 0, Texture.Width, Texture.Height/2), Color, 0, Vector2.Zero, SpriteEffects.None, 1);
         }
 
         public void TakeDamage(float value)

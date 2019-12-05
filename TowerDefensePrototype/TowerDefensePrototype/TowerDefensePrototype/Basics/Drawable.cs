@@ -47,6 +47,8 @@ namespace TowerDefensePrototype
         public Color Color = Color.White;
         public Vector2 Position;
 
+        public ShadowCaster ShadowCaster;
+
         public VertexPositionColorTexture[] vertices = new VertexPositionColorTexture[4];
         public int[] indices = new int[6];
 
@@ -179,6 +181,11 @@ namespace TowerDefensePrototype
         public virtual void DrawSpriteNormal(GraphicsDevice graphics, BasicEffect basicEffect)
         {
             
+        }
+
+        public virtual void DrawSpriteNormal(SpriteBatch spriteBatch)
+        {
+
         }
 
         public virtual void DrawSpriteOcclusion(GraphicsDevice graphics, BasicEffect effect)

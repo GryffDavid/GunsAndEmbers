@@ -11,10 +11,9 @@ namespace TowerDefensePrototype
     {
         public Vector3 Position;
         public Color Color;
-        public float Power, Size, Depth;
+        public float Power, Size, Depth, MaxTime, CurTime;
         public bool Active;
-
-        public float MaxTime, CurTime;
+        public object Tether;
 
         public Light()
         {
