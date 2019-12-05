@@ -14,6 +14,7 @@ namespace TowerDefensePrototype
         public SpriteFont RobotoItalic20_0, RobotoRegular20_0, RobotoBold40_2, RobotoRegular20_2;
         Vector2 BoxSize, NameBoxSize, Position;
         UIBar UIBar1, UIBar2, UIBar3, UIBar4, UIBar5;
+        DamageType DamageType;
         string BarText1, BarText2, BarText3, BarText4, BarText5;
 
         public Texture2D DamageIcon, WeaponIcon, ConcussiveDamageIcon, KineticDamageIcon, FireDamageIcon, RadiationDamageIcon, ElectricDamageIcon;
@@ -42,7 +43,7 @@ namespace TowerDefensePrototype
         int WeaponCost;
         int WeaponDamage;
 
-        public UIWeaponInfoTip(Vector2 position, TurretType? turret = null, TrapType? trap = null)
+        public UIWeaponInfoTip(Vector2 position, Turret turret = null, TrapType? trap = null)
         {
             Visible = false;
             Position = position;
@@ -70,10 +71,10 @@ namespace TowerDefensePrototype
                 BarText5 = "Reload";
                 #endregion
 
-                WeaponCost = TurretCost(turret.Value);
+                WeaponCost = TurretCost(turret.TurretType);
                 WeaponType = "Turret";
                 WeaponTip = "Fire this";
-                switch (turret.Value)
+                switch (turret.TurretType)
                 {
                     case TurretType.Cannon:
                         WeaponTip = "Arc into a crowd to maximise effectiveness. Blah blah blah. Blah bleh blurgh. Blah blah blah. Blah bleh blurgh.";
@@ -104,10 +105,13 @@ namespace TowerDefensePrototype
                 WeaponCost = TrapCost(trap.Value);
                 WeaponType = "Trap";
                 WeaponTip = "Place this";
+                DamageType = DamageType.Kinetic;
+
                 switch (trap.Value)
                 {
                     case TrapType.Fire:
                         WeaponName = "Immolation Trap";
+                        DamageType = DamageType.Fire;;
                         break;
 
                     case TrapType.SawBlade:
@@ -166,6 +170,29 @@ namespace TowerDefensePrototype
             FireDamageIcon = contentManager.Load<Texture2D>("Icons/DamageTypeIcons/FireDamageIcon");
             RadiationDamageIcon = contentManager.Load<Texture2D>("Icons/DamageTypeIcons/ConcussiveDamageIcon");
             ElectricDamageIcon = contentManager.Load<Texture2D>("Icons/DamageTypeIcons/ConcussiveDamageIcon");
+
+            switch (DamageType)
+            {
+                case DamageType.Concussive:
+                    DamageIcon = ConcussiveDamageIcon;
+                    break;
+
+                case DamageType.Kinetic:
+                    DamageIcon = KineticDamageIcon;
+                    break;
+
+                case DamageType.Fire:
+                    DamageIcon = FireDamageIcon;
+                    break;
+
+                case DamageType.Radiation:
+                    DamageIcon = RadiationDamageIcon;
+                    break;
+
+                case DamageType.Electric:
+                    DamageIcon = ElectricDamageIcon;
+                    break;
+            }
         }
 
         //public void Update(GameTime gameTime)
@@ -188,7 +215,7 @@ namespace TowerDefensePrototype
                     Color.White, 0, new Vector2(0, 0), 0.7f, SpriteEffects.None, 0);
 
                 //Draw the weapon damage
-                spriteBatch.DrawString(RobotoBold40_2, "248", new Vector2(Position.X + 5, Position.Y - BoxSize.Y + 2),
+                spriteBatch.DrawString(RobotoBold40_2, "248", new Vector2(Position.X + 30, Position.Y - BoxSize.Y + 2),
                     Color.DodgerBlue, 0, new Vector2(0, 0), 1f, SpriteEffects.None, 0);
 
                 //Draw the weapon tip, e.g. "Fire into a closely packed crowed for maximum carnage"
@@ -196,9 +223,16 @@ namespace TowerDefensePrototype
                     Color.White, 0, new Vector2(0, 0), 0.7f, SpriteEffects.None, 0);
 
 
-                spriteBatch.Draw(CurrencyIcon, new Rectangle((int)(Position.X + 5), (int)(Position.Y - 80), 24, 24), Color.White);
+                spriteBatch.Draw(CurrencyIcon, 
+                    new Rectangle((int)(Position.X + 5), (int)(Position.Y - 80), 24, 24), 
+                    Color.White);
 
-                spriteBatch.Draw(FireDamageIcon, new Rectangle((int)Position.X + 5, (int)(Position.Y - BoxSize.Y + 5), FireDamageIcon.Width, FireDamageIcon.Height), Color.Orange);
+                Vector2 NewSize = new Vector2(20, (int)((20f / DamageIcon.Width) * DamageIcon.Height));
+                spriteBatch.Draw(DamageIcon, 
+                    new Rectangle(
+                        (int)Position.X + 5, (int)(Position.Y - BoxSize.Y + 23),
+                        (int)NewSize.X, (int)NewSize.Y), null,
+                        Color.Orange, 0, new Vector2(0, DamageIcon.Height/2), SpriteEffects.None, 0);
 
                 //Draw the resource cost of the weapon
                 //*****CHANGE THIS COLOUR TO GRAY IF THE PLAYER CANNOT AFFORD THE WEAPON*****//
