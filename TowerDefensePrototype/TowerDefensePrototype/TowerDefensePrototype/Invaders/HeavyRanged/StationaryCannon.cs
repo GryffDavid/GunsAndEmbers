@@ -22,6 +22,16 @@ namespace TowerDefensePrototype
             YRange = new Vector2(700, 900);
             InvaderType = InvaderType.StationaryCannon;            
             InvaderState = InvaderState.Stand;
+            CurrentAngle = 45;
+            
+            RangedDamageStruct = new InvaderRangedStruct()
+            {
+                AngleRange = new Vector2(170, 190),
+                Damage = 10,
+                MaxFireDelay = 250,
+                CurrentFireDelay = 0,
+                DistanceRange = new Vector2(600, 800)
+            };
         }
 
         public override void Update(GameTime gameTime, Vector2 cursorPosition)
@@ -42,18 +52,23 @@ namespace TowerDefensePrototype
             //    NextAngle = MathHelper.ToRadians(FinalAngle);
             //}
 
+            UpdateFireDelay(gameTime);
+
+            BarrelPivot = new Vector2(BarrelAnimation.FrameSize.X/2, BarrelAnimation.FrameSize.Y/2);
+            BasePivot = new Vector2(Position.X , Position.Y);
+
             //BasePivot = new Vector2(Position.X + TextureList[0].Width / 2 + 10, Position.Y + 5);
             //CurrentAngle = MathHelper.SmoothStep(CurrentAngle, NextAngle, 0.1f * (float)(gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
-
+            //CurrentAngle += 0.01f;
             base.Update(gameTime, cursorPosition);
         }
 
-        public override void Draw(SpriteBatch spriteBatch)
-        {
-            spriteBatch.Draw(BarrelAnimation.Texture, BarrelDestinationRectangle, BarrelAnimation.DiffuseSourceRectangle,
-                             Color, CurrentAngle, BarrelPivot, SpriteEffects.None, DrawDepth-0.001f);
+        //public override void Draw(SpriteBatch spriteBatch)
+        //{
+        //    spriteBatch.Draw(BarrelAnimation.Texture, BarrelDestinationRectangle, BarrelAnimation.DiffuseSourceRectangle,
+        //                     Color, CurrentAngle, BarrelPivot, SpriteEffects.None, DrawDepth - 0.001f);
 
-            base.Draw(spriteBatch);
-        }
+        //    base.Draw(spriteBatch);
+        //}
     }
 }

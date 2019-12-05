@@ -28,7 +28,6 @@ namespace TowerDefensePrototype
         public HealDrone(Vector2 position)
         {
             CurrentHeight = position.Y;
-            Active = true;
             Speed = 1.5f;
             Position = position;            
             MaxHP = 300;
@@ -39,6 +38,15 @@ namespace TowerDefensePrototype
             Airborne = true;
             InAir = true;
             InvaderState = InvaderState.Walk;
+
+            RangedDamageStruct = new InvaderRangedStruct()
+            {
+                AngleRange = new Vector2(170, 190),
+                Damage = 10,
+                MaxFireDelay = 250,
+                CurrentFireDelay = 0,
+                DistanceRange = new Vector2(600, 800)
+            };
         }
 
         public override void Update(GameTime gameTime, Vector2 cursorPosition)
@@ -49,8 +57,6 @@ namespace TowerDefensePrototype
             }
 
             BoltList.RemoveAll(Bolt => Bolt.Alpha <= 0);
-
-            
 
             base.Update(gameTime, cursorPosition);
         }

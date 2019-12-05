@@ -10,9 +10,9 @@ namespace TowerDefensePrototype
 {
     class FelProjectile : HeavyProjectile
     {
-        public FelProjectile(Texture2D texture, Texture2D glowballTexture, Texture2D smokeTexture, Vector2 position, 
+        public FelProjectile(object source, Texture2D texture, Texture2D glowballTexture, Texture2D smokeTexture, Vector2 position, 
                             float speed, float angle, float gravity, float damage, float blastRadius, Vector2? yrange = null) 
-            : base(texture, position, speed, angle, gravity, damage, yrange, blastRadius)
+            : base(source, texture, position, speed, angle, gravity, damage, yrange, blastRadius)
         {
             HeavyProjectileType = HeavyProjectileType.FelProjectile;
 

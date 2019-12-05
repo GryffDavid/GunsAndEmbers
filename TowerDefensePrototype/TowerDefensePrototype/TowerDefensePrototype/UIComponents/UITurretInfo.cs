@@ -11,7 +11,6 @@ namespace TowerDefensePrototype
     class UITurretInfo
     {
         public Texture2D Texture, TurretIconTexture, DamageIconTexture, OverHeatIconTexture;
-        public Vector2 Position;
         public UIBar TurretHealthBar, TurretTimingBar;
         public Turret CurrentTurret;
         public SpriteFont Font;

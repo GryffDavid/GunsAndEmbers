@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace TowerDefensePrototype
 {
-    class PowerupDelivery // : Trap
+    class PowerupDelivery : Drawable
     {
         //Lands from the sky. Dropped in. Has to be shot by the player to be picked up.
         //Provides a bonus of some sort.

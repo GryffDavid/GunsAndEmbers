@@ -10,8 +10,8 @@ namespace TowerDefensePrototype
 {
     class AcidProjectile : HeavyProjectile
     {
-        public AcidProjectile(Texture2D texture, Texture2D particleTexture, Vector2 position, float speed, float angle, float gravity, float damage, Vector2? yrange = null) : 
-            base(texture, position, speed, angle, gravity, damage, yrange)
+        public AcidProjectile(object source, Texture2D texture, Texture2D particleTexture, Vector2 position, float speed, float angle, float gravity, float damage, Vector2? yrange = null) : 
+            base(source, texture, position, speed, angle, gravity, damage, yrange)
         {
             Rotate = true;
             HeavyProjectileType = HeavyProjectileType.Acid;

@@ -11,9 +11,9 @@ namespace TowerDefensePrototype
 {
     class ClusterBombShell : TimerHeavyProjectile
     {
-        public ClusterBombShell(float maxTime, Texture2D texture, Texture2D particleTexture, Vector2 position, 
+        public ClusterBombShell(object source, float maxTime, Texture2D texture, Texture2D particleTexture, Vector2 position, 
                                 float speed, float angle, float gravity, float damage, float blastRadius, Vector2? yrange = null, bool? verlet = false)
-            : base(maxTime, texture, position, speed, angle, gravity, damage, blastRadius, yrange, verlet)
+            : base(source, maxTime, texture, position, speed, angle, gravity, damage, blastRadius, yrange, verlet)
         {
             Rotate = true;
             HeavyProjectileType = HeavyProjectileType.ClusterBombShell;

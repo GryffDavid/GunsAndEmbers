@@ -7,6 +7,16 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace TowerDefensePrototype
 {
+    //public struct DrawData
+    //{
+    //    public Texture2D texture;
+    //    public Rectangle destinationRectangle;
+    //    public Color color;
+    //    public Vector2 origin;
+    //    public SpriteEffects orientation;
+    //    public float drawDepth, rotation;
+    //};
+
     public class Particle : Drawable
     {
         public Texture2D Texture;
@@ -21,8 +31,13 @@ namespace TowerDefensePrototype
         Color Color = Color.White;
         float RadRotation;
 
-        List<Invader> InvaderList;
-        List<Trap> TrapList;
+        //public DrawData drawData;
+
+        //THIS IS SO THAT SPARKS CAN BOUNCE OFF OF INVADERS
+        //List<Invader> InvaderList;
+
+        //THIS IS SO THAT SPARKS CAN BOUNCE OFF OF SOLID TRAPS
+        //List<Trap> TrapList;
 
         VertexPositionColorTexture[] ParticleVertices = new VertexPositionColorTexture[4];
         int[] ParticleIndices = new int[6];
@@ -101,215 +116,235 @@ namespace TowerDefensePrototype
 
         public void Update(GameTime gameTime)
         {
-            //Bouncing particles off of invaders/traps is meant specifically for Sparks only. 
-            //Those that aren't sorted by depth but are drawn additively.
-
-            //Bounce off invader bounding boxes
-            //Where from emitter to invader < max possible distance (MaxLife * MaxSpeed)
-            if (InvaderList != null)
-            foreach (Invader invader in InvaderList)
-            {
-
-            }
-
-            //Bounce off trap bounding boxes
-            //Where from emitter to trap < max possible distance (MaxLife * MaxSpeed)
-            if (TrapList != null)
-            foreach (Trap trap in TrapList)
-            {
-
-            }
-
-            //Third colour fade
-            //If ThirdColour != null change colour life to 1/3 instead of 1/2
-
-            if (FadeDelay == 0)
-            {
-                CurrentHP -= (float)(1 * gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
-            }
-            
-            if (FadeDelay > 0)
-            {
-                if (CurrentFadeDelay >= FadeDelay)
-                {
-                    CurrentHP -= (float)(1 * gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
-                }
-            }
-
-            if (CurrentFadeDelay <= FadeDelay)
-                CurrentFadeDelay += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
-
-            if (CurrentHP <= 0)
-                Active = false;
-            else
-                Active = true;
 
             if (Active == true)
             {
-                CurrentRotation += RotationIncrement * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
-                CurrentRotation = CurrentRotation % 360;
-                CurrentPosition += Velocity * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
-                Velocity.Y += Gravity * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
+                //Bouncing particles off of invaders/traps is meant specifically for Sparks only. 
+                //Those that aren't sorted by depth but are drawn additively.
 
-                if (RotateVelocity == true)
+                //Bounce off invader bounding boxes
+                //Where from emitter to invader < max possible distance (MaxLife * MaxSpeed)
+                //if (InvaderList != null)
+                //foreach (Invader invader in InvaderList)
+                //{
+
+                //}
+
+                //Bounce off trap bounding boxes
+                //Where from emitter to trap < max possible distance (MaxLife * MaxSpeed)
+                //if (TrapList != null)
+                //foreach (Trap trap in TrapList)
+                //{
+
+                //}
+
+                //Third colour fade
+                //If ThirdColour != null change colour life to 1/3 instead of 1/2
+
+                if (FadeDelay == 0)
                 {
-                    CurrentRotation = MathHelper.ToDegrees((float)Math.Atan2(Velocity.Y, Velocity.X));
+                    CurrentHP -= (float)(1 * gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
                 }
 
-                DestinationRectangle = new Rectangle((int)CurrentPosition.X, (int)CurrentPosition.Y, (int)(Texture.Width * CurrentScale), (int)(Texture.Height * CurrentScale));
-            }
-
-            if (CanBounce == true)
-                if (CurrentPosition.Y >= MaxY && BouncedOnGround == false)
+                if (FadeDelay > 0)
                 {
-                    if (HardBounce == true)
-                        CurrentPosition.Y -= Velocity.Y;
-
-                    Velocity.Y = (-Velocity.Y / 3);
-                    Velocity.X = (Velocity.X / 3);
-                    RotationIncrement = (RotationIncrement * 3);
-                    BouncedOnGround = true;
+                    if (CurrentFadeDelay >= FadeDelay)
+                    {
+                        CurrentHP -= (float)(1 * gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
+                    }
                 }
 
-            if (StopBounce == true &&
-                BouncedOnGround == true &&
-                CurrentPosition.Y > MaxY)
-            {
-                Velocity.Y = (-Velocity.Y / 2);
+                if (CurrentFadeDelay <= FadeDelay)
+                    CurrentFadeDelay += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
 
-                Velocity.X *= 0.9f;
-
-                RotationIncrement = MathHelper.Lerp(RotationIncrement, 0, 0.2f * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
-
-                if (Velocity.Y < 0.2f && Velocity.Y > 0)
+                if (CurrentHP <= 0)
                 {
-                    Velocity.Y = 0;
+                    Active = false;
+                    return;
+                }
+                else
+                {
+                    Active = true;
                 }
 
-                if (Velocity.Y > -0.2f && Velocity.Y < 0)
+                if (Active == true)
                 {
-                    Velocity.Y = 0;
+                    CurrentRotation += RotationIncrement * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
+                    CurrentRotation = CurrentRotation % 360;
+                    CurrentPosition += Velocity * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
+                    Velocity.Y += Gravity * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
+
+                    if (RotateVelocity == true)
+                    {
+                        CurrentRotation = MathHelper.ToDegrees((float)Math.Atan2(Velocity.Y, Velocity.X));
+                    }
+
+                    DestinationRectangle = new Rectangle((int)CurrentPosition.X, (int)CurrentPosition.Y, (int)(Texture.Width * CurrentScale), (int)(Texture.Height * CurrentScale));
                 }
 
-                if (Velocity.X < 0.2f && Velocity.X > 0)
+                #region Handle bouncing
+                if (CanBounce == true)
+                    if (CurrentPosition.Y >= MaxY && BouncedOnGround == false)
+                    {
+                        if (HardBounce == true)
+                            CurrentPosition.Y -= Velocity.Y;
+
+                        Velocity.Y = (-Velocity.Y / 3);
+                        Velocity.X = (Velocity.X / 3);
+                        RotationIncrement = (RotationIncrement * 3);
+                        BouncedOnGround = true;
+                    }
+
+                if (StopBounce == true &&
+                    BouncedOnGround == true &&
+                    CurrentPosition.Y > MaxY)
                 {
-                    Velocity.X = 0;
+                    Velocity.Y = (-Velocity.Y / 2);
+
+                    Velocity.X *= 0.9f;
+
+                    RotationIncrement = MathHelper.Lerp(RotationIncrement, 0, 0.2f * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
+
+                    if (Velocity.Y < 0.2f && Velocity.Y > 0)
+                    {
+                        Velocity.Y = 0;
+                    }
+
+                    if (Velocity.Y > -0.2f && Velocity.Y < 0)
+                    {
+                        Velocity.Y = 0;
+                    }
+
+                    if (Velocity.X < 0.2f && Velocity.X > 0)
+                    {
+                        Velocity.X = 0;
+                    }
+
+                    if (Velocity.X > -0.2f && Velocity.X < 0)
+                    {
+                        Velocity.X = 0;
+                    }
+                }
+                #endregion
+
+                if (Friction != new Vector2(0, 0))
+                {
+                    Velocity.Y = MathHelper.Lerp(Velocity.Y, 0, Friction.Y * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
+                    Velocity.X = MathHelper.Lerp(Velocity.X, 0, Friction.X * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
                 }
 
-                if (Velocity.X > -0.2f && Velocity.X < 0)
+                #region Handle bouncing rotation
+                if (Velocity.Y == 0 && CanBounce == true)
                 {
-                    Velocity.X = 0;
+                    if (CurrentRotation < 0)
+                        CurrentRotation += 360;
+
+                    //THIS WAS FOR CONTROLLING ROTATION AFTER BOUNCING FOR SHELL CASINGS - NOW HANDLED BY VERLET PHYSICS
+                    
+                    //if (CurrentRotation > 270 && CurrentRotation <= 360)
+                    //{
+                    //    if (MathHelper.Distance(CurrentRotation, 360) >= 45)
+                    //        CurrentRotation = MathHelper.Lerp(CurrentRotation, 360, 0.5f * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
+                    //    else
+                    //        CurrentRotation = MathHelper.Lerp(CurrentRotation, 360, 0.2f * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
+                    //}
+
+                    //if (CurrentRotation > 180 && CurrentRotation <= 270)
+                    //{
+                    //    if (MathHelper.Distance(CurrentRotation, 180) >= 45)
+                    //        CurrentRotation = MathHelper.Lerp(CurrentRotation, 180, 0.5f * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
+                    //    else
+                    //        CurrentRotation = MathHelper.Lerp(CurrentRotation, 180, 0.2f * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
+                    //}
+
+                    //if (CurrentRotation > 90 && CurrentRotation <= 180)
+                    //{
+                    //    if (MathHelper.Distance(CurrentRotation, 180) >= 45)
+                    //        CurrentRotation = MathHelper.Lerp(CurrentRotation, 180, 0.5f * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
+                    //    else
+                    //        CurrentRotation = MathHelper.Lerp(CurrentRotation, 180, 0.2f * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
+                    //}
+
+                    //if (CurrentRotation >= 0 && CurrentRotation <= 90)
+                    //{
+                    //    if (MathHelper.Distance(CurrentRotation, 0) >= 45)
+                    //        CurrentRotation = MathHelper.Lerp(CurrentRotation, 0, 0.5f * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
+                    //    else
+                    //        CurrentRotation = MathHelper.Lerp(CurrentRotation, 0, 0.2f * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
+                    //}
                 }
-            }
+                #endregion
 
-            if (Friction != new Vector2(0, 0))
-            {
-                Velocity.Y = MathHelper.Lerp(Velocity.Y, 0, Friction.Y * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
-                Velocity.X = MathHelper.Lerp(Velocity.X, 0, Friction.X * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
-            }
+                float PercentageHP = (100 / MaxHP) * CurrentHP;
 
-            if (Velocity.Y == 0 && CanBounce == true)
-            {
-                if (CurrentRotation < 0)
-                    CurrentRotation += 360;
-
-                if (CurrentRotation > 270 && CurrentRotation <= 360)
+                if (Fade == true && FadeDelay == 0)
                 {
-                    if (MathHelper.Distance(CurrentRotation, 360) >= 45)
-                        CurrentRotation = MathHelper.Lerp(CurrentRotation, 360, 0.5f * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
-                    else
-                        CurrentRotation = MathHelper.Lerp(CurrentRotation, 360, 0.2f * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
-                }
-
-                if (CurrentRotation > 180 && CurrentRotation <= 270)
-                {
-                    if (MathHelper.Distance(CurrentRotation, 180) >= 45)
-                        CurrentRotation = MathHelper.Lerp(CurrentRotation, 180, 0.5f * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
-                    else
-                        CurrentRotation = MathHelper.Lerp(CurrentRotation, 180, 0.2f * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
-                }
-
-                if (CurrentRotation > 90 && CurrentRotation <= 180)
-                {
-                    if (MathHelper.Distance(CurrentRotation, 180) >= 45)
-                        CurrentRotation = MathHelper.Lerp(CurrentRotation, 180, 0.5f * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
-                    else
-                        CurrentRotation = MathHelper.Lerp(CurrentRotation, 180, 0.2f * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
-                }
-
-                if (CurrentRotation >= 0 && CurrentRotation <= 90)
-                {
-                    if (MathHelper.Distance(CurrentRotation, 0) >= 45)
-                        CurrentRotation = MathHelper.Lerp(CurrentRotation, 0, 0.5f * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
-                    else
-                        CurrentRotation = MathHelper.Lerp(CurrentRotation, 0, 0.2f * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
-                }
-            }
-
-            float PercentageHP = (100 / MaxHP) * CurrentHP;
-
-            if (Fade == true && FadeDelay == 0)
-            {
-                CurrentTransparency = MaxTransparency * (PercentageHP / 100.0f);
-            }
-
-            if (Fade == true && FadeDelay != 0)
-            {
-                if (CurrentFadeDelay > FadeDelay)
                     CurrentTransparency = MaxTransparency * (PercentageHP / 100.0f);
-            }
+                }
 
-            if (Shrink == true)
-            {
-                CurrentScale = MaxScale * (PercentageHP / 100.0f);
-            }
-
-            if (SortDepth == true)
-            {
-                DrawDepth = DestinationRectangle.Center.Y / 1080.0f;
-            }
-
-            CurrentColor = Color.Lerp(EndColor, StartColor, PercentageHP / 100);
-            Color = Color.Lerp(Color.Transparent, CurrentColor, CurrentTransparency);
-            RadRotation = MathHelper.ToRadians(CurrentRotation);
-
-            //if (Vertices == true)
-            {
-
-                ParticleVertices[0] = new VertexPositionColorTexture()
+                if (Fade == true && FadeDelay != 0)
                 {
-                    Color = Color,
-                    Position = new Vector3(CurrentPosition.X - (Texture.Width * CurrentScale) / 2, CurrentPosition.Y - (Texture.Height * CurrentScale) / 2, 0),
-                    TextureCoordinate = texCoords[0]
-                };
+                    if (CurrentFadeDelay > FadeDelay)
+                        CurrentTransparency = MaxTransparency * (PercentageHP / 100.0f);
+                }
 
-                ParticleVertices[1] = new VertexPositionColorTexture()
+                if (Shrink == true)
                 {
-                    Color = Color,
-                    Position = new Vector3(CurrentPosition.X + (Texture.Width * CurrentScale) / 2, CurrentPosition.Y - (Texture.Height * CurrentScale) / 2, 0),
-                    TextureCoordinate = texCoords[1]
-                };
+                    CurrentScale = MaxScale * (PercentageHP / 100.0f);
+                }
 
-                ParticleVertices[2] = new VertexPositionColorTexture()
+                if (SortDepth == true)
                 {
-                    Color = Color,
-                    Position = new Vector3(CurrentPosition.X + (Texture.Width * CurrentScale) / 2, CurrentPosition.Y + (Texture.Height * CurrentScale) / 2, 0),
-                    TextureCoordinate = texCoords[2]
-                };
+                    DrawDepth = DestinationRectangle.Center.Y / 1080.0f;
+                }
 
-                ParticleVertices[3] = new VertexPositionColorTexture()
+                if (CurrentColor != EndColor)
                 {
-                    Color = Color,
-                    Position = new Vector3(CurrentPosition.X - (Texture.Width * CurrentScale) / 2, CurrentPosition.Y + (Texture.Height * CurrentScale) / 2, 0),
-                    TextureCoordinate = texCoords[3]
-                };
+                    CurrentColor = Color.Lerp(EndColor, StartColor, PercentageHP / 100);
+                }
 
-                ParticleIndices[0] = 0;
-                ParticleIndices[1] = 1;
-                ParticleIndices[2] = 2;
-                ParticleIndices[3] = 2;
-                ParticleIndices[4] = 3;
-                ParticleIndices[5] = 0;
+                Color = Color.Lerp(Color.Transparent, CurrentColor, CurrentTransparency);
+                RadRotation = MathHelper.ToRadians(CurrentRotation);
+
+                #region Particle Vertices
+                //if (Vertices == true)
+                {
+                    ParticleVertices[0] = new VertexPositionColorTexture()
+                    {
+                        Color = Color,
+                        Position = new Vector3(CurrentPosition.X - (Texture.Width * CurrentScale) / 2, CurrentPosition.Y - (Texture.Height * CurrentScale) / 2, 0),
+                        TextureCoordinate = texCoords[0]
+                    };
+
+                    ParticleVertices[1] = new VertexPositionColorTexture()
+                    {
+                        Color = Color,
+                        Position = new Vector3(CurrentPosition.X + (Texture.Width * CurrentScale) / 2, CurrentPosition.Y - (Texture.Height * CurrentScale) / 2, 0),
+                        TextureCoordinate = texCoords[1]
+                    };
+
+                    ParticleVertices[2] = new VertexPositionColorTexture()
+                    {
+                        Color = Color,
+                        Position = new Vector3(CurrentPosition.X + (Texture.Width * CurrentScale) / 2, CurrentPosition.Y + (Texture.Height * CurrentScale) / 2, 0),
+                        TextureCoordinate = texCoords[2]
+                    };
+
+                    ParticleVertices[3] = new VertexPositionColorTexture()
+                    {
+                        Color = Color,
+                        Position = new Vector3(CurrentPosition.X - (Texture.Width * CurrentScale) / 2, CurrentPosition.Y + (Texture.Height * CurrentScale) / 2, 0),
+                        TextureCoordinate = texCoords[3]
+                    };
+
+                    ParticleIndices[0] = 0;
+                    ParticleIndices[1] = 1;
+                    ParticleIndices[2] = 2;
+                    ParticleIndices[3] = 2;
+                    ParticleIndices[4] = 3;
+                    ParticleIndices[5] = 0;
+                }
+                #endregion
             }
         }
 
@@ -318,6 +353,18 @@ namespace TowerDefensePrototype
             if (Active == true)
             {
                 spriteBatch.Draw(Texture, DestinationRectangle, null, Color, RadRotation, Origin, Orientation, DrawDepth);
+                //spriteBatch.Draw(drawData.texture, drawData.destinationRectangle, null, drawData.color, 
+                //                 drawData.rotation, drawData.origin, drawData.orientation, drawData.drawDepth);
+
+                //DATA NEEDED TO ACTUALLY DRAW PARTICLE:
+                // TEXTURE
+                // DESTINATION RECTANGLE
+                // COLOR
+                // ROTATION
+                // ORIGIN
+                // ORIENTATION
+                // DRAWDEPTH
+
 
                 //if (Shadow == true)
                 //{
@@ -410,5 +457,19 @@ namespace TowerDefensePrototype
 
             return coords;
         }
+
+        //public void NewData()
+        //{
+        //    drawData = new DrawData() 
+        //    { 
+        //        color = Color, 
+        //        destinationRectangle = DestinationRectangle, 
+        //        drawDepth = DrawDepth, 
+        //        orientation = Orientation, 
+        //        origin = Origin, 
+        //        rotation = RadRotation, 
+        //        texture = Texture 
+        //    };
+        //}
     }
 }

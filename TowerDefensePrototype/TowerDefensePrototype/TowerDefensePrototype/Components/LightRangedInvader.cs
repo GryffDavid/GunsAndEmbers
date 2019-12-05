@@ -14,14 +14,26 @@ namespace TowerDefensePrototype
         public InvaderRangedStruct RangedDamageStruct;
         public float MinDistance; //The distance the invader has decided it wants to get to before firing - created from Distance Range in the RangedDamageStruct
 
-        //public int CurrentBurst;
-        //public float CurrentBurstDelay, MinDistance;
-        //public int RangedAttackPower, MaxBurst;
-        //public Vector2 AngleRange, DistanceRange;
-        //public InvaderFireType InvaderFireType;
-        //public float MaxBurstDelay;
-        
         public override void Update(GameTime gameTime, Vector2 cursorPosition)
+        {
+            UpdateFireDelay(gameTime);   
+
+            //if (CurrentBurst >= MaxBurst &&
+            //    CurrentBurstDelay < MaxBurstDelay)
+            //{
+            //    CurrentBurstDelay += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+            //}
+
+            //if (CurrentBurstDelay >= MaxBurstDelay)
+            //{
+            //    CurrentBurstDelay = 0;
+            //    CurrentBurst = 0;
+            //}
+
+            base.Update(gameTime, cursorPosition);
+        }
+
+        public void UpdateFireDelay(GameTime gameTime)
         {
             if (RangedDamageStruct != null)
             {
@@ -37,20 +49,6 @@ namespace TowerDefensePrototype
                     CanAttack = false;
                 }
             }
-
-            //if (CurrentBurst >= MaxBurst &&
-            //    CurrentBurstDelay < MaxBurstDelay)
-            //{
-            //    CurrentBurstDelay += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
-            //}
-
-            //if (CurrentBurstDelay >= MaxBurstDelay)
-            //{
-            //    CurrentBurstDelay = 0;
-            //    CurrentBurst = 0;
-            //}
-
-            base.Update(gameTime, cursorPosition);
         }
     }
 }

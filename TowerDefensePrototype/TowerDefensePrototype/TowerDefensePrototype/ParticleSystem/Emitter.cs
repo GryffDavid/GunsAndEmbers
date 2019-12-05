@@ -27,8 +27,47 @@ namespace TowerDefensePrototype
         public Invader Anchor;
         public object Tether;
 
-        //VertexPositionColorTexture[] 
+        //Affector
+        //Vector2 angleRange, speedRange, hpRange, friction
+        //float gravity, interval, burst, activeSeconds
+        //Color startColor, endColor
+        //Texture2D texture
 
+        /// <summary>
+        /// Create a particle emitter with the specified parameters
+        /// </summary>
+        /// <param name="textureName">The name the emitter will use to load the texture</param>
+        /// <param name="position">The position from which all particles will be emitted</param>
+        /// <param name="angleRange">The range of the angles the particles will be emitted at</param>
+        /// <param name="speedRange">The range of the speed the particles will start with</param>
+        /// <param name="hpRange">The range of the HP the particles will have - how long they're active for</param>
+        /// <param name="startingTransparency">How transparent the particles will start out 0.0 to 1.0</param>
+        /// <param name="fade">Whether the particles will fade out over their lifetime or not</param>
+        /// <param name="startingRotationRange">The range of rotation that the particles start with</param>
+        /// <param name="rotationIncrement">How fast the particles rotate after being created</param>
+        /// <param name="scaleRange">The range of scale each particle starts with</param>
+        /// <param name="startColor">The color the particles start as</param>
+        /// <param name="endColor">The color the particles end as</param>
+        /// <param name="gravity">How fast the particles accelerate in the Y axis</param>
+        /// <param name="activeSeconds">How long the emitter is active for</param>
+        /// <param name="interval">The time interval in ms between particles being emitted</param>
+        /// <param name="burst">How many particles are emitted after each interval</param>
+        /// <param name="canBounce">Whether the particles bounce after exceeding their MaxY or not</param>
+        /// <param name="yrange">The range of Y positions the particles will bounce/stop at</param>
+        /// <param name="shrink">Whether the particles shrinks over their lifetime</param>
+        /// <param name="drawDepth">The depth at which every particle from this emitter is drawn</param>
+        /// <param name="stopBounce">The particles bounce, but don't fall through the floor</param>
+        /// <param name="hardBounce">The particles bounce retaining a lot of their energy</param>
+        /// <param name="emitterSpeed">How fast the emitter travels when created</param>
+        /// <param name="emitterAngle">The angle the emitter travels at when created</param>
+        /// <param name="emitterGravity">The Y axis acceleration of the emitter</param>
+        /// <param name="rotateVelocity">Whether the emitter emits particles in the opposite direction to its velocity</param>
+        /// <param name="friction">How much friction the particles have when created</param>
+        /// <param name="flipHor">Whether the particles should be randomly flipped horizontally when created</param>
+        /// <param name="flipVer">Whether the particles should be randomly flipped vertically when created</param>
+        /// <param name="fadeDelay">The delay in ms before the particles start to fade out</param>
+        /// <param name="reduceDensity">Whether the number of particles burst every interval reduces over time or not</param>
+        /// <param name="sortParticles">Whether every particle needs to be individually depth sorted based on the Y position</param>
         public Emitter(String textureName, Vector2 position, Vector2 angleRange, Vector2 speedRange, Vector2 hpRange,
             float startingTransparency, bool fade, Vector2 startingRotationRange, Vector2 rotationIncrement, Vector2 scaleRange,
             Color startColor, Color endColor, float gravity, float activeSeconds, float interval, int burst, bool canBounce,
@@ -144,6 +183,41 @@ namespace TowerDefensePrototype
             AddMore = true;
         }
 
+        /// <summary>
+        /// Create a particle emitter with the specified parameters
+        /// </summary>
+        /// <param name="texture">The texture each particle will use</param>
+        /// <param name="position">The position from which all particles will be emitted</param>
+        /// <param name="angleRange">The range of the angles the particles will be emitted at</param>
+        /// <param name="speedRange">The range of the speed the particles will start with</param>
+        /// <param name="hpRange">The range of the HP the particles will have - how long they're active for</param>
+        /// <param name="startingTransparency">How transparent the particles will start out 0.0 to 1.0</param>
+        /// <param name="fade">Whether the particles will fade out over their lifetime or not</param>
+        /// <param name="startingRotationRange">The range of rotation that the particles start with</param>
+        /// <param name="rotationIncrement">How fast the particles rotate after being created</param>
+        /// <param name="scaleRange">The range of scale each particle starts with</param>
+        /// <param name="startColor">The color the particles start as</param>
+        /// <param name="endColor">The color the particles end as</param>
+        /// <param name="gravity">How fast the particles accelerate in the Y axis</param>
+        /// <param name="activeSeconds">How long the emitter is active for</param>
+        /// <param name="interval">The time interval in ms between particles being emitted</param>
+        /// <param name="burst">How many particles are emitted after each interval</param>
+        /// <param name="canBounce">Whether the particles bounce after exceeding their MaxY or not</param>
+        /// <param name="yrange">The range of Y positions the particles will bounce/stop at</param>
+        /// <param name="shrink">Whether the particles shrinks over their lifetime</param>
+        /// <param name="drawDepth">The depth at which every particle from this emitter is drawn</param>
+        /// <param name="stopBounce">The particles bounce, but don't fall through the floor</param>
+        /// <param name="hardBounce">The particles bounce retaining a lot of their energy</param>
+        /// <param name="emitterSpeed">How fast the emitter travels when created</param>
+        /// <param name="emitterAngle">The angle the emitter travels at when created</param>
+        /// <param name="emitterGravity">The Y axis acceleration of the emitter</param>
+        /// <param name="rotateVelocity">Whether the emitter emits particles in the opposite direction to its velocity</param>
+        /// <param name="friction">How much friction the particles have when created</param>
+        /// <param name="flipHor">Whether the particles should be randomly flipped horizontally when created</param>
+        /// <param name="flipVer">Whether the particles should be randomly flipped vertically when created</param>
+        /// <param name="fadeDelay">The delay in ms before the particles start to fade out</param>
+        /// <param name="reduceDensity">Whether the number of particles burst every interval reduces over time or not</param>
+        /// <param name="sortParticles">Whether every particle needs to be individually depth sorted based on the Y position</param>
         public Emitter(Texture2D texture, Vector2 position, Vector2 angleRange, Vector2 speedRange, Vector2 hpRange,
            float startingTransparency, bool fade, Vector2 startingRotationRange, Vector2 rotationIncrement, Vector2 scaleRange,
            Color startColor, Color endColor, float gravity, float activeSeconds, float interval, int burst, bool canBounce,
@@ -424,34 +498,34 @@ namespace TowerDefensePrototype
                 }
             }
 
-            foreach (Particle particle in ParticleList)
-            {
-                particle.Update(gameTime);
-            }
-            ParticleList.RemoveAll(Particle => Particle.Active == false);
+            //foreach (Particle particle in ParticleList)
+            //{
+            //    particle.Update(gameTime);
+            //}
+            //ParticleList.RemoveAll(Particle => Particle.Active == false);
 
             ////MIGHT BE BETTER TO USE THIS
-            //for (int i = 0; i < ParticleList.Count; i++)
-            //{
-            //    ParticleList[i].Update(gameTime);
+            for (int i = 0; i < ParticleList.Count; i++)
+            {
+                ParticleList[i].Update(gameTime);
 
-            //    if (ParticleList[i].Active == false)
-            //        ParticleList.RemoveAt(i);
-            //}            
+                if (ParticleList[i].Active == false)
+                    ParticleList.RemoveAt(i);
+            }            
         }
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            foreach (Particle particle in ParticleList)
-            {
-                particle.Draw(spriteBatch);
-            }
+            //foreach (Particle particle in ParticleList)
+            //{
+            //    particle.Draw(spriteBatch);
+            //}
 
             //MIGHT BE BETTER TO USE THIS
-            //for (int i = 0; i < ParticleList.Count; i++)
-            //{
-            //    ParticleList[i].Draw(spriteBatch);
-            //}
+            for (int i = 0; i < ParticleList.Count; i++)
+            {
+                ParticleList[i].Draw(spriteBatch);
+            }
         }
 
         public override void Draw(GraphicsDevice graphics, Effect effect)

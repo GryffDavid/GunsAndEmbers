@@ -20,7 +20,7 @@ namespace TowerDefensePrototype
         UIBar TimingBar;
         public bool Visible = false;
         bool Active;
-        public string Name, Description;
+        public string Description;//,Name;
 
         public UIPowerupInfo(Vector2 position, Powerup powerup, SpriteFont font)
         {

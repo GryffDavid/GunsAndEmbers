@@ -10,9 +10,9 @@ namespace TowerDefensePrototype
 {
     public class  BoomerangProjectile : HeavyProjectile
     {
-        public BoomerangProjectile(Texture2D texture, Texture2D particleTexture, Vector2 position, 
+        public BoomerangProjectile(object source, Texture2D texture, Texture2D particleTexture, Vector2 position, 
                                    float speed, float angle, float gravity, float damage, float blastRadius, Vector2? yrange = null) 
-            : base(texture, position, speed, angle, gravity, damage, yrange, blastRadius)
+            : base(source, texture, position, speed, angle, gravity, damage, yrange, blastRadius)
         {
             HeavyProjectileType = HeavyProjectileType.Boomerang;
 

@@ -21,28 +21,33 @@ namespace TowerDefensePrototype
             Resources = 1300;
                         
             //A float in the middle of the list changes the delay between invaders
-            //An in in the middle of the list creates a pause without changing the timing
+            //An int in the middle of the list creates a pause without changing the timing
 
             Wave Wave1 = new Wave(true, 1000, 100
-                 //, new Soldier(new Vector2(2050, 600))
-                 //, new Soldier(new Vector2(2050, 600))
-                 //, new Soldier(new Vector2(2050, 600))
-                 //, new Soldier(new Vector2(2050, 600))
-                 //, new Soldier(new Vector2(2050, 600))
-                 //, new Soldier(new Vector2(2050, 600))
+                 //, new StationaryCannon(new Vector2(2050, 600))
                  , new RifleMan(new Vector2(2050, 600))
-                 //, new RifleMan(new Vector2(2050, 600))
-                 //, new RifleMan(new Vector2(2050, 600))
-                 //, new RifleMan(new Vector2(2050, 600))
-                 //, new RifleMan(new Vector2(2050, 600))
-                 //, new RifleMan(new Vector2(2050, 600))
-                 //2500,
-                 //new HealDrone(new Vector2(2050, 100)),
-                 //new HealDrone(new Vector2(2050, 100)),
-                 //new HealDrone(new Vector2(2050, 100)),
-                 //new HealDrone(new Vector2(2050, 100)),
-                 //new HealDrone(new Vector2(2050, 100))
-                 //new StationaryCannon(new Vector2(2050, 600))
+                 , new Soldier(new Vector2(2050, 600))
+                 , new Soldier(new Vector2(2050, 600))
+                 , new Soldier(new Vector2(2050, 600))
+                 , new Soldier(new Vector2(2050, 600))
+                 , new Soldier(new Vector2(2050, 600))
+                 , new Soldier(new Vector2(2050, 600))
+                 , new StationaryCannon(new Vector2(2050, 600))
+                 , new RifleMan(new Vector2(2050, 600))
+                 , new StationaryCannon(new Vector2(2050, 600))
+                 , new RifleMan(new Vector2(2050, 600))
+                 , new StationaryCannon(new Vector2(2050, 600))
+                 , new RifleMan(new Vector2(2050, 600))
+                 , new StationaryCannon(new Vector2(2050, 600))
+                 , new RifleMan(new Vector2(2050, 600))
+                 , new StationaryCannon(new Vector2(2050, 600))
+                 , new RifleMan(new Vector2(2050, 600))
+                 , 2500 //2.5 second pause
+                 , new HealDrone(new Vector2(2050, 100))
+                 , new HealDrone(new Vector2(2050, 100))
+                 , new HealDrone(new Vector2(2050, 100))
+                 , new HealDrone(new Vector2(2050, 100))
+                 , new HealDrone(new Vector2(2050, 100))
                  );
 
             Wave Wave3 = new Wave(true, 200, 1000,

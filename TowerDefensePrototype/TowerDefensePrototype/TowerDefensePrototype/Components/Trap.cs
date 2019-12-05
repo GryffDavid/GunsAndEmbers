@@ -81,6 +81,7 @@ namespace TowerDefensePrototype
             CurrentAffectedTime = AffectedTime;
 
             DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, (int)CurrentAnimation.FrameSize.X, (int)CurrentAnimation.FrameSize.Y);
+            Center = new Vector2(DestinationRectangle.Center.X, DestinationRectangle.Y);
 
             DrawDepth = (float)(DestinationRectangle.Bottom / 1080f);
             Affected = false;
@@ -142,9 +143,7 @@ namespace TowerDefensePrototype
                                           new Vector3(Position.X + CurrentAnimation.FrameSize.X, Position.Y + CurrentAnimation.FrameSize.Y, 0));
 
             ShadowPosition = new Vector2(Position.X + CurrentAnimation.FrameSize.X/2, Position.Y + CurrentAnimation.FrameSize.Y);
-
-            Center = new Vector2(DestinationRectangle.Center.X, DestinationRectangle.Y);
-
+                        
             Bottom = BoundingBox.Max.Y;
             DrawDepth = (Bottom / 1080);
 

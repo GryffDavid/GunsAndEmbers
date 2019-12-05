@@ -29,7 +29,7 @@ namespace TowerDefensePrototype
         
         public Texture2D Texture;
         public List<Emitter> EmitterList;
-        public Vector2 Velocity, Position, YRange, Scale, Origin, Direction;
+        public Vector2 Velocity, Position, YRange, Scale, Origin, Center;
 
         public float Angle, Speed, CurrentRotation, CurrentTransparency, MaxY, Damage, BlastRadius, Gravity;
         float Bounce = 0.7f;        
@@ -47,12 +47,16 @@ namespace TowerDefensePrototype
 
         public Node Node1 = new Node();
         public Node Node2 = new Node();
-        public Stick Sticks = new Stick();
+        public Stick Rod = new Stick();
 
-        public HeavyProjectile(Texture2D texture, Vector2 position, float speed, float angle, float gravity, float damage,
+        public object SourceObject;
+
+        public HeavyProjectile(object source, Texture2D texture, Vector2 position, float speed, float angle, float gravity, float damage,
                                Vector2? yrange = null, float? blastRadius = null, bool? verlet = false)
         {
             //Initialise all the regular variables
+            SourceObject = source;
+
             Active = true;
             Texture = texture;
             Angle = angle;
@@ -99,7 +103,7 @@ namespace TowerDefensePrototype
                     Pinned = false
                 };
 
-                Sticks = new Stick()
+                Rod = new Stick()
                 {
                     Length = Texture.Width,
                     Rotate = true,
@@ -146,14 +150,10 @@ namespace TowerDefensePrototype
 
                         Time = 0;
                     }
-
-                    DestinationRectangle = new Rectangle((int)Sticks.Point1.CurrentPosition.X,
-                                                     (int)Sticks.Point1.CurrentPosition.Y,
-                                                     Texture.Width, Texture.Height);
-
-                    CollisionRectangle = new Rectangle((int)Sticks.Point1.CurrentPosition.X,
-                                                       (int)Sticks.Point1.CurrentPosition.Y,
-                                                       Texture.Width, Texture.Height);
+                    
+                    DestinationRectangle = new Rectangle((int)Rod.Point1.CurrentPosition.X,
+                                                            (int)Rod.Point1.CurrentPosition.Y,
+                                                            Texture.Width, Texture.Height);
 
                     foreach (Emitter emitter in EmitterList)
                     {
@@ -163,13 +163,18 @@ namespace TowerDefensePrototype
                     Position = Node1.CurrentPosition;
                 }
 
-                Vector2 dir = Sticks.Point2.CurrentPosition - Sticks.Point1.CurrentPosition;
-                Sticks.Rotation = (float)Math.Atan2(dir.Y, dir.X);
+                Vector2 dir = Rod.Point2.CurrentPosition - Rod.Point1.CurrentPosition;
+                Rod.Rotation = (float)Math.Atan2(dir.Y, dir.X);
 
-                Sticks.DestinationRectangle = new Rectangle(
-                                                  (int)Sticks.Point1.CurrentPosition.X,
-                                                  (int)Sticks.Point1.CurrentPosition.Y,
+                Rod.DestinationRectangle = new Rectangle(
+                                                  (int)Rod.Point1.CurrentPosition.X,
+                                                  (int)Rod.Point1.CurrentPosition.Y,
                                                   Texture.Width, Texture.Height);
+
+                BoundingBox = new BoundingBox(new Vector3(Rod.Center.X - ((float)Math.Cos(Rod.Rotation) * (Texture.Width / 4)),
+                                                          Rod.Center.Y - ((float)Math.Sin(Rod.Rotation) * (Texture.Width / 4)), 0),
+                                              new Vector3(Rod.Center.X + ((float)Math.Cos(Rod.Rotation) * (Texture.Width / 4)),
+                                                          Rod.Center.Y + ((float)Math.Sin(Rod.Rotation) * (Texture.Width / 4)), 0));
             }
             #endregion
             else
@@ -192,12 +197,23 @@ namespace TowerDefensePrototype
 
                         emitter.Position = projectileRear;
                     }
+
+                    DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y,
+                                                         Texture.Width * (int)Scale.X, Texture.Height * (int)Scale.Y);
+
+                    BoundingBox = new BoundingBox(new Vector3(Position.X - ((float)Math.Cos(CurrentRotation) * (Texture.Width / 4)),
+                                                              Position.Y - ((float)Math.Sin(CurrentRotation) * (Texture.Width / 4)), 0),
+                                                  new Vector3(Position.X + ((float)Math.Cos(CurrentRotation) * (Texture.Width / 4)),
+                                                              Position.Y + ((float)Math.Sin(CurrentRotation) * (Texture.Width / 4)), 0));
                 }
 
                 if (Rotate == true)
                     CurrentRotation = (float)Math.Atan2(Velocity.Y, Velocity.X);
             }
             #endregion
+
+            Center = new Vector2(DestinationRectangle.Center.X, DestinationRectangle.Center.Y);
+
 
             foreach (Emitter emitter in EmitterList)
             {
@@ -207,24 +223,15 @@ namespace TowerDefensePrototype
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            if (Verlet == true)
+            if (Active == true)
             {
-                if (Active == true)
+                if (Verlet == true)
                 {
-                    spriteBatch.Draw(Texture, Sticks.DestinationRectangle, null, Color.White, Sticks.Rotation,
+                    spriteBatch.Draw(Texture, Rod.DestinationRectangle, null, Color.White, Rod.Rotation,
                                      new Vector2(0, Texture.Height / 2), SpriteEffects.None, 0);
                 }
-            }
-            else
-            {
-                if (Active == true)
+                else
                 {
-                    DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y,
-                                                         Texture.Width * (int)Scale.X, Texture.Height * (int)Scale.Y);
-
-                    CollisionRectangle = new Rectangle(DestinationRectangle.X, DestinationRectangle.Y,
-                                                       DestinationRectangle.Width / 2, DestinationRectangle.Height / 2);
-
                     spriteBatch.Draw(Texture, DestinationRectangle, null, Color.White, CurrentRotation,
                                      new Vector2(Origin.X, Origin.Y), SpriteEffects.None, DrawDepth);
                 }
@@ -241,19 +248,19 @@ namespace TowerDefensePrototype
         {
             if (Rotate == true)
             {
-                Sticks.Point1.Velocity = (Sticks.Center - Sticks.PreviousCenter) * Friction;
-                Sticks.Point1.CurrentPosition = Sticks.Center - (Sticks.Direction * Sticks.Length / 2);
-                Sticks.Point1.PreviousPosition = Sticks.Point1.CurrentPosition;
-                Sticks.Point1.CurrentPosition += Sticks.Point1.Velocity * Sticks.Point1.Friction;
+                Rod.Point1.Velocity = (Rod.Center - Rod.PreviousCenter) * Friction;
+                Rod.Point1.CurrentPosition = Rod.Center - (Rod.Direction * Rod.Length / 2);
+                Rod.Point1.PreviousPosition = Rod.Point1.CurrentPosition;
+                Rod.Point1.CurrentPosition += Rod.Point1.Velocity * Rod.Point1.Friction;
 
-                Sticks.Point1.CurrentPosition.Y += Gravity;
+                Rod.Point1.CurrentPosition.Y += Gravity;
 
-                Sticks.Point2.Velocity = (Sticks.Center - Sticks.PreviousCenter) * Friction;
-                Sticks.Point2.CurrentPosition = Sticks.Center + (Sticks.Direction * Sticks.Length / 2);
-                Sticks.Point2.PreviousPosition = Sticks.Point2.CurrentPosition;
-                Sticks.Point2.CurrentPosition += Sticks.Point2.Velocity * Sticks.Point2.Friction;
+                Rod.Point2.Velocity = (Rod.Center - Rod.PreviousCenter) * Friction;
+                Rod.Point2.CurrentPosition = Rod.Center + (Rod.Direction * Rod.Length / 2);
+                Rod.Point2.PreviousPosition = Rod.Point2.CurrentPosition;
+                Rod.Point2.CurrentPosition += Rod.Point2.Velocity * Rod.Point2.Friction;
 
-                Sticks.Point2.CurrentPosition.Y += Gravity;
+                Rod.Point2.CurrentPosition.Y += Gravity;
             }
             else
             {
@@ -374,29 +381,29 @@ namespace TowerDefensePrototype
 
         public void UpdateSticks()
         {
-            Vector2 currentDir = Sticks.Point2.CurrentPosition - Sticks.Point1.CurrentPosition;
+            Vector2 currentDir = Rod.Point2.CurrentPosition - Rod.Point1.CurrentPosition;
             currentDir.Normalize();
-            Sticks.Center = Sticks.Point1.CurrentPosition + currentDir * Sticks.Length / 2;
+            Rod.Center = Rod.Point1.CurrentPosition + currentDir * Rod.Length / 2;
 
-            Vector2 previousDir = Sticks.Point2.PreviousPosition - Sticks.Point1.PreviousPosition;
+            Vector2 previousDir = Rod.Point2.PreviousPosition - Rod.Point1.PreviousPosition;
             previousDir.Normalize();
-            Sticks.PreviousCenter = Sticks.Point1.PreviousPosition + previousDir * Sticks.Length / 2;
+            Rod.PreviousCenter = Rod.Point1.PreviousPosition + previousDir * Rod.Length / 2;
 
-            Sticks.Direction = Sticks.Center - Sticks.PreviousCenter;
-            Sticks.Direction.Normalize();
+            Rod.Direction = Rod.Center - Rod.PreviousCenter;
+            Rod.Direction.Normalize();
 
-            float currentLength = Vector2.Distance(Sticks.Point1.CurrentPosition, Sticks.Point2.CurrentPosition);
+            float currentLength = Vector2.Distance(Rod.Point1.CurrentPosition, Rod.Point2.CurrentPosition);
 
-            if (currentLength != Sticks.Length)
+            if (currentLength != Rod.Length)
             {
-                Vector2 Direction = Sticks.Point2.CurrentPosition - Sticks.Point1.CurrentPosition;
+                Vector2 Direction = Rod.Point2.CurrentPosition - Rod.Point1.CurrentPosition;
                 Direction.Normalize();
 
-                if (Sticks.Point2.Pinned == false)
-                    Sticks.Point2.CurrentPosition -= (Direction * (currentLength - Sticks.Length) / 2);
+                if (Rod.Point2.Pinned == false)
+                    Rod.Point2.CurrentPosition -= (Direction * (currentLength - Rod.Length) / 2);
 
-                if (Sticks.Point1.Pinned == false)
-                    Sticks.Point1.CurrentPosition += (Direction * (currentLength - Sticks.Length) / 2);
+                if (Rod.Point1.Pinned == false)
+                    Rod.Point1.CurrentPosition += (Direction * (currentLength - Rod.Length) / 2);
             }
         }    
     }

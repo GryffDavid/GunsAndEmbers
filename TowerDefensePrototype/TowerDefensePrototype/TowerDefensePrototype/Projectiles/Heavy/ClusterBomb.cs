@@ -10,9 +10,9 @@ namespace TowerDefensePrototype
 {
     public class  ClusterBomb : HeavyProjectile
     {
-        public ClusterBomb(Texture2D texture, Texture2D particleTexture, Vector2 position, 
+        public ClusterBomb(object source, Texture2D texture, Texture2D particleTexture, Vector2 position, 
                            float speed, float angle, float gravity, float damage, Vector2? yrange = null)
-            : base(texture, position, speed, angle, gravity, damage, yrange)
+            : base(source, texture, position, speed, angle, gravity, damage, yrange)
         {
             HeavyProjectileType = HeavyProjectileType.ClusterBomb;
 

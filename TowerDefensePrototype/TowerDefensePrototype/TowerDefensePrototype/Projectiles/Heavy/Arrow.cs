@@ -10,9 +10,9 @@ namespace TowerDefensePrototype
 {
     public class Arrow : HeavyProjectile
     {
-        public Arrow(Texture2D texture, Texture2D particleTexture, Vector2 position, 
+        public Arrow(object source, Texture2D texture, Texture2D particleTexture, Vector2 position, 
                     float speed, float angle, float gravity, float damage, Vector2? yrange = null)
-            : base(texture, position, speed, angle, gravity, damage, yrange)
+            : base(source, texture, position, speed, angle, gravity, damage, yrange)
         {
             HeavyProjectileType = HeavyProjectileType.Arrow;
 

@@ -10,8 +10,8 @@ namespace TowerDefensePrototype
 {
     public class Torpedo : HeavyProjectile
     {
-        public Torpedo(Texture2D texture, Texture2D particleTexture, Vector2 position, float speed, float angle, float gravity, float damage, Vector2? yrange = null)
-            : base(texture, position, speed, angle, gravity, damage, yrange)
+        public Torpedo(object source, Texture2D texture, Texture2D particleTexture, Vector2 position, float speed, float angle, float gravity, float damage, Vector2? yrange = null)
+            : base(source, texture, position, speed, angle, gravity, damage, yrange)
         {
             HeavyProjectileType = HeavyProjectileType.Torpedo;
 
