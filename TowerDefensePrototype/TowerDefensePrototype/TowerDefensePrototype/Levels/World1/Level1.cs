@@ -24,7 +24,7 @@ namespace TowerDefensePrototype
             //An int in the middle of the list creates a pause without changing the timing
 
             Wave Wave1 = new Wave(true, 1000, 100
-                 //, new StationaryCannon(new Vector2(2050, 600))
+                 , new StationaryCannon(new Vector2(2050, 600))
                  , new RifleMan(new Vector2(2050, 600))
                  , new Soldier(new Vector2(2050, 600))
                  , new Soldier(new Vector2(2050, 600))

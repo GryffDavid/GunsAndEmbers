@@ -9,15 +9,22 @@ using Microsoft.Xna.Framework.Graphics;
 namespace TowerDefensePrototype
 {
     abstract class LightRangedInvader : Invader
-    {
-        public bool InRange = false;
+    {        
         public InvaderRangedStruct RangedDamageStruct;
-        public float MinDistance; //The distance the invader has decided it wants to get to before firing - created from Distance Range in the RangedDamageStruct
+        //public object HitObject; //The object the shot hit when the invader fired
+        //public float MinDistance; //The distance the invader has decided it wants to get to before firing - created from Distance Range in the RangedDamageStruct
+        //public float DistToTower = 1920;
+        //public bool InRange = false;
 
         public override void Update(GameTime gameTime, Vector2 cursorPosition)
         {
-            UpdateFireDelay(gameTime);   
+            UpdateFireDelay(gameTime);
 
+            if (RangedDamageStruct.DistToTower <= RangedDamageStruct.MinDistance)
+            {
+                Velocity.X = 0;
+                RangedDamageStruct.InRange = true;
+            }
             //if (CurrentBurst >= MaxBurst &&
             //    CurrentBurstDelay < MaxBurstDelay)
             //{

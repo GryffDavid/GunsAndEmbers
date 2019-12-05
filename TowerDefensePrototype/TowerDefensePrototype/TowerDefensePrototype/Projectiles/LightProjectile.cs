@@ -26,11 +26,6 @@ namespace TowerDefensePrototype
                 Damage = damage.Value;
             else
                 Damage = 0;
-        }
-
-        public void Update(GameTime gameTime)
-        {
-
-        }        
+        }   
     }
 }

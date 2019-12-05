@@ -13,7 +13,7 @@ namespace TowerDefensePrototype
         public Texture2D Texture;
         public Vector2 Position, MaxV, Scale;
         public float Rotation, MaxY;
-        float TransparencyPercentage, CurrentTime, MaxTime;
+        public float TransparencyPercentage, CurrentTime, MaxTime;
         float CurrentFadeDelay, FadeDelay;
         
         public Decal(Texture2D texture, Vector2 position, float rotation, Vector2 maxV, float maxY, float imageScale)
@@ -33,13 +33,15 @@ namespace TowerDefensePrototype
             //thing = MathHelper.Clamp(thing, imageScale * 0.45f, imageScale);
 
             //Scale = new Vector2(thing, thing * (0.5f * thing));      
-            Scale = new Vector2(1*imageScale, 0.3f*imageScale);
+            Scale = new Vector2(1 * imageScale, 0.3f * imageScale);
         }
 
         public void Update(GameTime gameTime)
         {
             if (CurrentFadeDelay < FadeDelay)
+            {
                 CurrentFadeDelay += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+            }
 
             if (CurrentFadeDelay >= FadeDelay)
             {
@@ -56,7 +58,7 @@ namespace TowerDefensePrototype
         public void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(Texture, new Rectangle((int)Position.X, (int)Position.Y, (int)(Texture.Width*Scale.X), 
-                            (int)(Texture.Height*Scale.Y)), null, Color.Lerp(Color.Transparent, Color.White, TransparencyPercentage/100), Rotation, new Vector2(Texture.Width / 2, Texture.Height / 2), 
+                            (int)(Texture.Height*Scale.Y)), null, Color.White * (TransparencyPercentage/100), Rotation, new Vector2(Texture.Width / 2, Texture.Height / 2), 
                             SpriteEffects.None, 0);
         }
 

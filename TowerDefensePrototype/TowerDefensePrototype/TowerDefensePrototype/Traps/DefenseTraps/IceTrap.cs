@@ -18,7 +18,7 @@ namespace TowerDefensePrototype
             TrapType = TrapType.Ice;
             DetonateDelay = 4000;
             DetonateLimit = 5;
-            AffectedTime = 300;
+            //AffectedTime = 300;
         }       
     }
 }

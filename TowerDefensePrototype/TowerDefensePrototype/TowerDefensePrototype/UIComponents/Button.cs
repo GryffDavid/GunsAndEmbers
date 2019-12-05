@@ -23,7 +23,8 @@ namespace TowerDefensePrototype
         }
 
         public string Text;
-        public Vector2 FrameSize, Scale, CurrentPosition, CursorPosition, IconPosition, NextPosition, IconNextPosition, NextScale;
+        public Vector2 FrameSize, Scale, CurrentPosition, CursorPosition, 
+                       IconPosition, NextPosition, IconNextPosition, NextScale, TextSize;
         public Rectangle DestinationRectangle, SourceRectangle;
 
         public Color Color, TextColor;
@@ -148,6 +149,9 @@ namespace TowerDefensePrototype
             CurrentIconColor = Color.White;
 
             NextScale = Vector2.One;
+
+            if (Text != "")
+                TextSize = Font.MeasureString(Text[0].ToString());
         }
 
         public void Initialize(ButtonClickHappenedEventHandler thing)
@@ -168,10 +172,10 @@ namespace TowerDefensePrototype
             CursorPosition = cursorPosition;
 
             if (CurrentMouseState.LeftButton != PreviousMouseState.LeftButton)
-                LeftButtonState = Mouse.GetState().LeftButton;
+                LeftButtonState = CurrentMouseState.LeftButton;
 
-            if (CurrentMouseState.RightButton != PreviousMouseState.RightButton)
-                RightButtonState = Mouse.GetState().RightButton;
+            if (CurrentMouseState.RightButton != PreviousMouseState.RightButton && CanBeRightClicked == true)
+                RightButtonState = CurrentMouseState.RightButton;
             
             #region Reposition the icon with the button
             if (IconNextPosition != IconPosition)
@@ -285,50 +289,50 @@ namespace TowerDefensePrototype
                 {
                     if (CurrentButtonState != ButtonSpriteState.Pressed)
                     {
-                        Vector2 TextSize = Font.MeasureString(Text);
+                        //Vector2 TextSize = Font.MeasureString(Text);
 
                         switch (Alignment)
                         {
                             case "Centre":                                
                                 spriteBatch.DrawString(Font, Text, new Vector2(DestinationRectangle.Center.X - (TextSize.X / 2),
-                                    DestinationRectangle.Center.Y - (Font.MeasureString(Text[0].ToString()).Y / 2)), drawColor, MathHelper.ToRadians(0), 
+                                    DestinationRectangle.Center.Y - (TextSize.Y / 2)), drawColor, MathHelper.ToRadians(0), 
                                     Vector2.Zero, 1, SpriteEffects.None, 0.5f);
                                 break;
 
                             case "Left":
                                 spriteBatch.DrawString(Font, Text, new Vector2(DestinationRectangle.Left + 16,
-                                    DestinationRectangle.Center.Y - (Font.MeasureString(Text[0].ToString()).Y / 2)), drawColor, MathHelper.ToRadians(0), 
+                                    DestinationRectangle.Center.Y - (TextSize.Y / 2)), drawColor, MathHelper.ToRadians(0), 
                                     Vector2.Zero, 1, SpriteEffects.None, 0.5f);
                                 break;
 
                             case "Right":
                                 spriteBatch.DrawString(Font, Text, new Vector2(DestinationRectangle.Right - TextSize.X - 16,
-                                    DestinationRectangle.Center.Y - (Font.MeasureString(Text[0].ToString()).Y / 2)), drawColor, MathHelper.ToRadians(0), 
+                                    DestinationRectangle.Center.Y - (TextSize.Y / 2)), drawColor, MathHelper.ToRadians(0), 
                                     Vector2.Zero, 1, SpriteEffects.None, 0.5f);
                                 break;
                         }
                     }
                     else
                     {
-                        Vector2 TextSize = Font.MeasureString(Text);
+                        //Vector2 TextSize = Font.MeasureString(Text);
 
                         switch (Alignment)
                         {
                             case "Centre":
                                 spriteBatch.DrawString(Font, Text, new Vector2(DestinationRectangle.Center.X - (TextSize.X / 2)+2,
-                                    DestinationRectangle.Center.Y - (Font.MeasureString(Text[0].ToString()).Y / 2) + 2), drawColor, MathHelper.ToRadians(0), 
+                                    DestinationRectangle.Center.Y - (TextSize.Y / 2) + 2), drawColor, MathHelper.ToRadians(0), 
                                     Vector2.Zero, 1, SpriteEffects.None, 0.5f);
                                 break;
 
                             case "Left":
                                 spriteBatch.DrawString(Font, Text, new Vector2(DestinationRectangle.Left + 16+2,
-                                    DestinationRectangle.Center.Y - (Font.MeasureString(Text[0].ToString()).Y / 2) + 2), drawColor, MathHelper.ToRadians(0), 
+                                    DestinationRectangle.Center.Y - (TextSize.Y / 2) + 2), drawColor, MathHelper.ToRadians(0), 
                                     Vector2.Zero, 1, SpriteEffects.None, 0.5f);
                                 break;
 
                             case "Right":
                                 spriteBatch.DrawString(Font, Text, new Vector2(DestinationRectangle.Right - TextSize.X - 16+2,
-                                    DestinationRectangle.Center.Y - (Font.MeasureString(Text[0].ToString()).Y / 2) + 2), drawColor, MathHelper.ToRadians(0), 
+                                    DestinationRectangle.Center.Y - (TextSize.Y / 2) + 2), drawColor, MathHelper.ToRadians(0), 
                                     Vector2.Zero, 1, SpriteEffects.None, 0.5f);
                                 break;
                         }

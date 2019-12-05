@@ -10,22 +10,29 @@ namespace TowerDefensePrototype
 {
     abstract class HeavyRangedInvader : Invader
     {
-        public bool InRange = false;
+        //public bool InRange = false;
         public InvaderRangedStruct RangedDamageStruct;
-
-        public float MinDistance;
         public InvaderAnimation BarrelAnimation;
-
-        public VertexPositionColorTexture[] barrelVertices = new VertexPositionColorTexture[4];
-        public int[] barrelIndices = new int[6];
-        public Rectangle BarrelDestinationRectangle;  
-
-              
+        public VertexPositionColorTexture[] barrelVertices = new VertexPositionColorTexture[4];        
+        public Rectangle BarrelDestinationRectangle;
         public Vector2 BarrelPivot, BasePivot, BarrelEnd;
         public float CurrentAngle;
+        public int[] barrelIndices = new int[6];
+
+        //public object HitObject;
+        //public float DistToTower = 1920;
+        //public float MinDistance;
+
+        public List<HeavyProjectile> FiredProjectiles = new List<HeavyProjectile>();//List of projectiles the invader has fired and are still active
 
         public override void Update(GameTime gameTime, Vector2 cursorPosition)
         {
+            if (RangedDamageStruct.DistToTower <= RangedDamageStruct.MinDistance)
+            {
+                Velocity.X = 0;
+                RangedDamageStruct.InRange = true;
+            }
+
             if (BarrelAnimation != null)
             {
                 BarrelAnimation.Update(gameTime);
@@ -36,6 +43,8 @@ namespace TowerDefensePrototype
 
                 //CurrentAngle += 0.1f;
             }
+
+            FiredProjectiles.RemoveAll(Projectile => Projectile.Active == false && Projectile.EmitterList.All(Emitter => Emitter.AddMore == false));
 
             //Vector2 BarrelCenter = new Vector2(BarrelDestinationRectangle.X + (float)Math.Cos(CurrentAngle - 90) * (BarrelPivot.Y - BarrelDestinationRectangle.Height / 2),
             //                                   BarrelDestinationRectangle.Y + (float)Math.Sin(CurrentAngle - 90) * (BarrelPivot.Y - BarrelDestinationRectangle.Height / 2));

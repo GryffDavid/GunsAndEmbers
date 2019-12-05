@@ -7,16 +7,6 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace TowerDefensePrototype
 {
-    //public struct DrawData
-    //{
-    //    public Texture2D texture;
-    //    public Rectangle destinationRectangle;
-    //    public Color color;
-    //    public Vector2 origin;
-    //    public SpriteEffects orientation;
-    //    public float drawDepth, rotation;
-    //};
-
     public class Particle : Drawable
     {
         public Texture2D Texture;
@@ -28,10 +18,22 @@ namespace TowerDefensePrototype
         public bool Fade, BouncedOnGround, CanBounce, Shrink, StopBounce, HardBounce, Shadow, RotateVelocity, SortDepth;
         static Random Random = new Random();
         public SpriteEffects Orientation;
-        Color Color = Color.White;
-        float RadRotation;
+        //Color Color = Color.White;
+        private Color _Color;
+        public Color Color 
+        {
+            get { return _Color; }
+            set 
+            { 
+                _Color = value;
+                ParticleVertices[0].Color = value;
+                ParticleVertices[1].Color = value;
+                ParticleVertices[2].Color = value;
+                ParticleVertices[3].Color = value;
+            }
+        }
 
-        //public DrawData drawData;
+        public float RadRotation;
 
         //THIS IS SO THAT SPARKS CAN BOUNCE OFF OF INVADERS
         //List<Invader> InvaderList;
@@ -47,7 +49,7 @@ namespace TowerDefensePrototype
             float startingTransparency, bool fade, float startingRotation, float rotationChange,
             float scale, Color startColor, Color endColor, float gravity, bool canBounce, float maxY, bool shrink,
             float? drawDepth = null, bool? stopBounce = false, bool? hardBounce = true, bool? shadow = false, 
-            bool? rotateVelocity = false, Vector2? friction = null, SpriteEffects? orientation = SpriteEffects.None, float? fadeDelay = null, bool? sortDepth = false)
+            bool? rotateVelocity = false, Vector2? friction = null, SpriteEffects? orientation = SpriteEffects.None, float? fadeDelay = null, bool? sortDepth = false, bool? vertices = false)
         {
             Active = true;
             Texture = texture;
@@ -69,19 +71,15 @@ namespace TowerDefensePrototype
             CanBounce = canBounce;
             Shrink = shrink;
             RotateVelocity = rotateVelocity.Value;
+            //Vertices = vertices.Value;
 
             if (fadeDelay != null)
                 FadeDelay = fadeDelay.Value;
             else
                 FadeDelay = 0;
 
-            //CurrentRotation = MathHelper.ToRadians(startingRotation);
-            //RotationIncrement = MathHelper.ToRadians(rotationChange);
             RotationIncrement = rotationChange;
             CurrentRotation = startingRotation;
-
-            //Direction.X = (float)Math.Sin(MathHelper.ToRadians(Angle));
-            //Direction.Y = (float)Math.Cos(MathHelper.ToRadians(Angle));
 
             Direction.X = (float)Math.Cos(Angle);
             Direction.Y = (float)Math.Sin(Angle);
@@ -112,6 +110,43 @@ namespace TowerDefensePrototype
             SortDepth = sortDepth.Value;
 
             Origin = new Vector2(Texture.Width / 2, Texture.Height / 2);
+
+            RadRotation = MathHelper.ToRadians(CurrentRotation);
+
+            ParticleVertices[0] = new VertexPositionColorTexture()
+            {
+                Color = Color,
+                Position = new Vector3(CurrentPosition.X - (Texture.Width * CurrentScale) / 2, CurrentPosition.Y - (Texture.Height * CurrentScale) / 2, 0),
+                TextureCoordinate = texCoords[0]
+            };
+
+            ParticleVertices[1] = new VertexPositionColorTexture()
+            {
+                Color = Color,
+                Position = new Vector3(CurrentPosition.X + (Texture.Width * CurrentScale) / 2, CurrentPosition.Y - (Texture.Height * CurrentScale) / 2, 0),
+                TextureCoordinate = texCoords[1]
+            };
+
+            ParticleVertices[2] = new VertexPositionColorTexture()
+            {
+                Color = Color,
+                Position = new Vector3(CurrentPosition.X + (Texture.Width * CurrentScale) / 2, CurrentPosition.Y + (Texture.Height * CurrentScale) / 2, 0),
+                TextureCoordinate = texCoords[2]
+            };
+
+            ParticleVertices[3] = new VertexPositionColorTexture()
+            {
+                Color = Color,
+                Position = new Vector3(CurrentPosition.X - (Texture.Width * CurrentScale) / 2, CurrentPosition.Y + (Texture.Height * CurrentScale) / 2, 0),
+                TextureCoordinate = texCoords[3]
+            };
+
+            ParticleIndices[0] = 0;
+            ParticleIndices[1] = 1;
+            ParticleIndices[2] = 2;
+            ParticleIndices[3] = 2;
+            ParticleIndices[4] = 3;
+            ParticleIndices[5] = 0;
         }
 
         public void Update(GameTime gameTime)
@@ -169,16 +204,35 @@ namespace TowerDefensePrototype
 
                 if (Active == true)
                 {
-                    CurrentRotation += RotationIncrement * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
-                    CurrentRotation = CurrentRotation % 360;
-                    CurrentPosition += Velocity * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
-                    Velocity.Y += Gravity * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
-
+                    //These two were originally separate - keep an eye on them
                     if (RotateVelocity == true)
                     {
                         CurrentRotation = MathHelper.ToDegrees((float)Math.Atan2(Velocity.Y, Velocity.X));
                     }
+                    else
+                    {
+                        if (RotationIncrement != 0)
+                        {
+                            CurrentRotation += RotationIncrement * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
+                        }
+                    }
 
+                    //CurrentRotation = CurrentRotation % 360;
+
+                    if (Velocity != Vector2.Zero)
+                    {
+                        CurrentPosition += Velocity * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
+
+                        ParticleVertices[0].Position = new Vector3(CurrentPosition.X - (Texture.Width * CurrentScale) / 2, CurrentPosition.Y - (Texture.Height * CurrentScale) / 2, 0);
+                        ParticleVertices[1].Position = new Vector3(CurrentPosition.X + (Texture.Width * CurrentScale) / 2, CurrentPosition.Y - (Texture.Height * CurrentScale) / 2, 0);
+                        ParticleVertices[2].Position = new Vector3(CurrentPosition.X + (Texture.Width * CurrentScale) / 2, CurrentPosition.Y + (Texture.Height * CurrentScale) / 2, 0);
+                        ParticleVertices[3].Position = new Vector3(CurrentPosition.X - (Texture.Width * CurrentScale) / 2, CurrentPosition.Y + (Texture.Height * CurrentScale) / 2, 0);
+                    }
+
+                    Velocity.Y += Gravity * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
+
+                    
+                    
                     DestinationRectangle = new Rectangle((int)CurrentPosition.X, (int)CurrentPosition.Y, (int)(Texture.Width * CurrentScale), (int)(Texture.Height * CurrentScale));
                 }
 
@@ -238,40 +292,6 @@ namespace TowerDefensePrototype
                 {
                     if (CurrentRotation < 0)
                         CurrentRotation += 360;
-
-                    //THIS WAS FOR CONTROLLING ROTATION AFTER BOUNCING FOR SHELL CASINGS - NOW HANDLED BY VERLET PHYSICS
-                    
-                    //if (CurrentRotation > 270 && CurrentRotation <= 360)
-                    //{
-                    //    if (MathHelper.Distance(CurrentRotation, 360) >= 45)
-                    //        CurrentRotation = MathHelper.Lerp(CurrentRotation, 360, 0.5f * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
-                    //    else
-                    //        CurrentRotation = MathHelper.Lerp(CurrentRotation, 360, 0.2f * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
-                    //}
-
-                    //if (CurrentRotation > 180 && CurrentRotation <= 270)
-                    //{
-                    //    if (MathHelper.Distance(CurrentRotation, 180) >= 45)
-                    //        CurrentRotation = MathHelper.Lerp(CurrentRotation, 180, 0.5f * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
-                    //    else
-                    //        CurrentRotation = MathHelper.Lerp(CurrentRotation, 180, 0.2f * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
-                    //}
-
-                    //if (CurrentRotation > 90 && CurrentRotation <= 180)
-                    //{
-                    //    if (MathHelper.Distance(CurrentRotation, 180) >= 45)
-                    //        CurrentRotation = MathHelper.Lerp(CurrentRotation, 180, 0.5f * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
-                    //    else
-                    //        CurrentRotation = MathHelper.Lerp(CurrentRotation, 180, 0.2f * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
-                    //}
-
-                    //if (CurrentRotation >= 0 && CurrentRotation <= 90)
-                    //{
-                    //    if (MathHelper.Distance(CurrentRotation, 0) >= 45)
-                    //        CurrentRotation = MathHelper.Lerp(CurrentRotation, 0, 0.5f * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
-                    //    else
-                    //        CurrentRotation = MathHelper.Lerp(CurrentRotation, 0, 0.2f * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
-                    //}
                 }
                 #endregion
 
@@ -303,48 +323,11 @@ namespace TowerDefensePrototype
                     CurrentColor = Color.Lerp(EndColor, StartColor, PercentageHP / 100);
                 }
 
-                Color = Color.Lerp(Color.Transparent, CurrentColor, CurrentTransparency);
-                RadRotation = MathHelper.ToRadians(CurrentRotation);
+                //Color = Color.Lerp(Color.Transparent, CurrentColor, CurrentTransparency);
+                Color = CurrentColor * CurrentTransparency;
 
-                #region Particle Vertices
-                //if (Vertices == true)
-                {
-                    ParticleVertices[0] = new VertexPositionColorTexture()
-                    {
-                        Color = Color,
-                        Position = new Vector3(CurrentPosition.X - (Texture.Width * CurrentScale) / 2, CurrentPosition.Y - (Texture.Height * CurrentScale) / 2, 0),
-                        TextureCoordinate = texCoords[0]
-                    };
-
-                    ParticleVertices[1] = new VertexPositionColorTexture()
-                    {
-                        Color = Color,
-                        Position = new Vector3(CurrentPosition.X + (Texture.Width * CurrentScale) / 2, CurrentPosition.Y - (Texture.Height * CurrentScale) / 2, 0),
-                        TextureCoordinate = texCoords[1]
-                    };
-
-                    ParticleVertices[2] = new VertexPositionColorTexture()
-                    {
-                        Color = Color,
-                        Position = new Vector3(CurrentPosition.X + (Texture.Width * CurrentScale) / 2, CurrentPosition.Y + (Texture.Height * CurrentScale) / 2, 0),
-                        TextureCoordinate = texCoords[2]
-                    };
-
-                    ParticleVertices[3] = new VertexPositionColorTexture()
-                    {
-                        Color = Color,
-                        Position = new Vector3(CurrentPosition.X - (Texture.Width * CurrentScale) / 2, CurrentPosition.Y + (Texture.Height * CurrentScale) / 2, 0),
-                        TextureCoordinate = texCoords[3]
-                    };
-
-                    ParticleIndices[0] = 0;
-                    ParticleIndices[1] = 1;
-                    ParticleIndices[2] = 2;
-                    ParticleIndices[3] = 2;
-                    ParticleIndices[4] = 3;
-                    ParticleIndices[5] = 0;
-                }
-                #endregion
+                if (RotationIncrement != 0)
+                    RadRotation = MathHelper.ToRadians(CurrentRotation);
             }
         }
 
@@ -353,72 +336,27 @@ namespace TowerDefensePrototype
             if (Active == true)
             {
                 spriteBatch.Draw(Texture, DestinationRectangle, null, Color, RadRotation, Origin, Orientation, DrawDepth);
-                //spriteBatch.Draw(drawData.texture, drawData.destinationRectangle, null, drawData.color, 
-                //                 drawData.rotation, drawData.origin, drawData.orientation, drawData.drawDepth);
-
-                //DATA NEEDED TO ACTUALLY DRAW PARTICLE:
-                // TEXTURE
-                // DESTINATION RECTANGLE
-                // COLOR
-                // ROTATION
-                // ORIGIN
-                // ORIENTATION
-                // DRAWDEPTH
-
-
-                //if (Shadow == true)
-                //{
-                //    float PercentToGround = (100 / (500 - MaxY)) * (CurrentPosition.Y - MaxY);
-                //    float SizeScale = (2 * PercentToGround) / 100;
-                //    float ColorScale = (150 - PercentToGround) / 100;
-
-                //    ColorScale = MathHelper.Clamp(ColorScale, 0.005f, 1f);
-                //    SizeScale = MathHelper.Clamp(SizeScale, 1f, 2f);
-
-                //    Vector2 ShadowScale = new Vector2(SizeScale * CurrentScale, SizeScale * CurrentScale);
-                //    Color ShadowColor = Color.Lerp(Color.Transparent, Color.Black, ColorScale * 0.05f);
-
-                //    spriteBatch.Draw(Texture,
-                //        new Rectangle((int)CurrentPosition.X, (int)MaxY + 4, (int)(Texture.Width * ShadowScale.X), (int)(Texture.Height * ShadowScale.Y)),
-                //        null, Color.Lerp(Color.Transparent, ShadowColor, CurrentTransparency),
-                //        MathHelper.ToRadians(CurrentRotation), Origin, SpriteEffects.None, (DestinationRectangle.Bottom / 1080));
-
-                //    //spriteBatch.Draw(Texture,
-                //    //    new Rectangle((int)CurrentPosition.X, (int)MaxY + 4, (int)(Texture.Width * ShadowScale.X / 1.7f), (int)(Texture.Height * ShadowScale.Y / 1.5f)),
-                //    //    null, Color.Lerp(Color.Transparent, ShadowColor, CurrentTransparency),
-                //    //    MathHelper.ToRadians(CurrentRotation), Origin, SpriteEffects.None, (DestinationRectangle.Bottom / 1080));
-
-                //    //spriteBatch.Draw(Texture,
-                //    //    new Rectangle((int)CurrentPosition.X, (int)MaxY + 4, (int)(Texture.Width * ShadowScale.X / 1.5f), (int)(Texture.Height * ShadowScale.Y / 1.5f)),
-                //    //    null, Color.Lerp(Color.Transparent, ShadowColor, CurrentTransparency),
-                //    //    MathHelper.ToRadians(CurrentRotation), Origin, SpriteEffects.None, (DestinationRectangle.Bottom / 1080));
-
-                //    //spriteBatch.Draw(Texture,
-                //    //    new Rectangle((int)CurrentPosition.X, (int)MaxY + 4, (int)(Texture.Width * ShadowScale.X / 1.3f), (int)(Texture.Height * ShadowScale.Y / 1.5f)),
-                //    //    null, Color.Lerp(Color.Transparent, ShadowColor, CurrentTransparency),
-                //    //    MathHelper.ToRadians(CurrentRotation), Origin, SpriteEffects.None, (DestinationRectangle.Bottom / 1080));
-
-                //    //spriteBatch.Draw(Texture,
-                //    //    new Rectangle((int)CurrentPosition.X, (int)MaxY + 4, (int)(Texture.Width * ShadowScale.X), (int)(Texture.Height * ShadowScale.Y)),
-                //    //    null, Color.Lerp(Color.Transparent, ShadowColor, CurrentTransparency),
-                //    //    MathHelper.ToRadians(CurrentRotation), Origin, SpriteEffects.None, (DestinationRectangle.Bottom / 1080));
-                //}
             }
         }
 
         public override void Draw(GraphicsDevice graphics, Effect effect)
         {
-            //if (Vertices == true)
+            //This should only be applied if the rotation changes.
+            //If the particle does not have a rotation increment, it should inherit its World Matrix from the emitter
+            //This should stop each particle having to change the world value for the effect
+
+            effect.Parameters["World"].SetValue(Matrix.CreateTranslation(new Vector3(-CurrentPosition.X, -CurrentPosition.Y, 0)) *
+                                                Matrix.CreateRotationZ(RadRotation) *
+                                                Matrix.CreateTranslation(new Vector3(CurrentPosition.X, CurrentPosition.Y, 0)));
+            
+            effect.Parameters["Color"].SetValue(new Vector4(Color.R / 255f, Color.G / 255f, Color.B / 255f, Color.A / 255f));
+
+            foreach (EffectPass pass in effect.CurrentTechnique.Passes)
             {
-                effect.Parameters["World"].SetValue(Matrix.CreateTranslation(new Vector3(-CurrentPosition.X, -CurrentPosition.Y, 0)) * Matrix.CreateRotationZ(RadRotation) * Matrix.CreateTranslation(new Vector3(CurrentPosition.X, CurrentPosition.Y, 0)));
-                effect.Parameters["Color"].SetValue(new Vector4(Color.R / 255f, Color.G / 255f, Color.B / 255f, Color.A / 255f));
-                
-                foreach (EffectPass pass in effect.CurrentTechnique.Passes)
-                {
-                    pass.Apply();
-                    graphics.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, ParticleVertices, 0, 4, ParticleIndices, 0, 2, VertexPositionColorTexture.VertexDeclaration);
-                }
+                pass.Apply();
+                graphics.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, ParticleVertices, 0, 4, ParticleIndices, 0, 2, VertexPositionColorTexture.VertexDeclaration);
             }
+            
         }
 
         public Vector2[] GetTexCoords(SpriteEffects orientation)
@@ -457,19 +395,5 @@ namespace TowerDefensePrototype
 
             return coords;
         }
-
-        //public void NewData()
-        //{
-        //    drawData = new DrawData() 
-        //    { 
-        //        color = Color, 
-        //        destinationRectangle = DestinationRectangle, 
-        //        drawDepth = DrawDepth, 
-        //        orientation = Orientation, 
-        //        origin = Origin, 
-        //        rotation = RadRotation, 
-        //        texture = Texture 
-        //    };
-        //}
     }
 }

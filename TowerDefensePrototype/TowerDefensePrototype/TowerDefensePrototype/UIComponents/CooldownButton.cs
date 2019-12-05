@@ -330,7 +330,7 @@ namespace TowerDefensePrototype
             CursorPosition = cursorPosition;
 
             if (CurrentMouseState.LeftButton != PreviousMouseState.LeftButton)
-                LeftButtonState = Mouse.GetState().LeftButton;
+                LeftButtonState = CurrentMouseState.LeftButton;
 
             if (CoolingDown == true)
             {

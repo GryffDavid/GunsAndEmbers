@@ -80,7 +80,7 @@ namespace TowerDefensePrototype
             }
 
             if (CurrentMouseState.LeftButton != PreviousMouseState.LeftButton)
-                LeftButtonState = Mouse.GetState().LeftButton;
+                LeftButtonState = CurrentMouseState.LeftButton;
 
             DestinationRectangle = new Rectangle((int)Position.X, (int)(Position.Y - BoxSize.Y), (int)BoxSize.X, (int)BoxSize.Y);
 

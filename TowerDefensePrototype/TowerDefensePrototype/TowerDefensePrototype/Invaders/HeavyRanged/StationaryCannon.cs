@@ -28,9 +28,9 @@ namespace TowerDefensePrototype
             {
                 AngleRange = new Vector2(170, 190),
                 Damage = 10,
-                MaxFireDelay = 250,
+                MaxFireDelay = 750,
                 CurrentFireDelay = 0,
-                DistanceRange = new Vector2(600, 800)
+                DistanceRange = new Vector2(800, 900)
             };
         }
 

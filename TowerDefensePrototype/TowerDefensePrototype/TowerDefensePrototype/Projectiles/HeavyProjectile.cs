@@ -131,10 +131,10 @@ namespace TowerDefensePrototype
 
         public virtual void Update(GameTime gameTime)
         {
-            #region Uses Verlet-based physics
-            if (Verlet == true)
+            if (Active == true)
             {
-                if (Active == true)
+                #region Uses Verlet-based physics
+                if (Verlet == true)
                 {
                     Time += gameTime.ElapsedGameTime.TotalMilliseconds;
 
@@ -150,7 +150,7 @@ namespace TowerDefensePrototype
 
                         Time = 0;
                     }
-                    
+
                     DestinationRectangle = new Rectangle((int)Rod.Point1.CurrentPosition.X,
                                                             (int)Rod.Point1.CurrentPosition.Y,
                                                             Texture.Width, Texture.Height);
@@ -161,26 +161,23 @@ namespace TowerDefensePrototype
                     }
 
                     Position = Node1.CurrentPosition;
+
+                    Vector2 dir = Rod.Point2.CurrentPosition - Rod.Point1.CurrentPosition;
+                    Rod.Rotation = (float)Math.Atan2(dir.Y, dir.X);
+
+                    Rod.DestinationRectangle = new Rectangle(
+                                                      (int)Rod.Point1.CurrentPosition.X,
+                                                      (int)Rod.Point1.CurrentPosition.Y,
+                                                      Texture.Width, Texture.Height);
+
+                    BoundingBox = new BoundingBox(new Vector3(Rod.Center.X - ((float)Math.Cos(Rod.Rotation) * (Texture.Width / 4)),
+                                                              Rod.Center.Y - ((float)Math.Sin(Rod.Rotation) * (Texture.Width / 4)), 0),
+                                                  new Vector3(Rod.Center.X + ((float)Math.Cos(Rod.Rotation) * (Texture.Width / 4)),
+                                                              Rod.Center.Y + ((float)Math.Sin(Rod.Rotation) * (Texture.Width / 4)), 0));
                 }
-
-                Vector2 dir = Rod.Point2.CurrentPosition - Rod.Point1.CurrentPosition;
-                Rod.Rotation = (float)Math.Atan2(dir.Y, dir.X);
-
-                Rod.DestinationRectangle = new Rectangle(
-                                                  (int)Rod.Point1.CurrentPosition.X,
-                                                  (int)Rod.Point1.CurrentPosition.Y,
-                                                  Texture.Width, Texture.Height);
-
-                BoundingBox = new BoundingBox(new Vector3(Rod.Center.X - ((float)Math.Cos(Rod.Rotation) * (Texture.Width / 4)),
-                                                          Rod.Center.Y - ((float)Math.Sin(Rod.Rotation) * (Texture.Width / 4)), 0),
-                                              new Vector3(Rod.Center.X + ((float)Math.Cos(Rod.Rotation) * (Texture.Width / 4)),
-                                                          Rod.Center.Y + ((float)Math.Sin(Rod.Rotation) * (Texture.Width / 4)), 0));
-            }
-            #endregion
-            else
-            #region Uses Euler-based physics
-            {
-                if (Active == true)
+                #endregion
+                else
+                #region Uses Euler-based physics
                 {
                     //This line simulates air friction. 
                     //I'm not sure if I should keep it. I thought it'd make the projectiles look a bit better.
@@ -192,8 +189,8 @@ namespace TowerDefensePrototype
 
                     foreach (Emitter emitter in EmitterList)
                     {
-                        Vector2 projectileRear = new Vector2(Position.X - (float)Math.Cos(CurrentRotation) * (Texture.Width/2),
-                                                             Position.Y - (float)Math.Sin(CurrentRotation) * (Texture.Width/2));
+                        Vector2 projectileRear = new Vector2(Position.X - (float)Math.Cos(CurrentRotation) * (Texture.Width / 2),
+                                                             Position.Y - (float)Math.Sin(CurrentRotation) * (Texture.Width / 2));
 
                         emitter.Position = projectileRear;
                     }
@@ -205,15 +202,14 @@ namespace TowerDefensePrototype
                                                               Position.Y - ((float)Math.Sin(CurrentRotation) * (Texture.Width / 4)), 0),
                                                   new Vector3(Position.X + ((float)Math.Cos(CurrentRotation) * (Texture.Width / 4)),
                                                               Position.Y + ((float)Math.Sin(CurrentRotation) * (Texture.Width / 4)), 0));
+
+                    if (Rotate == true)
+                        CurrentRotation = (float)Math.Atan2(Velocity.Y, Velocity.X);
                 }
+                #endregion
 
-                if (Rotate == true)
-                    CurrentRotation = (float)Math.Atan2(Velocity.Y, Velocity.X);
+                Center = new Vector2(DestinationRectangle.Center.X, DestinationRectangle.Center.Y);
             }
-            #endregion
-
-            Center = new Vector2(DestinationRectangle.Center.X, DestinationRectangle.Center.Y);
-
 
             foreach (Emitter emitter in EmitterList)
             {

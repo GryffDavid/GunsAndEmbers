@@ -134,7 +134,7 @@ namespace TowerDefensePrototype
             CurrentMouseState = Mouse.GetState();
 
             if (CurrentMouseState.LeftButton != PreviousMouseState.LeftButton)
-                LeftButtonState = Mouse.GetState().LeftButton;
+                LeftButtonState = CurrentMouseState.LeftButton;
 
             if (AmmoBelt != null)
             {
@@ -156,10 +156,10 @@ namespace TowerDefensePrototype
                 emitter.Update(gameTime);
             }
 
-            if (Active == true && Selected == true)
-            {
-                FireRotation = Rotation + MathHelper.ToRadians((float)(-AngleOffset + Random.NextDouble() * (AngleOffset - (-AngleOffset))));
-            }
+            //if (Active == true && Selected == true)
+            //{
+            //    FireRotation = Rotation + MathHelper.ToRadians((float)(-AngleOffset + Random.NextDouble() * (AngleOffset - (-AngleOffset))));
+            //}
 
             if (double.IsNaN(Rotation) == true)
                 Rotation = -20;

@@ -18,7 +18,7 @@ namespace TowerDefensePrototype
             TrapType = TrapType.Line;
             DetonateDelay = 1500;
             DetonateLimit = 5;
-            AffectedTime = 300;
+            //AffectedTime = 300;
             ResourceCost = 200;
         }
     }

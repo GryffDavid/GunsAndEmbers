@@ -17,8 +17,8 @@ namespace TowerDefensePrototype
         //public List<Emitter> TrapEmitterList = new List<Emitter>();
         public Vector2 Position, ShadowPosition, Center;
         public Vector2 Scale = new Vector2(1, 1);
-        public bool Solid, CanTrigger, Affected;
-        public float MaxHP, CurrentHP, DetonateDelay, CurrentDetonateDelay, AffectedTime, CurrentAffectedTime, Bottom;
+        public bool Solid, CanTrigger;
+        public float MaxHP, CurrentHP, DetonateDelay, CurrentDetonateDelay, Bottom;
         public int ResourceCost, DetonateLimit, CurrentDetonateLimit, CurrentFrame, PowerCost;
         public double CurrentFrameDelay;
         public static Random Random = new Random();
@@ -78,13 +78,13 @@ namespace TowerDefensePrototype
 
             CurrentDetonateLimit = DetonateLimit;
             CurrentDetonateDelay = DetonateDelay;
-            CurrentAffectedTime = AffectedTime;
+            //CurrentAffectedTime = AffectedTime;
 
             DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, (int)CurrentAnimation.FrameSize.X, (int)CurrentAnimation.FrameSize.Y);
             Center = new Vector2(DestinationRectangle.Center.X, DestinationRectangle.Y);
 
             DrawDepth = (float)(DestinationRectangle.Bottom / 1080f);
-            Affected = false;
+            //Affected = false;
         }
 
         public virtual void Update(GameTime gameTime)
@@ -97,19 +97,19 @@ namespace TowerDefensePrototype
                 CurrentAnimation.Update(gameTime);
             }
 
-            #region Handle how long the trap stays affected by outside stimulus for
-            if (CurrentAffectedTime < AffectedTime)
-                CurrentAffectedTime += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+            //#region Handle how long the trap stays affected by outside stimulus for
+            //if (CurrentAffectedTime < AffectedTime)
+            //    CurrentAffectedTime += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
 
-            if (CurrentAffectedTime >= AffectedTime)
-            {
-                Affected = false;
-            }
-            else
-            {
-                Affected = true;
-            }
-            #endregion
+            //if (CurrentAffectedTime >= AffectedTime)
+            //{
+            //    Affected = false;
+            //}
+            //else
+            //{
+            //    Affected = true;
+            //}
+            //#endregion
 
             #region Handle the timing between detonations and detonate limits
             if (CurrentDetonateDelay < DetonateDelay)
@@ -162,7 +162,7 @@ namespace TowerDefensePrototype
         {
             //Draw the colour map using a basic effect
             if (Active == true)
-            {                
+            {
                 effect.TextureEnabled = true;
                 effect.VertexColorEnabled = true;
                 effect.Texture = CurrentAnimation.Texture;
@@ -290,17 +290,6 @@ namespace TowerDefensePrototype
                 }
                 #endregion
             }
-        }
-
-        public override void Draw(SpriteBatch spriteBatch)
-        {
-            //if (TrapEmitterList.Count > 0)
-            //{
-            //    foreach (Emitter emitter in TrapEmitterList)
-            //    {
-            //        emitter.Draw(spriteBatch);
-            //    }
-            //}
         }
 
         public override void DrawSpriteDepth(GraphicsDevice graphics, Effect effect)

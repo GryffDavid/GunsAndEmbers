@@ -29,13 +29,49 @@ namespace TowerDefensePrototype
         public int[] lightIndices = new int[6];
         public static Random Random = new Random();
 
-        public Light(Vector3 position)
+        public Light(Vector3 position, Texture2D texture)
         {
             //Range = 500;
             //Radius = 250;
+            LightTexture = texture;
             StartPosition = position;
             Position = position;
             MaxFlickerTime = 60;
+
+            lightVertices[0] = new VertexPositionColorTexture()
+            {
+                Color = Color.White,
+                Position = Position - new Vector3(LightTexture.Width / 2, LightTexture.Height / 2, 0),
+                TextureCoordinate = new Vector2(0, 0)
+            };
+
+            lightVertices[1] = new VertexPositionColorTexture()
+            {
+                Color = Color.White,
+                Position = Position - new Vector3(-LightTexture.Width / 2, LightTexture.Height / 2, 0),
+                TextureCoordinate = new Vector2(1, 0)
+            };
+
+            lightVertices[2] = new VertexPositionColorTexture()
+            {
+                Color = Color.White,
+                Position = Position + new Vector3(LightTexture.Width / 2, LightTexture.Height / 2, 0),
+                TextureCoordinate = new Vector2(1, 1)
+            };
+
+            lightVertices[3] = new VertexPositionColorTexture()
+            {
+                Color = Color.White,
+                Position = Position + new Vector3(-LightTexture.Width / 2, LightTexture.Height / 2, 0),
+                TextureCoordinate = new Vector2(0, 1)
+            };
+
+            lightIndices[0] = 0;
+            lightIndices[1] = 1;
+            lightIndices[2] = 2;
+            lightIndices[3] = 2;
+            lightIndices[4] = 3;
+            lightIndices[5] = 0;
         }
 
         public void Update(GameTime gameTime)
@@ -88,42 +124,6 @@ namespace TowerDefensePrototype
                     MaxOscillationTime = MathHelper.Clamp(MaxOscillationTime + (float)RandomDouble(-50, 50), 400, 600);                    
                 }
             }
-
-            lightVertices[0] = new VertexPositionColorTexture()
-            {
-                Color = Color.White,
-                Position = Position - new Vector3(LightTexture.Width/2, LightTexture.Height/2, 0),
-                TextureCoordinate = new Vector2(0, 0)
-            };
-
-            lightVertices[1] = new VertexPositionColorTexture()
-            {
-                Color = Color.White,
-                Position = Position - new Vector3(-LightTexture.Width / 2, LightTexture.Height / 2, 0),
-                TextureCoordinate = new Vector2(1, 0)
-            };
-
-            lightVertices[2] = new VertexPositionColorTexture()
-            {
-                Color = Color.White,
-                Position = Position + new Vector3(LightTexture.Width/2, LightTexture.Height/2, 0),
-                TextureCoordinate = new Vector2(1, 1)
-            };
-
-            lightVertices[3] = new VertexPositionColorTexture()
-            {
-                Color = Color.White,
-                Position = Position + new Vector3(-LightTexture.Width / 2, LightTexture.Height / 2, 0),
-                TextureCoordinate = new Vector2(0, 1)
-            };
-
-            lightIndices[0] = 0;
-            lightIndices[1] = 1;
-            lightIndices[2] = 2;
-            lightIndices[3] = 2;
-            lightIndices[4] = 3;
-            lightIndices[5] = 0;
-
 
             Depth = (Position.Y / 1080f);
         }

@@ -19,7 +19,7 @@ namespace TowerDefensePrototype
             TrapType = TrapType.Fire;
             DetonateDelay = 1500;
             DetonateLimit = 5;
-            AffectedTime = 300;
+            //AffectedTime = 300;
             ResourceCost = 120;
             PowerCost = 1;
 
