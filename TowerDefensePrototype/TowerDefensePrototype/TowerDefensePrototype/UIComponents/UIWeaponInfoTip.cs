@@ -222,10 +222,6 @@ namespace TowerDefensePrototype
                     case TrapType.Trigger:
                         WeaponName = "Trigger";
                         break;
-
-                    case TrapType.Line:
-                        WeaponName = "Line";
-                        break;
                 }
             }
 

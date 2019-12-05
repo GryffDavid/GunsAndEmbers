@@ -8,5 +8,10 @@ namespace TowerDefensePrototype
     public class TrapAnimation : Animation
     {
         public TrapAnimationState CurrentTrapState;
+
+        public new TrapAnimation ShallowCopy()
+        {
+            return (TrapAnimation)this.MemberwiseClone();
+        }
     }
 }

@@ -219,3 +219,8 @@ Content\Fonts\SpriteFont1.xnb
 Content\ParticleEffect.xnb
 Content\ShadowBlur.xnb
 Content\Shaders\HealthBarEffect.xnb
+Content\Traps\FlameThrower\FlameThrowerTrapUntriggered.xnb
+Content\Icons\TrapIcons\FlameThrowerTrapIcon.xnb
+Content\Traps\FlameThrower\FlameThrowerTrapActive.xnb
+Content\Traps\FlameThrower\FlameThrowerTrapTriggering.xnb
+Content\Traps\FlameThrower\FlameThrowerTrapResetting.xnb

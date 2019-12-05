@@ -277,7 +277,7 @@ namespace TowerDefensePrototype
 
         //Trap Icons
         public Texture2D CatapultTrapIcon, IceTrapIcon, TarTrapIcon, WallTrapIcon, BarrelTrapIcon, FireTrapIcon, LineTrapIcon, SawBladeTrapIcon,
-                         SpikesTrapIcon, LandMineTrapIcon, TriggerTrapIcon;
+                         SpikesTrapIcon, LandMineTrapIcon, TriggerTrapIcon, FlameThrowerTrapIcon;
 
         //Damage Icons
         //public Texture2D ConcussiveDamageIcon, KineticDamageIcon, FireDamageIcon, ElectricDamageIcon, RadiationDamageIcon;
@@ -295,12 +295,13 @@ namespace TowerDefensePrototype
 
         //Trap Cursors
         public Texture2D WallTrapCursor, SpikesTrapCursor, CatapultTrapCursor, FireTrapCursor, IceTrapCursor, TarTrapCursor, BarrelTrapCursor,
-                         SawBladeTrapCursor, LineTrapCursor, TriggerTrapCursor, LandMineTrapCursor;
+                         SawBladeTrapCursor, LineTrapCursor, TriggerTrapCursor, LandMineTrapCursor, FlameThrowerTrapCursor;
         #endregion
 
         #region Trap sprites
         public List<TrapAnimation> WallAnimations, BarrelTrapAnimations, CatapultTrapAnimations, IceTrapAnimations, TarTrapAnimations,
-                                   LineTrapAnimations, SawBladeTrapAnimations, SpikeTrapAnimations, FireTrapAnimations, LandMineTrapAnimations;
+                                   LineTrapAnimations, SawBladeTrapAnimations, SpikeTrapAnimations, FireTrapAnimations, LandMineTrapAnimations,
+                                   FlameThrowerAnimations;
 
         public Texture2D WallAmbShadow;
         #endregion
@@ -1548,6 +1549,64 @@ namespace TowerDefensePrototype
             }
             #endregion
 
+            #region FlameThrower animations
+            //WallAmbShadow = Content.Load<Texture2D>("Traps/Wall/WallShadow");
+            FlameThrowerAnimations = new List<TrapAnimation>()
+            {
+                new TrapAnimation()
+                {
+                    CurrentTrapState = TrapAnimationState.Untriggered,
+                    Texture = Content.Load<Texture2D>("Traps/FlameThrower/FlameThrowerTrapUntriggered"),
+                    Animated = false,
+                    CurrentFrame = 0,
+                    TotalFrames = 1,
+                    
+                    AnimationType = AnimationType.Regular
+                },
+
+                new TrapAnimation()
+                {
+                    CurrentTrapState = TrapAnimationState.Active,
+                    Texture = Content.Load<Texture2D>("Traps/FlameThrower/FlameThrowerTrapActive"),
+                    Animated = false,
+                    CurrentFrame = 0,
+                    TotalFrames = 1,
+                    
+                    AnimationType = AnimationType.Regular
+                },
+
+
+                new TrapAnimation()
+                {
+                    CurrentTrapState = TrapAnimationState.Triggering,
+                    Texture = Content.Load<Texture2D>("Traps/FlameThrower/FlameThrowerTrapTriggering"),
+                    Animated = true,
+                    //Looping = true,
+                    CurrentFrame = 0,
+                    TotalFrames = 17,
+                    
+                    AnimationType = AnimationType.Regular
+                },
+
+                new TrapAnimation()
+                {
+                    CurrentTrapState = TrapAnimationState.Resetting,
+                    Texture = Content.Load<Texture2D>("Traps/FlameThrower/FlameThrowerTrapResetting"),
+                    Animated = true,
+                    //Looping = true,
+                    CurrentFrame = 0,
+                    TotalFrames = 17,
+                    
+                    AnimationType = AnimationType.Regular
+                },
+            };
+
+            foreach (TrapAnimation animation in FlameThrowerAnimations)
+            {
+                animation.GetFrameSize();
+            }
+            #endregion
+
             #region Fire trap animations
             FireTrapAnimations = new List<TrapAnimation>()
             {
@@ -2344,6 +2403,17 @@ namespace TowerDefensePrototype
                         }
                     }
                 }
+
+                if (Diagnostics == true)
+                {
+                    foreach (Trap trap in TrapList)
+                    {
+                        spriteBatch.DrawString(TooltipFont, "State: " + trap.TrapState, trap.Position, Color.White);
+                        spriteBatch.DrawString(TooltipFont, "CurrentFrame: " + trap.CurrentAnimation.CurrentFrame, trap.Position + new Vector2(0, 10), Color.White);
+                        spriteBatch.DrawString(TooltipFont, "FrameDelay: " + trap.CurrentAnimation.CurrentFrameDelay, trap.Position + new Vector2(0, 20), Color.White);
+
+                    }
+                }
                 #endregion
 
                 #region Draw number changes
@@ -3078,6 +3148,27 @@ namespace TowerDefensePrototype
                             trail.Update(gameTime);
                         }
 
+                        foreach (Emitter emitter in YSortedEmitterList.Where(Emitter => (Emitter.Tether as FlameThrowerTrap) != null))
+                        {
+                            foreach (Particle particle in emitter.ParticleList.Where(Part => Part.Friction.X != 0.25f))
+                            {
+                                if (TrapList.Any(Trap => 
+                                    Trap.TrapType == TrapType.Wall &&
+                                    (
+                                    (Trap.CollisionBox.Max.Y > (emitter.Tether as FlameThrowerTrap).CollisionBox.Min.Y &&
+                                     Trap.CollisionBox.Max.Y < (emitter.Tether as FlameThrowerTrap).CollisionBox.Max.Y) ||
+
+                                     (Trap.CollisionBox.Min.Y > (emitter.Tether as FlameThrowerTrap).CollisionBox.Min.Y &&
+                                     Trap.CollisionBox.Min.Y < (emitter.Tether as FlameThrowerTrap).CollisionBox.Max.Y)
+                                    ) &&
+                                    Trap.BoundingBox.Intersects(RectToBoundingBox(particle.DestinationRectangle))))
+                                {                                    
+                                    particle.Velocity.Y *= (particle.Velocity.X*1.5f);
+                                    particle.Friction.X = 0.25f;
+                                }
+                            }
+                        }
+
                         //Seconds += gameTime.ElapsedGameTime.TotalMilliseconds;
                         ResourceCounter.Update(gameTime);
 
@@ -3688,10 +3779,6 @@ namespace TowerDefensePrototype
                         position = explosionRay.Position,
                         direction = explosionRay.Direction
                     };
-
-                    //myRay.position = explosionRay.Position;
-                    //myRay.direction = explosionRay.Direction;
-
 
                     float invDist = float.PositiveInfinity;
                     float trapDist = float.PositiveInfinity;
@@ -8129,6 +8216,26 @@ namespace TowerDefensePrototype
                                 
                 if (trap.DestinationRectangle.Contains(new Point((int)CursorPosition.X, (int)CursorPosition.Y)))
                 {
+                    if (Keyboard.GetState().IsKeyDown(Keys.LeftControl) && 
+                        CurrentMouseState.LeftButton == ButtonState.Released && 
+                        PreviousMouseState.LeftButton == ButtonState.Pressed)
+                    {
+                        switch (trap.TrapState)
+                        {
+                            case TrapAnimationState.Untriggered:
+                                trap.TrapState = TrapAnimationState.Triggering;
+                                trap.CurrentAnimation.CurrentFrame = 0;
+                                trap.CurrentAnimation.Update(gameTime);
+                                break;
+
+                            case TrapAnimationState.Active:
+                                trap.TrapState = TrapAnimationState.Resetting;
+                                trap.CurrentAnimation.CurrentFrame = 0;
+                                trap.CurrentAnimation.Update(gameTime);
+                                break;
+                        }
+                    }
+
                     #region Remove trap if right-clicked for long enough
                     if (CurrentMouseState.RightButton == ButtonState.Pressed &&
                         PreviousMouseState.RightButton == ButtonState.Pressed)
@@ -8174,6 +8281,65 @@ namespace TowerDefensePrototype
                 #region Specific behaviour based on the trap type
                 switch (trap.TrapType)
                 {
+                    #region FlameThrower trap behaviour
+                    case TrapType.FlameThrower:
+                        {
+                            if (trap.TrapState == TrapAnimationState.Active)
+                            {
+                                if (!YSortedEmitterList.Exists(Emitter => Emitter.Tether == trap))
+                                {
+                                    Emitter FireEmitter = new Emitter(FireParticle,
+                                new Vector2(trap.Position.X + trap.CurrentAnimation.FrameSize.X - 10,
+                                            trap.Position.Y + trap.CurrentAnimation.FrameSize.Y / 2),
+                                new Vector2(-5, 5), new Vector2(1.2f, 1.95f), new Vector2(2500, 3000), 1f, false,
+                                new Vector2(90, 90), new Vector2(-0.25f, 0.25f), new Vector2(0.05f, 0.1f), FireColor2, Color.Black * 0.75f,
+                                0.0f, -1, 20, 2, false, new Vector2(0, 1080), true, (trap.DestinationRectangle.Bottom - 1.0f) / 1080f,
+                                null, null, null, null, null, null, new Vector2(0.0f, 0.001f), true, true, null, false, false, true, null);
+                                    YSortedEmitterList.Add(FireEmitter);
+
+                                    AddDrawable(FireEmitter);
+
+                                    FireEmitter.Tether = trap;
+                                }
+
+                                (trap as FlameThrowerTrap).CurrentActiveTime += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+
+                                if ((trap as FlameThrowerTrap).CurrentActiveTime > (trap as FlameThrowerTrap).ActiveTime)
+                                {
+                                    (trap as FlameThrowerTrap).CurrentActiveTime = 0;
+
+                                    foreach (Emitter emitter in YSortedEmitterList.Where(emit => emit.Tether == trap))
+                                    {
+                                        emitter.AddMore = false;
+                                    }
+
+                                    trap.TrapState = TrapAnimationState.Resetting;
+                                    trap.CurrentAnimation.CurrentFrame = 0;
+                                    trap.CurrentAnimation.Update(gameTime);
+                                }
+                            }
+
+                            if (trap.TrapState == TrapAnimationState.Triggering &&
+                                trap.CurrentAnimation.CurrentFrame >= 16)
+                            {
+                                trap.CurrentAnimation.CurrentFrame = 0;
+                                trap.TrapState = TrapAnimationState.Active;
+                                trap.CurrentAnimation.CurrentFrame = 0;
+                            }
+
+                            if (trap.TrapState == TrapAnimationState.Resetting &&
+                              trap.CurrentAnimation.CurrentFrame >= 16)
+                            {
+                                trap.CurrentAnimation.CurrentFrame = 0;
+                                trap.TrapState = TrapAnimationState.Untriggered;
+                                trap.CurrentAnimation.CurrentFrame = 0;
+                            }
+
+                            
+                        }
+                        break;
+                    #endregion
+
                     #region Fire trap behaviour
                     case TrapType.Fire:
                         //#region Make less fire if the trap isn't ready to detonate yet
@@ -8432,6 +8598,30 @@ namespace TowerDefensePrototype
                             NewTrap.AnimationList = WallAnimations;
                             NewTrap.TrapState = NewTrap.TrapState;
                             NewTrap.AmbientShadowTexture = WallAmbShadow;
+                            NewTrap.Position = trapPosition;
+                            TrapList.Add(NewTrap);
+                            AddDrawable(NewTrap);
+                            NewTrap.Initialize();
+                        }
+                        break;
+                    #endregion
+
+                    #region FlameThrower
+                    case TrapType.FlameThrower:
+                        {
+                            NewTrap = trap;
+                            NewTrap.AnimationList = new List<TrapAnimation>();
+
+                            for (int i = 0; i < FlameThrowerAnimations.Count; i++)
+                            {
+                                TrapAnimation animation = new TrapAnimation();
+                                animation = FlameThrowerAnimations[i].ShallowCopy();
+                                NewTrap.AnimationList.Add(animation);
+                            }
+
+                            //NewTrap.AnimationList = FlameThrowerAnimations;
+                            NewTrap.TrapState = NewTrap.TrapState;
+                            //NewTrap.AmbientShadowTexture = WallAmbShadow;
                             NewTrap.Position = trapPosition;
                             TrapList.Add(NewTrap);
                             AddDrawable(NewTrap);
@@ -10190,6 +10380,12 @@ namespace TowerDefensePrototype
                                            (int)(boundingBox.Max.X - boundingBox.Min.X),
                                            (int)(boundingBox.Max.Y - boundingBox.Min.Y));
             return rect;
+        }
+
+        public static BoundingBox RectToBoundingBox(Rectangle rectangle)
+        {
+            BoundingBox box = new BoundingBox(new Vector3(rectangle.Left, rectangle.Top, 0), new Vector3(rectangle.Right, rectangle.Bottom, 0));
+            return box;
         }
 
         public static bool RandomBool()

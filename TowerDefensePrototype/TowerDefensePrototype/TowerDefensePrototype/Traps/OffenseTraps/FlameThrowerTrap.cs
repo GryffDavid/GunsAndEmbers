@@ -1,0 +1,47 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Content;
+
+namespace TowerDefensePrototype
+{
+    class FlameThrowerTrap : Trap
+    {
+        public static new int ResourceCost = 200;
+
+        public float ActiveTime, CurrentActiveTime;
+
+
+        public FlameThrowerTrap(Vector2 position)
+            : base(position)
+        {
+            Solid = true;
+            MaxHP = 100;
+            TrapType = TrapType.FlameThrower;
+            DetonateLimit = -1;
+            ActiveTime = 3000f;
+            CurrentActiveTime = 0;
+        }
+
+        public override void Update(GameTime gameTime)
+        {
+            switch (TrapState)
+            {
+                default:
+                    OnGround = false;
+                    Solid = true;
+                    break;
+
+                case TrapAnimationState.Untriggered:
+                    OnGround = true;
+                    DrawDepth = 0f;
+                    Solid = false;
+                    break;
+            }
+            base.Update(gameTime);
+        }
+    }
+}

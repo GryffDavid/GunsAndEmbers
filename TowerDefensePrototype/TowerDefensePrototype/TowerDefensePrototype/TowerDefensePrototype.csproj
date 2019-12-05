@@ -117,7 +117,7 @@
     <Compile Include="Animations\Animation.cs" />
     <Compile Include="Animations\InvaderAnimation.cs" />
     <Compile Include="Basics\Ballistics.cs" />
-    <Compile Include="Pathfinder.cs" />
+    <Compile Include="Components\Pathfinder.cs" />
     <Compile Include="Components\ResourceCounter.cs" />
     <Compile Include="Components\Shield.cs" />
     <Compile Include="Invaders\ShieldGenerator.cs" />
@@ -126,6 +126,7 @@
     <Compile Include="ParticleSystem\JetEngine.cs" />
     <Compile Include="ParticleSystem\JetTrail.cs" />
     <Compile Include="ParticleSystem\SmokeTrail.cs" />
+    <Compile Include="Traps\OffenseTraps\FlameThrowerTrap.cs" />
     <Compile Include="Traps\OffenseTraps\LandMineTrap.cs" />
     <Compile Include="Traps\TriggerTrap.cs" />
     <Compile Include="Turrets\Light\SniperTurret.cs" />
@@ -177,7 +178,6 @@
     <Compile Include="Levels\TutorialLevel.cs" />
     <Compile Include="Components\PowerupDelivery.cs" />
     <Compile Include="SpecialAbilities\AirStrikeSpecial.cs" />
-    <Compile Include="Traps\OffenseTraps\LineTrap.cs" />
     <Compile Include="Projectiles\Beam\PersistentBeamProjectile.cs" />
     <Compile Include="Projectiles\Light\ShotgunProjectile.cs" />
     <Compile Include="Projectiles\TimerHeavyProjectile.cs" />

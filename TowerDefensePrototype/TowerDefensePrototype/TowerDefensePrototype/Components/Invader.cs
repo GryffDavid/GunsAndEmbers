@@ -17,6 +17,8 @@ namespace TowerDefensePrototype
 
     public enum InvaderBuildType { Mechanical, Organic }; //Whether the invader is affected by things like gas.
 
+    public enum InvaderEmotion { Normal, Fear, Anger };
+
     #region InvaderType
     public enum InvaderType
     {

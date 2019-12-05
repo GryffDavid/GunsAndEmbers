@@ -16,9 +16,9 @@ namespace TowerDefensePrototype
         Fire, Ice,
         Barrel,
         SawBlade,
-        Line,
         Trigger,
-        LandMine
+        LandMine,
+        FlameThrower
     };
     public enum TrapAnimationState { Untriggered, Triggering, Active, Resetting };
 
@@ -69,6 +69,7 @@ namespace TowerDefensePrototype
                     if (CurrentAnimation.CurrentTrapState == TrapAnimationState.Untriggered)
                         CurrentAnimation.CurrentFrame = Random.Next(0, CurrentAnimation.TotalFrames);
 
+                    //CurrentAnimation.CurrentFrame = 0;
                     CurrentAnimation.CurrentFrameDelay = 0;
                 }
             }
@@ -183,7 +184,6 @@ namespace TowerDefensePrototype
                 DrawDepth = (Bottom / 1080);
             else
                 DrawDepth = 0f;
-
 
             MaxY = Bottom;
 
