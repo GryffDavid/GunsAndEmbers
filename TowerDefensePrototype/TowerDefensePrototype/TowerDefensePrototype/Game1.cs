@@ -1421,7 +1421,7 @@ namespace TowerDefensePrototype
         };
 
         //Color AmbientLight = new Color(1f, 0.95f, 0.83f, 1f);
-        Color AmbientLight = new Color(0.25f, 0.25f, 0.25f, 1f);
+        Color AmbientLight = new Color(0.85f, 0.85f, 0.85f, 1f);
         private float specularStrength = 1.0f;
 
         BlendState Multiply = new BlendState() { ColorSourceBlend = Blend.DestinationColor, AlphaSourceBlend = Blend.DestinationAlpha };
@@ -2668,13 +2668,14 @@ namespace TowerDefensePrototype
                 #endregion
 
                 #region Draw things sorted according to their Y value - To create depth illusion
-                DrawableList = DrawableList.OrderBy(Drawable => Drawable.DrawDepth).ToList();
+                //DrawableList = DrawableList.OrderBy(Drawable => Drawable.DrawDepth).ToList();
                 spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, RasterizerState.CullNone);
 
                 foreach (Drawable drawable in DrawableList)
                 {
                     if (drawable.GetType().BaseType == typeof(Invader))
                         drawable.Draw(spriteBatch, BasicEffect, GraphicsDevice, ShadowBlurEffect, LightList);
+                        //drawable.DrawSpriteNormal(GraphicsDevice, BasicEffect);
                     else
                         drawable.Draw(spriteBatch);
                 }
@@ -2748,28 +2749,32 @@ namespace TowerDefensePrototype
                 spriteBatch.End();
                 #endregion
 
+
+                #region Draw to the normal map
+                GraphicsDevice.SetRenderTarget(LightNormalMap);
+                GraphicsDevice.Clear(new Color(127, 127, 255));
+
+                spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
+                GraphicsDevice.BlendState = BlendState.AlphaBlend;
+
+                foreach (Drawable drawable in DrawableList)
+                {
+                    drawable.DrawSpriteNormal(GraphicsDevice, BasicEffect);
+                }
+
+                spriteBatch.End();
                 #endregion
 
                 #region Draw to the depth map
                 GraphicsDevice.SetRenderTarget(DepthMap);
                 GraphicsDevice.Clear(Color.Transparent);
-                spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
+                spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
+
                 foreach (Drawable drawable in DrawableList)
                 {
                     drawable.DrawSpriteDepth(GraphicsDevice, DepthEffect);
                 }
-                spriteBatch.End();
-                #endregion
 
-                #region Draw to the normal map
-                GraphicsDevice.SetRenderTarget(LightNormalMap);
-                GraphicsDevice.Clear(Color.Black);
-                spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
-                spriteBatch.Draw(NormalMapTexture, Vector2.Zero, Color.White);
-                foreach (Drawable drawable in DrawableList)
-                {
-                    drawable.DrawSpriteNormal(GraphicsDevice, BasicEffect);
-                }                
                 spriteBatch.End();
                 #endregion
 
@@ -2809,11 +2814,8 @@ namespace TowerDefensePrototype
                 GraphicsDevice.SetRenderTarget(GameRenderTarget1);
                 GraphicsDevice.Clear(Color.CornflowerBlue);
 
-                //spriteBatch.Begin();
-                //spriteBatch.Draw(LightNormalMap, LightNormalMap.Bounds, Color.White);
-                //spriteBatch.Draw(DepthMap, LightNormalMap.Bounds, Color.White);
-
                 spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, null, LightCombinedEffect);
+
                 #region Draw the lightmap and color map combined
                 LightCombinedEffect.CurrentTechnique = LightCombinedEffect.Techniques["DeferredCombined"];
                 LightCombinedEffect.Parameters["ambient"].SetValue(1f);
@@ -2828,7 +2830,10 @@ namespace TowerDefensePrototype
 
                 spriteBatch.Draw(LightColorMap, Vector2.Zero, Color.White);
                 #endregion
+
                 spriteBatch.End();
+
+                #endregion
 
                 #region Draw UI
                 GraphicsDevice.SetRenderTarget(UIRenderTarget);                
@@ -8552,10 +8557,10 @@ namespace TowerDefensePrototype
                         LightList.Add(new Light()
                         {
                             Color = Color.Lerp(Color.White, Color.Transparent, 0.5f),
-                            Position = new Vector3(NewTrap.DestinationRectangle.Center.X, NewTrap.DestinationRectangle.Bottom, 1),
+                            Position = new Vector3(NewTrap.DestinationRectangle.Center.X, NewTrap.DestinationRectangle.Bottom, 10),
                             Active = true,
                             LightDecay = 125,
-                            Power = 0.5f
+                            Power = 0.25f
                         });
                     }
                     break;
@@ -9603,7 +9608,7 @@ namespace TowerDefensePrototype
             //AddDrawable(newDrawable);
             DrawableList.AddRange(newDrawable);
 
-            //DrawableList.Sort((x, y) => x.DrawDepth.CompareTo(y.DrawDepth));
+            DrawableList.Sort((x, y) => x.DrawDepth.CompareTo(y.DrawDepth));
             //DrawableList = DrawableList.OrderBy(Drawable => Drawable.DrawDepth).ToList();
 
             //COULD ALSO TRY THIS - INSERT ITEMS IN CORRECT ORDER INSTEAD OF SORTING AFTERWARDS

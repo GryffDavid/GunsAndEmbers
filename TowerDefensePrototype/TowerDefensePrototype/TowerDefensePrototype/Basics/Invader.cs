@@ -357,6 +357,12 @@ namespace TowerDefensePrototype
                     float animX = (float)(1f / CurrentAnimation.TotalFrames) * CurrentAnimation.CurrentFrame;
                     float animWid = (float)(1f / CurrentAnimation.TotalFrames);
 
+                    //There should be a limit on the number of shadows drawn. Could be set in the options menu by the player
+                    //To help with performance
+                    #region Draw the shadows
+
+                    #endregion
+
                     #region Draw the sprite
                     spriteVertices[0] = new VertexPositionColorTexture()
                     {
@@ -399,35 +405,6 @@ namespace TowerDefensePrototype
                         graphics.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, spriteVertices, 0, 4, spriteIndices, 0, 2, VertexPositionColorTexture.VertexDeclaration);
                     }
                     #endregion
-
-                    foreach (Light light in lightList)
-                    {
-                        ShadowPosition = new Vector2(Position.X, Position.Y + CurrentAnimation.DiffuseSourceRectangle.Height - 4);
-                        float lightDistance = Vector2.Distance(ShadowPosition, new Vector2(light.Position.X, light.Position.Y));
-
-                        Vector2 direction = ShadowPosition - new Vector2(light.Position.X, light.Position.Y);
-                        direction.Normalize();
-
-                        heightMod = lightDistance / (light.Range / 10);
-                        height = CurrentAnimation.DiffuseSourceRectangle.Height * heightMod;
-                        height = MathHelper.Clamp(CurrentAnimation.DiffuseSourceRectangle.Height * heightMod, 16, 64);
-                        float width = CurrentAnimation.DiffuseSourceRectangle.Height * heightMod;
-                        width = MathHelper.Clamp(CurrentAnimation.DiffuseSourceRectangle.Height * heightMod, 16, 92);
-                        
-                        shadowColor = Color.Lerp(Color.Black, Color.Transparent, lightDistance / light.Radius);
-
-                        //Reduce the density of the shadow based on the proximate lights
-                        foreach (Light light3 in lightList.FindAll(Light2 => Vector2.Distance(ShadowPosition, new Vector2(Light2.Position.X, Light2.Position.Y)) < light.Radius && Light2 != light).ToList())
-                        {
-                            shadowColor *= MathHelper.Clamp(Vector2.Distance(new Vector2(light3.Position.X, light3.Position.Y), ShadowPosition) / light3.Radius, 0.8f, 1f);
-                        }
-
-
-
-                        #region Draw the shadow
-
-                        #endregion
-                    }
                 }
 
                 if (HealthEmitter != null)

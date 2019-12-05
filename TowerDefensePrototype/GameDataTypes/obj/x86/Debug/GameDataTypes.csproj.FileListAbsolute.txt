@@ -268,9 +268,9 @@ C:\Users\Gryff\Desktop\TDP - Manual Sorting\Manual Sorting 6 - Lighting2\TowerDe
 C:\Users\Gryff\Desktop\TDP - Manual Sorting\Manual Sorting 6 - Lighting2\TowerDefensePrototype 95 - RebuildingAnim\GameDataTypes\obj\x86\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
 C:\Users\Gryff\Desktop\TDP - Manual Sorting\Manual Sorting 6 - Lighting2\TowerDefensePrototype 95 - RebuildingAnim\GameDataTypes\obj\x86\Debug\GameDataTypes.dll
 C:\Users\Gryff\Desktop\TDP - Manual Sorting\Manual Sorting 6 - Lighting2\TowerDefensePrototype 95 - RebuildingAnim\GameDataTypes\obj\x86\Debug\GameDataTypes.pdb
-G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 95 - RebuildingAnim\GameDataTypes\bin\x86\Debug\GameDataTypes.dll
-G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 95 - RebuildingAnim\GameDataTypes\bin\x86\Debug\GameDataTypes.pdb
-G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 95 - RebuildingAnim\GameDataTypes\obj\x86\Debug\GameDataTypes.csprojResolveAssemblyReference.cache
-G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 95 - RebuildingAnim\GameDataTypes\obj\x86\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
-G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 95 - RebuildingAnim\GameDataTypes\obj\x86\Debug\GameDataTypes.dll
-G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 95 - RebuildingAnim\GameDataTypes\obj\x86\Debug\GameDataTypes.pdb
+G:\Google Drive\Tower Defense Backups\TowerDefensePrototype 96\GameDataTypes\bin\x86\Debug\GameDataTypes.dll
+G:\Google Drive\Tower Defense Backups\TowerDefensePrototype 96\GameDataTypes\bin\x86\Debug\GameDataTypes.pdb
+G:\Google Drive\Tower Defense Backups\TowerDefensePrototype 96\GameDataTypes\obj\x86\Debug\GameDataTypes.csprojResolveAssemblyReference.cache
+G:\Google Drive\Tower Defense Backups\TowerDefensePrototype 96\GameDataTypes\obj\x86\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
+G:\Google Drive\Tower Defense Backups\TowerDefensePrototype 96\GameDataTypes\obj\x86\Debug\GameDataTypes.dll
+G:\Google Drive\Tower Defense Backups\TowerDefensePrototype 96\GameDataTypes\obj\x86\Debug\GameDataTypes.pdb
