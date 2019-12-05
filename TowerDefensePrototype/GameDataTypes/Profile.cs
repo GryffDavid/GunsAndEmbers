@@ -10,7 +10,7 @@ namespace TowerDefensePrototype
     public class Profile
     {
         public string Name;
-        public int LevelNumber, Points, Credits;
+        public int LevelNumber, Points, Credits, ShotsFired;
         public List<string> Buttons;
 
         //What turrets the player has access to

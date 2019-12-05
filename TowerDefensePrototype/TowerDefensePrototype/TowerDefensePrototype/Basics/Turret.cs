@@ -56,6 +56,11 @@ namespace TowerDefensePrototype
 
         public void Update(GameTime gameTime)
         {
+            FireRotation = Rotation + MathHelper.ToRadians((float)(-AngleOffset + Random.NextDouble() * (AngleOffset - (-AngleOffset))));
+
+            FireDirection.X = (float)Math.Cos(FireRotation);
+            FireDirection.Y = (float)Math.Sin(FireRotation);
+
             if (Animated == true)
             {
                 CurrentFrameTime += gameTime.ElapsedGameTime.TotalMilliseconds;
@@ -73,7 +78,6 @@ namespace TowerDefensePrototype
                             Animated = false;
                         }
                     }
-
                     CurrentFrameTime = 0;
                 }
             }
@@ -132,11 +136,6 @@ namespace TowerDefensePrototype
                 //else
                 //    Color = Color.White;
             #endregion                
-
-                FireRotation = Rotation + MathHelper.ToRadians((float)(-AngleOffset + Random.NextDouble() * (AngleOffset - (-AngleOffset))));
-
-                FireDirection.X = (float)Math.Cos(FireRotation);
-                FireDirection.Y = (float)Math.Sin(FireRotation);
 
             PreviousMouseState = CurrentMouseState;
         }

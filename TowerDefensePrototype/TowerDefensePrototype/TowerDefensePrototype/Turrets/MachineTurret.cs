@@ -19,7 +19,7 @@ namespace TowerDefensePrototype
             Selected = true;
             FireDelay = 200;
             Damage = 7;
-            AngleOffset = 2;
+            AngleOffset = 5;
             Animated = false;
             Looping = false;
 
@@ -40,7 +40,6 @@ namespace TowerDefensePrototype
                 BarrelPivot = new Vector2(20, TurretBarrel.Height / 2);
                 BasePivot = new Vector2(TurretBase.Width / 2, TurretBase.Height / 2-10);
 
-                //Rectangle SourceRectangle = new Rectangle(0 + (int)FrameSize.X * CurrentFrame, 0, (int)FrameSize.X, (int)FrameSize.Y);
                 spriteBatch.Draw(TurretBarrel, BarrelRectangle, SourceRectangle, Color, Rotation, BarrelPivot, SpriteEffects.None, 1f);
 
                 spriteBatch.Draw(TurretBase, BaseRectangle, null, Color, 0, BasePivot, SpriteEffects.None, 1f);

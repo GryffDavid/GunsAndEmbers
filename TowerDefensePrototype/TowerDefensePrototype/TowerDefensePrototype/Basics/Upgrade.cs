@@ -7,6 +7,7 @@ namespace TowerDefensePrototype
 {
     public class Upgrade
     {
-
+        string Text; //Describes what the upgrade does
+        //Attributechanges
     }
 }

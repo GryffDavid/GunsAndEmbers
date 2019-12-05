@@ -32,15 +32,25 @@ namespace TowerDefensePrototype
         {
             Box = contentManager.Load<Texture2D>("DialogBox");
 
-            LeftButton = new Button("Buttons/ButtonLeft", new Vector2(Position.X - (Box.Width / 2), Position.Y + 128 - (Box.Height/2)), null, 
-                new Vector2(0.5f, 1), null, LeftText, "Fonts/ButtonFont", "Left", Color.White);
+            LeftButton = new Button("Buttons/ButtonLeft", new Vector2(Position.X - (Box.Width / 2), 
+                Position.Y + 128 - (Box.Height/2)), null, new Vector2(0.5f, 1), null, LeftText, "Fonts/ButtonFont", "Left", Color.White);
             LeftButton.LoadContent(contentManager);
 
-            RightButton = new Button("Buttons/ButtonRight", new Vector2(Position.X + 250 - (Box.Width / 2), Position.Y + 128 - (Box.Height / 2)), null, 
-                new Vector2(0.5f, 1), null, RightText, "Fonts/ButtonFont", "Right", Color.White);            
+            RightButton = new Button("Buttons/ButtonRight", new Vector2(Position.X + 252 - (Box.Width / 2), 
+                Position.Y + 128 - (Box.Height / 2)), null, new Vector2(0.5f, 1), null, RightText, "Fonts/ButtonFont", "Right", Color.White);            
             RightButton.LoadContent(contentManager);
 
-            TextFont = contentManager.Load<SpriteFont>(LeftButton.FontName);
+            TextFont = contentManager.Load<SpriteFont>("Fonts/DialogFont");
+
+            for (int i = 0; i < BoxText.Length; i++)
+            {
+                if ((i % 40) == 1)
+                {
+                    int k;
+                    k = BoxText.LastIndexOf(" ", i);
+                    BoxText = BoxText.Insert(k + 1, Environment.NewLine);
+                }
+            }
         }
 
         public void Update()
@@ -54,7 +64,8 @@ namespace TowerDefensePrototype
         public void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(Box, new Rectangle((int)Position.X - (Box.Width/2), (int)Position.Y - (Box.Height/2), Box.Width, Box.Height), Color.White);
-            spriteBatch.DrawString(TextFont, BoxText, new Vector2(Position.X - (TextFont.MeasureString(BoxText).X / 2), Position.Y + 50 - (Box.Height / 2)), Color.White);
+            spriteBatch.DrawString(TextFont, BoxText, new Vector2(Position.X - (TextFont.MeasureString(BoxText).X / 2), 
+                                   Position.Y + 50 - (Box.Height / 2) - TextFont.MeasureString(BoxText[0].ToString()).Y), Color.White);
             LeftButton.Draw(spriteBatch);
 
             if (RightText != "")

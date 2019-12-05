@@ -223,19 +223,19 @@ namespace TowerDefensePrototype
                         {
                             case "Centre":                                
                                 spriteBatch.DrawString(Font, Text, new Vector2(DestinationRectangle.Center.X - (TextSize.X / 2),
-                                    DestinationRectangle.Center.Y - (TextSize.Y / 2) + 4), drawColor, MathHelper.ToRadians(0), 
+                                    DestinationRectangle.Center.Y - (Font.MeasureString(Text[0].ToString()).Y / 2)), drawColor, MathHelper.ToRadians(0), 
                                     Vector2.Zero, 1, SpriteEffects.None, 0.5f);
                                 break;
 
                             case "Left":
                                 spriteBatch.DrawString(Font, Text, new Vector2(DestinationRectangle.Left + 16,
-                                    DestinationRectangle.Center.Y - (TextSize.Y / 2) + 4), drawColor, MathHelper.ToRadians(0), 
+                                    DestinationRectangle.Center.Y - (Font.MeasureString(Text[0].ToString()).Y / 2)), drawColor, MathHelper.ToRadians(0), 
                                     Vector2.Zero, 1, SpriteEffects.None, 0.5f);
                                 break;
 
                             case "Right":
                                 spriteBatch.DrawString(Font, Text, new Vector2(DestinationRectangle.Right - TextSize.X - 16,
-                                    DestinationRectangle.Center.Y - (TextSize.Y / 2) + 4), drawColor, MathHelper.ToRadians(0), 
+                                    DestinationRectangle.Center.Y - (Font.MeasureString(Text[0].ToString()).Y / 2)), drawColor, MathHelper.ToRadians(0), 
                                     Vector2.Zero, 1, SpriteEffects.None, 0.5f);
                                 break;
                         }
@@ -248,19 +248,19 @@ namespace TowerDefensePrototype
                         {
                             case "Centre":
                                 spriteBatch.DrawString(Font, Text, new Vector2(DestinationRectangle.Center.X - (TextSize.X / 2)+2,
-                                    DestinationRectangle.Center.Y - (TextSize.Y / 2) + 6), drawColor, MathHelper.ToRadians(0), 
+                                    DestinationRectangle.Center.Y - (Font.MeasureString(Text[0].ToString()).Y / 2) + 2), drawColor, MathHelper.ToRadians(0), 
                                     Vector2.Zero, 1, SpriteEffects.None, 0.5f);
                                 break;
 
                             case "Left":
                                 spriteBatch.DrawString(Font, Text, new Vector2(DestinationRectangle.Left + 16+2,
-                                    DestinationRectangle.Center.Y - (TextSize.Y / 2) + 6), drawColor, MathHelper.ToRadians(0), 
+                                    DestinationRectangle.Center.Y - (Font.MeasureString(Text[0].ToString()).Y / 2) + 2), drawColor, MathHelper.ToRadians(0), 
                                     Vector2.Zero, 1, SpriteEffects.None, 0.5f);
                                 break;
 
                             case "Right":
                                 spriteBatch.DrawString(Font, Text, new Vector2(DestinationRectangle.Right - TextSize.X - 16+2,
-                                    DestinationRectangle.Center.Y - (TextSize.Y / 2) + 6), drawColor, MathHelper.ToRadians(0), 
+                                    DestinationRectangle.Center.Y - (Font.MeasureString(Text[0].ToString()).Y / 2) + 2), drawColor, MathHelper.ToRadians(0), 
                                     Vector2.Zero, 1, SpriteEffects.None, 0.5f);
                                 break;
                         }
