@@ -37,7 +37,7 @@ namespace TowerDefensePrototype
             : base(position, yRange)
         {
             Speed = 0.59f;
-            MaxHP = 200;
+            MaxHP = 40;
             ResourceMinMax = new Vector2(8, 20);
             YRange = new Vector2(700, 900);
             IntelligenceRange = new Vector2(0f, 1.0f);
@@ -49,12 +49,14 @@ namespace TowerDefensePrototype
             CurrentMicroBehaviour = MicroBehaviour.MovingForwards;
 
             AngleRange = new Vector2(30, 60);
-            TowerDistanceRange = new Vector2(750, 850);
+            TowerDistanceRange = new Vector2(450, 580);
             TrapDistanceRange = new Vector2(250, 350);
             LaunchVelocityRange = new Vector2(12, 17);
             MaxFireDelay = 1500;
             CurrentFireDelay = 0;
             RangedDamage = 10;
+
+            ZDepth = 24;
 
             CurrentAngle = 0;
             EndAngle = 0;
@@ -77,7 +79,7 @@ namespace TowerDefensePrototype
                                     if (InTowerRange == false && TargetTrap != null && Velocity.X < 0)
                                     {
                                         TrapPosition = TargetTrap.BoundingBox.Min.X;
-                                        Position.X += (Math.Abs(TargetTrap.BoundingBox.Max.X - BoundingBox.Min.X) + 1);
+                                        Position += new Vector2((Math.Abs(TargetTrap.BoundingBox.Max.X - BoundingBox.Min.X) + 1), 0);
 
                                         //INTELLIGENCE DECISION REQUIRED HERE
                                         //It should affect the number of loop times
@@ -107,7 +109,7 @@ namespace TowerDefensePrototype
                                     if (InTowerRange == false && TargetTrap != null && Velocity.X > 0)
                                     {
                                         TrapPosition = TargetTrap.BoundingBox.Min.X;
-                                        Position.X -= (Math.Abs(TargetTrap.BoundingBox.Min.X - BoundingBox.Max.X) + 1);
+                                        Position -= new Vector2((Math.Abs(TargetTrap.BoundingBox.Min.X - BoundingBox.Max.X) + 1), 0);
 
                                         CurrentMicroBehaviour = MicroBehaviour.MovingForwards;
                                     }
@@ -123,7 +125,7 @@ namespace TowerDefensePrototype
                                     if (InTowerRange == false && TargetTrap != null && Velocity.X > 0)
                                     {
                                         TrapPosition = TargetTrap.BoundingBox.Min.X;
-                                        Position.X -= (Math.Abs(TargetTrap.BoundingBox.Min.X - BoundingBox.Max.X) + 1);
+                                        Position -= new Vector2((Math.Abs(TargetTrap.BoundingBox.Min.X - BoundingBox.Max.X) + 1), 0);
                                         MinTowerRange = Random.Next((int)TowerDistanceRange.X, (int)TowerDistanceRange.Y);
 
                                         CurrentMicroBehaviour = MicroBehaviour.MovingForwards;
@@ -135,7 +137,7 @@ namespace TowerDefensePrototype
                                     if (InTowerRange == false && TargetTrap != null && Velocity.X < 0)
                                     {
                                         TrapPosition = TargetTrap.BoundingBox.Min.X;
-                                        Position.X += (Math.Abs(TargetTrap.BoundingBox.Max.X - BoundingBox.Min.X) + 1);
+                                        Position += new Vector2((Math.Abs(TargetTrap.BoundingBox.Max.X - BoundingBox.Min.X) + 1), 0);
 
                                         //Definitely stuck between two traps. Attack the one behind it.
                                         //Might let other invaders in to help with the one in front
@@ -429,6 +431,7 @@ namespace TowerDefensePrototype
                                         {
                                             #region Trap was destroyed, attack tower again
                                             if (TargetTrap != null)
+                                            {
                                                 if (TargetTrap.CurrentHP <= 0)
                                                 {
                                                     EndAngle = 0;
@@ -440,6 +443,19 @@ namespace TowerDefensePrototype
                                                     ResetCollisions();
                                                     break;
                                                 }
+                                            }
+
+                                            if (TargetTrap == null)
+                                            {
+                                                EndAngle = 0;
+                                                TargetTrap = null;
+                                                HitObject = null;
+                                                InTrapRange = false;
+                                                CurrentMicroBehaviour = MicroBehaviour.AdjustTrajectory;
+                                                CurrentMacroBehaviour = MacroBehaviour.AttackTower;
+                                                ResetCollisions();
+                                                break;
+                                            }
                                             #endregion
 
                                             #region Hit the shield, must be quite close to tower. Attack tower instead

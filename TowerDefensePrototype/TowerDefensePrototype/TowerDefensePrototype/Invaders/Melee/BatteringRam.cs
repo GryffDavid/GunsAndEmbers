@@ -19,16 +19,17 @@ namespace TowerDefensePrototype
             //YRange = new Vector2(700, 900);
 
             InvaderType = InvaderType.BatteringRam;
+            ZDepth = 24;
 
-            InvaderAnimationState = AnimationState_Invader.Walk;
+            InvaderAnimationState = AnimationState_Invader.Stand;
             CurrentMacroBehaviour = MacroBehaviour.AttackTower;
-            CurrentMicroBehaviour = MicroBehaviour.MovingForwards;
+            CurrentMicroBehaviour = MicroBehaviour.Stationary;
 
             MeleeDamageStruct = new InvaderMeleeStruct()
             {
                 CurrentAttackDelay = 0,
                 MaxAttackDelay = 2000,
-                Damage = 10
+                Damage = 25
             };
         }
         
@@ -44,8 +45,10 @@ namespace TowerDefensePrototype
                         Direction.X = -1;
 
                         if (CurrentOperators == NeededOperators &&
-                            OperatorList.All(Invader => Vector2.Distance(Invader.Position, this.Position) < 2))
+                            OperatorList.All(Invader => Vector2.Distance(Invader.Center, this.Center) < 26 && Invader.Velocity == Vector2.Zero && Invader.Waypoints.Count == 0))
                         {
+                            OperatorList.ForEach(Invader => { Invader.CurrentMicroBehaviour = MicroBehaviour.MovingForwards; Invader.Speed = Speed; });
+
                             if (Slow == true)
                                 Velocity.X = Direction.X * SlowSpeed;
                             else
@@ -66,7 +69,15 @@ namespace TowerDefensePrototype
 
                         if (CurrentOperators == NeededOperators)
                         {
-                            CurrentMicroBehaviour = MicroBehaviour.Attack;
+                            if (TargetTrap != null)
+                                CurrentMacroBehaviour = MacroBehaviour.AttackTraps;
+
+                            CurrentMicroBehaviour = MicroBehaviour.Attack;                            
+                        }
+
+                        if (CurrentOperators < NeededOperators && CurrentOperators > 0)
+                        {
+                            OperatorList.ForEach(Invader => Invader.CurrentMicroBehaviour = MicroBehaviour.Stationary);
                         }
                     }
                     break;
@@ -75,7 +86,9 @@ namespace TowerDefensePrototype
                 #region Attack
                 case MicroBehaviour.Attack:
                     {
-                        int p = 0;
+                        Velocity.X = 0;
+
+                        UpdateMeleeDelay(gameTime);
                     }
                     break;
                 #endregion

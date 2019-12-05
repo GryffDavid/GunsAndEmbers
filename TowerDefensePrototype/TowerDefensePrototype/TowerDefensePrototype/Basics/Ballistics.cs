@@ -8,22 +8,31 @@ namespace TowerDefensePrototype
 {
     class Ballistics
     {
-        //HeavyProjectile HeavyProjectile;
-        //float TimeInAir;
-        //Vector2 LandingPosition;
+        double PredictedTimeToMax,
+               PredictedDistToOrigin, DistToGround, TimeMaxToGround,
+               TotalPredictedTime, PredictedXDist;
 
-        //double PredictedDistToOrigin, PredictedTimeToMax, DistToGround, TimeMaxToGround, TotalPredictedTime;//, PredictedXDist;
+        HeavyProjectile HeavyProjectile;
 
-        //public Ballistics(HeavyProjectile projectile)
-        //{
-        //    PredictedTimeToMax = (0 - projectile.Velocity.Y) / (projectile.Gravity / 16.666d);
-        //    PredictedDistToOrigin = -((projectile.Velocity.Y * PredictedTimeToMax) + ((0.5f * projectile.Gravity / 16.6666d) * Math.Pow(PredictedTimeToMax, 2))) / 16.6666d;
-        //    DistToGround = (PredictedDistToOrigin + (projectile.MaxY - projectile.Position.Y));
-        //    TimeMaxToGround = Math.Sqrt((DistToGround / ((projectile.Gravity * 0.5f) / 16.6666d)) * 16.6666d);
+        public Ballistics()
+        {
 
-        //    TotalPredictedTime = TimeMaxToGround + PredictedTimeToMax;
+        }
 
-        //    ////PredictedXDist = ((projectile.Velocity.X * TotalPredictedTime) / 16.666d) - (TotalPredictedTime / 16.666d * 0.999f) - projectile.Position.X;
-        //}
+        public float GetXDist(HeavyProjectile heavyProjectile)
+        {
+            HeavyProjectile = heavyProjectile;
+
+            PredictedTimeToMax = (0 - HeavyProjectile.Velocity.Y) / (HeavyProjectile.Gravity / 16.666d);
+            PredictedDistToOrigin = -((HeavyProjectile.Velocity.Y * PredictedTimeToMax) + ((0.5f * HeavyProjectile.Gravity / 16.6666d) * Math.Pow(PredictedTimeToMax, 2))) / 16.6666d;
+            DistToGround = (PredictedDistToOrigin + (720 / 2));
+            TimeMaxToGround = Math.Sqrt((DistToGround / ((HeavyProjectile.Gravity * 0.5f) / 16.6666d)) * 16.6666d);
+
+            TotalPredictedTime = TimeMaxToGround + PredictedTimeToMax;
+
+            PredictedXDist = 0 + (HeavyProjectile.Velocity.X * TotalPredictedTime) / 16.666d;
+
+            return (float)PredictedXDist;
+        }
     }
 }

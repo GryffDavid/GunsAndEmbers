@@ -303,6 +303,8 @@ namespace TowerDefensePrototype
         #region Trap sprites
         public List<TrapAnimation> WallAnimations, BarrelTrapAnimations, CatapultTrapAnimations, IceTrapAnimations, TarTrapAnimations,
                                    LineTrapAnimations, SawBladeTrapAnimations, SpikeTrapAnimations, FireTrapAnimations, LandMineTrapAnimations;
+
+        public Texture2D WallAmbShadow;
         #endregion
 
         #region Turret sprites
@@ -637,6 +639,7 @@ namespace TowerDefensePrototype
         List<Shield> ShieldList = new List<Shield>();
 
         SmokeTrail SmokeTrail = new SmokeTrail(new Vector2(200, 200));
+        Vector2 GroundRange = new Vector2(672, 896);
         //List<SmokeTrail> SmokeTrailList = new List<SmokeTrail>();
 
         //^:b*[^:b#/]+.*$//
@@ -1606,12 +1609,13 @@ namespace TowerDefensePrototype
         private void LoadTrapSprites()
         {
             #region Wall animations
+            WallAmbShadow = Content.Load<Texture2D>("Traps/Wall/WallShadow");
             WallAnimations = new List<TrapAnimation>()
             {
                 new TrapAnimation()
                 {
                     CurrentTrapState = TrapAnimationState.Untriggered,
-                    Texture = Content.Load<Texture2D>("Traps/WallTrap"),
+                    Texture = Content.Load<Texture2D>("Traps/Wall/WallTrap"),
                     Animated = false,
                     CurrentFrame = 0,
                     TotalFrames = 1,
@@ -2131,6 +2135,16 @@ namespace TowerDefensePrototype
                     effect.Draw(spriteBatch);
                 }
 
+                foreach (Trap trap in TrapList.Where(Trap => Trap.AmbientShadowTexture != null))
+                {
+                    spriteBatch.Draw(trap.AmbientShadowTexture, new Vector2(trap.DestinationRectangle.Left, trap.DestinationRectangle.Bottom - trap.ZDepth), Color.White);
+
+                    if (trap.DestinationRectangle.Contains(new Point((int)CursorPosition.X, (int)CursorPosition.Y)))
+                    {
+                        spriteBatch.Draw(WhiteBlock, BoundingBoxToRect(trap.CollisionBox), Color.DarkGray);
+                    }
+                }
+
                 //FocusedEmitter.Draw(spriteBatch);
 
                 Tower.Draw(spriteBatch);
@@ -2179,12 +2193,6 @@ namespace TowerDefensePrototype
                         }
                         else
                         {
-                            if (drawable.GetType() == typeof(BatteringRam))
-                            {
-                                int p = 0;
-                            }
-
-                            //drawable.Draw(GraphicsDevice, BasicEffect, ShadowBlurEffect, spriteBatch);
                             drawable.Draw(GraphicsDevice, BasicEffect, ShadowBlurEffect, LightList);
                         }
                     }
@@ -2316,7 +2324,7 @@ namespace TowerDefensePrototype
                 foreach (ExplosionEffect effect in ExplosionEffectList)
                 {
                     effect.Draw(spriteBatch);
-                }
+                }           
                 spriteBatch.End();               
                 #endregion
 
@@ -2409,9 +2417,6 @@ namespace TowerDefensePrototype
                 GraphicsDevice.Clear(Color.Transparent);
 
                 spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
-
-
-                
 
                 #region Draw diagnostics
                 if (Diagnostics == true)
@@ -2535,8 +2540,14 @@ namespace TowerDefensePrototype
                             spriteBatch.DrawString(TooltipFont, "Int:" + invader.Intelligence.ToString(), invader.Position + new Vector2(0, yPos), Color.White);
                             yPos += yInc;
 
-                            spriteBatch.DrawString(TooltipFont, "MaxY:" + invader.DrawDepth.ToString(), invader.Position + new Vector2(0, yPos), Color.White);
+                            spriteBatch.DrawString(TooltipFont, "DrawDepth:" + invader.DrawDepth.ToString(), invader.Position + new Vector2(0, yPos), Color.White);
                             yPos += yInc;
+
+                            if (invader.OperatingVehicle != null)
+                            {
+                                spriteBatch.DrawString(TooltipFont, "OperatingVehicle:" + invader.OperatingVehicle.InvaderType.ToString(), invader.Position + new Vector2(0, yPos), Color.White);
+                                yPos += yInc;
+                            }
                         }
                     }
                 }
@@ -2613,7 +2624,9 @@ namespace TowerDefensePrototype
                 #region Draw trap bars, outline and quickinfo
                 foreach (Trap trap in TrapList)
                 {
-                    trap.DrawBars(GraphicsDevice, QuadEffect);
+                    if (trap.DestinationRectangle.Contains(VectorToPoint(CursorPosition)))
+                        trap.DrawBars(GraphicsDevice, QuadEffect);
+
                     trap.TrapOutline.Draw(spriteBatch);
                     trap.TrapQuickInfo.Draw(GraphicsDevice, QuadEffect, spriteBatch);
                 }
@@ -2736,6 +2749,90 @@ namespace TowerDefensePrototype
                         Vertices[0] = new VertexPositionColorTexture()
                         {
                             Color = drawableColor,
+                            Position = drawable.CollisionBox.Min,
+                            TextureCoordinate = new Vector2(0, 0)
+                        };
+
+                        Vertices[1] = new VertexPositionColorTexture()
+                        {
+                            Color = drawableColor,
+                            Position = new Vector3(drawable.CollisionBox.Max.X, drawable.CollisionBox.Min.Y, 0),
+                            TextureCoordinate = new Vector2(1, 0)
+                        };
+
+                        Vertices[2] = new VertexPositionColorTexture()
+                        {
+                            Color = drawableColor,
+                            Position = drawable.CollisionBox.Max,
+                            TextureCoordinate = new Vector2(1, 1)
+                        };
+
+                        Vertices[3] = new VertexPositionColorTexture()
+                        {
+                            Color = drawableColor,
+                            Position = new Vector3(drawable.CollisionBox.Min.X, drawable.CollisionBox.Max.Y, 0),
+                            TextureCoordinate = new Vector2(0, 1)
+                        };
+
+                        Indices[0] = 0;
+                        Indices[1] = 1;
+
+                        Indices[2] = 2;
+                        Indices[3] = 3;
+
+                        Indices[4] = 0;
+
+                        Indices[5] = 2;
+                        Indices[6] = 0;
+                        
+                        foreach (EffectPass pass in BasicEffect2.CurrentTechnique.Passes)
+                        {
+                            pass.Apply();
+                            GraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.LineStrip, Vertices, 0, 4, Indices, 0, 6, VertexPositionColorTexture.VertexDeclaration);
+                        }
+                    }
+
+                    foreach (Drawable drawable in DrawableList)
+                    {
+                        Color drawableColor = Color.White;
+
+                        //if (drawable.GetType().BaseType == typeof(Trap))
+                        //{
+                        //    drawableColor = Color.Fuchsia;
+                        //}
+
+                        if (drawable.GetType().BaseType == typeof(Invader))
+                        {
+                            drawableColor = Color.Red;
+                        }
+
+                        if (drawable.GetType().BaseType == typeof(LightRangedInvader))
+                        {
+                            drawableColor = Color.Yellow;
+                        }
+
+                        if (drawable.GetType().BaseType == typeof(HeavyRangedInvader))
+                        {
+                            drawableColor = Color.Violet;
+
+                            if (drawable.GetType() == typeof(ShieldGenerator))
+                            {
+                                spriteBatch.Draw(ShieldBoundingSphere,
+                                    new Rectangle(
+                                        (int)(drawable as ShieldGenerator).Center.X - (int)(drawable as ShieldGenerator).ShieldRadius,
+                                        (int)(drawable as ShieldGenerator).Center.Y - (int)(drawable as ShieldGenerator).ShieldRadius,
+                                        (int)(drawable as ShieldGenerator).ShieldRadius * 2,
+                                        (int)(drawable as ShieldGenerator).ShieldRadius * 2), Color.White);
+                            }
+                        }
+
+                        //Draw the debug bounding boxes here
+                        VertexPositionColorTexture[] Vertices = new VertexPositionColorTexture[4];
+                        int[] Indices = new int[8];
+
+                        Vertices[0] = new VertexPositionColorTexture()
+                        {
+                            Color = drawableColor,
                             Position = drawable.BoundingBox.Min,
                             TextureCoordinate = new Vector2(0, 0)
                         };
@@ -2771,7 +2868,135 @@ namespace TowerDefensePrototype
 
                         Indices[5] = 2;
                         Indices[6] = 0;
-                        
+
+                        foreach (EffectPass pass in BasicEffect2.CurrentTechnique.Passes)
+                        {
+                            pass.Apply();
+                            GraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.LineStrip, Vertices, 0, 4, Indices, 0, 6, VertexPositionColorTexture.VertexDeclaration);
+                        }
+                    }
+
+                    foreach (Drawable drawable in DrawableList.Where(Drawable => Drawable.GetType().BaseType == typeof(Invader)))
+                    {
+                        Color drawableColor = Color.White;
+                        Invader inv = drawable as Invader;
+                        //if (drawable.GetType().BaseType == typeof(Trap))
+                        //{
+                        //    drawableColor = Color.Fuchsia;
+                        //}
+
+                        if (drawable.GetType().BaseType == typeof(Invader))
+                        {
+                            drawableColor = Color.White;
+                        }
+
+                        //Draw the debug bounding boxes here
+                        VertexPositionColorTexture[] Vertices = new VertexPositionColorTexture[4];
+                        int[] Indices = new int[8];
+
+                        Vertices[0] = new VertexPositionColorTexture()
+                        {
+                            Color = drawableColor,
+                            Position = new Vector3(inv.DestinationRectangle.X, inv.DestinationRectangle.Y, 0),
+                            TextureCoordinate = new Vector2(0, 0)
+                        };
+
+                        Vertices[1] = new VertexPositionColorTexture()
+                        {
+                            Color = drawableColor,
+                            Position = new Vector3(inv.DestinationRectangle.Right, inv.DestinationRectangle.Y, 0),
+                            TextureCoordinate = new Vector2(1, 0)
+                        };
+
+                        Vertices[2] = new VertexPositionColorTexture()
+                        {
+                            Color = drawableColor,
+                            Position = new Vector3(inv.DestinationRectangle.Right, inv.DestinationRectangle.Bottom, 0),
+                            TextureCoordinate = new Vector2(1, 1)
+                        };
+
+                        Vertices[3] = new VertexPositionColorTexture()
+                        {
+                            Color = drawableColor,
+                            Position = new Vector3(inv.DestinationRectangle.Left, inv.DestinationRectangle.Bottom, 0),
+                            TextureCoordinate = new Vector2(0, 1)
+                        };
+
+                        Indices[0] = 0;
+                        Indices[1] = 1;
+
+                        Indices[2] = 2;
+                        Indices[3] = 3;
+
+                        Indices[4] = 0;
+
+                        Indices[5] = 2;
+                        Indices[6] = 0;
+
+                        foreach (EffectPass pass in BasicEffect2.CurrentTechnique.Passes)
+                        {
+                            pass.Apply();
+                            GraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.LineStrip, Vertices, 0, 4, Indices, 0, 6, VertexPositionColorTexture.VertexDeclaration);
+                        }
+                    }
+
+                    foreach (Drawable drawable in DrawableList.Where(Drawable => Drawable.GetType().BaseType == typeof(Invader)))
+                    {
+                        Color drawableColor = Color.White;
+                        Invader inv = drawable as Invader;
+                        //if (drawable.GetType().BaseType == typeof(Trap))
+                        //{
+                        //    drawableColor = Color.Fuchsia;
+                        //}
+
+                        if (drawable.GetType().BaseType == typeof(Invader))
+                        {
+                            drawableColor = Color.Purple * 0.5f;
+                        }
+
+                        //Draw the debug bounding boxes here
+                        VertexPositionColorTexture[] Vertices = new VertexPositionColorTexture[4];
+                        int[] Indices = new int[8];
+
+                        Vertices[0] = new VertexPositionColorTexture()
+                        {
+                            Color = drawableColor,
+                            Position = inv.invaderVertices[0].Position,
+                            TextureCoordinate = new Vector2(0, 0)
+                        };
+
+                        Vertices[1] = new VertexPositionColorTexture()
+                        {
+                            Color = drawableColor,
+                            Position = inv.invaderVertices[1].Position,
+                            TextureCoordinate = new Vector2(1, 0)
+                        };
+
+                        Vertices[2] = new VertexPositionColorTexture()
+                        {
+                            Color = drawableColor,
+                            Position = inv.invaderVertices[2].Position,
+                            TextureCoordinate = new Vector2(1, 1)
+                        };
+
+                        Vertices[3] = new VertexPositionColorTexture()
+                        {
+                            Color = drawableColor,
+                            Position = inv.invaderVertices[3].Position,
+                            TextureCoordinate = new Vector2(0, 1)
+                        };
+
+                        Indices[0] = 0;
+                        Indices[1] = 1;
+
+                        Indices[2] = 2;
+                        Indices[3] = 3;
+
+                        Indices[4] = 0;
+
+                        Indices[5] = 2;
+                        Indices[6] = 0;
+
                         foreach (EffectPass pass in BasicEffect2.CurrentTechnique.Passes)
                         {
                             pass.Apply();
@@ -2926,39 +3151,32 @@ namespace TowerDefensePrototype
                     {
                         GameButtonsUpdate(gameTime);
 
-                        SortDrawables();
+                        #region Sort Drawables if there is a change and overlap
+                        foreach (Drawable drawable in DrawableList)
+                        {
+                            foreach (Drawable drawable2 in DrawableList)
+                            {
+                                if (drawable != drawable2 && Approx(drawable.PreviousMaxY, drawable2.MaxY, 0.5f))
+                                {
+                                    SortDrawables();
+                                }
+                            }
+                        }
+                        #endregion
 
                         #region Show diagnostics
                         if (CurrentMouseState.LeftButton == ButtonState.Released &&
                            CurrentKeyboardState.IsKeyUp(Keys.F1) &&
                            PreviousKeyboardState.IsKeyDown(Keys.F1))
                         {
-                            switch (Diagnostics)
-                            {
-                                case false:
-                                    Diagnostics = true;
-                                    break;
-
-                                case true:
-                                    Diagnostics = false;
-                                    break;
-                            }
+                            Diagnostics = !Diagnostics;
                         }
 
                         if (CurrentMouseState.LeftButton == ButtonState.Released &&
                            CurrentKeyboardState.IsKeyUp(Keys.F3) &&
                            PreviousKeyboardState.IsKeyDown(Keys.F3))
                         {
-                            switch (BoundingBoxes)
-                            {
-                                case false:
-                                    BoundingBoxes = true;
-                                    break;
-
-                                case true:
-                                    BoundingBoxes = false;
-                                    break;
-                            }
+                            BoundingBoxes = !BoundingBoxes;
                         }
 
                         //Hold left control and click on an invader to show its diagnostics
@@ -2969,16 +3187,15 @@ namespace TowerDefensePrototype
                                 CurrentKeyboardState.IsKeyDown(Keys.LeftControl) &&
                                 invader.DestinationRectangle.Contains(VectorToPoint(CursorPosition)))
                             {
-                                switch (invader.ShowDiagnostics)
-                                {
-                                    case true:
-                                        invader.ShowDiagnostics = false;
-                                        break;
+                                invader.ShowDiagnostics = !invader.ShowDiagnostics;
+                            }
 
-                                    case false:
-                                        invader.ShowDiagnostics = true;
-                                        break;
-                                }
+                            if (CurrentMouseState.RightButton == ButtonState.Released &&
+                                PreviousMouseState.RightButton == ButtonState.Pressed &&
+                                CurrentKeyboardState.IsKeyDown(Keys.LeftControl) &&
+                                invader.DestinationRectangle.Contains(VectorToPoint(CursorPosition)))
+                            {
+                                invader.CurrentHP = 0;
                             }
                         }
                         #endregion
@@ -3068,7 +3285,8 @@ namespace TowerDefensePrototype
                         ResourceCounter.Update(gameTime);
 
                         //PowerUnitsBar ended up being null for some reason. Keep an eye on it.
-                        PowerUnitsBar.Update(Tower.CurrentPowerUnits, Tower.MaxPowerUnits);
+                        if (PowerUnitsBar != null)
+                            PowerUnitsBar.Update(Tower.CurrentPowerUnits, Tower.MaxPowerUnits);
 
                         HealthBar.Update(Tower.MaxHP, Tower.CurrentHP, gameTime);
                         ShieldBar.Update(Tower.Shield.MaxShield, Tower.Shield.CurrentShield, gameTime);
@@ -3096,8 +3314,8 @@ namespace TowerDefensePrototype
                         {
                             if (ReadyToPlace == true &&
                                 CursorPosition.X > (Tower.Position.X + Tower.Texture.Width) &&
-                                (CursorPosition.Y - CursorPosition.Y % 32) <= 896 &&
-                                (CursorPosition.Y - CursorPosition.Y % 32) >= 672 &&
+                                (CursorPosition.Y - CursorPosition.Y % 32) >= GroundRange.X &&
+                                (CursorPosition.Y - CursorPosition.Y % 32) <= GroundRange.Y &&                                
                                 SelectedTrap != null &&
                                 TrapList.All(Trap => !Trap.DestinationRectangle.Contains(VectorToPoint(CursorPosition))))
                             {
@@ -3108,82 +3326,120 @@ namespace TowerDefensePrototype
                         #region Update and clean PowerupsList
                         if (PowerupsList.Count > 0)
                         {
-                            for (int i = 0; i < PowerupsList.Count; i++)
-                            {
-                                PowerupsList[i].Update(gameTime);
+                            PowerupsList.ForEach(Powerup => Powerup.Update(gameTime));
+                            PowerupsList.RemoveAll(Powerup => Powerup.Active == false);
 
-                                if (PowerupsList[i].Active == false)
-                                {
-                                    PowerupsList.RemoveAt(i);
-                                }
-                            }
+                            //for (int i = 0; i < PowerupsList.Count; i++)
+                            //{
+                            //    PowerupsList[i].Update(gameTime);
+
+                            //    if (PowerupsList[i].Active == false)
+                            //    {
+                            //        PowerupsList.RemoveAt(i);
+                            //    }
+                            //}
                         }
                         #endregion
                         
                         #region Handle Particle Emitters and Particles
-                        //UpdateWeather(gameTime);
 
-                        for (int s = 0; s < VerletShells.Count; s++)
-                        {
-                            VerletShells[s].Update(gameTime);
-
-                            if (VerletShells[s].Active == false)
+                        VerletShells.ForEach(Shell => 
                             {
-                                DrawableList.Remove(VerletShells[s]);
-                            }
-                        }
+                                Shell.Update(gameTime);
+
+                                if (Shell.Active == false)
+                                {
+                                    DrawableList.Remove(Shell);
+                                }
+                            });
+
+                        VerletShells.RemoveAll(Shell => Shell.Active == false);
+
+                        //VerletShells.ForEach(x => { x.Update(gameTime); if (x.Active == false) VerletShells.Remove(x); });
+
+                        //for (int s = 0; s < VerletShells.Count; s++)
+                        //{
+                        //    VerletShells[s].Update(gameTime);
+
+                        //    if (VerletShells[s].Active == false)
+                        //    {
+                        //        DrawableList.Remove(VerletShells[s]);
+                        //    }
+                        //}
 
                         #region Handle YSortedEmitterList
-                        for (int i = 0; i < YSortedEmitterList.Count; i++)
+                        YSortedEmitterList.ForEach(Emitter => 
                         {
-                            Emitter emitter = YSortedEmitterList[i];
+                            Emitter.Update(gameTime);
 
-                            emitter.Update(gameTime);
-
-                            if (emitter.AddMore == false && emitter.ParticleList.Count == 0)
+                            if (Emitter.Active == false || (Emitter.AddMore == false && Emitter.ParticleList.Count == 0))
                             {
-                                YSortedEmitterList.RemoveAt(i);
-                                DrawableList.Remove(emitter);
+                                DrawableList.Remove(Emitter);
                             }
-                        }
+                        });
+
+                        YSortedEmitterList.RemoveAll(Emitter => Emitter.Active == false || (Emitter.AddMore == false && Emitter.ParticleList.Count == 0));
+                        
+                        //for (int i = 0; i < YSortedEmitterList.Count; i++)
+                        //{
+                        //    Emitter emitter = YSortedEmitterList[i];
+
+                        //    emitter.Update(gameTime);
+
+                        //    if (emitter.AddMore == false && emitter.ParticleList.Count == 0)
+                        //    {
+                        //        YSortedEmitterList.RemoveAt(i);
+                        //        DrawableList.Remove(emitter);
+                        //    }
+                        //}
                         #endregion
 
                         #region Handle AlphaEmitterList
-                        foreach (Emitter emitter in AlphaEmitterList)
-                        {
-                            emitter.Update(gameTime);
-                        }
+                        AlphaEmitterList.ForEach(Emitter => Emitter.Update(gameTime));
+                        AlphaEmitterList.RemoveAll(Emitter => Emitter.Active == false || (Emitter.AddMore == false && Emitter.ParticleList.Count == 0));
 
-                        AlphaEmitterList.RemoveAll(Emitter => Emitter.Active == false);
-                        AlphaEmitterList.RemoveAll(Emitter => Emitter.AddMore == false && Emitter.ParticleList.Count == 0);
+                        //foreach (Emitter emitter in AlphaEmitterList)
+                        //{
+                        //    emitter.Update(gameTime);
+                        //}
+
+                        //AlphaEmitterList.RemoveAll(Emitter => Emitter.Active == false);
+                        //AlphaEmitterList.RemoveAll(Emitter => Emitter.AddMore == false && Emitter.ParticleList.Count == 0);
                         #endregion
 
                         #region Handle AdditiveEmitterList
-                        foreach (Emitter emitter in AdditiveEmitterList)
-                        {
-                            emitter.Update(gameTime);
-                        }
+                        AlphaEmitterList.ForEach(Emitter => Emitter.Update(gameTime));
+                        AlphaEmitterList.RemoveAll(Emitter => Emitter.Active == false || (Emitter.AddMore == false && Emitter.ParticleList.Count == 0));
+                        //foreach (Emitter emitter in AdditiveEmitterList)
+                        //{
+                        //    emitter.Update(gameTime);
+                        //}
 
-                        AdditiveEmitterList.RemoveAll(Emitter => Emitter.Active == false);
-                        AdditiveEmitterList.RemoveAll(Emitter => Emitter.AddMore == false && Emitter.ParticleList.Count == 0);
+                        //AdditiveEmitterList.RemoveAll(Emitter => Emitter.Active == false);
+                        //AdditiveEmitterList.RemoveAll(Emitter => Emitter.AddMore == false && Emitter.ParticleList.Count == 0);
                         #endregion
 
                         #region Handle GasEmitterList
-                        foreach (Emitter emitter in GasEmitterList)
-                        {
-                            emitter.Update(gameTime);
-                        }
+                        GasEmitterList.ForEach(Emitter => Emitter.Update(gameTime));
+                        GasEmitterList.RemoveAll(Emitter => Emitter.Active == false || (Emitter.AddMore == false && Emitter.ParticleList.Count == 0));
 
-                        GasEmitterList.RemoveAll(Emitter => Emitter.Active == false);
-                        GasEmitterList.RemoveAll(Emitter => Emitter.AddMore == false && Emitter.ParticleList.Count == 0);
+                        //foreach (Emitter emitter in GasEmitterList)
+                        //{
+                        //    emitter.Update(gameTime);
+                        //}
+
+                        //GasEmitterList.RemoveAll(Emitter => Emitter.Active == false);
+                        //GasEmitterList.RemoveAll(Emitter => Emitter.AddMore == false && Emitter.ParticleList.Count == 0);
                         #endregion
 
-
-                        foreach (Particle coin in CoinList)
-                        {
-                            coin.Update(gameTime);
-                        }
+                        CoinList.ForEach(Coin => Coin.Update(gameTime));
                         CoinList.RemoveAll(Coin => Coin.Active == false);
+
+                        //foreach (Particle coin in CoinList)
+                        //{
+                        //    coin.Update(gameTime);
+                        //}
+                        //CoinList.RemoveAll(Coin => Coin.Active == false);
 
                         TotalParticles = 0;
                         foreach (Emitter emitter in YSortedEmitterList)
@@ -3293,12 +3549,35 @@ namespace TowerDefensePrototype
                             {
                                 if (TrapList[t].CurrentHP <= 0)
                                 {
+                                    InvaderList.ForEach(Invader =>
+                                    {
+                                        if (Invader.TargetTrap == TrapList[t])
+                                        {
+                                            Invader.TargetTrap = null;
+                                        }
+                                    });
+
                                     DrawableList.Remove(TrapList[t]);
                                     TrapList.Remove(TrapList[t]);
                                 }
                             }
                         }
 
+                        //trap.Update(gameTime);
+
+                        //if (trap.Active == false)
+                        //{
+                        //    InvaderList.ForEach(Invader =>
+                        //    {
+                        //        if (Invader.TargetTrap == trap)
+                        //        {
+                        //            Invader.TargetTrap = null;
+                        //        }
+                        //    });
+
+                        //    TrapList.Remove(trap);
+                        //    DrawableList.Remove(trap);
+                        //}
                         #endregion
 
                         #region Powerup Delivery stuff
@@ -3412,24 +3691,30 @@ namespace TowerDefensePrototype
                         #endregion
 
                         #region Update and clean TrailList
-                        for (int i = 0; i < TrailList.Count; i++)
-                        {
-                            BulletTrail trail = TrailList[i];
-                            trail.Update(gameTime);
+                        TrailList.ForEach(Trail => Trail.Update(gameTime));
+                        TrailList.RemoveAll(Trail => Trail.Color == Color.Transparent);
+                        
+                        //for (int i = 0; i < TrailList.Count; i++)
+                        //{
+                        //    BulletTrail trail = TrailList[i];
+                        //    trail.Update(gameTime);
 
-                            if (trail.Color == Color.Transparent)
-                                TrailList.RemoveAt(i);
-                        }
+                        //    if (trail.Color == Color.Transparent)
+                        //        TrailList.RemoveAt(i);
+                        //}
                         #endregion
 
                         #region Update and clean DecalList
-                        for (int i = 0; i < DecalList.Count; i++)
-                        {
-                            DecalList[i].Update(gameTime);
+                        DecalList.ForEach(Decal => Decal.Update(gameTime));
+                        DecalList.RemoveAll(Decal => Decal.TransparencyPercentage <= 0);
 
-                            if (DecalList[i].TransparencyPercentage <= 0)
-                                DecalList.RemoveAt(i);
-                        }
+                        //for (int i = 0; i < DecalList.Count; i++)
+                        //{
+                        //    DecalList[i].Update(gameTime);
+
+                        //    if (DecalList[i].TransparencyPercentage <= 0)
+                        //        DecalList.RemoveAt(i);
+                        //}
                         #endregion
 
                         ShockWaveEffect.Parameters["CurrentTime"].SetValue(ShockWaveEffect.Parameters["CurrentTime"].GetValueSingle() + (float)(gameTime.ElapsedGameTime.TotalSeconds));
@@ -3437,11 +3722,7 @@ namespace TowerDefensePrototype
                         #endregion
 
                         #region Handle number changes for damage etc.
-                        foreach (NumberChange numChange in NumberChangeList)
-                        {
-                            numChange.Update(gameTime);
-                        }
-
+                        NumberChangeList.ForEach(Change => Change.Update(gameTime));
                         NumberChangeList.RemoveAll(NumChange => NumChange.Active == false);
                         #endregion
 
@@ -3514,13 +3795,15 @@ namespace TowerDefensePrototype
 
                         if (ShieldList.Count > 0)
                         {
-                            for (int s = 0; s < ShieldList.Count; s++)
-                            {
-                                if ((ShieldList[s].Tether as Invader).Active == false)
-                                {
-                                    ShieldList.RemoveAt(s);
-                                }
-                            }
+                            ShieldList.RemoveAll(Shield => (Shield.Tether as Invader).Active == false);
+
+                            //for (int s = 0; s < ShieldList.Count; s++)
+                            //{
+                            //    if ((ShieldList[s].Tether as Invader).Active == false)
+                            //    {
+                            //        ShieldList.RemoveAt(s);
+                            //    }
+                            //}
                         }
 
                         //Powerups have to be applied before the invaders are updated and after the explosions and projectiles are updated
@@ -3600,9 +3883,9 @@ namespace TowerDefensePrototype
                                             MathHelper.ToDegrees(-(float)Math.Atan2(-DirectionToInvader.Y, -DirectionToInvader.X)) - (float)RandomDouble(0, 45),
                                             MathHelper.ToDegrees(-(float)Math.Atan2(-DirectionToInvader.Y, -DirectionToInvader.X)) + (float)RandomDouble(0, 45)),
                                             new Vector2((float)(0.1 * Damage), (float)(0.23 * Damage)), new Vector2(80, 130), 0.5f, true, new Vector2(0, 360),
-                                            new Vector2(1, 3), new Vector4(0.01f, 0.03f, 0.01f, 0.03f), Color.Red, Color.DarkRed,
-                                            0.1f, 0.1f, 3, 5, true, new Vector2(invader.MaxY - 8, invader.MaxY + 8), false, 0, true, false,
-                                            null, null, null, null, null, true, true, 1000);
+                                            new Vector2(1, 3), new Vector4(0.01f, 0.03f, 0.01f, 0.03f), Color.Red, Color.Red,
+                                            0.1f, 0.1f, 3, 5, true, new Vector2(invader.MaxY - 8, invader.MaxY + 8), false, (invader.DestinationRectangle.Bottom - 1) / 1080f, true, false,
+                                            null, null, null, null, null, false, false, 1000);
                         BloodEmitter.Grow = true;
 
                         YSortedEmitterList.Add(BloodEmitter);
@@ -4213,7 +4496,7 @@ namespace TowerDefensePrototype
                                     {
                                         int resourceCost = TurretCost(SelectedTurret.Value);
 
-                                        if (Resources >= resourceCost)
+                                        if (Resources >= resourceCost && TurretList[Index] == null)
                                         {
                                             TowerButtonList[Index].ButtonActive = false;
                                             Turret newTurret = GetNewTurret(SelectedTurret.Value, Index);
@@ -5031,10 +5314,263 @@ namespace TowerDefensePrototype
 
                 invader.Update(gameTime, CursorPosition);
 
+                //This handles specific invader AI - not generic behaviour
+                switch (invader.InvaderType)
+                {
+                    case InvaderType.Soldier:
+                        {
+                            Soldier soldier = invader as Soldier;
+
+                            //if (soldier.OperatingVehicle != null)
+                            //{
+                            //    soldier.Velocity.X = 0;
+                            //}
+
+                            if (soldier.Direction.X < 0)
+                            {
+                                soldier.Orientation = SpriteEffects.None;
+                            }
+                            else
+                            {
+                                soldier.Orientation = SpriteEffects.FlipHorizontally;
+                            }
+                        }
+                        break;
+
+                    #region Battering Ram
+                    case InvaderType.BatteringRam:
+                        {
+                            BatteringRam batteringRam = invader as BatteringRam;
+                            int MissingOperators = batteringRam.NeededOperators - batteringRam.CurrentOperators;
+
+                            if (batteringRam.CurrentOperators < batteringRam.NeededOperators)
+                            {
+                                List<Invader> closeInvaders = InvaderList.OrderByDescending(Invader => Vector2.Distance(Invader.Position, batteringRam.Position)).ToList();
+                                closeInvaders.RemoveAll(Invader => Invader.InvaderType != InvaderType.Soldier ||
+                                                                   (Invader.InvaderType == InvaderType.Soldier && Invader.OperatingVehicle != null));
+
+                                if (closeInvaders.Count >= MissingOperators)
+                                {
+                                    closeInvaders = closeInvaders.GetRange(0, MissingOperators).ToList();
+                                    batteringRam.OperatorList.AddRange(closeInvaders);
+                                }
+
+                                foreach (Invader pilot in batteringRam.OperatorList.Where(Invader => Invader.OperatingVehicle == null))
+                                {
+                                    pilot.TargetTrap = null;
+
+                                    pilot.SetOperatingVehicle(ref invader);
+
+                                    pilot.CurrentMacroBehaviour = MacroBehaviour.OperateVehicle;
+                                    pilot.CurrentMicroBehaviour = MicroBehaviour.FollowWaypoints;
+
+                                    Pathfinder pathfinder = new Pathfinder(TrapList, InvaderList,
+                                        new Vector2(pilot.Position.X, pilot.MaxY),
+                                        new Vector2(batteringRam.Position.X + batteringRam.DestinationRectangle.Width / 2,
+                                                    batteringRam.MaxY + 8 - (24 * batteringRam.OperatorList.IndexOf(pilot))));
+
+                                    pilot.Pathfinder = pathfinder;
+                                }
+                            }
+                        }
+                        break;
+                    #endregion
+
+                    #region Healer Drone
+                    case InvaderType.HealDrone:
+                        {
+                            HealDrone drone = invader as HealDrone;
+
+                            #region Choose target
+                            if (drone.HasTarget == false)
+                            {
+                                List<Invader> InRangeAndHurt = InvaderList.FindAll(Invader =>
+                                    Invader.Position.X > Tower.DestinationRectangle.Right + 350 &&
+                                    Invader.CurrentHP < Invader.MaxHP &&
+                                    Invader.InvaderType != InvaderType.HealDrone &&
+                                    Invader.InvaderType != InvaderType.StationaryCannon &&
+                                    Invader.IsBeingHealed == false &&
+                                    Invader.IsTargeted == false);
+
+                                if (InRangeAndHurt.Count > 0)
+                                {
+                                    InRangeAndHurt = InRangeAndHurt.OrderByDescending(Invader => Invader.Position.X).ToList();
+
+                                    drone.HealTarget = InRangeAndHurt[0];
+                                    drone.HealTarget.CurrentHealDelay = 0;
+                                    drone.HealTarget.HealDelay = 500;
+                                    drone.HealTarget.IsTargeted = true;
+                                    drone.IsHealing = true;
+                                    drone.HasTarget = true;
+                                    drone.CurrentHeight = drone.HealTarget.BoundingBox.Min.Y - 150;
+                                }
+                                else
+                                {
+                                    #region Idle behaviour
+                                    if (drone.BoundingBox.Min.Y < drone.CurrentHeight - 30)
+                                    {
+                                        drone.Velocity.Y = LerpTime(drone.Velocity.Y, 1 * drone.Speed, 0.1f, gameTime);
+                                    }
+
+                                    if (drone.BoundingBox.Min.Y > drone.CurrentHeight + 30)
+                                    {
+                                        drone.Velocity.Y = LerpTime(drone.Velocity.Y, -1 * drone.Speed, 0.1f, gameTime);
+                                    }
+                                    #endregion
+                                }
+                            }
+                            #endregion
+
+                            if (drone.HasTarget == true)
+                            {
+                                #region The target got too close to the tower
+                                if (drone.HealTarget.Position.X < Tower.DestinationRectangle.Right + 350)
+                                {
+                                    drone.HasTarget = false;
+                                    drone.IsHealing = false;
+                                    drone.HealTarget.IsBeingHealed = false;
+                                    drone.HealTarget.IsTargeted = false;
+
+                                    drone.CurrentHeight = (float)RandomDouble(drone.YRange.X, drone.YRange.Y);
+                                    drone.Velocity.X = 0;
+                                }
+                                #endregion
+
+                                #region The drone isn't yet close enough to start healing
+                                if (Math.Abs(drone.Center.X - drone.HealTarget.Center.X) > 100)
+                                {
+                                    drone.Direction = drone.HealTarget.Center - drone.Center;
+                                    drone.Direction.Normalize();
+                                    drone.Velocity.X = LerpTime(drone.Velocity.X, drone.Direction.X * 5f, 0.05f, gameTime);
+                                    drone.Speed = 2.5f;
+                                }
+                                #endregion
+
+                                #region Orient the drone correctly
+                                if (drone.HealTarget != null)
+                                {
+                                    if (drone.HealTarget.Center.X > drone.Center.X)
+                                    {
+                                        drone.Orientation = SpriteEffects.FlipHorizontally;
+                                    }
+
+                                    if (drone.HealTarget.Center.X < drone.Center.X)
+                                    {
+                                        drone.Orientation = SpriteEffects.None;
+                                    }
+                                }
+                                #endregion
+
+                                #region If the target reaches full health, disengage healing
+                                if (drone.HealTarget.CurrentHP >= drone.HealTarget.MaxHP)
+                                {
+                                    drone.HealTarget.IsBeingHealed = false;
+                                    drone.HealTarget.IsTargeted = false;
+                                    drone.HasTarget = false;
+                                    drone.IsHealing = false;
+
+                                    drone.CurrentHeight = (float)RandomDouble(drone.YRange.X, drone.YRange.Y);
+                                    drone.Velocity.X = 0;
+                                }
+                                #endregion
+
+                                #region The drone is close enough to the target to start healing
+                                if (Vector2.Distance(drone.HealTarget.Center, drone.Center) < 200 &&
+                                    drone.HealTarget.CurrentHP < drone.HealTarget.MaxHP)
+                                {
+                                    drone.HealTarget.IsBeingHealed = true;
+
+                                    #region Actually heal the target
+                                    if (drone.HealTarget.CurrentHealDelay >= drone.HealTarget.HealDelay)
+                                    {
+                                        drone.HealTarget.HealDamage(1);
+                                        drone.HealTarget.CurrentHealDelay = 0;
+                                    }
+                                    #endregion
+
+                                    #region Make sure there's a beam
+                                    if (drone.BoltList.Count < 5)
+                                    {
+                                        Lightning = new LightningBolt(drone, drone.HealTarget, new Color(0, 150, 30, 255), 0.02f, 75f, true);
+                                        drone.BoltList.Add(Lightning);
+                                        LightningList.AddRange(drone.BoltList);
+                                    }
+                                    else
+                                    {
+                                        foreach (LightningBolt bolt in drone.BoltList)
+                                        {
+                                            bolt.Source = drone.Center + new Vector2(0, 8);
+                                            bolt.Destination = drone.HealTarget.Center;
+                                        }
+                                    }
+                                    #endregion
+                                }
+                                #endregion
+
+                                //THE DRONE MOVEMENT NEEDS TO BE A BIT RANDOM SO THAT TWO DRONES AREN'T MOVING EXACTLY THE SAME
+                                //AT THE SAME TIME. MAYBE JUST ADD OR SUBTRACT A TINY RANDOM NUMBER FROM VELOCITIES
+                                if (drone.BoundingBox.Min.Y < drone.CurrentHeight - 30)
+                                {
+                                    drone.Velocity.Y = LerpTime(drone.Velocity.Y, 1 * drone.Speed, 0.1f, gameTime);
+                                }
+
+                                if (drone.BoundingBox.Min.Y > drone.CurrentHeight + 30)
+                                {
+                                    drone.Velocity.Y = LerpTime(drone.Velocity.Y, -1 * drone.Speed, 0.1f, gameTime);
+                                }
+                            }
+
+                            #region The heal target died
+                            if (drone.HasTarget == true)
+                            {
+                                if (drone.HealTarget == null || drone.HealTarget.Active == false)
+                                {
+                                    drone.HasTarget = false;
+                                    drone.IsHealing = false;
+                                    drone.BoltList.Clear();
+
+                                    drone.CurrentHeight = (float)RandomDouble(drone.YRange.X, drone.YRange.Y);
+                                    drone.Velocity.X = 0;
+                                }
+                            }
+                            #endregion
+                        }
+                        break;
+                    #endregion
+
+                    #region Jumpman
+                    case InvaderType.JumpMan:
+                        {
+                            JumpMan jumpMan = invader as JumpMan;
+
+                            foreach (Trap trap in TrapList)
+                            {
+                                //Check if the invader is close enough to the trap in the X axis
+                                //Check if the invader is also in-line with the Y axis of the trap
+                            }
+                        }
+                        break;
+                    #endregion
+
+                    //case InvaderType.ShieldGenerator:
+                    //    {
+                    //        ShieldGenerator generator = invader as ShieldGenerator;
+
+                    //        if (generator.Shield.ShieldOn == true && generator.BoltList.Count < 5)
+                    //        {
+                    //            //LightningBolt bolt = new LightningBolt(generator.Center, generator.Center - new Vector2(0, generator.Shield.CurrentRadius - 5), Color.Blue, 0.02f, 75f, true);
+                    //            Lightning = new LightningBolt(generator.Center, generator.Center - new Vector2(0, generator.Shield.CurrentRadius - 5), Color.MediumPurple, 0.02f, 150f, false);
+                    //            generator.BoltList.Add(Lightning);
+                    //            LightningList.AddRange(generator.BoltList);
+                    //        }
+                    //    }
+                    //    break;
+                }
+
                 #region Show damage and healing values
                 if (invader.CurrentHP < invader.PreviousHP)
                 {
-                    NumberChangeList.Add(new NumberChange(RobotoRegular20_0, invader.Position, new Vector2(0, -1.5f), 0 - (int)(invader.PreviousHP - invader.CurrentHP)));
+                    NumberChangeList.Add(new NumberChange(RobotoRegular20_0, invader.Position, new Vector2(0, -1.5f), 0 - (int)(invader.PreviousHP - invader.CurrentHP), Color.Red));
                 }
 
                 invader.PreviousHP = invader.CurrentHP;
@@ -5055,14 +5591,14 @@ namespace TowerDefensePrototype
                                                   new Vector2(0, 0), new Vector2(0.001f, 0.001f), new Vector2(250, 250), 1f, false,
                                                   new Vector2(-25, 25), new Vector2(0, 0), new Vector4(0.25f, 0.25f, 0.25f, 0.25f),
                                                   Color.White, Color.White, 0f, 0.05f, 50, 1, false, new Vector2(0, 1080), true,
-                                                  invader.MaxY + 4 / 1080f, null, null, null, null, null, false, new Vector2(0.11f, 0.11f), false, false,
+                                                  (invader.MaxY + 4f) / 1080f, null, null, null, null, null, false, new Vector2(0.11f, 0.11f), false, false,
                                                   null, false, false, true);                                
                                 YSortedEmitterList.Add(BOOMEmitter);
 
                                 Emitter BloodEmitter = new Emitter(ToonBloodDrip1, invader.Center,
                                 new Vector2(0, 180), new Vector2(1, 2), new Vector2(800, 1600), 1f, false, new Vector2(0, 360),
                                 new Vector2(1, 3), new Vector4(0.02f, 0.06f, 0.02f, 0.06f), Color.White, Color.White, 0.1f, 0.2f, 20, 10, true,
-                                new Vector2(invader.MaxY, invader.MaxY), true, 1.0f, true, false, null, null, null, true, null, true, true);
+                                new Vector2(invader.MaxY, invader.MaxY), true, (invader.MaxY + 1f) / 1080f, true, false, null, null, null, true, null, true, true);
                                 YSortedEmitterList.Add(BloodEmitter);
 
                                 //Emitter BloodEmitter2 = new Emitter(SmokeParticle,
@@ -5081,6 +5617,16 @@ namespace TowerDefensePrototype
                     if (invader.OperatingVehicle != null)
                     {
                         invader.OperatingVehicle.OperatorList.Remove(invader);
+                    }
+
+                    if (invader.OperatorList.Count > 0)
+                    {
+                        invader.OperatorList.ForEach(Invader => 
+                        { 
+                            Invader.OperatingVehicle = null; 
+                            Invader.CurrentMacroBehaviour = MacroBehaviour.AttackTower; 
+                            Invader.CurrentMicroBehaviour = MicroBehaviour.MovingForwards; 
+                        });
                     }
 
                     //if (invader.OperatorList.Count > 0)
@@ -5117,15 +5663,11 @@ namespace TowerDefensePrototype
 
                 #region MOVEMENT
                 #region Stop the invader if it hits the tower or a trap
-                if (invader.BoundingBox.Intersects(Tower.BoundingBox) ||
-                    TrapList.Any(Trap => Trap.Solid == true && Trap.BoundingBox.Intersects(invader.BoundingBox)))
+                if (invader.CollisionBox.Intersects(Tower.BoundingBox) ||
+                    TrapList.Any(Trap => Trap.Solid == true && Trap.CollisionBox.Intersects(invader.CollisionBox)))
                 {
-                    //Trap trap = TrapList.Where(Trap => Trap.Solid == true && Trap.BoundingBox.Intersects(invader.BoundingBox)).ToList().First();
-                    //invader.SetTargetTrap(ref trap);
-
-                    //Trap trap = TrapList.First(Trap => Trap.Solid == true && Trap.BoundingBox.Intersects(invader.BoundingBox));
-                    //invader.SetTargetTrap(ref trap);
-
+                    if (invader.OperatingVehicle == null) //Makes sure that if a soldier attacks a trap before being chosen to operate a vehicle, the vehicle doesn't target the far away trap too and then not move
+                        invader.TargetTrap = TrapList.FirstOrDefault(Trap => Trap.Solid == true && Trap.BoundingBox.Intersects(invader.BoundingBox));
 
                     if (invader.CurrentMicroBehaviour == MicroBehaviour.MovingForwards ||
                         invader.CurrentMicroBehaviour == MicroBehaviour.MovingBackwards)
@@ -5133,40 +5675,86 @@ namespace TowerDefensePrototype
                         invader.CurrentMicroBehaviour = MicroBehaviour.Stationary;
                     }
                 }
+                #endregion
                 else
+                #region Proceed as normal if not frozen, following waypoints or moving backwards
+                if (invader.Frozen == false &&
+                    invader.CurrentMicroBehaviour != MicroBehaviour.MovingBackwards &&
+                    invader.CurrentMicroBehaviour != MicroBehaviour.FollowWaypoints)
                 {
-                    if (invader.Frozen == false &&
-                        invader.CurrentMicroBehaviour != MicroBehaviour.MovingBackwards)
+                    if (heavyRangedInvader == null && lightRangedInvader == null)
                     {
-                        if (heavyRangedInvader == null && lightRangedInvader == null)
+                        switch (invader.InvaderType)
+                        {
+                            default:
+                                {
+                                    invader.CurrentMicroBehaviour = MicroBehaviour.MovingForwards;
+                                }
+                                break;
+
+                            case InvaderType.Soldier:
+                                {
+                                    //If the soldier isn't operating a vehicle, move normally, otherwise copy the vehicle behaviour
+                                    if (invader.OperatingVehicle == null)
+                                        invader.CurrentMicroBehaviour = MicroBehaviour.MovingForwards;
+                                    else
+                                        invader.CurrentMicroBehaviour = invader.OperatingVehicle.CurrentMicroBehaviour;
+                                }
+                                break;
+
+                            case InvaderType.BatteringRam:
+                                {
+                                    //If any of the operators have hit a trap, but the ram hasn't, stop the ram from moving
+                                    if (invader.OperatorList.Any(Invader => Invader.TargetTrap != null))
+                                    {
+                                        invader.OperatorList.ForEach(Invader =>
+                                        {
+                                            if (Invader.TargetTrap != null)
+                                                invader.TargetTrap = Invader.TargetTrap;
+                                        });
+
+                                        invader.CurrentMicroBehaviour = MicroBehaviour.Stationary;
+                                    }
+
+                                    //The ram is targeting a trap becaus an operator has collided with it
+                                    if (invader.TargetTrap != null)
+                                    {
+                                        invader.CurrentMicroBehaviour = MicroBehaviour.Attack;
+                                    }
+
+                                    //If all the operators are able to move and present, move forwards
+                                    if (invader.CurrentOperators == invader.NeededOperators && invader.OperatorList.All(Invader => Invader.TargetTrap == null))
+                                    {
+                                        invader.CurrentMicroBehaviour = MicroBehaviour.MovingForwards;
+                                    }
+                                }
+                                break;
+                        }
+                    }
+
+                    #region HEAVY Ranged Invader
+                    if (heavyRangedInvader != null)
+                    {
+                        if (heavyRangedInvader.CurrentAngle == heavyRangedInvader.EndAngle &&
+                            heavyRangedInvader.InTowerRange == false &&
+                            heavyRangedInvader.InTrapRange == false)
                         {
                             invader.CurrentMicroBehaviour = MicroBehaviour.MovingForwards;
                         }
-
-                        #region HEAVY Ranged Invader
-                        if (heavyRangedInvader != null)
-                        {
-                            if (heavyRangedInvader.CurrentAngle == heavyRangedInvader.EndAngle &&
-                                heavyRangedInvader.InTowerRange == false &&
-                                heavyRangedInvader.InTrapRange == false)
-                            {
-                                invader.CurrentMicroBehaviour = MicroBehaviour.MovingForwards;
-                            }
-                        }
-                        #endregion
-
-                        #region LIGHT Ranged Invader
-                        if (lightRangedInvader != null)
-                        {
-                            if (lightRangedInvader.InTowerRange == false &&
-                                lightRangedInvader.InTrapRange == false)
-                            {
-                                invader.CurrentMicroBehaviour = MicroBehaviour.MovingForwards;
-                            }
-                        }
-                        #endregion
                     }
-                }
+                    #endregion
+
+                    #region LIGHT Ranged Invader
+                    if (lightRangedInvader != null)
+                    {
+                        if (lightRangedInvader.InTowerRange == false &&
+                            lightRangedInvader.InTrapRange == false)
+                        {
+                            invader.CurrentMicroBehaviour = MicroBehaviour.MovingForwards;
+                        }
+                    }
+                    #endregion
+                }                
                 #endregion
 
                 #region Let ranged invaders know how far away from the tower they are
@@ -5374,271 +5962,7 @@ namespace TowerDefensePrototype
                 #endregion
 
 
-                //This handles specific invader AI - not generic behaviour
-                switch (invader.InvaderType)
-                {
-                    case InvaderType.Soldier:
-                        {
-                            Soldier soldier = invader as Soldier;
 
-                            if (soldier.OperatingVehicle != null)
-                            {
-                                soldier.Speed = 0f;
-                            }
-
-                            if (soldier.Direction.X < 0)
-                            {
-                                soldier.Orientation = SpriteEffects.None;
-                            }
-                            else
-                            {
-                                soldier.Orientation = SpriteEffects.FlipHorizontally;
-                            }
-                            
-                        }
-                        break;
-
-                    #region Battering Ram
-                    case InvaderType.BatteringRam:
-                        {
-                            BatteringRam batteringRam = invader as BatteringRam;
-                            int MissingOperators = batteringRam.NeededOperators - batteringRam.CurrentOperators;
-
-                            if (batteringRam.CurrentOperators < batteringRam.NeededOperators)
-                            {
-                                List<Invader> closeInvaders = InvaderList.OrderBy(Invader => Vector2.Distance(Invader.Position, batteringRam.Position)).ToList();
-                                closeInvaders.RemoveAll(Invader => Invader.InvaderType != InvaderType.Soldier || 
-                                    (Invader.InvaderType == InvaderType.Soldier && Invader.OperatingVehicle != null));
-                                //closeInvaders.RemoveAll(Invader => Invader.OperatingVehicle != null);
-
-                                if (closeInvaders.Count >= MissingOperators)
-                                {
-                                    //batteringRam.OperatorList.AddRange(closeInvaders.GetRange(0, 2));
-                                    closeInvaders = closeInvaders.GetRange(0, MissingOperators).ToList();
-
-                                    foreach (Invader closeInvader in closeInvaders)
-                                    {
-                                        invader.OperatingVehicle = batteringRam;
-                                    }
-
-                                    batteringRam.OperatorList.AddRange(closeInvaders);
-                                    //batteringRam.SetOperators(ref closeInvaders);
-                                }
-
-                                foreach (Invader pilot in batteringRam.OperatorList)
-                                {
-                                    //pilot.OperatingVehicle = batteringRam;
-                                    pilot.SetOperatingVehicle(ref invader);
-
-                                    //Map map = new Map(TrapList, InvaderList, new Vector2(pilot.Position.X, pilot.MaxY), new Vector2(batteringRam.Position.X + batteringRam.DestinationRectangle.Width, batteringRam.MaxY - (batteringRam.DestinationRectangle.Height * batteringRam.OperatorList.IndexOf(pilot))));
-                                    //map.LoadContent(Content);
-
-                                    Pathfinder pathfinder = new Pathfinder(TrapList, InvaderList, 
-                                        new Vector2(pilot.Position.X, pilot.MaxY), 
-                                        new Vector2(batteringRam.Position.X + batteringRam.DestinationRectangle.Width/2, 
-                                                    batteringRam.MaxY - (batteringRam.DestinationRectangle.Height/2 * batteringRam.OperatorList.IndexOf(pilot))));
-                                    pathfinder.LoadContent(Content);                                    
-
-                                    pilot.Pathfinder = pathfinder;
-
-                                    //pilot.FindPath(pilot.Position, pilot.OperatingVehicle.Position);                                   
-                                    
-                                }
-                            }
-                        }
-                        break;
-                    #endregion
-
-                    #region Healer Drone
-                    case InvaderType.HealDrone:
-                        {
-                            HealDrone drone = invader as HealDrone;
-
-                            #region Choose target
-                            if (drone.HasTarget == false)
-                            {
-                                List<Invader> InRangeAndHurt = InvaderList.FindAll(Invader =>
-                                    Invader.Position.X > Tower.DestinationRectangle.Right + 350 &&
-                                    Invader.CurrentHP < Invader.MaxHP &&
-                                    Invader.InvaderType != InvaderType.HealDrone &&
-                                    Invader.InvaderType != InvaderType.StationaryCannon &&
-                                    Invader.IsBeingHealed == false &&
-                                    Invader.IsTargeted == false);
-
-                                if (InRangeAndHurt.Count > 0)
-                                {
-                                    InRangeAndHurt = InRangeAndHurt.OrderByDescending(Invader => Invader.Position.X).ToList();
-
-                                    drone.HealTarget = InRangeAndHurt[0];
-                                    drone.HealTarget.CurrentHealDelay = 0;
-                                    drone.HealTarget.HealDelay = 500;
-                                    drone.HealTarget.IsTargeted = true;
-                                    drone.IsHealing = true;
-                                    drone.HasTarget = true;
-                                    drone.CurrentHeight = drone.HealTarget.BoundingBox.Min.Y - 150;
-                                }
-                                else
-                                {
-                                    #region Idle behaviour
-                                    if (drone.BoundingBox.Min.Y < drone.CurrentHeight - 30)
-                                    {
-                                        drone.Velocity.Y = LerpTime(drone.Velocity.Y, 1 * drone.Speed, 0.1f, gameTime);
-                                    }
-
-                                    if (drone.BoundingBox.Min.Y > drone.CurrentHeight + 30)
-                                    {
-                                        drone.Velocity.Y = LerpTime(drone.Velocity.Y, -1 * drone.Speed, 0.1f, gameTime);
-                                    }
-                                    #endregion
-                                }
-                            }
-                            #endregion
-
-                            if (drone.HasTarget == true)
-                            {
-                                #region The target got too close to the tower
-                                if (drone.HealTarget.Position.X < Tower.DestinationRectangle.Right + 350)
-                                {
-                                    drone.HasTarget = false;
-                                    drone.IsHealing = false;
-                                    drone.HealTarget.IsBeingHealed = false;
-                                    drone.HealTarget.IsTargeted = false;
-
-                                    drone.CurrentHeight = (float)RandomDouble(drone.YRange.X, drone.YRange.Y);
-                                    drone.Velocity.X = 0;
-                                }
-                                #endregion
-
-                                #region The drone isn't yet close enough to start healing
-                                if (Math.Abs(drone.Center.X - drone.HealTarget.Center.X) > 100)
-                                {
-                                    drone.Direction = drone.HealTarget.Center - drone.Center;
-                                    drone.Direction.Normalize();
-                                    drone.Velocity.X = LerpTime(drone.Velocity.X, drone.Direction.X * 5f, 0.05f, gameTime);
-                                    drone.Speed = 2.5f;
-                                }
-                                #endregion
-
-                                #region Orient the drone correctly
-                                if (drone.HealTarget != null)
-                                {
-                                    if (drone.HealTarget.Center.X > drone.Center.X)
-                                    {
-                                        drone.Orientation = SpriteEffects.FlipHorizontally;
-                                    }
-
-                                    if (drone.HealTarget.Center.X < drone.Center.X)
-                                    {
-                                        drone.Orientation = SpriteEffects.None;
-                                    }
-                                }
-                                #endregion
-
-                                #region If the target reaches full health, disengage healing
-                                if (drone.HealTarget.CurrentHP >= drone.HealTarget.MaxHP)
-                                {
-                                    drone.HealTarget.IsBeingHealed = false;
-                                    drone.HealTarget.IsTargeted = false;
-                                    drone.HasTarget = false;
-                                    drone.IsHealing = false;
-
-                                    drone.CurrentHeight = (float)RandomDouble(drone.YRange.X, drone.YRange.Y);
-                                    drone.Velocity.X = 0;
-                                }
-                                #endregion
-
-                                #region The drone is close enough to the target to start healing
-                                if (Vector2.Distance(drone.HealTarget.Center, drone.Center) < 200 &&
-                                    drone.HealTarget.CurrentHP < drone.HealTarget.MaxHP)
-                                {
-                                    drone.HealTarget.IsBeingHealed = true;
-
-                                    #region Actually heal the target
-                                    if (drone.HealTarget.CurrentHealDelay >= drone.HealTarget.HealDelay)
-                                    {
-                                        drone.HealTarget.HealDamage(1);
-                                        drone.HealTarget.CurrentHealDelay = 0;
-                                    }
-                                    #endregion
-
-                                    #region Make sure there's a beam
-                                    if (drone.BoltList.Count < 5)
-                                    {
-                                        Lightning = new LightningBolt(drone, drone.HealTarget, new Color(0, 150, 30, 255), 0.02f, 75f, true);
-                                        drone.BoltList.Add(Lightning);
-                                        LightningList.AddRange(drone.BoltList);
-                                    }
-                                    else
-                                    {
-                                        foreach (LightningBolt bolt in drone.BoltList)
-                                        {
-                                            bolt.Source = drone.Center + new Vector2(0, 8);
-                                            bolt.Destination = drone.HealTarget.Center;
-                                        }
-                                    }
-                                    #endregion
-                                }
-                                #endregion
-
-                                //THE DRONE MOVEMENT NEEDS TO BE A BIT RANDOM SO THAT TWO DRONES AREN'T MOVING EXACTLY THE SAME
-                                //AT THE SAME TIME. MAYBE JUST ADD OR SUBTRACT A TINY RANDOM NUMBER FROM VELOCITIES
-                                if (drone.BoundingBox.Min.Y < drone.CurrentHeight - 30)
-                                {
-                                    drone.Velocity.Y = LerpTime(drone.Velocity.Y, 1 * drone.Speed, 0.1f, gameTime);
-                                }
-
-                                if (drone.BoundingBox.Min.Y > drone.CurrentHeight + 30)
-                                {
-                                    drone.Velocity.Y = LerpTime(drone.Velocity.Y, -1 * drone.Speed, 0.1f, gameTime);
-                                }
-                            }
-
-                            #region The heal target died
-                            if (drone.HasTarget == true)
-                            {
-                                if (drone.HealTarget == null || drone.HealTarget.Active == false)
-                                {
-                                    drone.HasTarget = false;
-                                    drone.IsHealing = false;
-                                    drone.BoltList.Clear();
-
-                                    drone.CurrentHeight = (float)RandomDouble(drone.YRange.X, drone.YRange.Y);
-                                    drone.Velocity.X = 0;
-                                }
-                            }
-                            #endregion
-                        }
-                        break;
-                    #endregion
-
-                    #region Jumpman
-                    case InvaderType.JumpMan:
-                        {
-                            JumpMan jumpMan = invader as JumpMan;
-
-                            foreach (Trap trap in TrapList)
-                            {
-                                //Check if the invader is close enough to the trap in the X axis
-                                //Check if the invader is also in-line with the Y axis of the trap
-                            }
-                        }
-                        break;
-                    #endregion
-
-                    //case InvaderType.ShieldGenerator:
-                    //    {
-                    //        ShieldGenerator generator = invader as ShieldGenerator;
-
-                    //        if (generator.Shield.ShieldOn == true && generator.BoltList.Count < 5)
-                    //        {
-                    //            //LightningBolt bolt = new LightningBolt(generator.Center, generator.Center - new Vector2(0, generator.Shield.CurrentRadius - 5), Color.Blue, 0.02f, 75f, true);
-                    //            Lightning = new LightningBolt(generator.Center, generator.Center - new Vector2(0, generator.Shield.CurrentRadius - 5), Color.MediumPurple, 0.02f, 150f, false);
-                    //            generator.BoltList.Add(Lightning);
-                    //            LightningList.AddRange(generator.BoltList);
-                    //        }
-                    //    }
-                    //    break;
-                }
 
 
                 #region Remove inactive invaders
@@ -6879,7 +7203,7 @@ namespace TowerDefensePrototype
                                     MathHelper.ToDegrees(-(float)Math.Atan2(CurrentProjectile.Ray.Direction.Y, CurrentProjectile.Ray.Direction.X)) + (float)RandomDouble(0, 45)),
                                     new Vector2(1, 2), new Vector2(3000, 6000), 1f, false, new Vector2(0, 360),
                                     new Vector2(1, 3), new Vector4(0.01f, 0.03f, 0.01f, 0.03f), Color.White, Color.White,
-                                    0.1f, 0.1f, 10, 5, true, new Vector2(hitInvader.MaxY - 5, hitInvader.MaxY + 5), true, hitInvader.DrawDepth, true, false,
+                                    0.1f, 0.1f, 10, 5, true, new Vector2(hitInvader.MaxY - 5, hitInvader.MaxY + 5), true, (hitInvader.DestinationRectangle.Bottom + 1)/1080f, true, false,
                                     null, null, null, true, null, null, null, 500);
 
                                     Emitter BloodEmitter2 = new Emitter(ToonBloodDrip1,
@@ -6889,7 +7213,7 @@ namespace TowerDefensePrototype
                                     MathHelper.ToDegrees(-(float)Math.Atan2(-CurrentProjectile.Ray.Direction.Y, -CurrentProjectile.Ray.Direction.X)) + (float)RandomDouble(0, 45)),
                                     new Vector2(1, 3), new Vector2(1800, 3600), 1f, false, new Vector2(0, 360),
                                     new Vector2(1, 3), new Vector4(0.01f, 0.03f, 0.01f, 0.03f), Color.White, Color.White,
-                                    0.1f, 0.1f, 10, 5, true, new Vector2(hitInvader.MaxY - 5, hitInvader.MaxY + 5), true, hitInvader.DrawDepth, true, false,
+                                    0.1f, 0.1f, 10, 5, true, new Vector2(hitInvader.MaxY - 5, hitInvader.MaxY + 5), true, (hitInvader.DestinationRectangle.Bottom + 1) / 1080f, true, false,
                                     null, null, null, true, null, null, null, 500);
 
                                     YSortedEmitterList.Add(BloodEmitter);
@@ -6969,13 +7293,13 @@ namespace TowerDefensePrototype
 
                                         YSortedEmitterList.Add(BOOMEmitter);
 
-                                        Emitter DustEmitter = new Emitter(SmokeParticle,
+                                        Emitter DustEmitter = new Emitter(ToonSmoke3,
                                                new Vector2(CollisionEnd.X, CollisionEnd.Y),
                                                new Vector2(MathHelper.ToDegrees(-(float)Math.Atan2(CurrentProjectile.Ray.Direction.Y, CurrentProjectile.Ray.Direction.X)) - 180 - (float)RandomDouble(0, 45),
                                                            MathHelper.ToDegrees(-(float)Math.Atan2(CurrentProjectile.Ray.Direction.Y, CurrentProjectile.Ray.Direction.X)) - 180 + (float)RandomDouble(0, 45)),
                                                new Vector2(1.8f, 3f), new Vector2(1120, 1600), 1f, false, new Vector2(0, 360),
-                                               new Vector2(0.5f, 1f), new Vector4(0.2f, 0.5f, 0.2f, 0.5f), Color.LightGray, Color.LightGray, 0.03f, 0.02f, 5, 1, true,
-                                               new Vector2(0, 1080), true, Trap.DrawDepth,
+                                               new Vector2(0.5f, 1f), new Vector4(0.02f, 0.05f, 0.02f, 0.05f), Color.Gray, Color.Gray, 0.03f, 0.02f, 5, 1, true,
+                                               new Vector2(0, 1080), true, (Trap.DestinationRectangle.Bottom + 8)/1080f,
                                                null, null, null, null, null, null, new Vector2(0.08f, 0.08f), true, true);
                                         YSortedEmitterList.Add(DustEmitter);
 
@@ -6985,7 +7309,7 @@ namespace TowerDefensePrototype
                                                     new Vector2(5, 8), new Vector2(250, 500), 1f, false,
                                                     new Vector2(0, 0), new Vector2(0, 0), new Vector4(0.15f, 0.15f, 0.15f, 0.15f),
                                                     Color.White, Color.LightYellow, 0f, 0.05f, 50, 5, false, new Vector2(0, 1080), true,
-                                                    Trap.DrawDepth, null, null, null, null, null, true, new Vector2(0.2f, 0.2f), false, false,
+                                                    Trap.DrawDepth + (4f / 1080f), null, null, null, null, null, true, new Vector2(0.2f, 0.2f), false, false,
                                                     null, false, false, false);
                                         YSortedEmitterList.Add(hitEmitter);
 
@@ -8577,14 +8901,7 @@ namespace TowerDefensePrototype
             for (int t = 0; t < TrapList.Count; t++)
             {
                 Trap trap = TrapList[t];
-
                 trap.Update(gameTime);
-
-                if (trap.Active == false)
-                {
-                    TrapList.Remove(trap);
-                    DrawableList.Remove(trap);
-                }
                                 
                 if (trap.DestinationRectangle.Contains(new Point((int)CursorPosition.X, (int)CursorPosition.Y)))
                 {
@@ -8619,6 +8936,7 @@ namespace TowerDefensePrototype
                     
                     trap.TrapQuickInfo.Update(gameTime);
                     trap.TrapOutline.Visible = true;
+                    trap.Color = Color.White * 0.5f;
                 }
                 else
                 {
@@ -8626,6 +8944,7 @@ namespace TowerDefensePrototype
                     trap.TrapOutline.Visible = false;
                     trap.TrapQuickInfo.CurrentVisibilityDelay = 0;
                     trap.CurrentRemovalTime = 0;
+                    trap.Color = Color.White;
                 }
                 
                 #region Specific behaviour based on the trap type
@@ -8888,7 +9207,7 @@ namespace TowerDefensePrototype
                             NewTrap = trap;
                             NewTrap.AnimationList = WallAnimations;
                             NewTrap.TrapState = NewTrap.TrapState;
-
+                            NewTrap.AmbientShadowTexture = WallAmbShadow;
                             NewTrap.Position = trapPosition;
                             TrapList.Add(NewTrap);
                             AddDrawable(NewTrap);
@@ -8913,9 +9232,9 @@ namespace TowerDefensePrototype
                                 new Vector2(NewTrap.Position.X + NewTrap.CurrentAnimation.FrameSize.X / 2, 
                                             NewTrap.Position.Y + NewTrap.CurrentAnimation.FrameSize.Y - 8), 
                                 new Vector2(80, 100), new Vector2(0.5f, 0.75f), new Vector2(1500, 2000), 1f, false,
-                                new Vector2(-0, 0), new Vector2(-0.25f, 0.25f), new Vector4(0.1f, 0.12f, 0.1f, 0.12f), FireColor, Color.Black * 0.75f,
+                                new Vector2(-0, 0), new Vector2(-0.25f, 0.25f), new Vector4(0.12f, 0.15f, 0.1f, 0.12f), FireColor, Color.Black * 0.75f,
                                 0.0f, -1, 75, 1, false, new Vector2(0, 1080), true, (NewTrap.DestinationRectangle.Bottom + 1.0f) / 1080f,
-                                null, null, null, null, null, null, null, true, true, 0, false, false, false);
+                                null, null, null, null, null, null, null, true, true, 0, false, false, false, null, false);
                             FireEmitter.TextureName = "FireParticle";
 
                             //Emitter SmokeEmitter = new Emitter(SmokeParticle,
@@ -9097,6 +9416,11 @@ namespace TowerDefensePrototype
             //{
             //    return;
             //}
+
+            //IDEA: As a trap is placed, make sure it shows up as partially transparent with a box showing the actual collision
+            //bounds of the trap. Mousing over the trap should do the same thing.
+            //
+            //Should also consider making lanes visible when moused-over with a trap selected
 
             Vector2 NewTrapPosition = new Vector2(CursorPosition.X - CursorPosition.X % 32, CursorPosition.Y - CursorPosition.Y % 32);
             int resourceCost = TrapCost(SelectedTrap.Value);
@@ -9518,16 +9842,22 @@ namespace TowerDefensePrototype
                                 nextInvader.MaxY += 2;
                             }
 
+                            nextInvader.MaxY = Random.Next((int)nextInvader.YRange.X, (int)nextInvader.YRange.Y);
+                            nextInvader.Position.Y = nextInvader.MaxY - nextInvader.CurrentAnimation.FrameSize.Y;
+                            nextInvader.Velocity = Vector2.Zero;
+
                             nextInvader.Initialize();
 
                             
 
                             nextInvader.Update(gameTime, CursorPosition);
+
                             nextInvader.InvaderOutline = new UIOutline(nextInvader.Position,
                                                             new Vector2(nextInvader.CurrentAnimation.GetFrameSize().X,
                                                                         nextInvader.CurrentAnimation.GetFrameSize().Y),
                                                                        null, null, nextInvader);
                             nextInvader.InvaderOutline.OutlineTexture = TurretSelectBox;
+
                             InvaderList.Add(nextInvader);
                             AddDrawable(nextInvader);
                             CurrentInvaderTime = 0;
@@ -10710,6 +11040,25 @@ namespace TowerDefensePrototype
             return newNumber;
         }
 
+        /// <summary>
+        /// Checks if two values are approximately the same.
+        /// </summary>
+        /// <param name="value1">The first value to compare</param>
+        /// <param name="value2">The second value to compare</param>
+        /// <param name="delta">The maximum difference between the values</param>
+        /// <returns></returns>
+        public bool Approx(float value1, float value2, float delta)
+        {
+            if (Math.Abs(value1 - value2) < delta)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         public Point VectorToPoint(Vector2 vector)
         {
             return new Point((int)vector.X, (int)vector.Y);
@@ -10718,8 +11067,8 @@ namespace TowerDefensePrototype
         public Rectangle BoundingBoxToRect(BoundingBox boundingBox)
         {
             Rectangle rect = new Rectangle((int)boundingBox.Min.X, (int)boundingBox.Min.Y,
-                                           (int)(boundingBox.Min.X + (boundingBox.Max.X - boundingBox.Min.X)),
-                                           (int)(boundingBox.Min.Y + (boundingBox.Max.Y - boundingBox.Min.Y)));
+                                           (int)(boundingBox.Max.X - boundingBox.Min.X),
+                                           (int)(boundingBox.Max.Y - boundingBox.Min.Y));
             return rect;
         }
 

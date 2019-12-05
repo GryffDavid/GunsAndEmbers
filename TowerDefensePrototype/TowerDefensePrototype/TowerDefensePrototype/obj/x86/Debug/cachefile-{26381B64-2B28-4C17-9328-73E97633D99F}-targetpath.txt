@@ -91,7 +91,7 @@ Content\Invaders\Soldier\SoldierStand.xnb
 Content\Invaders\Soldier\SoldierMelee.xnb
 Content\Traps\FireTrap.xnb
 Content\Particles\FireParticle2.xnb
-Content\Traps\WallTrap.xnb
+Content\Traps\Wall\WallTrap.xnb
 Content\Particles\FireParticle.xnb
 Content\Particles\ExplosionParticle2.xnb
 Content\Icons\HealthIcon.xnb
@@ -190,6 +190,7 @@ Content\Particles\ToonDust\ToonDust7.xnb
 Content\GridTexture.xnb
 Content\Block.xnb
 Content\Circle.xnb
+Content\Traps\Wall\WallShadow.xnb
 Content\Sounds\Menu\MenuClick.xnb
 Content\Sounds\FireTrapStart.xnb
 Content\Sounds\Menu\MenuAmbiance.xnb

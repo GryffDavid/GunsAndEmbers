@@ -11,13 +11,17 @@ namespace TowerDefensePrototype
     {
         public bool Active;
         public float DrawDepth;
+        public float PreviousMaxY, MaxY;
         public BlendState BlendState = BlendState.AlphaBlend;
-        public BoundingBox BoundingBox;
+        public BoundingBox CollisionBox;        
+        public BoundingBox BoundingBox;        
         public BoundingSphere BoundingSphere;
+        public float ZDepth = 16f; //The theoretical physical depth of the object in the non-existant Z dimension. Not DrawDepth though.
         public bool Emissive = false;
         public bool Normal = false;
         public bool Shadows = false;
-
+        
+        
 
         public virtual void Draw(SpriteBatch spriteBatch)
         {

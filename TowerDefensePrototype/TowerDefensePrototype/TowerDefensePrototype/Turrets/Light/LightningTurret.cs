@@ -17,8 +17,8 @@ namespace TowerDefensePrototype
             Position = position;
             Selected = true;
             FireDelay = 200;
-            Damage = 3;
-            AngleOffset = 2.5f;
+            Damage = 30;
+            AngleOffset = 0f;
             Animated = false;
             Looping = false;
             ResourceCost = 200;

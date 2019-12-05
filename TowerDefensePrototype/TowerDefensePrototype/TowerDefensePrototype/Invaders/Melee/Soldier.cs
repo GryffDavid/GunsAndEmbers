@@ -34,11 +34,6 @@ namespace TowerDefensePrototype
 
         public override void Update(GameTime gameTime, Vector2 cursorPosition)
         {
-            if (Pathfinder != null)
-            {
-                Waypoints = Pathfinder.GetWaypoints();
-            }
-
             switch (CurrentMicroBehaviour)
             {
                 #region Stationary
@@ -56,7 +51,7 @@ namespace TowerDefensePrototype
                         if (Waypoints.Count == 0)
                         {
                             Direction.X = -1;
-
+                            
                             if (Slow == true)
                                 Velocity.X = Direction.X * SlowSpeed;
                             else
@@ -82,6 +77,8 @@ namespace TowerDefensePrototype
                 #region Attack
                 case MicroBehaviour.Attack:
                     {
+                        Velocity.X = 0;
+
                         switch (CurrentMacroBehaviour)
                         {
                             #region Attack Tower
@@ -89,13 +86,13 @@ namespace TowerDefensePrototype
                                 {
                                     UpdateMeleeDelay(gameTime);
                                 }
-                                break; 
+                                break;
                             #endregion
 
                             #region Attack Traps
                             case MacroBehaviour.AttackTraps:
                                 {
-
+                                    UpdateMeleeDelay(gameTime);
                                 }
                                 break;
                             #endregion
@@ -103,6 +100,23 @@ namespace TowerDefensePrototype
                     }
                     break;
                 #endregion
+
+                case MicroBehaviour.FollowWaypoints:
+                    {
+                        if (Pathfinder != null)
+                        {
+                            Waypoints = Pathfinder.GetWaypoints();
+                        }
+
+                        if (OperatingVehicle == null)
+                        {
+                            Waypoints.Clear();
+                            //Pathfinder = null;
+                            CurrentMicroBehaviour = MicroBehaviour.MovingForwards;
+                            CurrentMacroBehaviour = MacroBehaviour.AttackTower;
+                        }
+                    }
+                    break;
             }
 
             switch (CurrentMacroBehaviour)
@@ -113,6 +127,7 @@ namespace TowerDefensePrototype
                     }
                     break;
             }
+            
             
             base.Update(gameTime, cursorPosition);
         }

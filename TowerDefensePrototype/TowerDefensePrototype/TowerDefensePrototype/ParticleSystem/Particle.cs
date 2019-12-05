@@ -15,7 +15,6 @@ namespace TowerDefensePrototype
                        CurrentScale, MaxScale;
         public Rectangle DestinationRectangle;
         public float Angle, Speed,
-                     MaxY,
                      RotationIncrement, CurrentRotation,
                      Gravity,
                      CurrentTime, MaxTime,

@@ -17,7 +17,7 @@ namespace TowerDefensePrototype
         public Texture2D Texture, TrailTexture, FinTexture;
         //public BoundingBox BoundingBox;
         public Vector2 Position, Velocity, Direction;
-        public float Gravity, MaxY, Rotation, Speed, FinRotation;
+        public float Gravity, Rotation, Speed, FinRotation;
         public float CurrentHP, MaxHP;
         float OpeningDelay, CurrentDelay;
         public List<Emitter> EmitterList = new List<Emitter>();

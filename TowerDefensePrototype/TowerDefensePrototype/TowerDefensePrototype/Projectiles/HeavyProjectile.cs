@@ -66,7 +66,7 @@ namespace TowerDefensePrototype
         public Vector2 Velocity, Position, YRange, Origin, Center, BasePosition, TipPosition;
         public Vector2 Scale = Vector2.One;
 
-        public float Angle, Speed, CurrentRotation, MaxY, Damage, BlastRadius, Gravity, ShadowLength;
+        public float Angle, Speed, CurrentRotation, Damage, BlastRadius, Gravity, ShadowLength;
         float Bounce = 0.7f;        
         float Friction = 1.0f;
 

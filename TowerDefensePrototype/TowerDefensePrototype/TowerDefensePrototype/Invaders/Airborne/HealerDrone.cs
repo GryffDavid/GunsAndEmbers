@@ -30,7 +30,7 @@ namespace TowerDefensePrototype
         {
             CurrentHeight = position.Y;
             Speed = 1.5f;        
-            MaxHP = 300;
+            MaxHP = 30;
             CurrentHP = MaxHP;
             ResourceMinMax = new Vector2(1, 5);
             InvaderType = InvaderType.HealDrone;

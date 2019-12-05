@@ -69,6 +69,8 @@ namespace TowerDefensePrototype
                     break;
             }
 
+            nFrameX = NormalizedFrameSize.X * CurrentFrame;
+
             DiffuseSourceRectangle = new Rectangle((int)(CurrentFrame * FrameSize.X), 0, (int)FrameSize.X, (int)FrameSize.Y);
             dTopLeftTexCooord = new Vector2(nFrameX, 0);
             dTopRightTexCoord = new Vector2(nFrameX + NormalizedFrameSize.X, 0);

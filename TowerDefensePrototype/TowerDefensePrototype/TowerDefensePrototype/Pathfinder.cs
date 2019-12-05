@@ -9,8 +9,27 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace TowerDefensePrototype
 {
+    public enum TileState { Open, Solid, Path, FinalPath, StartPos, EndPos };
+
+    
     public class Pathfinder
     {
+        public class Tile
+        {
+            public TileState TileState = TileState.Open;
+
+            public Vector2 Position, Size;
+            public Rectangle DestinationRectangle;
+            Color Color = Color.Transparent;
+
+            public Tile(Vector2 index)
+            {
+                Size = new Vector2(32, 32);
+                Position = new Vector2(272 + (Size.X * index.X), 672 + (Size.Y * index.Y));
+                DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, (int)Size.X, (int)Size.Y);
+            }
+        }
+
         Vector2 GridSize = new Vector2(32, 32);
         static Random Random = new Random();
 
@@ -46,9 +65,8 @@ namespace TowerDefensePrototype
 
         public Vector2 StartIndex = new Vector2(52, 16);
         public Vector2 EndIndex = new Vector2(94, 2);
-
-        ContentManager contentManager;
-
+        public Vector2 EndPosition;
+        
         private struct SearchNode
         {
             public Vector2 Position;
@@ -77,6 +95,7 @@ namespace TowerDefensePrototype
 
             StartIndex = new Vector2((int)((startPos.X - 272) / (GridSize.X)), (int)((startPos.Y - 672) / (GridSize.Y)));
             EndIndex = new Vector2((int)((endPos.X - 272) / (GridSize.X)), (int)((endPos.Y - 672) / (GridSize.Y)));
+            EndPosition = endPos;
 
             for (int x = 0; x < TileArray.GetLength(0); x++)
             {
@@ -98,12 +117,15 @@ namespace TowerDefensePrototype
             {
                 for (int y = 0; y < TileArray.GetLength(1); y++)
                 {
-                    TileArray[x, y].Update();
-
-                    if (TrapList.Any(Trap => Trap.DestinationRectangle.Intersects(TileArray[x, y].DestinationRectangle) && Trap.Solid == true))
+                    if (TrapList.Any(Trap => BoundingBoxToRect(Trap.CollisionBox).Intersects(TileArray[x, y].DestinationRectangle) && Trap.Solid == true))
                     {
                         TileArray[x, y].TileState = TileState.Solid;
                     }
+
+                    //if (InvaderList.Any(Invader => BoundingBoxToRect(Invader.CollisionBox).Intersects(TileArray[x, y].DestinationRectangle)))
+                    //{
+                    //    TileArray[x, y].TileState = TileState.Solid;
+                    //}
 
                     if (StartIndex == new Vector2(x, y))
                     {
@@ -128,24 +150,12 @@ namespace TowerDefensePrototype
                 {
                     WayPoints.Add(new Vector2(272 + Random.Next(-8, 8), 672 + Random.Next(-8, 8)) + (point * GridSize.X) + new Vector2(GridSize.X / 2, GridSize.Y));
                 }
+                WayPoints.Add(EndPosition);
             }
 
             //WayPoints = FinalPath().ToList();
 
             return WayPoints;
-        }
-        
-        public void LoadContent(ContentManager content)
-        {
-            contentManager = content;
-
-            for (int x = 0; x < TileArray.GetLength(0); x++)
-            {
-                for (int y = 0; y < TileArray.GetLength(1); y++)
-                {
-                    TileArray[x, y].LoadContent(content);
-                }
-            }
         }
 
         public void Draw(SpriteBatch spriteBatch)
@@ -346,9 +356,8 @@ namespace TowerDefensePrototype
         }
 
 
-        private void TrapsChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        public void TrapsChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            int p = 0;
             FindPath = true;
             WayPoints.Clear();
 
@@ -357,7 +366,6 @@ namespace TowerDefensePrototype
                 for (int y = 0; y < TileArray.GetLength(1); y++)
                 {
                     TileArray[x, y] = new Tile(new Vector2(x, y));
-                    TileArray[x, y].LoadContent(contentManager);
                 }
             }
 
@@ -380,6 +388,15 @@ namespace TowerDefensePrototype
             //Or make one Map object that is shared between all invaders
             //Just need to take into account that the size of the invaders fluctuates and therefore the size
             //of the tiles should fluctuate too.
+            
+        }
+
+        public Rectangle BoundingBoxToRect(BoundingBox boundingBox)
+        {
+            Rectangle rect = new Rectangle((int)boundingBox.Min.X, (int)boundingBox.Min.Y,
+                                           (int)(boundingBox.Max.X - boundingBox.Min.X),
+                                           (int)(boundingBox.Max.Y - boundingBox.Min.Y));
+            return rect;
         }
     }
 }

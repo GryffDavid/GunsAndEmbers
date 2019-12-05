@@ -22,6 +22,10 @@ namespace TowerDefensePrototype
 
         //A float in the middle of the list changes the delay between invaders
         //An in in the middle of the list creates a pause without changing the timing
+        
+        //IDEA: A string in the middle of the list points to dialogue that needs to be said, e.g.:
+        //"That pneumatic ram appears to need other soldiers to operate it. Take them out and the
+        //ram will stop, but keep an eye out for soldiers retreating to take up his comrades' place!"
 
         public virtual void LoadContent(ContentManager contentManager)
         {

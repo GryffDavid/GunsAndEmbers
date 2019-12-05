@@ -125,6 +125,7 @@ namespace TowerDefensePrototype
         public float Speed, SlowSpeed;
         public Vector2 Direction = new Vector2(-1f, 0);
         public Vector2 Position, Velocity;
+
         //public SpriteEffects Orientation = SpriteEffects.None;
 
         private SpriteEffects _Orientation;
@@ -193,6 +194,7 @@ namespace TowerDefensePrototype
                 if (AnimationList != null)
                 {
                     CurrentAnimation = AnimationList.Find(Animation => Animation.CurrentInvaderState == value);
+                    CurrentAnimation.GetFrameSize();
 
                     if (CurrentAnimation.CurrentInvaderState == AnimationState_Invader.Stand)
                         CurrentAnimation.CurrentFrame = 0;// Random.Next(0, CurrentAnimation.TotalFrames);
@@ -275,7 +277,7 @@ namespace TowerDefensePrototype
 
         public InvaderMeleeStruct MeleeDamageStruct;
 
-        public float MaxHP, CurrentHP, PreviousHP, MaxY, Gravity, ShadowHeight, ShadowHeightMod;
+        public float MaxHP, CurrentHP, PreviousHP, Gravity, ShadowHeight, ShadowHeightMod;
         public int ResourceValue;
         public static Random Random = new Random();
 
@@ -304,6 +306,7 @@ namespace TowerDefensePrototype
         public Pathfinder Pathfinder;
         public List<Vector2> Waypoints = new List<Vector2>();
         int CurrentWaypoint = 0;
+
         #endregion
 
         public Invader(Vector2 position, Vector2? yRange = null)
@@ -320,7 +323,7 @@ namespace TowerDefensePrototype
         {
             base.Active = true;
             CurrentHP = MaxHP;
-            MaxY = Random.Next((int)YRange.X, (int)YRange.Y);
+            //MaxY = Random.Next((int)YRange.X, (int)YRange.Y);
             NextYPos = MaxY;
 
             ResourceValue = Random.Next((int)ResourceMinMax.X, (int)ResourceMinMax.Y);
@@ -341,6 +344,9 @@ namespace TowerDefensePrototype
                 Intelligence = (Random.Next((int)IntelligenceRange.X * 100, (int)IntelligenceRange.Y * 100))/10;
             }
 
+            DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y,
+                                                 (int)(CurrentAnimation.FrameSize.X),
+                                                 (int)(CurrentAnimation.FrameSize.Y));
 
             #region Set up Vertices
             #region Sprite Vertices
@@ -418,23 +424,23 @@ namespace TowerDefensePrototype
             #endregion
             #endregion
 
-            DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y,
-                                                 (int)(CurrentAnimation.FrameSize.X),
-                                                 (int)(CurrentAnimation.FrameSize.Y));
+            BoundingBox = new BoundingBox(new Vector3(DestinationRectangle.Left + 6, DestinationRectangle.Top + 6, 0),
+                                          new Vector3(DestinationRectangle.Right - 6, DestinationRectangle.Bottom, 0));
 
-            //BoundingBox = new BoundingBox(new Vector3(DestinationRectangle.Left + 6, DestinationRectangle.Top + 6, 0),
-            //                              new Vector3(DestinationRectangle.Right - 6, DestinationRectangle.Bottom, 0));
-
-            //Center = new Vector2(DestinationRectangle.Center.X, DestinationRectangle.Center.Y);
+            Center = new Vector2(DestinationRectangle.Center.X, DestinationRectangle.Center.Y);
         }
 
-        public virtual void Update(GameTime gameTime, Vector2 cursorPosition)
+        public virtual void Update(GameTime gameTime, Vector2 cursorPosition) 
         {
             if (Active == true)
             {
+                PreviousMaxY = MaxY;
+                //PreviousBottom = Bottom;
+
                 if (Waypoints.Count == 0)
                 {
-                    Velocity.Y += Gravity * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
+                    if ((BoundingBox.Max.Y + Velocity.Y) < MaxY)
+                        Velocity.Y += Gravity * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
 
                     if (Velocity.X != 0 && InvaderAnimationState != AnimationState_Invader.Walk)
                     {
@@ -527,6 +533,9 @@ namespace TowerDefensePrototype
 
                     BoundingBox = new BoundingBox(new Vector3(DestinationRectangle.Left + 6, DestinationRectangle.Top + 6, 0),
                                                   new Vector3(DestinationRectangle.Right - 6, DestinationRectangle.Bottom, 0));
+
+                    CollisionBox = new BoundingBox(new Vector3(DestinationRectangle.Left + 6, DestinationRectangle.Top + DestinationRectangle.Height - ZDepth, 0),
+                                                   new Vector3(DestinationRectangle.Right - 6, DestinationRectangle.Bottom, 0));
 
                     Center = new Vector2(DestinationRectangle.Center.X, DestinationRectangle.Center.Y);
                     HealthBar.Update(MaxHP, CurrentHP, gameTime, new Vector2(Center.X + Velocity.X, Position.Y - 8));
@@ -657,7 +666,7 @@ namespace TowerDefensePrototype
                 }
                 #endregion
 
-                if (Waypoints.Count == 0)
+                if (CurrentMicroBehaviour != MicroBehaviour.FollowWaypoints)
                 {
                     if (Airborne == false)
                     {
@@ -693,15 +702,15 @@ namespace TowerDefensePrototype
 
                 ShadowPosition = new Vector2(Position.X, Position.Y + CurrentAnimation.FrameSize.Y - 2);
 
-                if (Waypoints.Count != 0)
+                if (CurrentMicroBehaviour == MicroBehaviour.FollowWaypoints)
                 {
                     if (CurrentWaypoint < Waypoints.Count)
                     {
                         Direction = Waypoints[CurrentWaypoint] - (ShadowPosition + new Vector2(CurrentAnimation.FrameSize.X / 2, 4));
                         Direction.Normalize();
 
-                        Velocity = new Vector2(0, 0);
-                        Velocity = Direction * 1f;
+                        //Velocity = new Vector2(0, 0);
+                        Velocity = Direction * Speed;
 
                         if (Vector2.Distance(ShadowPosition + new Vector2(CurrentAnimation.FrameSize.X / 2, 4), Waypoints[CurrentWaypoint]) < 2)
                         {
@@ -711,14 +720,24 @@ namespace TowerDefensePrototype
 
                         MaxY = DestinationRectangle.Bottom;
                     }
-                    else
+                    else if (Waypoints.Count > 0) //Checking the waypoint count here makes sure that the following code is only run once
                     {
                         Velocity = Vector2.Zero;
                         Direction.X = -1f;
+                        CurrentWaypoint = 0;
+
+                        if (Pathfinder != null) //Not totally necessary, but prevents a crash if this code does get run twice - i.e. Pathfinder is already null
+                        {
+                            Pathfinder.TrapList.CollectionChanged -= Pathfinder.TrapsChanged;
+                            Pathfinder = null;
+                        }
+
                         Waypoints.Clear();
                     }
                 }
 
+                //Only change this if the value of MaxY actually changes
+                
                 DrawDepth = MaxY / 1080.0f;
             }
         }
@@ -1007,11 +1026,6 @@ namespace TowerDefensePrototype
         public void SetOperatingVehicle(ref Invader operatingVehicle)
         {
             OperatingVehicle = operatingVehicle;
-        }
-
-        public void SetTargetTrap(ref Trap targetTrap)
-        {
-            TargetTrap = targetTrap;
         }
     }
 }
