@@ -1,0 +1,76 @@
+C:\Users\Gryff\Google Drive\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\TowerDefensePrototype.exe
+C:\Users\Gryff\Google Drive\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\TowerDefensePrototype.pdb
+C:\Users\Gryff\Google Drive\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\obj\x86\Debug\TowerDefensePrototype.csprojResolveAssemblyReference.cache
+C:\Users\Gryff\Google Drive\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\obj\x86\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
+C:\Users\Gryff\Google Drive\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\obj\x86\Debug\TowerDefensePrototype.exe
+C:\Users\Gryff\Google Drive\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\obj\x86\Debug\TowerDefensePrototype.pdb
+C:\Users\Gryff\Google Drive\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\Tower.xnb
+C:\Users\Gryff\Google Drive\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\UI.xnb
+C:\Users\Gryff\Google Drive\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\Button.xnb
+C:\Users\Gryff\Google Drive\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\Ground.xnb
+C:\Users\Gryff\Google Drive\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\TowerButton.xnb
+C:\Users\Gryff\Google Drive\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\TrapButton.xnb
+C:\Users\Gryff\Google Drive\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\BarricadeButton.xnb
+C:\Users\Gryff\Google Drive\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\ResourceFont.xnb
+C:\Users\Gryff\Google Drive\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\Wall.xnb
+C:\Users\Gryff\Google Drive\Tower Defense Backups\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\obj\x86\Debug\TowerDefensePrototype.csprojResolveAssemblyReference.cache
+C:\Users\Gryff\Google Drive\Tower Defense Backups\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\obj\x86\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
+C:\Users\Gryff\Google Drive\Tower Defense Backups\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\obj\x86\Debug\TowerDefensePrototype.exe
+C:\Users\Gryff\Google Drive\Tower Defense Backups\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\Tower.xnb
+C:\Users\Gryff\Google Drive\Tower Defense Backups\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\UI.xnb
+C:\Users\Gryff\Google Drive\Tower Defense Backups\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\Button.xnb
+C:\Users\Gryff\Google Drive\Tower Defense Backups\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\Ground.xnb
+C:\Users\Gryff\Google Drive\Tower Defense Backups\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\TowerButton.xnb
+C:\Users\Gryff\Google Drive\Tower Defense Backups\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\TrapButton.xnb
+C:\Users\Gryff\Google Drive\Tower Defense Backups\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\BarricadeButton.xnb
+C:\Users\Gryff\Google Drive\Tower Defense Backups\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\Wall.xnb
+C:\Users\Gryff\Google Drive\Tower Defense Backups\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\ResourceFont.xnb
+C:\Users\Gryff\Google Drive\Tower Defense Backups\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\TowerDefensePrototype.exe
+C:\Users\Gryff\Google Drive\Tower Defense Backups\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\TowerDefensePrototype.pdb
+C:\Users\Gryff\Google Drive\Tower Defense Backups\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\obj\x86\Debug\TowerDefensePrototype.pdb
+C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\Tower.xnb
+C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\UI.xnb
+C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\Button.xnb
+C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\Ground.xnb
+C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\TowerButton.xnb
+C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\TrapButton.xnb
+C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\BarricadeButton.xnb
+C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\Wall.xnb
+C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\ResourceFont.xnb
+C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\TowerDefensePrototype.exe
+C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\TowerDefensePrototype.pdb
+C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\obj\x86\Debug\TowerDefensePrototype.csprojResolveAssemblyReference.cache
+C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\obj\x86\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
+C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\obj\x86\Debug\TowerDefensePrototype.exe
+C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\obj\x86\Debug\TowerDefensePrototype.pdb
+G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\Tower.xnb
+G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\UI.xnb
+G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\Button.xnb
+G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\Ground.xnb
+G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\TowerButton.xnb
+G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\TrapButton.xnb
+G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\BarricadeButton.xnb
+G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\Wall.xnb
+G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\ResourceFont.xnb
+G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\TowerDefensePrototype.exe
+G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\TowerDefensePrototype.pdb
+G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\obj\x86\Debug\TowerDefensePrototype.csprojResolveAssemblyReference.cache
+G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\obj\x86\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
+G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\obj\x86\Debug\TowerDefensePrototype.exe
+G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\obj\x86\Debug\TowerDefensePrototype.pdb
+G:\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\Tower.xnb
+G:\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\UI.xnb
+G:\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\Button.xnb
+G:\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\Ground.xnb
+G:\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\TowerButton.xnb
+G:\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\TrapButton.xnb
+G:\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\BarricadeButton.xnb
+G:\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\Wall.xnb
+G:\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\ResourceFont.xnb
+G:\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\TowerDefensePrototype.exe
+G:\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\TowerDefensePrototype.pdb
+G:\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\obj\x86\Debug\TowerDefensePrototype.csprojAssemblyReference.cache
+G:\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\obj\x86\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
+G:\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\obj\x86\Debug\TowerDefensePrototype.csproj.CoreCompileInputs.cache
+G:\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\obj\x86\Debug\TowerDefensePrototype.exe
+G:\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\obj\x86\Debug\TowerDefensePrototype.pdb
