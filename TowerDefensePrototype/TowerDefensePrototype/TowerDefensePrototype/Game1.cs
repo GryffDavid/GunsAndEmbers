@@ -263,8 +263,8 @@ namespace TowerDefensePrototype
                 SFXVolume = 1.0f,
                 MusicVolume = 1.1f,
                 TimesPlayed = 0,
-                ResWidth = 1280,
-                ResHeight = 720
+                ResWidth = 1920,
+                ResHeight = 1080
             };
 
             LoadSettings();
@@ -278,7 +278,6 @@ namespace TowerDefensePrototype
 
             graphics.SynchronizeWithVerticalRetrace = false;
             IsFixedTimeStep = false;
-
             Content.RootDirectory = "Content";
 
             #region Set up game window
@@ -1100,8 +1099,8 @@ namespace TowerDefensePrototype
             {
                 ShieldBubbleEffect.Parameters["ScreenTexture"].SetValue(GameRenderTarget);
                 ShockWaveEffect.Parameters["ScreenTexture"].SetValue(GameRenderTarget);
-                ScreenTex = HandleShaders(GameRenderTarget//,
-                                          //ShockWaveEffect.CurrentTechnique.Passes[0],
+                ScreenTex = HandleShaders(GameRenderTarget
+                                          //,ShockWaveEffect.CurrentTechnique.Passes[0],
                                           //ShieldBubbleEffect.CurrentTechnique.Passes[0]
                                           );
             }

@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyProduct("TowerDefensePrototype")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyCompany("Sneaky Goblin Games")]
-[assembly: AssemblyCopyright("© Copyright 2014 Gryff David. All rights reserved.")]
+[assembly: AssemblyCopyright("© Copyright 2015 Gryff David. All rights reserved.")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
