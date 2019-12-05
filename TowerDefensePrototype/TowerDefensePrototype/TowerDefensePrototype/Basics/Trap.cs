@@ -20,6 +20,7 @@ namespace TowerDefensePrototype
 
         public virtual void LoadContent(ContentManager contentManager)
         {
+            Active = true;
             Texture = contentManager.Load<Texture2D>(AssetName);
             BoundingBox = new BoundingBox(new Vector3((int)Position.X, (int)Position.Y, 0), new Vector3((int)Position.X + Texture.Width, (int)Position.Y - Texture.Height, 0));
             DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y - Texture.Height, (int)(Texture.Width), (int)(Texture.Height));
@@ -32,6 +33,7 @@ namespace TowerDefensePrototype
 
         public virtual void Draw(SpriteBatch spriteBatch)
         {
+            if (Active == true)
             spriteBatch.Draw(Texture, DestinationRectangle, Color.White);
         }
     }

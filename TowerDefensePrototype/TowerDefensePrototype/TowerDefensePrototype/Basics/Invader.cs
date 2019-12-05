@@ -39,7 +39,7 @@ namespace TowerDefensePrototype
             if (Active == true)
             {                
                 DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, Texture.Width, Texture.Height);
-                BoundingBox = new BoundingBox(new Vector3(Position.X, Position.Y, 0), new Vector3(Position.X + 32, Position.Y + 32, 0));
+                BoundingBox = new BoundingBox(new Vector3(Position.X+8, Position.Y+8, 0), new Vector3(Position.X + 24, Position.Y + 24, 0));
                 spriteBatch.Draw(Texture, DestinationRectangle, Color);
             }
         }

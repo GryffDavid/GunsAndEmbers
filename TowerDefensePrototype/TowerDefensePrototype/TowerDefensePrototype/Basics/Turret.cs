@@ -12,14 +12,14 @@ namespace TowerDefensePrototype
     public abstract class Turret
     {
         public String TurretAsset, BaseAsset;
-        public Texture2D TurretBase, TurretBarrel;
+        public Texture2D TurretBase, TurretBarrel, Line;
         public Vector2 Direction, Position, MousePosition;
         public Rectangle BaseRectangle, BarrelRectangle;
         MouseState CurrentMouseState, PreviousMouseState;
         public float Rotation;
         public bool Selected, Active, JustClicked, CanShoot;
         public Color Color;
-        //public MuzzleFlash Flash;
+        public MuzzleFlash Flash;
         public double FireDelay;
 
         double ElapsedTime = 0;
@@ -30,26 +30,36 @@ namespace TowerDefensePrototype
             Color = Color.White;
             BaseRectangle = new Rectangle();
             BarrelRectangle = new Rectangle();
-
+            
             if (Active == true)
             {
                 TurretBase = contentManager.Load<Texture2D>(BaseAsset);
                 TurretBarrel = contentManager.Load<Texture2D>(TurretAsset);
-                //Flash = new MuzzleFlash(contentManager, TurretBarrel.Bounds.Width);
             }
+
+            Flash = new MuzzleFlash(contentManager, BarrelRectangle.Width);
+
+            Line = contentManager.Load<Texture2D>("Line");
         }
 
         public void Update(GameTime gameTime)
         {
+            CurrentMouseState = Mouse.GetState();
+            
             ElapsedTime += gameTime.ElapsedGameTime.TotalSeconds;
 
             if (ElapsedTime >= FireDelay)
             {
                 CanShoot = true;
                 ElapsedTime = 0;
+                return;
             }
 
-            CurrentMouseState = Mouse.GetState();
+            //if (CanShoot == true && CurrentMouseState.LeftButton == ButtonState.Pressed && Selected == true)
+            //{
+            //    Flash.Flash(0, 3);
+            //    ElapsedTime = 0;
+            //}                       
 
             if (Active == true)
             {
@@ -92,17 +102,18 @@ namespace TowerDefensePrototype
             PreviousMouseState = CurrentMouseState;
         }
 
-        public void Draw(SpriteBatch spriteBatch)
-        {          
+        public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+        {
             if (Active == true)
             {
+                Flash.Draw(spriteBatch, gameTime, new Vector2(BarrelRectangle.X, BarrelRectangle.Y), Rotation);
+
                 BaseRectangle = new Rectangle((int)Position.X - 12, (int)Position.Y - 16-6, TurretBase.Width, TurretBase.Height);
                 BarrelRectangle = new Rectangle((int)Position.X+8, (int)Position.Y-6, TurretBarrel.Width, TurretBarrel.Height);
 
-                //Flash.Draw(spriteBatch, gameTime, new Vector2(BarrelRectangle.X, BarrelRectangle.Y), Rotation);
-
                 spriteBatch.Draw(TurretBarrel, BarrelRectangle, null, Color, Rotation, new Vector2(24, TurretBarrel.Height / 2), SpriteEffects.None, 1f);
-                spriteBatch.Draw(TurretBase, BaseRectangle, Color);
+                spriteBatch.Draw(Line, new Rectangle(BarrelRectangle.X, BarrelRectangle.Y, Line.Width, Line.Height), null, Color, Rotation, Vector2.Zero, SpriteEffects.None, 1f);
+                spriteBatch.Draw(TurretBase, BaseRectangle, Color);               
             }
         }
     }

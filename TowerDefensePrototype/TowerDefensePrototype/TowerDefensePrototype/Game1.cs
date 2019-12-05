@@ -26,7 +26,7 @@ namespace TowerDefensePrototype
             graphics = new GraphicsDeviceManager(this);
             graphics.PreferredBackBufferWidth = 1280;
             graphics.PreferredBackBufferHeight = 720;
-            //IsMouseVisible = true;
+            IsMouseVisible = true;
             //graphics.IsFullScreen = true;
             Content.RootDirectory = "Content";
         }
@@ -41,7 +41,7 @@ namespace TowerDefensePrototype
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            UserInterface.LoadContent(Content);
+            UserInterface.LoadContent();
         }
 
         protected override void UnloadContent()

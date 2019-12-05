@@ -19,7 +19,7 @@ namespace TowerDefensePrototype
             BaseAsset = baseName;
             Position = position;
             Selected = true;
-            FireDelay = 0.1;
+            FireDelay = 0.25;
         }
     }
 }

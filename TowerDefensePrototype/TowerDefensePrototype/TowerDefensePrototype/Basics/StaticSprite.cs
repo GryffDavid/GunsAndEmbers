@@ -15,6 +15,7 @@ namespace TowerDefensePrototype
         public Vector2 Position, Scale;
         Color Color;
         Rectangle DestinationRectangle;
+        public BoundingBox BoundingBox;
 
         public StaticSprite(string assetName, Vector2 position, Vector2? scale = null, Color? color = null)
         {
@@ -40,6 +41,7 @@ namespace TowerDefensePrototype
         public void Draw(SpriteBatch spriteBatch)
         {
             DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, (int)(Texture.Width * Scale.X), (int)(Texture.Height * Scale.Y));
+            BoundingBox = new BoundingBox(new Vector3(Position.X, Position.Y, 0), new Vector3(Position.X + (Texture.Width * Scale.X), Position.Y + (Texture.Width * Scale.Y), 0));
             spriteBatch.Draw(Texture, DestinationRectangle, Color);
         }
     }

@@ -30,7 +30,6 @@ namespace TowerDefensePrototype
         List<Turret> TurretList;
         List<Invader> InvaderList;
         List<string> IconNameList;
-
         List<Projectile> ProjectileList;
         
         Tower Tower;
@@ -41,11 +40,15 @@ namespace TowerDefensePrototype
 
         GameTime GameTime;
 
+        StaticSprite Marker;
+
         int Rounds = 0;
 
         //Basic XNA calls
         public UserInterface(int trapButtons, int towerButtons, int resources, ContentManager contentManager)
         {
+            Marker = new StaticSprite("OrcMinion", new Vector2(0, 0));
+
             ProjectileList = new List<Projectile>();
 
             Tower = new Tower("Tower", new Vector2(32, 304-65));          
@@ -118,14 +121,15 @@ namespace TowerDefensePrototype
                 InvaderList = new List<Invader>();
                 for (int i = 0; i < 300; i++)
                 {
-                    InvaderList.Add(new Soldier(new Vector2(1260+(32*i), 720 - 160 - 37-65)));
+                    InvaderList.Add(new Soldier(new Vector2(1260+(32*i), 720 - 160 - 32-65)));
                     InvaderList[i].LoadContent(ContentManager);
                 }
             #endregion                                       
         }
 
-        public void LoadContent(ContentManager contentManager)
+        public void LoadContent()
         {
+            Marker.LoadContent(ContentManager);
             ResourceFont = ContentManager.Load<SpriteFont>("ResourceFont");
             Tower.LoadContent(ContentManager);
             Ground.LoadContent(ContentManager);
@@ -135,7 +139,6 @@ namespace TowerDefensePrototype
 
         public void Update(GameTime gameTime)
         {
-            //RayList.Clear();
             //This is just the stuff that needs to be updated every step
             //This is where I call all the smaller procedures that I broke the update into 
             GameTime = gameTime;
@@ -159,17 +162,27 @@ namespace TowerDefensePrototype
                 }
             }
 
-            //TurretShoot();
+           
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
+            foreach (Turret turret in TurretList)
+            {
+                if (turret.Selected == true && CurrentMouseState.LeftButton == ButtonState.Pressed && PreviousMouseState.LeftButton == ButtonState.Pressed && turret.CanShoot == true)
+                {
+                    //turret.CanShoot = false;
+                    TurretShoot();
+                }
+            }    
+
             spriteBatch.DrawString(ResourceFont, "Resources: " + Resources.ToString(), new Vector2(0, 0), Color.White);
             spriteBatch.DrawString(ResourceFont, "Rounds: " + Rounds.ToString(), new Vector2(0, 32), Color.White);
 
             #region Background stuff
                 Ground.Draw(spriteBatch);
                 Tower.Draw(spriteBatch);
+                Marker.Draw(spriteBatch);
             #endregion            
 
             #region Drawing buttons
@@ -205,16 +218,16 @@ namespace TowerDefensePrototype
                 foreach (Turret turret in TurretList)
                 {
                     turret.Update(GameTime);
-                    turret.Draw(spriteBatch);
+                    turret.Draw(spriteBatch, GameTime);
                 }
             #endregion
 
             CursorDraw(spriteBatch);
 
-            //This is here to make sure that the invader movement doesn't look jumpy
-                     
+            //This is here to make sure that the invader movement doesn't look jumpy                     
             InvaderUpdate();
-            //TurretShoot();
+            if (ProjectileList.Count == 1)
+            ProjectileUpdate();
         }
 
         
@@ -413,9 +426,10 @@ namespace TowerDefensePrototype
         }
 
         private void TurretUpdate()
-        {
-            ProjectileList.Clear();
+        {            
             //This piece of code makes sure that two turrets cannot be selected at any one time
+            ProjectileList.Clear();
+
             foreach (Turret turret in TurretList)
             {
                 if (turret.JustClicked == true)
@@ -431,10 +445,10 @@ namespace TowerDefensePrototype
                     }                    
                 }
 
-                if (turret.Selected == true && CurrentMouseState.LeftButton == ButtonState.Pressed && turret.CanShoot == true)
+                if (turret.Selected == true && CurrentMouseState.LeftButton == ButtonState.Pressed  && PreviousMouseState.LeftButton == ButtonState.Pressed && turret.CanShoot == true)
                 {
-                    TurretShoot();
-                    turret.CanShoot = false;
+                    //turret.CanShoot = false;
+                    TurretShoot();                    
                 }
             }         
         }
@@ -509,24 +523,85 @@ namespace TowerDefensePrototype
 
             foreach (Turret turret in TurretList)
             {
-                if (turret.Selected == true)
+                if (turret.Selected == true && turret.CanShoot == true)
                 {
-                    ProjectileList.Add(new Projectile(new Vector2(turret.BarrelRectangle.X, turret.BarrelRectangle.Y), new Vector2(turret.Direction.X, turret.Direction.Y)));
-                }
+                    
+                    Vector2 MousePosition, Direction;
 
-                foreach (Invader invader in InvaderList)
+                    CurrentMouseState = Mouse.GetState();
+                    MousePosition = new Vector2(CurrentMouseState.X, CurrentMouseState.Y);
+
+                    Direction = MousePosition - new Vector2(turret.BarrelRectangle.X, turret.BarrelRectangle.Y);
+                    Direction.Normalize();
+                       
+                    ProjectileList.Add(new Projectile(new Vector2(turret.BarrelRectangle.X, turret.BarrelRectangle.Y), new Vector2(Direction.X, Direction.Y)));   
+                }
+            }
+        }
+
+        private void ProjectileUpdate()
+        {
+            if (InvaderList.Any(TestInvader => TestInvader.BoundingBox.Intersects(ProjectileList[0].Ray) != null) &&
+                TrapList.Any(TestTrap => TestTrap.BoundingBox.Intersects(ProjectileList[0].Ray) != null) &&
+                ProjectileList[0].Active == true)
+            {
+                Invader HitInvader = InvaderList.First(TestInvader => TestInvader.BoundingBox.Intersects(ProjectileList[0].Ray) != null);
+                Trap HitTrap = TrapList.First(TestTrap => TestTrap.BoundingBox.Intersects(ProjectileList[0].Ray) != null);
+
+                if (ProjectileList[0].Ray.Intersects(HitInvader.BoundingBox) < ProjectileList[0].Ray.Intersects(HitTrap.BoundingBox))
                 {
-                    for (int i = 0; i < ProjectileList.Count; i++)
+                    if (ProjectileList.Count > 0)
                     {
-                        if (ProjectileList[i].Ray.Intersects(invader.BoundingBox) != null && ProjectileList[i].Active == true)
+                        //InvaderList.Remove(HitInvader);
+                        InvaderList.Remove(InvaderList.First(TestInvader => TestInvader.BoundingBox.Intersects(ProjectileList[0].Ray) != null));
+                        ProjectileList[0].Active = false;
+                        Rounds++;
+                        return;
+                    }
+                }
+            }
+
+            if (TrapList.All(Trap => Trap.BoundingBox.Intersects(ProjectileList[0].Ray) == null) &&
+                InvaderList.Any(TestInvader => TestInvader.BoundingBox.Intersects(ProjectileList[0].Ray) != null) &&
+                ProjectileList[0].Active == true)
+            {
+                Invader HitInvader = InvaderList.First(TestInvader => TestInvader.BoundingBox.Intersects(ProjectileList[0].Ray) != null);
+
+                if (ProjectileList.Count > 0)
+                {
+                    //InvaderList.Remove(HitInvader);
+                    ProjectileList[0].Active = false;
+
+                    InvaderList.Remove(InvaderList.First(TestInvader => TestInvader.BoundingBox.Intersects(ProjectileList[0].Ray) != null));
+                    Rounds++;
+                    return;
+                }
+            }
+
+            if (TrapList.All(Trap => Trap.BoundingBox.Intersects(ProjectileList[0].Ray) == null) &&
+                        InvaderList.All(Invader => Invader.BoundingBox.Intersects(ProjectileList[0].Ray) == null) &&
+                        ProjectileList[0].Ray.Intersects(Ground.BoundingBox) != null && ProjectileList[0].Active == true)
+            {
+                Nullable<double> Distance = ProjectileList[0].Ray.Intersects(Ground.BoundingBox);
+
+                if (Distance != null)
+                {
+                    foreach (Turret turret in TurretList)
+                    {
+                        if (turret.Selected == true)
                         {
-                            invader.ChangeHP(-100);
-                            ProjectileList[i].Active = false;
-                            ProjectileList.Clear();                                                    
+                            Vector2 newPos;
+                            newPos.Y = Ground.Position.Y;
+                            double Value1, Value2;
+                            Value1 = Math.Pow(Distance.Value, 2); //This is the hypoteneuse
+                            Value2 = Math.Pow(720 - 160 - 65 - turret.BarrelRectangle.Y, 2); //This is the height to the turret
+                            newPos.X = turret.BarrelRectangle.X + (float)Math.Sqrt(Value1 - Value2);
+                            Marker.Position = newPos;
                         }
                     }
                 }
             }
+
         }
 
         

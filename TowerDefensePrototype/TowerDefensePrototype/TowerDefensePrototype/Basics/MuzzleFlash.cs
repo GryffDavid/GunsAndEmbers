@@ -11,7 +11,7 @@ namespace TowerDefensePrototype
     public class MuzzleFlash
     {
         public bool Visible;
-        Vector2 Position;
+        public Vector2 Position;
         float Rotation;
         double Alpha, FadeIncrement, FadeTime;
         Texture2D CurrentTexture, Texture1, Texture2, Texture3;
@@ -64,7 +64,7 @@ namespace TowerDefensePrototype
                     FadeTime = 0.02;
                 }
 
-                spriteBatch.Draw(CurrentTexture, new Rectangle((int)Position.X, (int)Position.Y, (int)(CurrentTexture.Width), (int)(CurrentTexture.Height)), null, Color.Lerp(Color.Transparent, Color.White, (float)Alpha), Rotation, new Vector2(-BarrelLength,CurrentTexture.Height/2), SpriteEffects.None, 1);
+                spriteBatch.Draw(CurrentTexture, new Rectangle((int)Position.X, (int)Position.Y, (int)(CurrentTexture.Width), (int)(CurrentTexture.Height)), null, Color.Lerp(Color.Transparent, Color.White, (float)Alpha), Rotation, new Vector2(BarrelLength-16,CurrentTexture.Height/2), SpriteEffects.None, 1);
             }
         }
 
