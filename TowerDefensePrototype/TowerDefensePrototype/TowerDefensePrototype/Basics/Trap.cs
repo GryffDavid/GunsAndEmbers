@@ -135,10 +135,10 @@ namespace TowerDefensePrototype
                 {
                     emitter.Update(gameTime);
 
-                    if (emitter.DrawDepth != (Bottom / 1080))
-                    {
-                        emitter.DrawDepth = (Bottom / 1080);
-                    }
+                    //if (emitter.DrawDepth != (Bottom / 1080))
+                    //{
+                    //    emitter.DrawDepth = (Bottom / 1080);
+                    //}
                 }
             }
         }

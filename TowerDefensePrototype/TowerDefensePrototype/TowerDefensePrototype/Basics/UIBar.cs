@@ -99,7 +99,7 @@ namespace TowerDefensePrototype
                         Position.Y),
                     new Vector2(
                         MathHelper.Clamp((Position.X + (MaxSize.X * PercentValue)), Position.X, (Position.X + MaxSize.X)), 
-                        Position.Y + MathHelper.Clamp(MaxSize.X * PercentValue, 0, MaxSize.Y)),
+                        Position.Y + MaxSize.Y),
                     new Vector2(
                         MathHelper.Clamp(Position.X + (MaxSize.X * PercentValue), Position.X, Position.X + MaxSize.X), 
                         Position.Y)
@@ -171,6 +171,42 @@ namespace TowerDefensePrototype
                 });
             }
             
+            PreviousValue = CurrentValue;
+        }
+
+        public void Update(float maxValue, float currentValue)
+        {
+            CurrentValue = currentValue;
+
+            if (PreviousValue != CurrentValue)
+            {
+                PercentValue = (100 / maxValue * currentValue) / 100;
+
+                QuadList[1] = new Quad(
+                    new Vector2[] 
+                {
+                    new Vector2(
+                        Position.X + BottomXOffset, 
+                        Position.Y + MaxSize.Y),
+                    new Vector2(
+                        Position.X + TopXOffset, 
+                        Position.Y),
+                    new Vector2(
+                        MathHelper.Clamp((Position.X + (MaxSize.X * PercentValue)), Position.X, (Position.X + MaxSize.X)), 
+                        Position.Y + MathHelper.Clamp(MaxSize.X * PercentValue, 0, MaxSize.Y)),
+                    new Vector2(
+                        MathHelper.Clamp(Position.X + (MaxSize.X * PercentValue), Position.X, Position.X + MaxSize.X), 
+                        Position.Y)
+                },
+                    new Color[]
+                {
+                    BarColor,
+                    BarColor,
+                    BarColor,
+                    BarColor
+                });
+            }
+
             PreviousValue = CurrentValue;
         }
 

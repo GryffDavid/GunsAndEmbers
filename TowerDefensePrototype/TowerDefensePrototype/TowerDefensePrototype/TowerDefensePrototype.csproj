@@ -128,8 +128,10 @@
     <Compile Include="Basics\HeavyRangedInvader.cs" />
     <Compile Include="Basics\Quad.cs" />
     <Compile Include="Basics\SpecialAbility.cs" />
+    <Compile Include="Basics\UIInvaderInfo.cs" />
     <Compile Include="Basics\UISlopedBar.cs" />
     <Compile Include="Basics\UITurretInfo.cs" />
+    <Compile Include="Basics\UIWeaponInfoTip.cs" />
     <Compile Include="Basics\WaveCountDown.cs" />
     <Compile Include="Basics\NumberChange.cs" />
     <Compile Include="Basics\Light.cs" />

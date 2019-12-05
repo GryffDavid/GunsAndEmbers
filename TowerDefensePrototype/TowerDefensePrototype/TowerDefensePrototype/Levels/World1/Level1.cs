@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace TowerDefensePrototype
 {
@@ -11,8 +13,9 @@ namespace TowerDefensePrototype
         public Level1()
         {
             Number = 1;
-            WorldType = "Basic";
             WaveList = new List<Wave>();
+            WorldType = WorldType.Snowy;
+            StartWeather = Weather.Snow;
             Resources = 1000;
 
             Wave Wave1 = new Wave(true, 2050, 3000,
@@ -146,6 +149,13 @@ namespace TowerDefensePrototype
             WaveList.Add(Wave7);
             WaveList.Add(Wave8);
             WaveList.Add(Wave9);
+        }
+
+        public override void LoadContent(ContentManager contentManager)
+        {
+            GroundTexture = contentManager.Load<Texture2D>("Backgrounds/Ground");
+            ForegroundTexture = contentManager.Load<Texture2D>("Backgrounds/Foreground");
+            SkyBackgroundTexture = contentManager.Load<Texture2D>("Backgrounds/Sky");
         }
     }
 }

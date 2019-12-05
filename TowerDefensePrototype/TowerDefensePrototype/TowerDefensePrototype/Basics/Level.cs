@@ -13,10 +13,16 @@ namespace TowerDefensePrototype
 {
     public class Level
     {
+        public Texture2D GroundTexture, SkyBackgroundTexture, ForegroundTexture;
         public int Number, Resources;
-        public string WorldType;
-        public List<Wave> WaveList; 
-        
+        public WorldType WorldType;
+        public List<Wave> WaveList;
+        public Weather StartWeather;
+
+        public virtual void LoadContent(ContentManager contentManager)
+        {
+
+        }
 
         //STORE WAVES HERE IN A LIST//
         //CALL WAVE BY IT'S INDEX IN THE LIST//

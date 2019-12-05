@@ -48,11 +48,20 @@ namespace TowerDefensePrototype
             
             if (Active == true)
             {
-                FrameSize = new Vector2(TurretBarrel.Width / CurrentAnimation.TotalFrames, TurretBarrel.Height);
+                if (CurrentAnimation.TotalFrames > 0)
+                {
+                    FrameSize = new Vector2(TurretBarrel.Width / CurrentAnimation.TotalFrames, TurretBarrel.Height);
+                }
+                else
+                {
+                    FrameSize = new Vector2(TurretBarrel.Width, TurretBarrel.Height);
+                }
             }
                         
             CurrentHealth = Health;
             CurrentHeat = 0;
+
+            ElapsedTime = FireDelay;
 
             SelectBox = new Rectangle((int)Position.X - 32, (int)Position.Y - 32, 96, 96);
 

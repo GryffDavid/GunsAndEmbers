@@ -19,19 +19,29 @@ namespace TowerDefensePrototype
 
         Rectangle MouseRectangle;
         MouseState CurrentMouseState, PreviousMouseState;
-
+        MousePosition CurrentMousePosition, PreviousMousePosition;
+        
         Color OutlineColor, InteriorColor;
+        public Color IconColor;
 
-        public CooldownButton(Vector2 position, Vector2 size, float outlineThickness)
+        Texture2D Icon;
+
+        public bool JustClicked;
+
+        public CooldownButton(Vector2 position, Vector2 size, float outlineThickness, Texture2D icon)
         {
             CurrentButtonState = ButtonSpriteState.Released;
-            OutlineColor = Color.Lerp(Color.White, Color.Transparent, 0.25f);
+            Icon = icon;
+            IconColor = Color.White;
+            OutlineColor = Color.Lerp(Color.White, Color.Transparent, 0.5f);
             OutlineThickness = outlineThickness;
             CurrentCooldownTime = 0;
             MaxCooldownTime = 2000;
 
             CurrentPosition = position;
             CurrentSize = size;
+
+            JustClicked = false;
 
             MouseRectangle = new Rectangle((int)CurrentPosition.X, (int)CurrentPosition.Y, (int)CurrentSize.X, (int)CurrentSize.Y);
 
@@ -230,6 +240,7 @@ namespace TowerDefensePrototype
         public void Update(GameTime gameTime, Vector2 cursorPosition)
         {
             CurrentMouseState = Mouse.GetState();
+
             //If the mouse is inside the button
             if (MouseRectangle.Contains(new Point((int)cursorPosition.X, (int)cursorPosition.Y)))
             {
@@ -407,14 +418,86 @@ namespace TowerDefensePrototype
                 #endregion
             }
 
+            if (CurrentMouseState.LeftButton == ButtonState.Pressed &&
+                PreviousMouseState.LeftButton == ButtonState.Released)
+            {
+                //When the button is clicked down, check if it was inside or outside the button
+                if (MouseRectangle.Contains(new Point((int)cursorPosition.X, (int)cursorPosition.Y)))
+                {
+                    CurrentMousePosition = MousePosition.Inside;
+                }
+                else
+                {
+                    CurrentMousePosition = MousePosition.Outside;
+                }
+            }
+
+            if (CurrentMouseState.LeftButton == ButtonState.Released &&
+                PreviousMouseState.LeftButton == ButtonState.Pressed)
+            {
+                //If the mouse button was just released update the mouse position and 
+                //check if the current mouse position and the previous position are both inside the button
+                if (MouseRectangle.Contains(new Point((int)cursorPosition.X, (int)cursorPosition.Y)))
+                {
+                    CurrentMousePosition = MousePosition.Inside;
+                }
+                else
+                {
+                    CurrentMousePosition = MousePosition.Outside;
+                }
+
+                if (CurrentMousePosition == MousePosition.Inside && PreviousMousePosition == MousePosition.Inside)
+                {
+                    JustClicked = true;
+                }
+            }
+
+            if (CurrentMousePosition == MousePosition.Inside && CurrentMouseState.LeftButton == ButtonState.Pressed)
+            {
+                CurrentButtonState = ButtonSpriteState.Pressed;
+            }
+
+            if (CurrentMouseState.LeftButton == ButtonState.Released &&
+                PreviousMouseState.LeftButton == ButtonState.Released)
+            {
+                JustClicked = false;
+            }
+
+            PreviousMousePosition = CurrentMousePosition;
             PreviousButtonState = CurrentButtonState;
             PreviousMouseState = CurrentMouseState;
         }
 
-        public void Draw(GraphicsDevice graphicsDevice)
+        public void Draw(BasicEffect basicEffect, GraphicsDevice graphicsDevice, SpriteBatch spriteBatch)
         {
-            graphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, OutlineVertices, 0, OutlineVertices.Length/3, VertexPositionColor.VertexDeclaration);
-            graphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, InteriorVertices, 0, InteriorVertices.Length / 3, VertexPositionColor.VertexDeclaration);
+            foreach (EffectPass pass in basicEffect.CurrentTechnique.Passes)
+            {
+                pass.Apply();
+                graphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, OutlineVertices, 0, OutlineVertices.Length / 3, VertexPositionColor.VertexDeclaration);
+                graphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, InteriorVertices, 0, InteriorVertices.Length / 3, VertexPositionColor.VertexDeclaration);
+            }
+
+            if (Icon != null)
+            {
+                if (CurrentButtonState == ButtonSpriteState.Pressed)
+                {
+                    spriteBatch.Draw(Icon,
+                        new Rectangle((int)(CurrentPosition.X + CurrentSize.X / 2 + 3), (int)(CurrentPosition.Y + CurrentSize.Y / 2 + 3), Icon.Width, Icon.Height),
+                        null,
+                        IconColor,
+                        0,
+                        new Vector2(Icon.Width / 2, Icon.Height / 2), SpriteEffects.None, 1f);
+                }
+                else
+                {
+                    spriteBatch.Draw(Icon,
+                        new Rectangle((int)(CurrentPosition.X + CurrentSize.X / 2), (int)(CurrentPosition.Y + CurrentSize.Y / 2), Icon.Width, Icon.Height),
+                        null,
+                        IconColor,
+                        0,
+                        new Vector2(Icon.Width / 2, Icon.Height / 2), SpriteEffects.None, 1f);
+                }
+            }
         }
     }
 }

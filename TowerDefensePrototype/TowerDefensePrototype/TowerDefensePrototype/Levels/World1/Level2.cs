@@ -11,7 +11,6 @@ namespace TowerDefensePrototype
         public Level2()
         {
             Number = 2;
-            WorldType = "Basic";
             WaveList = new List<Wave>();
 
             Wave Wave1 = new Wave(false, 800, 5000,
