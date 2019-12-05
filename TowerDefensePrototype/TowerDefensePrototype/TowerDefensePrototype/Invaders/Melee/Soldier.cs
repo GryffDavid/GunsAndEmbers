@@ -244,7 +244,8 @@ namespace TowerDefensePrototype
                                         Direction = Waypoints[CurrentWaypoint] - (ShadowPosition + new Vector2(CurrentAnimation.FrameSize.X / 2, 4));
                                         Direction.Normalize();
 
-                                        Velocity = Direction * Speed;
+                                        if (Frozen == false)
+                                            Velocity = Direction * Speed;
 
                                         if (Vector2.Distance(ShadowPosition + new Vector2(CurrentAnimation.FrameSize.X / 2, 4), Waypoints[CurrentWaypoint]) < 2)
                                         {

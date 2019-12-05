@@ -16,7 +16,7 @@ namespace TowerDefensePrototype
         public Level2(Game1 game)
         {
             //DialogueItems = new StoryDialogueItems();
-            LevelDialogue = new Level2Dialogue(game);
+            //LevelDialogue = new Level2Dialogue(game);
             Number = 2;
             WaveList = new List<Wave>();
             WorldType = WorldType.Snowy;
@@ -109,22 +109,22 @@ namespace TowerDefensePrototype
                  );
             #endregion
 
-            WaveList.Add(Wave1);
+            //WaveList.Add(Wave1);
             WaveList.Add(Wave2);
             WaveList.Add(Wave3);
         }
 
         public override void LoadContent(ContentManager contentManager)
         {
-            StoryDialogueItems DialogueItems = contentManager.Load<StoryDialogueItems>("StoryDialogue/Level2Dialogue");
-            LevelDialogue.ItemsList = DialogueItems.DialogueItems;
+            //StoryDialogueItems DialogueItems = contentManager.Load<StoryDialogueItems>("StoryDialogue/Level2Dialogue");
+            //LevelDialogue.ItemsList = DialogueItems.DialogueItems;
 
-            LevelDialogue.TutorialMarker = new ButtonMarker(new Vector2(100, 100), contentManager.Load<Texture2D>("WhiteBlock"));
+            //LevelDialogue.TutorialMarker = new ButtonMarker(new Vector2(100, 100), contentManager.Load<Texture2D>("WhiteBlock"));
 
-            LevelDialogue.DialogueBox = new StoryDialogueBox();
-            LevelDialogue.DialogueBox.BoxTexture = contentManager.Load<Texture2D>("WhiteBlock");
-            LevelDialogue.DialogueBox.DialogueFont = contentManager.Load<SpriteFont>("Fonts/RobotoBold20_0_Outline");
-            LevelDialogue.DialogueBox.TipFont = contentManager.Load<SpriteFont>("Fonts/RobotoLight20_2");
+            //LevelDialogue.DialogueBox = new StoryDialogueBox();
+            //LevelDialogue.DialogueBox.BoxTexture = contentManager.Load<Texture2D>("WhiteBlock");
+            //LevelDialogue.DialogueBox.DialogueFont = contentManager.Load<SpriteFont>("Fonts/RobotoBold20_0_Outline");
+            //LevelDialogue.DialogueBox.TipFont = contentManager.Load<SpriteFont>("Fonts/RobotoLight20_2");
        
             GroundTexture = contentManager.Load<Texture2D>("Backgrounds/Ground");
             ForegroundTexture = contentManager.Load<Texture2D>("Backgrounds/Foreground");

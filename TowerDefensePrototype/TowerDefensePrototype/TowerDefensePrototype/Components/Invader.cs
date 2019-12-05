@@ -1031,6 +1031,17 @@ namespace TowerDefensePrototype
         {
             if (Frozen == false)
             {
+                //if (OperatorList != null)
+                //foreach (Invader invader in OperatorList)
+                //{
+                //    invader.Freeze(freeze, frozenColor);
+                //}
+
+                //if (OperatingVehicle != null)
+                //{
+                //    OperatingVehicle.Freeze(freeze, frozenColor);
+                //}
+
                 FrozenColor = frozenColor;
                 Frozen = true;
                 CurrentFreeze = freeze;

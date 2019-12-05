@@ -227,7 +227,8 @@ namespace TowerDefensePrototype
                 #endregion
 
                 #region Update vertices
-                if (Velocity != Vector2.Zero)
+                if (Velocity != Vector2.Zero ||
+                    (Velocity == Vector2.Zero && (Grow == true || Shrink == true)))
                 {
                     CurrentPosition += Velocity * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
 
@@ -385,7 +386,7 @@ namespace TowerDefensePrototype
             effect.Parameters["Color"].SetValue(new Vector4(Color.R / 255f, Color.G / 255f, Color.B / 255f, Color.A / 255f));
 
             base.Draw(graphics, effect);
-            //effect.Parameters["Color"].SetValue(new Vector4(Color.R / 255f, Color.G / 255f, Color.B / 255f, Color.A / 255f));
+            //effect.Parameters ["Color"].SetValue(new Vector4(Color.R / 255f, Color.G / 255f, Color.B / 255f, Color.A / 255f));
 
             //foreach (EffectPass pass in effect.CurrentTechnique.Passes)
             //{

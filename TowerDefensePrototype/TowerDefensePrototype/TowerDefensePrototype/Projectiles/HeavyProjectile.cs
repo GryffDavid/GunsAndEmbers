@@ -101,10 +101,16 @@ namespace TowerDefensePrototype
 
         public object SourceObject;
 
+        public float ShadowMaxY = 828f;
+
+        public Ballistics Ballistics;
+        public Vector2 StartPosition;
+
         public HeavyProjectile(object source, Texture2D texture, Vector2 position, float speed, float angle, float gravity, float damage,
                                Vector2? yrange = null, float? blastRadius = null, bool? verlet = false)
         {
-            //Initialise all the regular variables
+            //Initialise all the regular variables       
+            StartPosition = position;
             SourceObject = source;
             Active = true;
             Shadow = true;
@@ -203,28 +209,28 @@ namespace TowerDefensePrototype
             #region Shadow Vertices
             shadowVertices[0] = new VertexPositionColorTexture()
             {
-                Position = new Vector3(DestinationRectangle.Left, MaxY, 0),
+                Position = new Vector3(DestinationRectangle.Left, ShadowMaxY, 0),
                 TextureCoordinate = new Vector2(0, 0),
                 Color = Color.White
             };
 
             shadowVertices[1] = new VertexPositionColorTexture()
             {
-                Position = new Vector3(DestinationRectangle.Left + DestinationRectangle.Width, MaxY, 0),
+                Position = new Vector3(DestinationRectangle.Left + DestinationRectangle.Width, ShadowMaxY, 0),
                 TextureCoordinate = new Vector2(1, 0),
                 Color = Color.White
             };
 
             shadowVertices[2] = new VertexPositionColorTexture()
             {
-                Position = new Vector3(DestinationRectangle.Left + DestinationRectangle.Width, MaxY + DestinationRectangle.Height, 0),
+                Position = new Vector3(DestinationRectangle.Left + DestinationRectangle.Width, ShadowMaxY + DestinationRectangle.Height, 0),
                 TextureCoordinate = new Vector2(1, 1),
                 Color = Color.White
             };
 
             shadowVertices[3] = new VertexPositionColorTexture()
             {
-                Position = new Vector3(DestinationRectangle.Left, MaxY + DestinationRectangle.Height, 0),
+                Position = new Vector3(DestinationRectangle.Left, ShadowMaxY + DestinationRectangle.Height, 0),
                 TextureCoordinate = new Vector2(0, 1),
                 Color = Color.White
             };
@@ -236,6 +242,8 @@ namespace TowerDefensePrototype
             shadowIndices[4] = 3;
             shadowIndices[5] = 0;
             #endregion
+
+            Ballistics = new Ballistics(this);
         }
 
         public virtual void Update(GameTime gameTime)
@@ -291,7 +299,8 @@ namespace TowerDefensePrototype
                     //This line simulates air friction. 
                     //I'm not sure if I should keep it. I thought it'd make the projectiles look a bit better.
                     //It kinda does.
-                    Velocity.X = MathHelper.Lerp(Velocity.X, 0, 0.005f * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
+                    //EDIT: REMOVED THIS BECAUSE IT CREATED PROBLEMS WITH THE BALLISTICS CALCULATIONS
+                    //Velocity.X = MathHelper.Lerp(Velocity.X, 0, 0.005f * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
 
                     Position += Velocity * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
                     Velocity.Y += Gravity * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
@@ -339,6 +348,13 @@ namespace TowerDefensePrototype
 
                 Center = new Vector2(DestinationRectangle.Left, DestinationRectangle.Top);
 
+                //float startX = StartPosition.X;
+                //float endX = Ballistics.EndPosition.X;
+                //float curX = Position.X;
+                float perc = ((100f / Ballistics.EndPosition.X) * Position.X) / 100f;
+                float yDist = (Ballistics.EndPosition.Y - 828);
+                ShadowMaxY = (828 + (yDist * perc));
+
                 #region Update Vertices
                 if (Velocity != Vector2.Zero)
                 {
@@ -349,10 +365,10 @@ namespace TowerDefensePrototype
                     projectileVertices[2].Position = new Vector3(DestinationRectangle.Left + DestinationRectangle.Width, DestinationRectangle.Top + DestinationRectangle.Height, 0);
                     projectileVertices[3].Position = new Vector3(DestinationRectangle.Left, DestinationRectangle.Top + DestinationRectangle.Height, 0);
 
-                    shadowVertices[0].Position = new Vector3(DestinationRectangle.Left, MaxY, 0);
-                    shadowVertices[1].Position = new Vector3(DestinationRectangle.Left + ShadowLength, MaxY, 0);
-                    shadowVertices[2].Position = new Vector3(DestinationRectangle.Left + ShadowLength, MaxY + DestinationRectangle.Height, 0);
-                    shadowVertices[3].Position = new Vector3(DestinationRectangle.Left, MaxY + DestinationRectangle.Height, 0);
+                    shadowVertices[0].Position = new Vector3(DestinationRectangle.Left, ShadowMaxY, 0);
+                    shadowVertices[1].Position = new Vector3(DestinationRectangle.Left + ShadowLength, ShadowMaxY, 0);
+                    shadowVertices[2].Position = new Vector3(DestinationRectangle.Left + ShadowLength, ShadowMaxY + DestinationRectangle.Height, 0);
+                    shadowVertices[3].Position = new Vector3(DestinationRectangle.Left, ShadowMaxY + DestinationRectangle.Height, 0);
 
                     shadowVertices[0].Color = Color.Black * 0.85f;
                     shadowVertices[1].Color = Color.Black * 0.85f;
@@ -377,9 +393,18 @@ namespace TowerDefensePrototype
                 effect.Texture = Texture;
 
                 #region Draw projectile shadow
+
+                Vector2 dir = Ballistics.EndPosition - new Vector2(StartPosition.X, 828);
+                dir.Normalize();
+
+                float rot = (float)Math.Atan2(dir.Y, dir.X);
+                
                 shadowEffect.Parameters["Texture"].SetValue(Texture);
                 shadowEffect.Parameters["texSize"].SetValue(new Vector2(Texture.Width, Texture.Height));
-
+                shadowEffect.Parameters["World"].SetValue(Matrix.CreateTranslation(-shadowVertices[0].Position) *
+                                                          Matrix.CreateRotationZ(rot) *
+                                                          Matrix.CreateTranslation(shadowVertices[0].Position));
+                
                 foreach (EffectPass pass in shadowEffect.CurrentTechnique.Passes)
                 {
                     pass.Apply();

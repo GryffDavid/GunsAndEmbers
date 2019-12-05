@@ -114,9 +114,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="2DCamera.cs" />
     <Compile Include="Animations\Animation.cs" />
     <Compile Include="Animations\InvaderAnimation.cs" />
-    <Compile Include="Basics\Ballistics.cs" />
+    <Compile Include="Ballistics.cs" />
     <Compile Include="Basics\VectorSprite.cs" />
     <Compile Include="Components\Pathfinder.cs" />
     <Compile Include="Components\ResourceCounter.cs" />

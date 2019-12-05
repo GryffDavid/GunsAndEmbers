@@ -222,6 +222,8 @@ Content\Invaders\GunShip\GunShipTexture.xnb
 Content\Invaders\Crate\Block.xnb
 Content\Fonts\RobotoBold20_2_Outline.xnb
 Content\Fonts\RobotoBold20_0_Outline.xnb
+Content\Particles\ToonSmoke\ToonSmokeQuad.xnb
+Content\Traps\Barrel.xnb
 Content\Sounds\Menu\MenuClick.xnb
 Content\Sounds\FireTrapStart.xnb
 Content\Sounds\Menu\MenuAmbiance.xnb
