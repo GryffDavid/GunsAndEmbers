@@ -65,3 +65,4 @@ Content\TestBackground.xnb
 Content\Ground7.xnb
 Content\SpiderSprite.xnb
 Content\AcidProjectileSprite.xnb
+Content\Slime.xnb

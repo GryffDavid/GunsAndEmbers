@@ -110,10 +110,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Basics\Explosion.cs" />
     <Compile Include="Basics\RangedInvader.cs" />
+    <Compile Include="Basics\World.cs" />
     <Compile Include="Invaders\Archer.cs" />
     <Compile Include="Invaders\FireElemental.cs" />
     <Compile Include="Invaders\Healer.cs" />
+    <Compile Include="Invaders\Slime.cs" />
     <Compile Include="Invaders\Spider.cs" />
     <Compile Include="Invaders\SuicideBomber.cs" />
     <Compile Include="Invaders\WaterElemental.cs" />
@@ -141,7 +144,7 @@
     <Compile Include="DefenseTraps\TarTrap.cs" />
     <Compile Include="Invaders\Tank.cs" />
     <Compile Include="Projectiles\MachineGunProjectile.cs" />
-    <Compile Include="Turrets\BasicTurret.cs" />
+    <Compile Include="Turrets\GatlingTurret.cs" />
     <Compile Include="Turrets\BlankTurret.cs" />
     <Compile Include="DefenseTraps\CatapultTrap.cs" />
     <Compile Include="OffenseTraps\FireTrap.cs" />
@@ -202,6 +205,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Bosses\" />
+    <Folder Include="World\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />

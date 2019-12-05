@@ -13,7 +13,7 @@ namespace TowerDefensePrototype
         public string AssetName;
         public Texture2D CurrentTexture;
         public Rectangle DestinationRectangle, SourceRectangle;
-        public Vector2 Position, MoveVector, ResourceMinMax, Velocity;
+        public Vector2 Position, MoveVector, CurrentMoveVector, ResourceMinMax, Velocity;
         public bool Active, VulnerableToTurret, VulnerableToTrap, CanAttack, Burning, Frozen, Slow;//, CanMove;
         public Color Color, BurnColor, FrozenColor, AcidColor;
         public BoundingBox BoundingBox;
@@ -43,6 +43,7 @@ namespace TowerDefensePrototype
             Color = Color.White;
             HPBar = new HorizontalBar(contentManager, new Vector2(32, 4), MaxHP, CurrentHP);
             CurrentMoveDelay = MoveDelay;
+            CurrentMoveVector = MoveVector;
             MaxY = Random.Next((int)YRange.X, (int)YRange.Y); 
         }
 
@@ -111,13 +112,13 @@ namespace TowerDefensePrototype
                 {
                     CurrentFreezeDelay += gameTime.ElapsedGameTime.TotalMilliseconds;
                     Color = FrozenColor;
-                    CanMove = false;
+                    CurrentMoveVector = Vector2.Zero;
                 }
 
                 if (Frozen == true && CurrentFreezeDelay > FreezeDelay)
                 {
                     Frozen = false;
-                    CanMove = true;
+                    CurrentMoveVector = MoveVector;
                     CurrentFreezeDelay = 0;
                 }
 
@@ -203,14 +204,14 @@ namespace TowerDefensePrototype
                
         public void Move()
         {
-            if (Active == true && CanMove == true)
+            //if (Active == true && CanMove == true)
+            //{
+            if (CurrentDelay > CurrentMoveDelay)
             {
-                if (CurrentDelay > CurrentMoveDelay)
-                {
-                    Position += MoveVector;
-                    CurrentDelay = 0;
-                }
+                Position += CurrentMoveVector;
+                CurrentDelay = 0;
             }
+            //}
         }
 
         public void Freeze(float milliseconds, Color frozenColor)

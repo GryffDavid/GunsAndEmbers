@@ -13,7 +13,6 @@ namespace TowerDefensePrototype
         public Spider(Vector2 position)
          {
             Active = true;
-            CanMove = true;
             MoveVector = new Vector2(-1, 0);
             Position = position;
             AssetName = "SpiderSprite";

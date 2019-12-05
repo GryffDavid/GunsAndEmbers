@@ -9,9 +9,9 @@ using Microsoft.Xna.Framework.Input;
 
 namespace TowerDefensePrototype
 {    
-    class BasicTurret : Turret
+    class GatlingTurret : Turret
     {      
-        public BasicTurret(Vector2 position)
+        public GatlingTurret(Vector2 position)
         {
             Active = true;
             TurretType = TurretType.Basic;

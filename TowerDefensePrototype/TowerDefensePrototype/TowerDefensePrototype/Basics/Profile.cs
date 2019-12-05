@@ -12,6 +12,8 @@ namespace TowerDefensePrototype
         public string Name;
         public int LevelNumber;
         public int Points;
+        public List<string> Buttons;
+
         //What turrets the player has access to
         public bool FlameThrower, MachineGun, Cannon;
 

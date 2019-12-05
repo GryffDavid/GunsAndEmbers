@@ -1,35 +1,39 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;  
+using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 
 namespace TowerDefensePrototype
 {
-    class Tank : Invader
+    class Slime : Invader
     {
-        public Tank(Vector2 position)
+        public Slime(Vector2 position)
         {
             Active = true;
             MoveVector = new Vector2(-1, 0);
             Position = position;
-            AssetName = "Troll";
-            CurrentHP = 500;
-            MaxHP = 500;
-            MoveDelay = 40;
-            ResourceMinMax = new Vector2(20, 90);
+            AssetName = "Slime";
+            CurrentHP = 50;
+            MaxHP = 50;
+            MoveDelay = 5;
+            ResourceMinMax = new Vector2(1, 5);
             CurrentAttackDelay = 0;
             AttackDelay = 1500;
-            AttackPower = 30;
-            FrameSize = new Vector2(37, 58);
+            AttackPower = 4;
+            FrameSize = new Vector2(50, 28);
             FrameDelay = 120;
-            TotalFrames = 1;
+            TotalFrames = 2;
             CurrentFrame = 0;
-            InvaderType = InvaderType.Tank;
-            Scale = new Vector2(1.5f, 1.5f);
-            YRange = new Vector2(420, 530);
+            InvaderType = InvaderType.Slime;
+            YRange = new Vector2(420, 530);          
+        }
+
+        public override void Update(GameTime gameTime)
+        {
+            base.Update(gameTime);
         }
 
         public override void TrapDamage(TrapType trapType)
@@ -44,11 +48,11 @@ namespace TowerDefensePrototype
                         break;
 
                     case TrapType.Spikes:
-
+                        CurrentHP -= 10;
                         break;
 
                     case TrapType.Catapult:
-
+                        Trajectory(new Vector2(5, -10));
                         break;
 
                     case TrapType.Ice:
@@ -56,7 +60,7 @@ namespace TowerDefensePrototype
                         break;
 
                     case TrapType.Tar:
-
+                        MakeSlow(4000, 80);
                         break;
                 }
             }
