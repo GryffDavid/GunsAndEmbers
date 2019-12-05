@@ -289,7 +289,8 @@ namespace TowerDefensePrototype
 
         //Trap Cursors
         public Texture2D WallTrapCursor, SpikesTrapCursor, CatapultTrapCursor, FireTrapCursor, IceTrapCursor, TarTrapCursor, BarrelTrapCursor,
-                         SawBladeTrapCursor, LineTrapCursor, TriggerTrapCursor, LandMineTrapCursor, FlameThrowerTrapCursor, GlueTrapCursor;
+                         SawBladeTrapCursor, LineTrapCursor, TriggerTrapCursor, LandMineTrapCursor, FlameThrowerTrapCursor, GlueTrapCursor,
+                         PopFragTrapCursor;
         #endregion
 
         #region Trap sprites
@@ -2032,6 +2033,24 @@ namespace TowerDefensePrototype
                         }
                         break;
                     #endregion
+
+                    case TrapType.PopFrag:
+                        {
+                            AnimationsList = new List<TrapAnimation>()
+                            {
+                                new TrapAnimation()
+                                {
+                                    CurrentTrapState = TrapAnimationState.Untriggered,
+                                    Texture = Content.Load<Texture2D>("Traps/PopFrag/PopFragTrapUntriggered"),
+                                    Animated = false,
+                                    CurrentFrame = 0,
+                                    TotalFrames = 1,
+                    
+                                    AnimationType = AnimationType.Regular
+                                }
+                            };
+                        }
+                        break;
                 }
 
                 TrapAnimationsDictionary[entryName] = AnimationsList;
@@ -7450,6 +7469,7 @@ namespace TowerDefensePrototype
         public void OnLightProjectileFired(object source, LightProjectileEventArgs e)
         {
             LightProjectile projectile = e.Projectile;
+            Trap sourceTrap = source as Trap;
             LightRangedInvader sourceInvader = source as LightRangedInvader;
             Turret sourceTurret = source as Turret;
 
@@ -7464,6 +7484,11 @@ namespace TowerDefensePrototype
             if (sourceInvader != null)
             {
                 Ground.BoundingBox.Min = new Vector3(0, MathHelper.Clamp(sourceInvader.DestinationRectangle.Bottom + 16, 690, 960), 0);
+            }
+
+            if (sourceTrap != null)
+            {
+
             }
             #endregion
 
@@ -7565,14 +7590,18 @@ namespace TowerDefensePrototype
 
 
             #region INVADER hit by a projectile
-            Action<Turret, Invader, Vector2> InvaderEffect = (Turret Turret, Invader hitInvader, Vector2 collisionEnd) =>
+            Action<object, Invader, Vector2> InvaderEffect = (object sourceObject, Invader hitInvader, Vector2 collisionEnd) =>
             {
+                Turret Turret = sourceObject as Turret;
+                Trap Trap = sourceObject as Trap;
+
                 #region The turret has a limited range
-                float TurretInvaderDist = Vector2.Distance(Turret.BarrelEnd, collisionEnd);
+                float InvaderDist = Vector2.Distance(Turret.BarrelEnd, collisionEnd);
+
                 if (Turret.Range != 0)
                 {
                     #region The invader is in range
-                    if (TurretInvaderDist <= Turret.Range)
+                    if (InvaderDist <= Turret.Range)
                     {
                         switch (Turret.TurretFireType)
                         {
@@ -7597,7 +7626,7 @@ namespace TowerDefensePrototype
                     else
                     #region The invader is out of range - reduce the damage accordingly
                     {
-                        float OverRange = TurretInvaderDist - Turret.Range;
+                        float OverRange = InvaderDist - Turret.Range;
                         float DamageReduction = Math.Min((100 / (2 * Turret.Range)) * OverRange, 50);
                         float FinalDamage = ((100 - DamageReduction) / 100) * Turret.Damage;
                         switch (Turret.TurretFireType)
@@ -8354,7 +8383,7 @@ namespace TowerDefensePrototype
                     if (HitTrap != null)
                     {
                         CreateEffect(sourcePosition, CollisionEnd, CurrentProjectile.LightProjectileType);
-                        TrapEffect(CollisionEnd, projectileSource, HitTrap);
+                        //TrapEffect(CollisionEnd, projectileSource, HitTrap);
 
                         if (sourceInvader != null)
                             sourceInvader.HitObject = HitTrap;
@@ -10573,6 +10602,18 @@ namespace TowerDefensePrototype
                         }
                         break;
                     #endregion
+
+                    case TrapType.PopFrag:
+                        {
+                            for (int i = 0; i < 10; i++)
+                            {
+                                float angle = (float)RandomDouble(0.0, 90.0);
+
+                                Vector2 Direction = new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
+                                CreateLightProjectile(new MachineGunProjectile(new Vector2(HitTrap.Center.X, HitTrap.Center.Y - 70), Direction), HitTrap);
+                            }
+                        }
+                        break;
                 }
 
                 #region Deactivate trap if it's reached the detonation limit

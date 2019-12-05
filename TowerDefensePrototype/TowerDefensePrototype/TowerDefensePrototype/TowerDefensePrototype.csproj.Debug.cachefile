@@ -194,7 +194,6 @@ Content\Traps\FlameThrower\FlameThrowerTrapUntriggered.xnb
 Content\Icons\TrapIcons\FlameThrowerTrapIcon.xnb
 Content\Traps\FlameThrower\FlameThrowerTrapTriggering.xnb
 Content\Traps\FlameThrower\FlameThrowerTrapResetting.xnb
-Content\Traps\GlueTrap.xnb
 Content\Icons\TrapIcons\GlueTrapIcon.xnb
 Content\Particles\ToonGlueDrip1.xnb
 Content\Decals\GlueDecal1.xnb
@@ -268,3 +267,6 @@ Content\Shaders\LightEffect.xnb
 Content\StoryDialogue\Level1Dialogue.xnb
 Content\StoryDialogue\Level2Dialogue.xnb
 Content\StoryDialogue\LoadoutMenuDialogue.xnb
+Content\Icons\TrapIcons\PopFragTrapIcon.xnb
+Content\Traps\PopFrag\PopFragTrapUntriggered.xnb
+Content\Traps\GlueTrap.xnb

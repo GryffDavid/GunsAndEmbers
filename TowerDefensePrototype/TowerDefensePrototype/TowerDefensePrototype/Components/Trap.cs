@@ -20,7 +20,8 @@ namespace TowerDefensePrototype
         Trigger,
         LandMine,
         FlameThrower,
-        Glue
+        Glue,
+        PopFrag
     };
 
     public enum TrapAnimationState { Untriggered, Triggering, Active, Resetting };
