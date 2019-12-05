@@ -1013,7 +1013,7 @@ namespace TowerDefensePrototype
                 //});
 
                 #region Prepare Render Targets
-                Buffer2 = new RenderTarget2D(GraphicsDevice, 1920, 1080, false, SurfaceFormat.Rgba64, DepthFormat.None, 1, RenderTargetUsage.PreserveContents);
+                Buffer2 = new RenderTarget2D(GraphicsDevice, 1920, 1080, false, SurfaceFormat.Rgba64, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
                 Buffer1 = new RenderTarget2D(GraphicsDevice, 1920, 1080);
 
                 OcclusionMap = new RenderTarget2D(GraphicsDevice, 1920, 1080);
@@ -1022,7 +1022,7 @@ namespace TowerDefensePrototype
                 BlurMap = new RenderTarget2D(GraphicsDevice, 1920, 1080); 
                 ColorMap = new RenderTarget2D(GraphicsDevice, 1920, 1080); 
                 NormalMap = new RenderTarget2D(GraphicsDevice, 1920, 1080);
-                LightMap = new RenderTarget2D(GraphicsDevice, 1920, 1080, false, SurfaceFormat.Rgba64, DepthFormat.None, 8, RenderTargetUsage.PreserveContents);
+                LightMap = new RenderTarget2D(GraphicsDevice, 1920, 1080, false, SurfaceFormat.Rgba64, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
 
                 FinalMap = new RenderTarget2D(GraphicsDevice, 1920, 1080);
                 SpecMap = new RenderTarget2D(GraphicsDevice, 1920, 1080);
@@ -1109,6 +1109,7 @@ namespace TowerDefensePrototype
 
                 CrepEffect.Parameters["Projection"].SetValue(Projection);
                 BlurEffect.Parameters["Projection"].SetValue(Projection);
+                LightCombined.Parameters["Projection"].SetValue(Projection);
 
                 NoBlackEffect = Content.Load<Effect>("Shaders/NoBlack");
                 NoBlackEffect.Parameters["Projection"].SetValue(Projection);
@@ -2650,6 +2651,8 @@ namespace TowerDefensePrototype
                 SkyBackground.Draw(spriteBatch);
                 Ground.Draw(spriteBatch);
 
+                //spriteBatch.Draw(ShadowMap, ShadowMap.Bounds, Color.White);
+
 
                 foreach (Decal decal in DecalList)
                 {
@@ -2845,8 +2848,14 @@ namespace TowerDefensePrototype
                 #region Draw to NormalMap
                 GraphicsDevice.SetRenderTarget(NormalMap);
                 GraphicsDevice.Clear(new Color(128, 128, 255));
-                spriteBatch.Begin();
-
+                spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
+                //foreach (Drawable drawable in DrawableList)
+                //{
+                //    //if (drawable.Normal == true)
+                //    {
+                //        drawable.DrawSpriteNormal(GraphicsDevice, BasicEffect);
+                //    }
+                //}
                 spriteBatch.End();
                 #endregion
 
@@ -3820,7 +3829,7 @@ namespace TowerDefensePrototype
             #region DRAW ACTUAL GAME
             if (GameState == GameState.Playing || GameState == GameState.Paused || GameState == GameState.Victory && IsLoading == false)
             {
-                #region Draw Maps while holding S key                
+                #region Draw Maps while holding S key
                 if (Keyboard.GetState().IsKeyDown(Keys.S))
                 {
                     spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
@@ -3924,6 +3933,26 @@ namespace TowerDefensePrototype
 
                                         spriteBatch.End();
                                     }
+                                    else
+                                        if (Keyboard.GetState().IsKeyDown(Keys.N))
+                                        {
+                                            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
+
+                                            spriteBatch.Draw(NormalMap, new Rectangle(0, 0, 1920, 1080), Color.White);
+                                            spriteBatch.DrawString(DefaultFont, "Normal", new Vector2(0, 0), Color.White);
+
+                                            spriteBatch.End();
+                                        }
+                                        else
+                                            if (Keyboard.GetState().IsKeyDown(Keys.C))
+                                            {
+                                                spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
+
+                                                spriteBatch.Draw(ColorMap, new Rectangle(0, 0, 1920, 1080), Color.White);
+                                                spriteBatch.DrawString(DefaultFont, "Color", new Vector2(0, 0), Color.White);
+
+                                                spriteBatch.End();
+                                            }
                 #endregion
                 else
                 {
@@ -7742,19 +7771,22 @@ namespace TowerDefensePrototype
             CurrentProjectile = projectile;
 
             #region Change the ground bounding box
-            if (sourceTurret != null)
+            if (Ground != null)
             {
-                Ground.BoundingBox.Min = new Vector3(0, MathHelper.Clamp(CursorPosition.Y, Math.Max(690, CurrentTurret.BaseRectangle.Bottom + 16), 960), 0);
-            }
+                if (sourceTurret != null && CurrentTurret != null)
+                {
+                    Ground.BoundingBox.Min = new Vector3(0, MathHelper.Clamp(CursorPosition.Y, Math.Max(690, CurrentTurret.BaseRectangle.Bottom + 16), 960), 0);
+                }
 
-            if (sourceInvader != null)
-            {
-                Ground.BoundingBox.Min = new Vector3(0, MathHelper.Clamp(sourceInvader.DestinationRectangle.Bottom + 16, 690, 960), 0);
-            }
+                if (sourceInvader != null)
+                {
+                    Ground.BoundingBox.Min = new Vector3(0, MathHelper.Clamp(sourceInvader.DestinationRectangle.Bottom + 16, 690, 960), 0);
+                }
 
-            if (sourceTrap != null)
-            {
-                Ground.BoundingBox.Min = new Vector3(0, MathHelper.Clamp(sourceTrap.DestinationRectangle.Bottom + 16, 690, 960), 0);
+                if (sourceTrap != null)
+                {
+                    Ground.BoundingBox.Min = new Vector3(0, MathHelper.Clamp(sourceTrap.DestinationRectangle.Bottom + 16, 690, 960), 0);
+                }
             }
             #endregion
 
@@ -8554,7 +8586,15 @@ namespace TowerDefensePrototype
                     if (DistToGround != null)
                     {
                         CollisionEnd = new Vector2(sourcePosition.X + (CurrentProjectile.Ray.Direction.X * (float)DistToGround),
-                                                   Random.Next(-16, 16) + sourcePosition.Y + (CurrentProjectile.Ray.Direction.Y * (float)DistToGround));
+                                                   Random.Next(-2, 2) + sourcePosition.Y + (CurrentProjectile.Ray.Direction.Y * (float)DistToGround));
+
+
+                        //TODO: THIS LOOKS BETTER IN GENERAL BUT CAN LOOK LIKE A DEPTH ISSUE WHEN THERE IS NONE BECAUSE
+                        //PROJECTILES CAN APPEAR IN FRONT OF OR BEHIND AN OBJECT THAT SEEMS LIKE IT SHOULD BE ON THE SAME PLANE
+                        //AS THE CURSOR. TRY PLACING A WALL AND SHOOTING NEAR IT TO SEE WHY IT LOOKS WRONG
+                        //CollisionEnd = new Vector2(sourcePosition.X + (CurrentProjectile.Ray.Direction.X * (float)DistToGround),
+                        //                           Random.Next(-16, 16) + sourcePosition.Y + (CurrentProjectile.Ray.Direction.Y * (float)DistToGround));
+
 
                         CreateEffect(sourcePosition, CollisionEnd, CurrentProjectile.LightProjectileType);
                         GroundEffect(sourcePosition, CollisionEnd);
