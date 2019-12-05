@@ -258,7 +258,7 @@ namespace TowerDefensePrototype
             graphics.SynchronizeWithVerticalRetrace = false;
 
             //this.TargetElapsedTime = TimeSpan.FromSeconds(1.0f / 60.0f);
-            IsFixedTimeStep = true;
+            IsFixedTimeStep = false;
             //this.IsMouseVisible = true;
 
             Content.RootDirectory = "Content";
@@ -1264,8 +1264,8 @@ namespace TowerDefensePrototype
 
                 RightClickClearSelected();
 
-                SelectButtonsUpdate();
-                TowerButtonUpdate();
+                SelectButtonsUpdate(gameTime);
+                TowerButtonUpdate(gameTime);
 
                 AttackTower();
                 AttackTraps();
@@ -1383,7 +1383,7 @@ namespace TowerDefensePrototype
                 //Because they have to only be emitted every time the Machine Gun is fired
                 foreach (Particle shellCasing in ShellCasingList)
                 {
-                    shellCasing.Update();
+                    shellCasing.Update(gameTime);
 
                     #region This makes the shell casings bounce when an explosion happens near them
                     foreach (Explosion explosion in ExplosionList)
@@ -1437,7 +1437,7 @@ namespace TowerDefensePrototype
 
                 foreach (Particle coin in CoinList)
                 {
-                    coin.Update();
+                    coin.Update(gameTime);
                 }
 
                 TotalParticles = 0;
@@ -1609,7 +1609,7 @@ namespace TowerDefensePrototype
                 EnemyExplosionsUpdate(gameTime);
             }
 
-            MenuButtonsUpdate();
+            MenuButtonsUpdate(gameTime);
 
             PreviousKeyboardState = CurrentKeyboardState;
             PreviousMouseState = CurrentMouseState;
@@ -1968,7 +1968,7 @@ namespace TowerDefensePrototype
 
 
         #region BUTTON stuff that needs to be done every step
-        private void TowerButtonUpdate()
+        private void TowerButtonUpdate(GameTime gameTime)
         {
             //This places the selected turret type into the right slot on the tower when the tower slot has been clicked
             int Index;
@@ -1977,7 +1977,7 @@ namespace TowerDefensePrototype
             {
                 if (this.IsActive == true)
                 {
-                    towerButton.Update(CursorPosition);
+                    towerButton.Update(CursorPosition, gameTime);
 
                     if (towerButton.JustClicked == true && SelectedTurret != null)
                     {
@@ -2048,7 +2048,7 @@ namespace TowerDefensePrototype
             }
         }
 
-        private void SelectButtonsUpdate()
+        private void SelectButtonsUpdate(GameTime gameTime)
         {
             //This makes sure that when the button at the bottom of the screen is clicked, the corresponding trap or turret is actually selected//
             //This will code will need to be added to every time that a new trap/turret is added to the game.
@@ -2059,7 +2059,7 @@ namespace TowerDefensePrototype
             {
                 if (this.IsActive == true)
                 {
-                    button.Update(CursorPosition);
+                    button.Update(CursorPosition, gameTime);
 
                     if (button.CurrentButtonState == ButtonSpriteState.Hover &&
                         button.DestinationRectangle.Contains(new Point((int)CursorPosition.X, (int)CursorPosition.Y))
@@ -2158,7 +2158,7 @@ namespace TowerDefensePrototype
             }
         }
 
-        private void MenuButtonsUpdate()
+        private void MenuButtonsUpdate(GameTime gameTime)
         {
             if (this.IsActive == true)
             {
@@ -2174,7 +2174,7 @@ namespace TowerDefensePrototype
 
                     foreach (Button button in MainMenuButtonList)
                     {
-                        button.Update(CursorPosition);
+                        button.Update(CursorPosition, gameTime);
 
                         if (button.PlayHover == true)
                         {
@@ -2287,7 +2287,7 @@ namespace TowerDefensePrototype
 
                     foreach (Button button in PauseButtonList)
                     {
-                        button.Update(CursorPosition);
+                        button.Update(CursorPosition, gameTime);
 
                         if (button.JustClicked == true)
                         {
@@ -2335,9 +2335,9 @@ namespace TowerDefensePrototype
                 #region Handling Profile Management Button Presses
                 if (GameState == GameState.ProfileManagement && DialogVisible == false)
                 {
-                    ProfileManagementPlay.Update(CursorPosition);
-                    ProfileManagementBack.Update(CursorPosition);
-                    ProfileManagementUpgrades.Update(CursorPosition);
+                    ProfileManagementPlay.Update(CursorPosition, gameTime);
+                    ProfileManagementBack.Update(CursorPosition, gameTime);
+                    ProfileManagementUpgrades.Update(CursorPosition, gameTime);
                     RightClickClearSelected();
 
                     #region Play Button
@@ -2431,7 +2431,7 @@ namespace TowerDefensePrototype
                     #region Select Weapon Buttons
                     foreach (WeaponBox trapBox in TrapBoxes)
                     {
-                        trapBox.Update(CursorPosition);
+                        trapBox.Update(CursorPosition, gameTime);
 
                         if (trapBox.CurrentPosition.X > SelectTrapLeft.DestinationRectangle.Right &&
                             trapBox.DestinationRectangle.Right < SelectTrapRight.DestinationRectangle.Left)
@@ -2462,7 +2462,7 @@ namespace TowerDefensePrototype
 
                     foreach (WeaponBox turretBox in TurretBoxes)
                     {
-                        turretBox.Update(CursorPosition);
+                        turretBox.Update(CursorPosition, gameTime);
 
                         if (turretBox.CurrentPosition.X > SelectTurretLeft.DestinationRectangle.Right &&
                             turretBox.DestinationRectangle.Right < SelectTurretRight.DestinationRectangle.Left)
@@ -2500,7 +2500,7 @@ namespace TowerDefensePrototype
                     #region Place Weapon Buttons
                     foreach (Button button in PlaceWeaponList)
                     {
-                        button.Update(CursorPosition);
+                        button.Update(CursorPosition, gameTime);
 
                         if (button.JustClicked == true)
                         {
@@ -2550,8 +2550,8 @@ namespace TowerDefensePrototype
                     #endregion
 
                     #region Move weapons right
-                    SelectTrapLeft.Update(CursorPosition);
-                    SelectTurretLeft.Update(CursorPosition);
+                    SelectTrapLeft.Update(CursorPosition, gameTime);
+                    SelectTurretLeft.Update(CursorPosition, gameTime);
 
                     if (TrapBoxes[TrapBoxes.Count - 1].NextPosition.X + TrapBoxes[TrapBoxes.Count - 1].SourceRectangle.Width > SelectTrapRight.DestinationRectangle.Left)
                         if (SelectTrapRight.JustClicked == true)
@@ -2575,8 +2575,8 @@ namespace TowerDefensePrototype
                     #endregion
 
                     #region Move weapons left
-                    SelectTrapRight.Update(CursorPosition);
-                    SelectTurretRight.Update(CursorPosition);
+                    SelectTrapRight.Update(CursorPosition, gameTime);
+                    SelectTurretRight.Update(CursorPosition, gameTime);
 
                     if (TrapBoxes[0].NextPosition.X < SelectTrapLeft.DestinationRectangle.Right)
                         if (SelectTrapLeft.JustClicked == true)
@@ -2660,7 +2660,7 @@ namespace TowerDefensePrototype
 
                     foreach (Button button in ProfileButtonList)
                     {
-                        button.Update(CursorPosition);
+                        button.Update(CursorPosition, gameTime);
 
                         if (button.PlayHover == true)
                         {
@@ -2719,7 +2719,7 @@ namespace TowerDefensePrototype
 
                     foreach (Button button in ProfileDeleteList)
                     {
-                        button.Update(CursorPosition);
+                        button.Update(CursorPosition, gameTime);
 
                         if (button.JustClicked == true)
                         {
@@ -2751,7 +2751,7 @@ namespace TowerDefensePrototype
                         }
                     }
 
-                    ProfileBackButton.Update(CursorPosition);
+                    ProfileBackButton.Update(CursorPosition, gameTime);
 
                     if (ProfileBackButton.JustClicked == true)
                     {
@@ -2786,13 +2786,13 @@ namespace TowerDefensePrototype
                 #region Handling Options Button Presses
                 if (GameState == GameState.Options)
                 {
-                    OptionsBack.Update(CursorPosition);
+                    OptionsBack.Update(CursorPosition, gameTime);
 
-                    OptionsSFXUp.Update(CursorPosition);
-                    OptionsSFXDown.Update(CursorPosition);
+                    OptionsSFXUp.Update(CursorPosition, gameTime);
+                    OptionsSFXDown.Update(CursorPosition, gameTime);
 
-                    OptionsMusicUp.Update(CursorPosition);
-                    OptionsMusicDown.Update(CursorPosition);
+                    OptionsMusicUp.Update(CursorPosition, gameTime);
+                    OptionsMusicDown.Update(CursorPosition, gameTime);
 
                     if (OptionsBack.PlayHover == true)
                     {
@@ -2928,8 +2928,8 @@ namespace TowerDefensePrototype
                 #region Handling GetName Button Presses
                 if (GameState == GameState.GettingName && DialogVisible == false)
                 {
-                    GetNameBack.Update(CursorPosition);
-                    GetNameOK.Update(CursorPosition);
+                    GetNameBack.Update(CursorPosition, gameTime);
+                    GetNameOK.Update(CursorPosition, gameTime);
                     NameInput.Update();
                     NameInput.Active = true;
 
@@ -3008,13 +3008,13 @@ namespace TowerDefensePrototype
                 if (GameState == GameState.Victory && DialogVisible == false)
                 {
                     if (VictoryRetry != null)
-                        VictoryRetry.Update(CursorPosition);
+                        VictoryRetry.Update(CursorPosition, gameTime);
 
                     if (VictoryComplete != null)
-                        VictoryComplete.Update(CursorPosition);
+                        VictoryComplete.Update(CursorPosition, gameTime);
 
                     if (VictoryReturn != null)
-                        VictoryReturn.Update(CursorPosition);
+                        VictoryReturn.Update(CursorPosition, gameTime);
 
                     if (VictoryReturn != null)
                         if (VictoryReturn.JustClicked == true)
@@ -3084,11 +3084,11 @@ namespace TowerDefensePrototype
                 #region Handling Upgrades Menu Button Presses
                 if (GameState == GameState.Upgrades && DialogVisible == false)
                 {
-                    UpgradesBack.Update(CursorPosition);
+                    UpgradesBack.Update(CursorPosition, gameTime);
 
                     foreach (Button button in UpgradeButtonList)
                     {
-                        button.Update(CursorPosition);
+                        button.Update(CursorPosition, gameTime);
 
                         int index = UpgradeButtonList.IndexOf(button);
 
@@ -3113,7 +3113,7 @@ namespace TowerDefensePrototype
                 #region Handling DialogBox Button Presses
                 if (ExitDialog != null)
                 {
-                    ExitDialog.Update(CursorPosition);
+                    ExitDialog.Update(CursorPosition, gameTime);
 
                     if (ExitDialog.LeftButton.JustClicked == true)
                     {
@@ -3135,7 +3135,7 @@ namespace TowerDefensePrototype
 
                 if (DeleteProfileDialog != null)
                 {
-                    DeleteProfileDialog.Update(CursorPosition);
+                    DeleteProfileDialog.Update(CursorPosition, gameTime);
 
                     if (DeleteProfileDialog.LeftButton.JustClicked == true)
                     {
@@ -3157,7 +3157,7 @@ namespace TowerDefensePrototype
 
                 if (ProfileMenuDialog != null)
                 {
-                    ProfileMenuDialog.Update(CursorPosition);
+                    ProfileMenuDialog.Update(CursorPosition, gameTime);
 
                     if (ProfileMenuDialog.LeftButton.JustClicked == true)
                     {
@@ -3181,7 +3181,7 @@ namespace TowerDefensePrototype
 
                 if (MainMenuDialog != null)
                 {
-                    MainMenuDialog.Update(CursorPosition);
+                    MainMenuDialog.Update(CursorPosition, gameTime);
 
                     if (MainMenuDialog.LeftButton.JustClicked == true)
                     {
@@ -3206,7 +3206,7 @@ namespace TowerDefensePrototype
 
                 if (NoWeaponsDialog != null)
                 {
-                    NoWeaponsDialog.Update(CursorPosition);
+                    NoWeaponsDialog.Update(CursorPosition, gameTime);
 
                     if (NoWeaponsDialog.LeftButton.JustClicked == true)
                     {
@@ -3218,7 +3218,7 @@ namespace TowerDefensePrototype
 
                 if (NameLengthDialog != null)
                 {
-                    NameLengthDialog.Update(CursorPosition);
+                    NameLengthDialog.Update(CursorPosition, gameTime);
 
                     if (NameLengthDialog.LeftButton.JustClicked == true)
                     {
@@ -4137,14 +4137,14 @@ namespace TowerDefensePrototype
 
                                     AvgY /= InvaderList.Count;
 
-                                    HeavyProjectile = new CannonBall(new Vector2(turret.BarrelEnd.X, turret.BarrelEnd.Y), 16,
-                                        turret.FireRotation, 0.2f, turret.Damage, turret.BlastRadius,
+                                    HeavyProjectile = new CannonBall(new Vector2(turret.BarrelEnd.X, turret.BarrelEnd.Y), 1200f,
+                                        turret.FireRotation, 1200f, turret.Damage, turret.BlastRadius,
                                         new Vector2(AvgY - 32, AvgY+32));
                                 }
                                 else
                                 {
-                                    HeavyProjectile = new CannonBall(new Vector2(turret.BarrelEnd.X, turret.BarrelEnd.Y), 16, 
-                                        turret.FireRotation, 0.2f, turret.Damage, turret.BlastRadius, 
+                                    HeavyProjectile = new CannonBall(new Vector2(turret.BarrelEnd.X, turret.BarrelEnd.Y), 1200f, 
+                                        turret.FireRotation, 1200f, turret.Damage, turret.BlastRadius, 
                                         new Vector2(MathHelper.Clamp(turret.Position.Y + 32, 690, 930), 930));
                                 }
 
@@ -6212,7 +6212,7 @@ namespace TowerDefensePrototype
 
                 if (StartWaveButton != null)
                 {
-                    StartWaveButton.Update(CursorPosition);
+                    StartWaveButton.Update(CursorPosition, gameTime);
 
                     if (StartWaveButton.JustClicked == true)
                     {

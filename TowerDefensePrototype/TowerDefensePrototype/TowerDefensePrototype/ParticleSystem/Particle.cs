@@ -71,7 +71,7 @@ namespace TowerDefensePrototype
             Origin = new Vector2(Texture.Width / 2, Texture.Height / 2);
         }
 
-        public void Update()
+        public void Update(GameTime gameTime)
         {
             CurrentHP--;
 
@@ -83,10 +83,10 @@ namespace TowerDefensePrototype
 
             if (Active == true)
             {
-                CurrentRotation += RotationIncrement;
+                CurrentRotation += RotationIncrement * (float)gameTime.ElapsedGameTime.TotalSeconds;
                 CurrentRotation = CurrentRotation % 360;
-                CurrentPosition += Velocity;
-                Velocity.Y += Gravity;
+                CurrentPosition += Velocity * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                Velocity.Y += Gravity * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
                 if (RotateVelocity == true)
                 {
@@ -100,11 +100,11 @@ namespace TowerDefensePrototype
                 if (CurrentPosition.Y >= MaxY && BouncedOnGround == false)
                 {
                     if (HardBounce == true)
-                        CurrentPosition.Y -= Velocity.Y;
+                        CurrentPosition.Y -= Velocity.Y * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-                    Velocity.Y = -Velocity.Y / 3;
-                    Velocity.X = Velocity.X / 3;
-                    RotationIncrement = RotationIncrement * 3;
+                    Velocity.Y = -Velocity.Y / 3 * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                    Velocity.X = Velocity.X / 3 * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                    RotationIncrement = RotationIncrement * 3 * (float)gameTime.ElapsedGameTime.TotalSeconds;
                     BouncedOnGround = true;
                 }
 
@@ -112,9 +112,9 @@ namespace TowerDefensePrototype
                 BouncedOnGround == true &&
                 CurrentPosition.Y > MaxY)
             {
-                Velocity.Y = -Velocity.Y / 2;
+                Velocity.Y = -Velocity.Y / 2 * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-                Velocity.X *= 0.9f;
+                Velocity.X *= 0.9f * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
                 RotationIncrement = MathHelper.Lerp(RotationIncrement, 0, 0.2f);
 
@@ -147,33 +147,33 @@ namespace TowerDefensePrototype
                 if (CurrentRotation > 270 && CurrentRotation <= 360)
                 {
                     if (MathHelper.Distance(CurrentRotation, 360) >= 45)
-                        CurrentRotation = MathHelper.Lerp(CurrentRotation, 360, 0.5f);
+                        CurrentRotation = MathHelper.Lerp(CurrentRotation, 360, 0.5f * (float)gameTime.ElapsedGameTime.TotalSeconds);
                     else
-                        CurrentRotation = MathHelper.Lerp(CurrentRotation, 360, 0.2f);
+                        CurrentRotation = MathHelper.Lerp(CurrentRotation, 360, 0.2f * (float)gameTime.ElapsedGameTime.TotalSeconds);
                 }
 
                 if (CurrentRotation > 180 && CurrentRotation <= 270)
                 {
                     if (MathHelper.Distance(CurrentRotation, 180) >= 45)
-                        CurrentRotation = MathHelper.Lerp(CurrentRotation, 180, 0.5f);
+                        CurrentRotation = MathHelper.Lerp(CurrentRotation, 180, 0.5f * (float)gameTime.ElapsedGameTime.TotalSeconds);
                     else
-                        CurrentRotation = MathHelper.Lerp(CurrentRotation, 180, 0.2f);
+                        CurrentRotation = MathHelper.Lerp(CurrentRotation, 180, 0.2f * (float)gameTime.ElapsedGameTime.TotalSeconds);
                 }
 
                 if (CurrentRotation > 90 && CurrentRotation <= 180)
                 {
                     if (MathHelper.Distance(CurrentRotation, 180) >= 45)
-                        CurrentRotation = MathHelper.Lerp(CurrentRotation, 180, 0.5f);
+                        CurrentRotation = MathHelper.Lerp(CurrentRotation, 180, 0.5f * (float)gameTime.ElapsedGameTime.TotalSeconds);
                     else
-                        CurrentRotation = MathHelper.Lerp(CurrentRotation, 180, 0.2f);
+                        CurrentRotation = MathHelper.Lerp(CurrentRotation, 180, 0.2f * (float)gameTime.ElapsedGameTime.TotalSeconds);
                 }
 
                 if (CurrentRotation >= 0 && CurrentRotation <= 90)
                 {
                     if (MathHelper.Distance(CurrentRotation, 0) >= 45)
-                        CurrentRotation = MathHelper.Lerp(CurrentRotation, 0, 0.5f);
+                        CurrentRotation = MathHelper.Lerp(CurrentRotation, 0, 0.5f * (float)gameTime.ElapsedGameTime.TotalSeconds);
                     else
-                        CurrentRotation = MathHelper.Lerp(CurrentRotation, 0, 0.2f);
+                        CurrentRotation = MathHelper.Lerp(CurrentRotation, 0, 0.2f * (float)gameTime.ElapsedGameTime.TotalSeconds);
                 }
             }
 
@@ -181,18 +181,18 @@ namespace TowerDefensePrototype
 
             if (Fade == true)
             {
-                CurrentTransparency = MathHelper.Lerp(PercentageHP, CurrentTransparency, PercentageHP);
+                CurrentTransparency = MathHelper.Lerp(PercentageHP, CurrentTransparency, PercentageHP * (float)gameTime.ElapsedGameTime.TotalSeconds);
                 //CurrentTransparency = MathHelper.Lerp(1, 0, ((MaxHP / 100) * CurrentHP) / 100);
             }
 
             if (Shrink == true)
             {
-                Scale = MathHelper.Lerp(Scale, (Scale * (PercentageHP)), PercentageHP);
+                Scale = MathHelper.Lerp(Scale, (Scale * (PercentageHP)), PercentageHP * (float)gameTime.ElapsedGameTime.TotalSeconds);
             }
 
 
 
-            CurrentColor = Color.Lerp(CurrentColor, EndColor, PercentageHP / (CurrentHP * 0.5f));
+            CurrentColor = Color.Lerp(CurrentColor, EndColor, (PercentageHP / (CurrentHP * 0.5f)) * (float)gameTime.ElapsedGameTime.TotalSeconds);
             //double PercentHP = (100 / MaxHP) * CurrentHP;
             //CurrentColor = Color.Lerp(StartColor, EndColor, PercentageHP/100);            
         }

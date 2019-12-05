@@ -106,14 +106,14 @@ namespace TowerDefensePrototype
             }
         }
 
-        public virtual void Update(Vector2 cursorPosition)
+        public virtual void Update(Vector2 cursorPosition, GameTime gameTime)
         {
             CurrentMouseState = Mouse.GetState();
             CursorPosition = cursorPosition;
 
             if (IconNextPosition != IconPosition)
             {
-                IconPosition = Vector2.Lerp(IconPosition, IconNextPosition, 0.15f);
+                IconPosition = Vector2.Lerp(IconPosition, IconNextPosition, 0.15f * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
 
                 if (Math.Abs(IconPosition.X - IconNextPosition.X) < 0.5f)
                 {
@@ -123,7 +123,7 @@ namespace TowerDefensePrototype
 
             if (NextPosition != CurrentPosition)
             {
-                CurrentPosition = Vector2.Lerp(CurrentPosition, NextPosition, 0.15f);
+                CurrentPosition = Vector2.Lerp(CurrentPosition, NextPosition, 0.15f * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
 
                 if (Math.Abs(CurrentPosition.X - NextPosition.X) < 0.5f)
                 {
@@ -132,7 +132,7 @@ namespace TowerDefensePrototype
             }
 
             if (Scale != NextScale)
-                Scale = Vector2.Lerp(Scale, NextScale, 0.15f);
+                Scale = Vector2.Lerp(Scale, NextScale, 10f * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
                                    
             DestinationRectangle = new Rectangle((int)CurrentPosition.X, (int)CurrentPosition.Y, (int)(FrameSize.X * Scale.X), (int)(FrameSize.Y * Scale.Y));
 

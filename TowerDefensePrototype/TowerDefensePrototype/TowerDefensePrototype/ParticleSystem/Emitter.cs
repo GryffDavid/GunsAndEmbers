@@ -203,8 +203,8 @@ namespace TowerDefensePrototype
 
                 if (EmitterSpeed != 0)
                 {
-                    EmitterVelocity.Y += EmitterGravity;
-                    Position += EmitterVelocity;
+                    EmitterVelocity.Y += EmitterGravity * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                    Position += EmitterVelocity * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
                     if (CanBounce == true)
                         if (Position.Y >= MaxY && BouncedOnGround == false)
@@ -212,8 +212,8 @@ namespace TowerDefensePrototype
                             if (HardBounce == true)
                                 Position.Y -= EmitterVelocity.Y;
 
-                            EmitterVelocity.Y = -EmitterVelocity.Y / 3;
-                            EmitterVelocity.X = EmitterVelocity.X / 3;
+                            EmitterVelocity.Y = -EmitterVelocity.Y / 3 * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                            EmitterVelocity.X = EmitterVelocity.X / 3 * (float)gameTime.ElapsedGameTime.TotalSeconds;
                             BouncedOnGround = true;
                         }
 
@@ -221,9 +221,9 @@ namespace TowerDefensePrototype
                         BouncedOnGround == true &&
                         Position.Y > MaxY)
                     {
-                        EmitterVelocity.Y = -EmitterVelocity.Y / 2;
+                        EmitterVelocity.Y = -EmitterVelocity.Y / 2 * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-                        EmitterVelocity.X *= 0.9f;
+                        EmitterVelocity.X *= 0.9f * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
                         if (EmitterVelocity.Y < 0.2f && EmitterVelocity.Y > 0)
                         {
@@ -299,7 +299,7 @@ namespace TowerDefensePrototype
 
             foreach (Particle particle in ParticleList)
             {
-                particle.Update();
+                particle.Update(gameTime);
             }
         }
 

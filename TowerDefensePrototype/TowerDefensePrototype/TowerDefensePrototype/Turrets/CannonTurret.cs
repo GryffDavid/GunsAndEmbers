@@ -17,7 +17,7 @@ namespace TowerDefensePrototype
             TurretType = TurretType.Cannon;
             Position = position;
             Selected = true;
-            FireDelay = 8000;
+            FireDelay = 1000;
             Damage = 21;
             Animated = false;
             Looping = false;

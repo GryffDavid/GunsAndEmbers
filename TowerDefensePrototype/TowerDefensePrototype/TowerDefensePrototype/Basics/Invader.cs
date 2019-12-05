@@ -168,7 +168,7 @@ namespace TowerDefensePrototype
                 //This makes sure that the HP bar is displayed in the correct position
                 //HPBar.Update(new Vector2(Position.X, Position.Y - 16), CurrentHP);                
 
-                Position += Velocity;
+                    Position += Velocity * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
                 Velocity.Y += Gravity;
 

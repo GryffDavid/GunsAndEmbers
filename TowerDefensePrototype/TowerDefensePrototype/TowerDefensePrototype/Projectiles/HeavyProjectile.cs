@@ -43,8 +43,8 @@ namespace TowerDefensePrototype
         {         
             if (Active == true)
             {
-                Position += Velocity;
-                Velocity.Y += Gravity;
+                Position += Velocity * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                Velocity.Y += Gravity * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
                 foreach (Emitter emitter in EmitterList)
                 {
