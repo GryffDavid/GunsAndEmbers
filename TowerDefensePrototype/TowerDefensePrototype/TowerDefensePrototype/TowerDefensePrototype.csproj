@@ -128,6 +128,8 @@
     <Compile Include="Invaders\DropShipSkids.cs" />
     <Compile Include="Invaders\HeavyRanged\HarpoonCannon.cs" />
     <Compile Include="Invaders\ShieldGenerator.cs" />
+    <Compile Include="LevelDialogue\Level1Dialogue.cs" />
+    <Compile Include="LevelDialogue\LevelDialogue.cs" />
     <Compile Include="ParticleSystem\Corpse.cs" />
     <Compile Include="ParticleSystem\ExplosionEffect.cs" />
     <Compile Include="ParticleSystem\JetEngine.cs" />
@@ -139,6 +141,7 @@
     <Compile Include="Projectiles\Grenades\StickyMineProjectile.cs" />
     <Compile Include="Projectiles\Heavy\HarpoonProjectile.cs" />
     <Compile Include="Projectiles\StickyMine.cs" />
+    <Compile Include="Settings.cs" />
     <Compile Include="Traps\DefenseTraps\GlueTrap.cs" />
     <Compile Include="Traps\OffenseTraps\FlameThrowerTrap.cs" />
     <Compile Include="Traps\OffenseTraps\LandMineTrap.cs" />

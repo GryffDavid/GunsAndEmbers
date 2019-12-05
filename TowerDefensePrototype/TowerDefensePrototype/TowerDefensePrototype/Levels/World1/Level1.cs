@@ -15,7 +15,7 @@ namespace TowerDefensePrototype
     {
         public Level1()
         {
-            LevelDialogue = new Level1Dialogue();
+            //LevelDialogue = new Level1Dialogue();
             Number = 1;
             WaveList = new List<Wave>();
             WorldType = WorldType.Snowy;
@@ -78,7 +78,7 @@ namespace TowerDefensePrototype
 
         public override void LoadContent(ContentManager contentManager)
         {
-            LevelDialogue = contentManager.Load<LevelDialogue>("StoryDialogue/StoryDialogue1");            
+            //LevelDialogue = contentManager.Load<LevelDialogue>("StoryDialogue/StoryDialogue1");            
             GroundTexture = contentManager.Load<Texture2D>("Backgrounds/Ground");
             ForegroundTexture = contentManager.Load<Texture2D>("Backgrounds/Foreground");
             SkyBackgroundTexture = contentManager.Load<Texture2D>("Backgrounds/Sky");

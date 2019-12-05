@@ -20,7 +20,7 @@ namespace TowerDefensePrototype
         public List<Wave> WaveList;
         public Weather StartWeather;
         public List<SoundEffect> AmbienceList = new List<SoundEffect>();
-        public LevelDialogue LevelDialogue;
+        //public LevelDialogue LevelDialogue;
 
         //A float in the middle of the list changes the delay between invaders
         //An in in the middle of the list creates a pause without changing the timing

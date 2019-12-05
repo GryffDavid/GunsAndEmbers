@@ -10,11 +10,11 @@ namespace TowerDefensePrototype
 {
     class DropShipSkid : Drawable
     {
-        public enum SkidState { Closed, Opening, Open, Closing };
-        public SkidState CurrentSkidState = SkidState.Closed;
-        VectorSprite Skid, Piston, Strut;
+        //public enum SkidState { Closed, Opening, Open, Closing };
+        //public SkidState CurrentSkidState = SkidState.Closed;
+        //VectorSprite Skid, Piston, Strut;
 
-        float SkidRotation, PistonRotation, StrutRotation;
+        //float SkidRotation, PistonRotation, StrutRotation;
 
 
         public DropShipSkid()

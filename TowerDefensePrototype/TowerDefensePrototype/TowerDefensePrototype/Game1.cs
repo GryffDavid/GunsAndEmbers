@@ -2457,7 +2457,7 @@ namespace TowerDefensePrototype
 
                 spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
 
-                spriteBatch.DrawString(DefaultFont, CurrentLevel.LevelDialogue.CurrentText, new Vector2(100, 100), Color.Black);
+                //spriteBatch.DrawString(DefaultFont, CurrentLevel.LevelDialogue.CurrentText, new Vector2(100, 100), Color.Black);
 
                 #region Draw diagnostics
                 if (Diagnostics == true)
@@ -3338,7 +3338,7 @@ namespace TowerDefensePrototype
                     {
                         GameButtonsUpdate(gameTime);
 
-                        CurrentLevel.LevelDialogue.Update(gameTime);
+                        //CurrentLevel.LevelDialogue.Update(gameTime);
 
 
                         #region TEST - Create powerup delivery
@@ -9737,9 +9737,7 @@ namespace TowerDefensePrototype
             Assembly assembly = Assembly.Load("TowerDefensePrototype");
             Type t = assembly.GetType("TowerDefensePrototype.Level" + number);
             CurrentLevel = (Level)Activator.CreateInstance(t);
-
-            CurrentLevel.LevelDialogue.Initialize(this);
-
+            
             ////Load the story dialogue used for this level here
             //try
             //{
@@ -10765,7 +10763,6 @@ namespace TowerDefensePrototype
 
             if (File.Exists("Content\\Settings\\Settings.xml"))
             {
-
                 Stream stream = new FileStream("Content\\Settings\\Settings.xml", FileMode.Open);
                 CurrentSettings = (Settings)serializer.Deserialize(stream);
                 stream.Close();
@@ -10773,7 +10770,6 @@ namespace TowerDefensePrototype
             }
             else
             {
-
                 Stream stream = new FileStream("Content\\Settings\\Settings.xml", FileMode.Create);
                 CurrentSettings = DefaultSettings;
                 serializer.Serialize(stream, CurrentSettings);
