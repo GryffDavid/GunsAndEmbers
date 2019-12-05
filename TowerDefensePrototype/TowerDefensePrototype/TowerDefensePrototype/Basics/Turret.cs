@@ -139,14 +139,14 @@ namespace TowerDefensePrototype
                 else
                 {
                     JustClicked = false;
-                }            
-            
-                //if (Selected == true)
-                //{
-                //    Color = Color.Red;
-                //}
-                //else
-                //    Color = Color.White;
+                }
+
+                if (Selected == true)
+                {
+                    Color = Color.Red;
+                }
+                else
+                    Color = Color.White;
             #endregion                
 
             PreviousMouseState = CurrentMouseState;

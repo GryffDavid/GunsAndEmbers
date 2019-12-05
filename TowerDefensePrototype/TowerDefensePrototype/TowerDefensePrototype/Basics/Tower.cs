@@ -14,18 +14,20 @@ namespace TowerDefensePrototype
         string AssetName;
         public Vector2 Position;
         public Rectangle DestinationRectangle;
-        public float MaxHP, CurrentHP, Slots, MaxShield, CurrentShield, ShieldStrength;
+        public float MaxHP, CurrentHP, Slots, MaxShield, CurrentShield;
+        public bool ShieldOn;
+        public double CurrentTime, Time;
         
-        public Tower(string assetName, Vector2 position, int totalHitpoints, int totalShield, float shieldStrength, int slots)
+        public Tower(string assetName, Vector2 position, int totalHitpoints, int maxShield, int slots)
         {
             AssetName = assetName;
             Position = position;
             MaxHP = totalHitpoints;
             CurrentHP = MaxHP;
-            MaxShield = totalShield;
-            CurrentShield = MaxShield;
-            ShieldStrength = shieldStrength;
             Slots = slots;
+            CurrentShield = maxShield;
+            MaxShield = maxShield;
+            ShieldOn = true;
         }
 
         public void LoadContent(ContentManager contentManager)
@@ -35,8 +37,23 @@ namespace TowerDefensePrototype
         }
 
         public void Update(GameTime gameTime)
-        {            
+        {
+            if (ShieldOn == false)
+            {
+                CurrentTime += gameTime.ElapsedGameTime.TotalMilliseconds;
+            }
 
+            if (ShieldOn == false && CurrentTime >= 3000)
+            {
+                CurrentShield += 0.05f;
+                CurrentShield = MathHelper.Clamp(CurrentShield, 0, MaxShield);
+            }
+
+            if (ShieldOn == false && CurrentTime >= 3000 && CurrentShield == MaxShield)
+            {
+                ShieldOn = true;
+                CurrentTime = 0;
+            }
         }
 
         public void Draw(SpriteBatch spriteBatch)
@@ -46,12 +63,13 @@ namespace TowerDefensePrototype
 
         public void TakeDamage(float value)
         {
-            if (CurrentShield > 0)
-            {
-                CurrentShield -= MathHelper.Clamp(value, 0, ShieldStrength);
-                CurrentHP -= MathHelper.Clamp(value - ShieldStrength, 0, value);
-            }
-            else
+            if (ShieldOn == true && CurrentShield > 0)
+                CurrentShield -= value;
+
+            if (ShieldOn == true && CurrentShield <= 0)
+                ShieldOn = false;
+
+            if (ShieldOn == false)
             {
                 CurrentHP -= value;
             }

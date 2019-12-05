@@ -8,9 +8,9 @@ using Microsoft.Xna.Framework.Content;
 
 namespace TowerDefensePrototype
 {    
-    class GatlingTurret : Turret
+    class MachineGunTurret : Turret
     {      
-        public GatlingTurret(Vector2 position)
+        public MachineGunTurret(Vector2 position)
         {
             Active = true;
             TurretType = TurretType.MachineGun;
@@ -18,8 +18,8 @@ namespace TowerDefensePrototype
             Position = position;
             Selected = true;
             FireDelay = 200;
-            Damage = 5;
-            AngleOffset = 5;
+            Damage = 4;
+            AngleOffset = 4;
             Animated = false;
             Looping = false;
             ResourceCost = 200;
@@ -37,8 +37,11 @@ namespace TowerDefensePrototype
         {
             if (Active == true)
             {
-                BaseRectangle = new Rectangle((int)Position.X, (int)Position.Y, TurretBase.Width, TurretBase.Height);
-                BarrelRectangle = new Rectangle((int)Position.X, (int)Position.Y, TurretBarrel.Width/CurrentAnimation.TotalFrames, TurretBarrel.Height);
+                BaseRectangle = new Rectangle((int)Position.X, (int)Position.Y, 
+                                              TurretBase.Width, TurretBase.Height);
+
+                BarrelRectangle = new Rectangle((int)Position.X, (int)Position.Y, 
+                                                TurretBarrel.Width/CurrentAnimation.TotalFrames, TurretBarrel.Height);
 
                 BarrelPivot = new Vector2(32, 32);
                 BasePivot = new Vector2(40, 5);

@@ -23,6 +23,7 @@ namespace TowerDefensePrototype
             Animated = false;
             Looping = false;
             Health = 500;
+            ResourceCost = 600;
 
             CurrentAnimation = new Animation()
             {
@@ -35,8 +36,11 @@ namespace TowerDefensePrototype
         {
             if (Active == true)
             {
-                BaseRectangle = new Rectangle((int)Position.X + 20, (int)Position.Y + 8, TurretBase.Width, TurretBase.Height);
-                BarrelRectangle = new Rectangle((int)Position.X + 20, (int)Position.Y + 8, TurretBarrel.Width / CurrentAnimation.TotalFrames, TurretBarrel.Height);
+                BaseRectangle = new Rectangle((int)Position.X + 20, (int)Position.Y + 8, 
+                    TurretBase.Width, TurretBase.Height);
+
+                BarrelRectangle = new Rectangle((int)Position.X + 20, (int)Position.Y + 8, 
+                    TurretBarrel.Width / CurrentAnimation.TotalFrames, TurretBarrel.Height);
 
                 BarrelPivot = new Vector2(45, TurretBarrel.Height / 2);
                 BasePivot = new Vector2(TurretBase.Width / 2, TurretBase.Height / 2 - 10);

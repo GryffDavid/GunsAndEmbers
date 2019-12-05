@@ -13,15 +13,15 @@ namespace TowerDefensePrototype
         public Soldier(Vector2 position)
         {
             Active = true;
-            MoveVector = new Vector2(-1, 0);
+            MoveVector = new Vector2(-1f, 0);
             Position = position;
-            CurrentHP = 150;
-            MaxHP = 150;
+            CurrentHP = 20;
+            MaxHP = 20;
             MoveDelay = 5;
             ResourceMinMax = new Vector2(1, 5);
             CurrentAttackDelay = 0;
             AttackDelay = 1500;
-            AttackPower = 20;
+            AttackPower = 5;
             CurrentFrame = 0;            
             InvaderType = InvaderType.Soldier;
             YRange = new Vector2(525, 630);
@@ -55,7 +55,7 @@ namespace TowerDefensePrototype
                 switch (trapType)
                 {
                     case TrapType.Fire:
-                        CurrentHP -= 10;
+                        CurrentHP -= 7;
                         DamageOverTime(3000, 10, 300, Color.Red);
                         break;
 

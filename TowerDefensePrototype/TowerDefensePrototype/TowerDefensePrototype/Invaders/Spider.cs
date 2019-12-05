@@ -13,11 +13,11 @@ namespace TowerDefensePrototype
         public Spider(Vector2 position)
          {
             Active = true;
-            MoveVector = new Vector2(-2, 0);
+            MoveVector = new Vector2(-1.75f, 0);
             Position = position;
             CurrentHP = 50;
             MaxHP = 50;
-            MoveDelay = 10;
+            MoveDelay = 5;
             ResourceMinMax = new Vector2(1, 5);
             CurrentAttackDelay = 0;
             AttackDelay = 3000;
@@ -25,7 +25,7 @@ namespace TowerDefensePrototype
             CurrentFrame = 0;
             InvaderType = InvaderType.Spider;
             YRange = new Vector2(525, 630);
-            RangedAttackPower = 20;
+            RangedAttackPower = 7;
             Range = new Vector2(200, 600); 
             AngleRange = new Vector2(110, 160);
             PowerRange = new Vector2(9, 12);
@@ -34,14 +34,13 @@ namespace TowerDefensePrototype
             { 
                 AssetName = "Invaders/SpiderSprite", 
                 TotalFrames = 3, 
-                FrameDelay = 500 
+                FrameDelay = 250 
             };
 
             ParticleEmitter = new Emitter("Particles/Smoke", new Vector2(DestinationRectangle.Center.X, DestinationRectangle.Bottom - 8),
-                                               new Vector2(60, 60), new Vector2(0.5f, 1f), new Vector2(20, 30), 0.5f, true, new Vector2(0, 0),
-                                               new Vector2(-2, 2), new Vector2(0.25f, 0.5f), Color.SaddleBrown, Color.SaddleBrown, 0f, -1, 600, 1, false, new Vector2(0, 720), false);
-
- 
+                                          new Vector2(60, 60), new Vector2(0.5f, 1f), new Vector2(20, 30), 0.5f, true, new Vector2(0, 0),
+                                          new Vector2(-2, 2), new Vector2(0.25f, 0.5f), Color.SaddleBrown, Color.SaddleBrown, 0f, -1, 600, 
+                                          1, false, new Vector2(0, 720), false);
         }
 
         public override void Update(GameTime gameTime)

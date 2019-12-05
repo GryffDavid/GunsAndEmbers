@@ -11,7 +11,7 @@ namespace TowerDefensePrototype
 {
     class ClusterBombShell : TimerHeavyProjectile
     {
-        public ClusterBombShell(float maxTime, Vector2 position, float speed, float angle, float gravity, Vector2? yrange = null)
+        public ClusterBombShell(float maxTime, Vector2 position, float speed, float angle, float gravity, float damage, Vector2? yrange = null)
         {
             MaxTime = maxTime;
 

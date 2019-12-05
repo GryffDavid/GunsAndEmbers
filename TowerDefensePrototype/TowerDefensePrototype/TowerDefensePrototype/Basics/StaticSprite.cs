@@ -17,11 +17,12 @@ namespace TowerDefensePrototype
         public Rectangle DestinationRectangle;
         public BoundingBox BoundingBox;
         public bool VerticalLooping, HorizontalLooping;
-        public double CurrentTime, UpdateDelay;
+        public double CurrentTime, UpdateDelay, FadeTime, CurrentFadeTime;
         public float Rotation;
+        public float Transparency = 0;
 
         public StaticSprite(string assetName, Vector2 position, Vector2? scale = null, Color? color = null, 
-            Vector2? move = null, bool? horizontalLooping = null, bool? verticalLooping = null, double? updateDelay = null, float? rotation = null)
+            Vector2? move = null, bool? horizontalLooping = null, bool? verticalLooping = null, double? updateDelay = null, float? rotation = null, float? fadeTime = null)
         {
             AssetName = assetName;
             Position = position;
@@ -60,7 +61,15 @@ namespace TowerDefensePrototype
                 Rotation = 0;
             else
                 Rotation = rotation.Value;
-        }
+
+            if (fadeTime == null)
+                FadeTime = 0;
+            else
+            {
+                FadeTime = fadeTime.Value;
+                CurrentFadeTime = 0;
+            }
+    }
 
         public void LoadContent(ContentManager contentManager)
         {
@@ -70,10 +79,17 @@ namespace TowerDefensePrototype
         public void Update(GameTime gameTime)
         {
             CurrentTime += gameTime.ElapsedGameTime.TotalMilliseconds;
+            CurrentFadeTime += gameTime.ElapsedGameTime.TotalMilliseconds;
+
+            if (CurrentFadeTime > 10 && Transparency <= 1)
+            {
+                Transparency += 0.01f;
+                Color = Color.Lerp(Color.White, Color.Transparent, Transparency);
+                CurrentFadeTime = 0;
+            }
 
             if (CurrentTime > UpdateDelay)
-            {
-
+            {                
                 if (HorizontalLooping == true && DestinationRectangle.Left > 1280 && Move.X > 0)
                 {
                     Position.X = 0 - DestinationRectangle.Width;
@@ -98,6 +114,8 @@ namespace TowerDefensePrototype
 
                 CurrentTime = 0;
             }
+
+            
         }
 
         public void Draw(SpriteBatch spriteBatch)

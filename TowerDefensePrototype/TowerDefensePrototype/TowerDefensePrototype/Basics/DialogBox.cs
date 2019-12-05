@@ -36,9 +36,12 @@ namespace TowerDefensePrototype
                 Position.Y + 128 - (Box.Height/2)), null, new Vector2(0.5f, 1), null, LeftText, "Fonts/ButtonFont", "Left", Color.White);
             LeftButton.LoadContent(contentManager);
 
-            RightButton = new Button("Buttons/ButtonRight", new Vector2(Position.X + 252 - (Box.Width / 2), 
-                Position.Y + 128 - (Box.Height / 2)), null, new Vector2(0.5f, 1), null, RightText, "Fonts/ButtonFont", "Right", Color.White);            
-            RightButton.LoadContent(contentManager);
+            if (RightText != null)
+            {
+                RightButton = new Button("Buttons/ButtonRight", new Vector2(Position.X + 252 - (Box.Width / 2),
+                    Position.Y + 128 - (Box.Height / 2)), null, new Vector2(0.5f, 1), null, RightText, "Fonts/ButtonFont", "Right", Color.White);
+                RightButton.LoadContent(contentManager);
+            }
 
             TextFont = contentManager.Load<SpriteFont>("Fonts/DialogFont");
 
@@ -57,7 +60,7 @@ namespace TowerDefensePrototype
         {
             LeftButton.Update();
             
-            if (RightText != "")
+            if (RightText != null)
             RightButton.Update();
         }
 
@@ -68,7 +71,7 @@ namespace TowerDefensePrototype
                                    Position.Y + 50 - (Box.Height / 2) - TextFont.MeasureString(BoxText[0].ToString()).Y), Color.White);
             LeftButton.Draw(spriteBatch);
 
-            if (RightText != "")
+            if (RightText != null)
             RightButton.Draw(spriteBatch);
         }
     }

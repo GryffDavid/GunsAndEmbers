@@ -10,7 +10,7 @@ namespace TowerDefensePrototype
 {
     class FlameProjectile : HeavyProjectile
     {
-        public FlameProjectile(Vector2 position, float speed, float angle, float gravity, Vector2? yrange = null)
+        public FlameProjectile(Vector2 position, float speed, float angle, float gravity, float damage, Vector2? yrange = null)
         {
             Active = true;
             Rotate = true;

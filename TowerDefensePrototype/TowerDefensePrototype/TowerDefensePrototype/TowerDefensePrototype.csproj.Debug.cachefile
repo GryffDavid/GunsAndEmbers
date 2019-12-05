@@ -8,7 +8,7 @@ Content\Cursors\DefaultCursor.xnb
 Content\Particles\Splodge.xnb
 Content\WhiteBlock.xnb
 Content\Particles\FireParticle.xnb
-Content\Icons\FireIcon.xnb
+Content\Icons\FireTrapIcon.xnb
 Content\Icons\WallIcon.xnb
 Content\Icons\SpikesIcon.xnb
 Content\Projectiles\CannonBall.xnb
@@ -27,7 +27,7 @@ Content\Traps\BarrelTrap.xnb
 Content\Invaders\Troll.xnb
 Content\Icons\SnowFlakeIcon.xnb
 Content\Icons\BombIcon.xnb
-Content\Icons\BasicTurretIcon2.xnb
+Content\Icons\MachineGunTurretIcon.xnb
 Content\Icons\CannonTurretIcon.xnb
 Content\Icons\FlameThrowerTurretIcon.xnb
 Content\Backgrounds\TestBackground.xnb
@@ -83,6 +83,10 @@ Content\Ground1.xnb
 Content\HealthBar\HealthBarForeground.xnb
 Content\HealthBar\ShieldBarForeground.xnb
 Content\HealthBar\Background.xnb
+Content\Particles\GlowBall.xnb
+Content\Shield.xnb
+Content\Backgrounds\Space2.xnb
+Content\Tower2.xnb
 Content\Fonts\BoxFont1.xnb
 Content\Fonts\HUDFont.xnb
 Content\Fonts\ButtonFont.xnb
@@ -101,4 +105,8 @@ Content\Sounds\Shot12.xnb
 Content\Sounds\PlaceTrap.xnb
 Content\Sounds\Shot2.xnb
 Content\Sounds\Shot3.xnb
-Content\GlowBall.xnb
+Content\Sounds\Ricochet1.xnb
+Content\Sounds\Ricochet2.xnb
+Content\Sounds\Ricochet3.xnb
+Content\Sounds\Splat1.xnb
+Content\Sounds\Splat2.xnb

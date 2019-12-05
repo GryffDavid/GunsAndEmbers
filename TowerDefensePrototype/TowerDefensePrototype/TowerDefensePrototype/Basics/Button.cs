@@ -15,10 +15,9 @@ namespace TowerDefensePrototype
     public class Button
     {
         public string AssetName, IconName, Text, FontName;
-        public Vector2 FrameSize, Scale, Position, CursorPosition;
+        public Vector2 FrameSize, Scale, Position, CursorPosition, IconPosition;
         public Rectangle DestinationRectangle, SourceRectangle;
 
-        Vector2 IconPosition;
         Color Color, TextColor;
         Texture2D ButtonStrip, IconTexture;       
         Rectangle IconRectangle;
@@ -31,6 +30,7 @@ namespace TowerDefensePrototype
         int CurrentFrame;
         public bool Active, CanBeRightClicked, JustClicked, JustRightClicked;
         public bool ButtonActive;
+        public Color IconColor;
 
         string Alignment;
 
@@ -75,6 +75,8 @@ namespace TowerDefensePrototype
             Alignment = alignment;
 
             CurrentButtonState = ButtonSpriteState.Released;
+
+            IconColor = Color.White;
         }
 
         public void LoadContent(ContentManager contentManager)
@@ -105,6 +107,11 @@ namespace TowerDefensePrototype
             CurrentMouseState = Mouse.GetState();
 
             CursorPosition = new Vector2(CurrentMouseState.X, CurrentMouseState.Y);
+
+            DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, (int)(FrameSize.X * Scale.X), (int)(FrameSize.Y * Scale.Y));
+
+            if (IconName != null)
+            IconRectangle = new Rectangle((int)IconPosition.X, (int)IconPosition.Y, IconTexture.Width, IconTexture.Height);
 
             switch (CurrentButtonState)
             {
@@ -267,11 +274,11 @@ namespace TowerDefensePrototype
                 if (IconName != null)
                 {
                     if (CurrentButtonState != ButtonSpriteState.Pressed)                    
-                        spriteBatch.Draw(IconTexture, IconRectangle, null, Color.White, MathHelper.ToRadians(0), Vector2.Zero, 
+                        spriteBatch.Draw(IconTexture, IconRectangle, null, IconColor, MathHelper.ToRadians(0), Vector2.Zero, 
                             SpriteEffects.None, 0.5f);
                     else
-                        spriteBatch.Draw(IconTexture, new Rectangle(IconRectangle.X + 2, IconRectangle.Y + 2, IconRectangle.Width, 
-                            IconRectangle.Height), null, Color.White, MathHelper.ToRadians(0), Vector2.Zero, SpriteEffects.None, 0.5f);              
+                        spriteBatch.Draw(IconTexture, new Rectangle(IconRectangle.X + 2, IconRectangle.Y + 2, IconRectangle.Width,
+                            IconRectangle.Height), null, IconColor, MathHelper.ToRadians(0), Vector2.Zero, SpriteEffects.None, 0.5f);              
                 }
 
                 switch (CurrentButtonState)
@@ -358,7 +365,10 @@ namespace TowerDefensePrototype
                 {
                     //Vector2 pos = new Vector2((1 / Scale.X) * (Mouse.GetState().X - Position.X), (1 / Scale.Y) * (Mouse.GetState().Y - Position.Y));
                     //Rectangle testRect = new Rectangle((int)((1 / Scale.X) * (Mouse.GetState().X - Position.X)), (int)((1 / Scale.Y) * (Mouse.GetState().Y - Position.Y)), 1, 1);
-                    ButtonStrip.GetData<Color>(0,Rect, retrievedColor, 0, 1);
+                    if (Rect != new Rectangle((int)((1 / Scale.X) * (Mouse.GetState().X - Position.X)), (int)((1 / Scale.Y) * (Mouse.GetState().Y - Position.Y)), 1, 1))
+                        return Color.White;
+                    else
+                        ButtonStrip.GetData<Color>(0, Rect, retrievedColor, 0, 1);
                 }
             }
 
