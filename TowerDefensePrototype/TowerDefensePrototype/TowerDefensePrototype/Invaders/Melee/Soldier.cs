@@ -27,8 +27,8 @@ namespace TowerDefensePrototype
             MeleeDamageStruct = new InvaderMeleeStruct()
             {
                 CurrentAttackDelay = 0,
-                MaxAttackDelay = 500,
-                Damage = 1
+                MaxAttackDelay = 2000,
+                Damage = 10
             };
         }
 
@@ -40,6 +40,7 @@ namespace TowerDefensePrototype
                 case MicroBehaviour.Stationary:
                     {
                         Velocity.X = 0;
+                        CurrentMicroBehaviour = MicroBehaviour.Attack;
                     }
                     break;
                 #endregion
@@ -73,7 +74,24 @@ namespace TowerDefensePrototype
                 #region Attack
                 case MicroBehaviour.Attack:
                     {
+                        switch (CurrentMacroBehaviour)
+                        {
+                            #region Attack Tower
+                            case MacroBehaviour.AttackTower:
+                                {
+                                    UpdateMeleeDelay(gameTime);
+                                }
+                                break; 
+                            #endregion
 
+                            #region Attack Traps
+                            case MacroBehaviour.AttackTraps:
+                                {
+
+                                }
+                                break;
+                            #endregion
+                        }
                     }
                     break;
                 #endregion

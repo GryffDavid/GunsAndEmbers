@@ -16,19 +16,25 @@ namespace TowerDefensePrototype
             TurretType = TurretType.Lightning;
             Position = position;
             Selected = true;
-            //FireDelay = 6000;
             FireDelay = 200;
-            Damage = 150;
-            AngleOffset = 2;
+            Damage = 3;
+            AngleOffset = 2.5f;
             Animated = false;
             Looping = false;
+            ResourceCost = 200;
+            MaxHeat = 100;
+            ShotHeat = 5;
+            MaxHeatTime = 4000;
+            CoolValue = 0.15f;
+            Range = 500;
+            TurretFireType = TurretFireType.FullAuto;
 
             CurrentAnimation = new InvaderAnimation()
             {
-                TotalFrames = 0
+                TotalFrames = 1
             };
 
-            Charges = 6;
+            MaxHealth = 100;
         }
 
         public override void Initialize(ContentManager contentManager)

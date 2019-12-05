@@ -17,7 +17,8 @@ namespace TowerDefensePrototype
         Barrel,
         SawBlade,
         Line,
-        Trigger
+        Trigger,
+        LandMine
     };
     public enum TrapAnimationState { Untriggered, Triggering, Active, Resetting };
 
@@ -164,7 +165,11 @@ namespace TowerDefensePrototype
             ShadowPosition = new Vector2(Position.X + CurrentAnimation.FrameSize.X/2, Position.Y + CurrentAnimation.FrameSize.Y);
                         
             Bottom = BoundingBox.Max.Y;
-            DrawDepth = (Bottom / 1080);
+
+            if (OnGround == false)
+                DrawDepth = (Bottom / 1080);
+            else
+                DrawDepth = 0f;
 
 
             //if (TrapEmitterList.Count > 0)
@@ -189,7 +194,11 @@ namespace TowerDefensePrototype
                 #region Draw trap shadows
                 foreach (Light light in lightList)
                 {
+                    double dist = Math.Sqrt(Math.Pow(0.45f * (DestinationRectangle.Center.X - light.Position.X), 2) + Math.Pow(DestinationRectangle.Bottom - light.Position.Y, 2));
+
                     float lightDistance = Vector2.Distance(ShadowPosition, new Vector2(light.Position.X, light.Position.Y));
+
+                    lightDistance = (float)dist;
 
                     if (lightDistance < light.LightDecay)
                     {

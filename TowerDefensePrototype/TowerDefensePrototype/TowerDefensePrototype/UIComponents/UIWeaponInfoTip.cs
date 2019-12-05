@@ -15,7 +15,6 @@ namespace TowerDefensePrototype
         public SpriteFont RobotoItalic20_0, RobotoRegular20_0, RobotoBold40_2, RobotoRegular20_2;
         public Vector2 BoxSize, NameBoxSize, Position;
         UIBar UIBar1, UIBar2, UIBar3, UIBar4, UIBar5;
-        DamageType DamageType;
         string BarText1, BarText2, BarText3, BarText4, BarText5;
 
         public Texture2D DamageIcon, WeaponIcon, ConcussiveDamageIcon, KineticDamageIcon, 
@@ -185,17 +184,15 @@ namespace TowerDefensePrototype
                 WeaponName = "TRAP";
                 WeaponType = "Trap";
                 WeaponTip = "Place this";
-                DamageType = DamageType.Kinetic;
 
                 switch (trap.TrapType)
                 {
                     case TrapType.Barrel:
-                        WeaponName = "Mine Trap";
+                        WeaponName = "Barrel Trap";
                         break;
 
                     case TrapType.Fire:
                         WeaponName = "Immolation Trap";
-                        DamageType = DamageType.Fire;
                         break;
 
                     case TrapType.SawBlade:
@@ -216,6 +213,18 @@ namespace TowerDefensePrototype
 
                     case TrapType.Wall:
                         WeaponName = "Wall";
+                        break;
+
+                    case TrapType.LandMine:
+                        WeaponName = "Land Mine";
+                        break;
+
+                    case TrapType.Trigger:
+                        WeaponName = "Trigger";
+                        break;
+
+                    case TrapType.Line:
+                        WeaponName = "Line";
                         break;
                 }
             }
@@ -268,29 +277,6 @@ namespace TowerDefensePrototype
             FireDamageIcon = contentManager.Load<Texture2D>("Icons/DamageTypeIcons/FireDamageIcon");
             RadiationDamageIcon = contentManager.Load<Texture2D>("Icons/DamageTypeIcons/ConcussiveDamageIcon");
             ElectricDamageIcon = contentManager.Load<Texture2D>("Icons/DamageTypeIcons/ConcussiveDamageIcon");
-
-            switch (DamageType)
-            {
-                case DamageType.Concussive:
-                    DamageIcon = ConcussiveDamageIcon;
-                    break;
-
-                case DamageType.Kinetic:
-                    DamageIcon = KineticDamageIcon;
-                    break;
-
-                case DamageType.Fire:
-                    DamageIcon = FireDamageIcon;
-                    break;
-
-                case DamageType.Radiation:
-                    DamageIcon = RadiationDamageIcon;
-                    break;
-
-                case DamageType.Electric:
-                    DamageIcon = ElectricDamageIcon;
-                    break;
-            }
         }
 
         public void Draw(SpriteBatch spriteBatch, GraphicsDevice graphics, BasicEffect basicEffect)

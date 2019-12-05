@@ -25,12 +25,10 @@ namespace TowerDefensePrototype
             Color FireColor2 = Color.Orange;
             FireColor2.A = 200;
 
-            EmitterList = new List<Emitter>();
-            EmitterList.Add(new Emitter(particleTexture, new Vector2(Position.X + 16, Position.Y + 8),
-                new Vector2(90, 90),
-                new Vector2(1.5f, 2), new Vector2(30, 35), 0.1f, true,
-                new Vector2(-20, 20), new Vector2(-4, 4),
-                new Vector2(1, 2f), FireColor, FireColor2, 0.0f, -1, 1, 1, false, new Vector2(0, 720)));
+            EmitterList.Add(new Emitter(particleTexture, new Vector2(Position.X + 16, Position.Y + 8), new Vector2(0, 0),
+                new Vector2(0, 0), new Vector2(640, 960), 0.75f, true, new Vector2(0, 0), new Vector2(0, 0),
+                new Vector2(0.1f, 0.1f), FireColor * 0.5f, Color.Black, -0.05f, -1, 25, 1, false, new Vector2(0, 720), true, DrawDepth,
+                null, null, null, null, null, null, null, true, true));
         }
     }
 }

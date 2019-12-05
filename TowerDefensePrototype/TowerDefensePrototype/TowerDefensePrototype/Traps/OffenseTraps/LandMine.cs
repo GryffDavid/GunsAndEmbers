@@ -8,16 +8,20 @@ using Microsoft.Xna.Framework.Content;
 
 namespace TowerDefensePrototype
 {
-    class BarrelTrap : Trap
+    class LandMine : Trap
     {
-        public BarrelTrap(Vector2 position)
+        public LandMine(Vector2 position)
         {
             Position = position;
-            Solid = true;
+            Solid = false;
             MaxHP = 50;
-            TrapType = TrapType.Barrel;
+            TrapType = TrapType.LandMine;
             DetonateDelay = 10000;
             DetonateLimit = 1;
+            OnGround = true;
+            NormalDamage = 100;
+            ResourceCost = 25;
+            PowerCost = 1;
         }
     }
 }

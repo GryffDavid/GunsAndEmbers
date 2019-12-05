@@ -157,6 +157,12 @@ Content\CircularBar.xnb
 Content\ThinkingAnimation.xnb
 Content\Turrets\MachineGunTurret\MachineTurretBarrelGib.xnb
 Content\JetSprite.xnb
+Content\ExplosionRingSprite.xnb
+Content\Traps\LandMine.xnb
+Content\Icons\TrapIcons\LandMineTrapIcon.xnb
+Content\Icons\TurretIcons\GasGrenadeTurretIcon.xnb
+Content\Traps\BarrelTrap.xnb
+Content\Projectiles\FlameProjectile.xnb
 Content\Sounds\Menu\MenuClick.xnb
 Content\Sounds\FireTrapStart.xnb
 Content\Sounds\Menu\MenuAmbiance.xnb

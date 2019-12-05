@@ -14,7 +14,6 @@ namespace TowerDefensePrototype
         {
             Active = true;
             TurretType = TurretType.MachineGun;
-            DamageType = DamageType.Kinetic;
             Position = position;
             Selected = true;
             FireDelay = 200;

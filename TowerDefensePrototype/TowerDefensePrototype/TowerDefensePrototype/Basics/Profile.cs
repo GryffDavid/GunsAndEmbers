@@ -15,11 +15,30 @@ namespace TowerDefensePrototype
         public List<Upgrade> UpgradesList;
 
         //What turrets the player has access to
-        public bool FlameThrower, MachineGun, Cannon, Lightning, Cluster,
-                    FelCannon, Beam, Freeze, Grenade, Boomerang, PulseGun, Shotgun, PersistentBeam,
+        public bool FlameThrower, 
+                    MachineGun, 
+                    Cannon, 
+                    Lightning, 
+                    Cluster,
+                    FelCannon, 
+                    Beam, Freeze, 
+                    Grenade, 
+                    Boomerang, 
+                    PulseGun, 
+                    Shotgun, 
+                    PersistentBeam,
                     GasGrenade;
 
         //What traps the player has access to
-        public bool Fire, Spikes, Wall, Catapult, SawBlade, Ice, Barrel, Line, Trigger;
+        public bool Fire, 
+                    Spikes,
+                    Wall, 
+                    Catapult, 
+                    SawBlade, 
+                    Ice, 
+                    Barrel, 
+                    Line, 
+                    Trigger, 
+                    LandMine;
     }
 }

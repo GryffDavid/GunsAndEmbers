@@ -61,7 +61,6 @@ namespace TowerDefensePrototype
         public Color Color;        
         public InvaderAnimation CurrentAnimation;
         public List<Emitter> EmitterList = new List<Emitter>();
-        public DamageType DamageType;
         public UIBar TimingBar, HealthBar;
         public AmmoBelt AmmoBelt;
 

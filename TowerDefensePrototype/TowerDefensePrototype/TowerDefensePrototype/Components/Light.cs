@@ -129,11 +129,18 @@ namespace TowerDefensePrototype
             Depth = (Position.Y / 1080f);
 
             Invader tetherInvader = Tether as Invader;
+            HeavyProjectile tetherProjectile = Tether as HeavyProjectile;
 
             if (tetherInvader != null)
             {
                 Position = new Vector3(tetherInvader.Center.X, tetherInvader.Center.Y, 15);
                 Depth = tetherInvader.DrawDepth - 0.1f;
+            }
+
+            if (tetherProjectile != null)
+            {
+                Position = new Vector3(tetherProjectile.Center.X, tetherProjectile.Center.Y, 15);
+                Depth = tetherProjectile.DrawDepth;
             }
         }
 

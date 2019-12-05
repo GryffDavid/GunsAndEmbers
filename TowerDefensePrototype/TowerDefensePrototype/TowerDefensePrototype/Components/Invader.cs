@@ -14,6 +14,9 @@ namespace TowerDefensePrototype
 
     public enum InvaderFireType { Burst };
 
+    public enum InvaderBuildType { Mechanical, Organic }; //Whether the invader is affected by things like gas.
+
+    #region InvaderType
     public enum InvaderType
     {
         Soldier,
@@ -28,16 +31,21 @@ namespace TowerDefensePrototype
         StationaryCannon,
         HealDrone,
         JumpMan,
-        RifleMan
+        RifleMan,
+        ShieldProjector
     };
+    #endregion
 
+    #region MacroBehaviour
     public enum MacroBehaviour
     {
         AttackTower,
         AttackTraps,
         AttackTurrets
-    };
+    }; 
+    #endregion
 
+    #region MicroBehaviour
     public enum MicroBehaviour
     {
         MovingForwards,
@@ -46,8 +54,10 @@ namespace TowerDefensePrototype
         AdjustTrajectory,
         Attack
     };
+    #endregion
 
 
+    #region DOTStruct
     public class DamageOverTimeStruct
     {
         public float Damage, //How much damage is done each interval
@@ -58,24 +68,31 @@ namespace TowerDefensePrototype
                      CurrentInterval;
 
         public Color Color; //The colour the invader turns while this DOT is active
-    };
+    }; 
+    #endregion
 
+    #region SlowStruct
     public class SlowStruct
     {
         public float MaxDelay, CurrentDelay, SpeedPercentage;
         public float PreviousSpeed; //The speed value before the invader was slowed
     };
+    #endregion
 
+    #region FreezeStruct
     public class FreezeStruct
     {
         public float MaxDelay, CurrentDelay;
-    };
+    }; 
+    #endregion
 
+    #region MeleeStruct
     public class InvaderMeleeStruct
     {
         public float Damage;
         public float CurrentAttackDelay, MaxAttackDelay;
     };
+    #endregion
 
     public struct PreviousResult
     {
@@ -120,7 +137,8 @@ namespace TowerDefensePrototype
 
         public bool CanAttack, Burning, Frozen, Slow, InAir;
         #endregion
-
+        
+        #region HitByBeam
         private bool _HitByBeam;
         public bool HitByBeam
         {
@@ -134,8 +152,10 @@ namespace TowerDefensePrototype
                     CurrentBeamDelay = 0;
                 }
             }
-        }
+        } 
+        #endregion
 
+        #region Color
         private Color _Color;
         public Color Color
         {
@@ -150,9 +170,9 @@ namespace TowerDefensePrototype
                 }
             }
         }
-
-        public Trap TargetTrap;
-
+        #endregion
+                
+        #region AnimationState
         private AnimationState_Invader _InvaderAnimationState;
         public AnimationState_Invader InvaderAnimationState
         {
@@ -172,19 +192,23 @@ namespace TowerDefensePrototype
                 }
             }
         }
+        #endregion
 
+        #region MacroBehaviour
         public MacroBehaviour PreviousMacroBehaviour;
         private MacroBehaviour _CurrentMacroBehaviour;
         public MacroBehaviour CurrentMacroBehaviour
         {
             get { return _CurrentMacroBehaviour; }
-            set 
+            set
             {
                 PreviousMacroBehaviour = _CurrentMacroBehaviour;
-                _CurrentMacroBehaviour = value; 
+                _CurrentMacroBehaviour = value;
             }
         }
+        #endregion
 
+        #region MicroBehaviour
         public MicroBehaviour PreviousMicroBehavior;
         private MicroBehaviour _CurrentMicroBehaviour;
         public MicroBehaviour CurrentMicroBehaviour
@@ -193,24 +217,31 @@ namespace TowerDefensePrototype
             set
             {
                 PreviousMicroBehavior = _CurrentMicroBehaviour;
-                _CurrentMicroBehaviour = value;                
+                _CurrentMicroBehaviour = value;
             }
         }
-
+        #endregion
+        
+        #region BehaviourDelay
         public double MaxBehaviourDelay = 1500;
         public double CurrentBehaviourDelay;
+        #endregion
 
+        #region HitObject
         public object PreviousHitObject;
         private object _HitObject;
         public object HitObject
         {
             get { return _HitObject; }
-            set 
+            set
             {
                 PreviousHitObject = _HitObject;
-                _HitObject = value; 
+                _HitObject = value;
             }
-        }
+        } 
+        #endregion
+
+        public Trap TargetTrap;
 
         public DamageOverTimeStruct CurrentDOT;
 
@@ -218,7 +249,6 @@ namespace TowerDefensePrototype
         public InvaderAnimation CurrentAnimation;
         public List<InvaderAnimation> AnimationList;
 
-        public DamageType DamageVulnerability;
         public UIOutline InvaderOutline;
         public UIBar HealthBar;
         public SoundEffectInstance MoveLoop;
@@ -451,22 +481,22 @@ namespace TowerDefensePrototype
                     Center = new Vector2(DestinationRectangle.Center.X, DestinationRectangle.Center.Y + 6);
                 }
 
-                #region Melee Attack
-                if (MeleeDamageStruct != null)
-                {
-                    MeleeDamageStruct.CurrentAttackDelay += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+                //#region Melee Attack
+                //if (MeleeDamageStruct != null)
+                //{
+                //    MeleeDamageStruct.CurrentAttackDelay += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
 
-                    if (MeleeDamageStruct.CurrentAttackDelay >= MeleeDamageStruct.MaxAttackDelay)
-                    {
-                        CanAttack = true;
-                        MeleeDamageStruct.CurrentAttackDelay = 0;
-                    }
-                    else
-                    {
-                        CanAttack = false;
-                    }
-                }
-                #endregion
+                //    if (MeleeDamageStruct.CurrentAttackDelay >= MeleeDamageStruct.MaxAttackDelay)
+                //    {
+                //        CanAttack = true;
+                //        MeleeDamageStruct.CurrentAttackDelay = 0;
+                //    }
+                //    else
+                //    {
+                //        CanAttack = false;
+                //    }
+                //}
+                //#endregion
 
                 #region This makes sure that the invader can't take damage if it's off screen (i.e. before it's visible to the player)
                 if (Position.X > 1920)
@@ -603,88 +633,25 @@ namespace TowerDefensePrototype
 
                 if (InAir == false)
                 {
-                    #region Draw initial shadow
-                    //if (Active == true)
-                    //{
-                    //    Vector2 direction = ShadowPosition - new Vector2(DestinationRectangle.X, DestinationRectangle.Y - 32);
-                    //    direction.Normalize();
+                    #region Draw Initial Shadow
 
-                    //    ShadowHeightMod = 1.0f;
-                    //    ShadowHeight = MathHelper.Clamp(CurrentAnimation.FrameSize.Y * ShadowHeightMod, 16, 64);
-                    //    float width = MathHelper.Clamp(CurrentAnimation.FrameSize.Y * ShadowHeightMod, 16, 92);
-
-                    //    //This needs to be reduced by the percentage distance to the closest light source
-                    //    ShadowColor = Color.Lerp(Color.Lerp(Color.Black, Color.Transparent, 0f), Color.Transparent, 0.25f);
-
-                    //    shadowVertices[0] = new VertexPositionColorTexture()
-                    //    {
-                    //        Position = new Vector3(ShadowPosition.X, ShadowPosition.Y, 0),
-                    //        TextureCoordinate = CurrentAnimation.dBottomLeftTexCoord,
-                    //        Color = ShadowColor
-                    //    };
-
-                    //    shadowVertices[1] = new VertexPositionColorTexture()
-                    //    {
-                    //        Position = new Vector3(ShadowPosition.X + CurrentAnimation.FrameSize.X, ShadowPosition.Y, 0),
-                    //        TextureCoordinate = CurrentAnimation.dBottomRightTexCoord,
-                    //        Color = ShadowColor
-                    //    };
-
-                    //    shadowVertices[2] = new VertexPositionColorTexture()
-                    //    {
-                    //        Position = new Vector3(ShadowPosition.X + CurrentAnimation.FrameSize.X + (direction.X * width), ShadowPosition.Y + (direction.Y * ShadowHeight), 0),
-                    //        TextureCoordinate = CurrentAnimation.dTopRightTexCoord,
-                    //        Color = Color.Lerp(ShadowColor, Color.Transparent, 0.85f)
-                    //    };
-
-                    //    shadowVertices[3] = new VertexPositionColorTexture()
-                    //    {
-                    //        Position = new Vector3(ShadowPosition.X + (direction.X * width), ShadowPosition.Y + (direction.Y * ShadowHeight), 0),
-                    //        TextureCoordinate = CurrentAnimation.dTopLeftTexCooord,
-                    //        Color = Color.Lerp(ShadowColor, Color.Transparent, 0.85f)
-                    //    };
-
-                    //    //This stops backface culling when the shadow flips vertically
-                    //    if (direction.Y > 0)
-                    //    {
-                    //        shadowIndices[0] = 0;
-                    //        shadowIndices[1] = 1;
-                    //        shadowIndices[2] = 2;
-                    //        shadowIndices[3] = 2;
-                    //        shadowIndices[4] = 3;
-                    //        shadowIndices[5] = 0;
-                    //    }
-                    //    else
-                    //    {
-                    //        shadowIndices[0] = 3;
-                    //        shadowIndices[1] = 2;
-                    //        shadowIndices[2] = 1;
-                    //        shadowIndices[3] = 1;
-                    //        shadowIndices[4] = 0;
-                    //        shadowIndices[5] = 3;
-                    //    }
-
-                    //    //shadowEffect.Parameters["Texture"].SetValue(CurrentAnimation.Texture);
-                    //    //shadowEffect.Parameters["texSize"].SetValue(CurrentAnimation.FrameSize);
-
-                    //    foreach (EffectPass pass in shadowEffect.CurrentTechnique.Passes)
-                    //    {
-                    //        pass.Apply();
-                    //        graphics.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, shadowVertices, 0, 4, shadowIndices, 0, 2, VertexPositionColorTexture.VertexDeclaration);
-                    //    }
-                    //}
                     #endregion
 
                     #region Draw invader shadows
                     foreach (Light light in lightList)
                     {
+                        double dist = Math.Sqrt(Math.Pow(0.45f * (DestinationRectangle.Center.X - light.Position.X), 2) + Math.Pow(DestinationRectangle.Bottom - light.Position.Y, 2));
+
                         float lightDistance = Vector2.Distance(new Vector2(Center.X, DestinationRectangle.Bottom), new Vector2(light.Position.X, light.Position.Y));
+
+                        lightDistance = (float)dist;
 
                         if (lightDistance < light.Range)
                         {
-                            Vector2 direction = ShadowPosition - new Vector2(light.Position.X, light.Position.Y);
+                            Vector2 direction = new Vector2(DestinationRectangle.Center.X, DestinationRectangle.Bottom) - new Vector2(light.Position.X, light.Position.Y);
                             direction.Normalize();
 
+                           
                             ShadowHeightMod = lightDistance / (light.Range / 10);
                             ShadowHeight = MathHelper.Clamp(CurrentAnimation.FrameSize.Y * ShadowHeightMod, 16, 64);
                             float width = MathHelper.Clamp(CurrentAnimation.FrameSize.Y * ShadowHeightMod, 16, 92);
@@ -713,14 +680,14 @@ namespace TowerDefensePrototype
                             {
                                 Position = new Vector3(ShadowPosition.X + CurrentAnimation.FrameSize.X + (direction.X * width), ShadowPosition.Y + (direction.Y * ShadowHeight), 0),
                                 TextureCoordinate = CurrentAnimation.dTopRightTexCoord,
-                                Color = Color.Lerp(ShadowColor, Color.Transparent, 0.85f)
+                                Color = ShadowColor * 0.85f
                             };
 
                             shadowVertices[3] = new VertexPositionColorTexture()
                             {
                                 Position = new Vector3(ShadowPosition.X + (direction.X * width), ShadowPosition.Y + (direction.Y * ShadowHeight), 0),
                                 TextureCoordinate = CurrentAnimation.dTopLeftTexCooord,
-                                Color = Color.Lerp(ShadowColor, Color.Transparent, 0.85f)
+                                Color = ShadowColor * 0.85f
                             };
 
                             //This stops backface culling when the shadow flips vertically
@@ -744,7 +711,7 @@ namespace TowerDefensePrototype
                             }
 
                             shadowEffect.Parameters["Texture"].SetValue(CurrentAnimation.Texture);
-                            shadowEffect.Parameters["texSize"].SetValue(CurrentAnimation.FrameSize);
+                            shadowEffect.Parameters["texSize"].SetValue(new Vector2(CurrentAnimation.Texture.Width, CurrentAnimation.Texture.Height));
 
                             foreach (EffectPass pass in shadowEffect.CurrentTechnique.Passes)
                             {
@@ -807,6 +774,27 @@ namespace TowerDefensePrototype
                 #region Draw the ice block normal map
 
                 #endregion
+            }
+        }
+
+        public void UpdateMeleeDelay(GameTime gameTime)
+        {
+            //This should only be called if the invader is actually ALLOWED to fire
+            //i.e. They can't fire when moving, can't fire when facing the wrong way etc.
+            if (MeleeDamageStruct != null)
+            {
+                if (MeleeDamageStruct.CurrentAttackDelay < MeleeDamageStruct.MaxAttackDelay)
+                    MeleeDamageStruct.CurrentAttackDelay += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+
+                if (MeleeDamageStruct.CurrentAttackDelay >= MeleeDamageStruct.MaxAttackDelay)
+                {
+                    CanAttack = true;
+                    MeleeDamageStruct.CurrentAttackDelay = 0;
+                }
+                else
+                {
+                    CanAttack = false;
+                }
             }
         }
 

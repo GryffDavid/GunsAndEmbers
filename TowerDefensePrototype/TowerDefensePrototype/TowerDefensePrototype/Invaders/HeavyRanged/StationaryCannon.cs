@@ -36,7 +36,7 @@ namespace TowerDefensePrototype
         public StationaryCannon(Vector2 position)
         {
             Position = position;
-            Speed = 1.5f;
+            Speed = 0.59f;
             MaxHP = 200;
             ResourceMinMax = new Vector2(8, 20);
             YRange = new Vector2(700, 900);

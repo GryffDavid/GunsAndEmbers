@@ -14,7 +14,6 @@ namespace TowerDefensePrototype
         public CannonTurret(Vector2 position)
         {
             Active = true;
-            DamageType = DamageType.Concussive;
             TurretType = TurretType.Cannon;
             Position = position;
             Selected = true;

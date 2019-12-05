@@ -304,7 +304,7 @@ namespace TowerDefensePrototype
                 }
                 #endregion
 
-                Center = new Vector2(DestinationRectangle.Center.X, DestinationRectangle.Center.Y);
+                Center = new Vector2(DestinationRectangle.Left, DestinationRectangle.Top);
 
                 #region Update Vertices
                 if (Velocity != Vector2.Zero)
