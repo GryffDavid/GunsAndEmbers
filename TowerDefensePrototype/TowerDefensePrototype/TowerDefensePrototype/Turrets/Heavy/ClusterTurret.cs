@@ -25,6 +25,7 @@ namespace TowerDefensePrototype
             Selected = true;
             FireDelay = 5000;
             Damage = 100;
+            MaxHealth = 200;
             Animated = false;
             Looping = false;
 

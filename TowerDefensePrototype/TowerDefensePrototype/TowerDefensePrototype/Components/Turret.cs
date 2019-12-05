@@ -27,7 +27,8 @@ namespace TowerDefensePrototype
         Shotgun,
         PersistentBeam,
         Harpoon,
-        StickyMine
+        StickyMine,
+        Grapple
     };
     public enum TurretAnimationState { Overheated, ReadyToFire, Stunned };
     public enum TurretFireType { FullAuto, SemiAuto, Single, Beam };

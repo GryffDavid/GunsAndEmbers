@@ -275,7 +275,7 @@ namespace TowerDefensePrototype
         //NEW_TURRET E **turret icon declarations**
         public Texture2D BeamTurretIcon, BoomerangTurretIcon, CannonTurretIcon, ClusterTurretIcon, FelCannonTurretIcon, FlameThrowerTurretIcon,
                          FreezeTurretIcon, GrenadeTurretIcon, GasGrenadeTurretIcon, LightningTurretIcon, MachineGunTurretIcon,
-                         PersistentBeamTurretIcon, ShotgunTurretIcon, HarpoonTurretIcon, StickyMineTurretIcon;
+                         PersistentBeamTurretIcon, ShotgunTurretIcon, HarpoonTurretIcon, StickyMineTurretIcon, GrappleTurretIcon;
 
         //Trap Icons
         public Texture2D CatapultTrapIcon, IceTrapIcon, TarTrapIcon, WallTrapIcon, BarrelTrapIcon, FireTrapIcon, LineTrapIcon, SawBladeTrapIcon,
@@ -297,7 +297,7 @@ namespace TowerDefensePrototype
         public Texture2D MachineGunTurretCursor, CannonTurretCursor, FlameThrowerTurretCursor, LightningTurretCursor, ClusterTurretCursor,
                          FelCannonTurretCursor, BeamTurretCursor, FreezeTurretCursor, BoomerangTurretCursor, GrenadeTurretCursor, GasGrenadeTurretCursor,
                          ShotgunTurretCursor,
-                         PersistentBeamTurretCursor, HarpoonTurretCursor, StickyMineTurretCursor;
+                         PersistentBeamTurretCursor, HarpoonTurretCursor, StickyMineTurretCursor, GrappleTurretCursor;
 
         //Trap Cursors
         public Texture2D WallTrapCursor, SpikesTrapCursor, CatapultTrapCursor, FireTrapCursor, IceTrapCursor, TarTrapCursor, BarrelTrapCursor,
@@ -1093,6 +1093,9 @@ namespace TowerDefensePrototype
 
                 Tower.LoadContent(Content);
                 Invader.Tower = Tower;
+
+                //Tower.DrawDepth = Tower.DestinationRectangle.Bottom / 1080f;
+                //AddDrawable(Tower);
 
                 #endregion                
 
@@ -9874,6 +9877,12 @@ namespace TowerDefensePrototype
                         HeavyProjectileList.Add(HeavyProjectile);
 
                         AddDrawable(HeavyProjectile);
+                    }
+                    break;
+
+                case TurretType.Grapple:
+                    {
+
                     }
                     break;
 

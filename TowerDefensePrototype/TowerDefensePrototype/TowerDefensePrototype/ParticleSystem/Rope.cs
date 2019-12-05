@@ -108,7 +108,8 @@ namespace TowerDefensePrototype
             }
             else
             {
-                Nodes[0].CurrentPosition = StartPoint + new Vector2(1, 0);
+                //Nodes[0].CurrentPosition = StartPoint + new Vector2(1, 0);
+                Nodes[0].CurrentPosition = EndPoint;
                 Nodes[0].Tether = true;
             }
 

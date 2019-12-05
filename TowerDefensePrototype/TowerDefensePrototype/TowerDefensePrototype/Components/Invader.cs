@@ -892,6 +892,7 @@ namespace TowerDefensePrototype
             if (Active == true)
             {
                 effect.Parameters["Texture"].SetValue(CurrentAnimation.Texture);
+                effect.Parameters["World"].SetValue(Matrix.CreateTranslation(new Vector3(0, 0, 0)));
                 effect.Parameters["depth"].SetValue(DrawDepth);
 
                 foreach (EffectPass pass in effect.CurrentTechnique.Passes)

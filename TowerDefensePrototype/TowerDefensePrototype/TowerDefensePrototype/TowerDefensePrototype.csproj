@@ -155,6 +155,7 @@
     <Compile Include="Traps\TriggerTrap.cs" />
     <Compile Include="Turrets\Grenade\StickyMineTurret.cs" />
     <Compile Include="Turrets\HarpoonTurret.cs" />
+    <Compile Include="Turrets\Heavy\GrappleTurret.cs" />
     <Compile Include="Turrets\Light\SniperTurret.cs" />
     <Compile Include="UIComponents\CheckBox.cs" />
     <Compile Include="Components\BulletTrail.cs" />

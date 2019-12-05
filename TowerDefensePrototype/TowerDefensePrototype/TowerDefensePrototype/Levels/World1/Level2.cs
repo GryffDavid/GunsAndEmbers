@@ -27,19 +27,19 @@ namespace TowerDefensePrototype
             //An int in the middle of the list creates a pause without changing the timing
             #region Wave1
             Wave Wave1 = new Wave(true, 350, 100,
-                new RifleMan(new Vector2(2050, 600), new Vector2(700, 850)),
-                new RifleMan(new Vector2(2050, 600), new Vector2(700, 850)),
-                new RifleMan(new Vector2(2050, 600), new Vector2(700, 850)),
-                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                new Soldier(new Vector2(2050, 600), new Vector2(700, 850))
+                //new RifleMan(new Vector2(2050, 600), new Vector2(700, 850)),
+                //new RifleMan(new Vector2(2050, 600), new Vector2(700, 850)),
+                //new RifleMan(new Vector2(2050, 600), new Vector2(700, 850)),
+                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850))
 
-                //new HarpoonCannon(new Vector2(2050, 600), new Vector2(700, 850)),
+                new HarpoonCannon(new Vector2(2050, 600), new Vector2(700, 850))
                 //new HarpoonCannon(new Vector2(2050, 600), new Vector2(700, 850)),
                 //new HarpoonCannon(new Vector2(2050, 600), new Vector2(700, 850)),
                 //new HarpoonCannon(new Vector2(2050, 600), new Vector2(700, 850)),
@@ -152,9 +152,9 @@ namespace TowerDefensePrototype
                  );
             #endregion
 
-            //WaveList.Add(Wave1);
-            WaveList.Add(Wave2);
-            WaveList.Add(Wave3);
+            WaveList.Add(Wave1);
+            //WaveList.Add(Wave2);
+            //WaveList.Add(Wave3);
         }
 
         public override void LoadContent(ContentManager contentManager)

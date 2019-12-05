@@ -28,6 +28,7 @@ namespace TowerDefensePrototype
             Animated = false;
             Looping = false;
             MaxHeat = 50;
+            MaxHealth = 200;
             MaxHeatTime = 2000;
             CoolValue = 0.15f;
             ShotHeat = 10;

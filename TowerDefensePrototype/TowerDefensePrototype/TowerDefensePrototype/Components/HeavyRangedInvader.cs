@@ -208,6 +208,80 @@ namespace TowerDefensePrototype
             base.Draw(graphics, effect, shadowEffect);
         }
 
+        public override void DrawSpriteDepth(GraphicsDevice graphics, Effect effect)
+        {
+            base.DrawSpriteDepth(graphics, effect);
+
+            //effect.Parameters["Texture"].SetValue(CurrentAnimation.Texture);
+            //effect.Parameters["depth"].SetValue(DrawDepth);
+
+            //foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+            //{
+            //    pass.Apply();
+            //    graphics.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, vertices, 0, 4, indices, 0, 2, VertexPositionColorTexture.VertexDeclaration);
+            //}
+
+            if (BarrelAnimation != null && Active == true)
+            {
+                //effect.TextureEnabled = true;
+                //effect.VertexColorEnabled = true;
+                //effect.Texture = BarrelAnimation.Texture;
+
+                effect.Parameters["Texture"].SetValue(BarrelAnimation.Texture);
+                effect.Parameters["depth"].SetValue(DrawDepth);
+
+                barrelVertices[0] = new VertexPositionColorTexture()
+                {
+                    Position = new Vector3(BarrelDestinationRectangle.Left, BarrelDestinationRectangle.Top, 0),
+                    TextureCoordinate = BarrelAnimation.dTopLeftTexCooord,
+                    Color = Color
+                };
+
+                barrelVertices[1] = new VertexPositionColorTexture()
+                {
+                    Position = new Vector3(BarrelDestinationRectangle.Left + BarrelDestinationRectangle.Width, BarrelDestinationRectangle.Top, 0),
+                    TextureCoordinate = BarrelAnimation.dTopRightTexCoord,
+                    Color = Color
+                };
+
+                barrelVertices[2] = new VertexPositionColorTexture()
+                {
+                    Position = new Vector3(BarrelDestinationRectangle.Left + BarrelDestinationRectangle.Width, BarrelDestinationRectangle.Top + BarrelDestinationRectangle.Height, 0),
+                    TextureCoordinate = BarrelAnimation.dBottomRightTexCoord,
+                    Color = Color
+                };
+
+                barrelVertices[3] = new VertexPositionColorTexture()
+                {
+                    Position = new Vector3(BarrelDestinationRectangle.Left, BarrelDestinationRectangle.Top + BarrelDestinationRectangle.Height, 0),
+                    TextureCoordinate = BarrelAnimation.dBottomLeftTexCoord,
+                    Color = Color
+                };
+
+                barrelIndices[0] = 0;
+                barrelIndices[1] = 1;
+                barrelIndices[2] = 2;
+                barrelIndices[3] = 2;
+                barrelIndices[4] = 3;
+                barrelIndices[5] = 0;
+
+                Matrix view = effect.Parameters["World"].GetValueMatrix();
+
+                effect.Parameters["World"].SetValue(Matrix.CreateTranslation(new Vector3(-Position.X - BarrelPivot.X, -Position.Y - BarrelPivot.Y, 0)) *
+                              Matrix.CreateRotationZ(CurrentAngle) *
+                              Matrix.CreateTranslation(new Vector3(Position.X + BarrelPivot.X, Position.Y + BarrelPivot.Y, 0)));
+
+                foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+                {
+                    pass.Apply();
+                    graphics.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, barrelVertices, 0, 4, barrelIndices, 0, 2, VertexPositionColorTexture.VertexDeclaration);
+                }
+
+                effect.Parameters["World"].SetValue(view);
+            }
+
+        }
+
         public void UpdateFireDelay(GameTime gameTime)
         {
             //This should only be called if the invader is actually ALLOWED to fire

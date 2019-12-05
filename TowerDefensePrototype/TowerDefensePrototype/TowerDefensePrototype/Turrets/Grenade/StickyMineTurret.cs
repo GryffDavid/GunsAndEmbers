@@ -27,7 +27,7 @@ namespace TowerDefensePrototype
             AngleOffset = 2.5f;
             Animated = false;
             Looping = false;
-            //ResourceCost = 200;
+            MaxHealth = 200;
             MaxHeat = 100;
             ShotHeat = 5;
             MaxHeatTime = 4000;

@@ -213,15 +213,19 @@ namespace TowerDefensePrototype
 
                 case SpecificBehaviour.Attached:
                     {
+                        //Rope.StartPoint = new Vector2(0, 0);
+                        //Rope.EndPoint = new Vector2(1920 / 2, 1080 / 2);
+
                         RopeDelay += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
 
-                        if (Rope.Sticks.Count > 50 && 
+                        if (Rope.Sticks.Count > 50 &&
                             RopeDelay > MaxRopeDelay &&
                             HarpoonedTurret.CurrentHealth > 0)
                         {
                             Rope.Segments = Rope.Sticks.Count;
                             Rope.Sticks.RemoveAt(Rope.Sticks.Count - 1);
                             Rope.StartPoint = BarrelEnd;
+                            //Rope.EndPoint = new Vector2(0, 0);
                             RopeDelay = 0;
                         }
 
