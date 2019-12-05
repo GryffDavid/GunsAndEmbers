@@ -24,10 +24,5 @@ namespace TowerDefensePrototype
         {
 
         }
-
-        public void Draw(SpriteBatch spriteBatch)
-        {
-
-        }
     }
 }

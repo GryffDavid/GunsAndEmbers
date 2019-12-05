@@ -154,7 +154,6 @@
     <Compile Include="UIComponents\TutorialBox.cs" />
     <Compile Include="UIComponents\PartitionedBar.cs" />
     <Compile Include="Projectiles\BeamProjectile.cs" />
-    <Compile Include="UIComponents\StoryDialogueBox.cs" />
     <Compile Include="Animations\TrapAnimation.cs" />
     <Compile Include="Animations\TurretAnimation.cs" />
     <Compile Include="Basics\Drawable.cs" />

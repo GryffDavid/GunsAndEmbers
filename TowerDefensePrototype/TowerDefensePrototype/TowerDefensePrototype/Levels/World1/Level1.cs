@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Media;
 using Microsoft.Xna.Framework.Audio;
+using GameDataTypes;
 
 namespace TowerDefensePrototype
 {
@@ -14,6 +15,7 @@ namespace TowerDefensePrototype
     {
         public Level1()
         {
+            LevelDialogue = new Level1Dialogue();
             Number = 1;
             WaveList = new List<Wave>();
             WorldType = WorldType.Snowy;
@@ -22,16 +24,16 @@ namespace TowerDefensePrototype
                         
             //A float in the middle of the list changes the delay between invaders
             //An int in the middle of the list creates a pause without changing the timing
-
+            #region Wave1
             Wave Wave1 = new Wave(true, 350, 100,
 
                     //new RifleMan(new Vector2(2050, 600), new Vector2(700, 850)),
-                    //new RifleMan(new Vector2(2050, 600), new Vector2(700, 850)),
-                    //new RifleMan(new Vector2(2050, 600), new Vector2(700, 850)),
-                    //new RifleMan(new Vector2(2050, 600), new Vector2(700, 850)),
-                    //new RifleMan(new Vector2(2050, 600), new Vector2(700, 850)),
-                    ////new RifleMan(new Vector2(2050, 600), new Vector2(700, 850)),
-                    ////3500,
+                //new RifleMan(new Vector2(2050, 600), new Vector2(700, 850)),
+                //new RifleMan(new Vector2(2050, 600), new Vector2(700, 850)),
+                //new RifleMan(new Vector2(2050, 600), new Vector2(700, 850)),
+                //new RifleMan(new Vector2(2050, 600), new Vector2(700, 850)),
+                ////new RifleMan(new Vector2(2050, 600), new Vector2(700, 850)),
+                ////3500,
                 //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
                 //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
                 //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
@@ -46,142 +48,37 @@ namespace TowerDefensePrototype
                 //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
                 //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
                 //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                    //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                    //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
 
                     //new HarpoonCannon(new Vector2(2050, 600), new Vector2(700, 850)),
-                    //new HarpoonCannon(new Vector2(2050, 600), new Vector2(700, 850)),
-                    //new HarpoonCannon(new Vector2(2050, 600), new Vector2(700, 850)),
-                    //new HarpoonCannon(new Vector2(2050, 600), new Vector2(700, 850)),
-                    //new HarpoonCannon(new Vector2(2050, 600), new Vector2(700, 850)),
+                //new HarpoonCannon(new Vector2(2050, 600), new Vector2(700, 850)),
+                //new HarpoonCannon(new Vector2(2050, 600), new Vector2(700, 850)),
+                //new HarpoonCannon(new Vector2(2050, 600), new Vector2(700, 850)),
+                //new HarpoonCannon(new Vector2(2050, 600), new Vector2(700, 850)),
 
                     //2000,
 
                     //new BatteringRam(new Vector2(2050, 600), new Vector2(700, 850)),
-                    //new BatteringRam(new Vector2(2050, 600), new Vector2(700, 850)),
+                //new BatteringRam(new Vector2(2050, 600), new Vector2(700, 850)),
 
                     //5000,
 
                     //new HealDrone(new Vector2(2050, 600), new Vector2(700, 850)),
-                    //new HealDrone(new Vector2(2050, 600), new Vector2(700, 850)),
-                    //new HealDrone(new Vector2(2050, 600), new Vector2(700, 850))//,
+                //new HealDrone(new Vector2(2050, 600), new Vector2(700, 850)),
+                //new HealDrone(new Vector2(2050, 600), new Vector2(700, 850))//,
 
                     new GunShip(new Vector2(2050, 600), new Vector2(700, 850))
-                    //new DropShip(new Vector2(2050, 600), new Vector2(700, 850))
-                 );
-
-            Wave Wave3 = new Wave(true, 200, 1000,
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)));
-
-            Wave Wave4 = new Wave(true, 200, 1000,
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)));
-
-            Wave Wave5 = new Wave(true, 200, 1000,
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)));
-
-            Wave Wave6 = new Wave(true, 200, 3000,
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)));
-
-            Wave Wave7 = new Wave(true, 200, 1000,
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)));
-
-            Wave Wave8 = new Wave(false, 200, 1000,
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)));
-
-            Wave Wave9 = new Wave(true, 200, 1000,
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)));
+                //new DropShip(new Vector2(2050, 600), new Vector2(700, 850))
+                 );            
+            #endregion
 
             WaveList.Add(Wave1);
-            //WaveList.Add(Wave3);
-            //WaveList.Add(Wave4);
-            //WaveList.Add(Wave5);
-            //WaveList.Add(Wave6);
-            //WaveList.Add(Wave7);
-            //WaveList.Add(Wave8);
-            //WaveList.Add(Wave9);
         }
 
         public override void LoadContent(ContentManager contentManager)
         {
+            LevelDialogue = contentManager.Load<LevelDialogue>("StoryDialogue/StoryDialogue1");            
             GroundTexture = contentManager.Load<Texture2D>("Backgrounds/Ground");
             ForegroundTexture = contentManager.Load<Texture2D>("Backgrounds/Foreground");
             SkyBackgroundTexture = contentManager.Load<Texture2D>("Backgrounds/Sky");
@@ -190,6 +87,6 @@ namespace TowerDefensePrototype
             //{
             //    contentManager.Load<SoundEffect>("Sounds/Ambience/PolarWindAmbience")
             //};
-        }
+        }        
     }
 }

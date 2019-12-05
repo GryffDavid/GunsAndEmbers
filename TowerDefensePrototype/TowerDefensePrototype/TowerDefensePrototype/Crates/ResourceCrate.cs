@@ -16,20 +16,5 @@ namespace TowerDefensePrototype
         {
 
         }
-
-        public void LoadContent(ContentManager content)
-        {
-
-        }
-
-        public void Update(GameTime gameTime)
-        {
-
-        }
-
-        public void Draw(SpriteBatch spriteBatch)
-        {
-
-        }
     }
 }
