@@ -205,15 +205,35 @@ namespace TowerDefensePrototype
             {
                 if (Shadow == true)
                 {
-                    float YDist = CurrentPosition.Y - MaxY;
-                    float YDist2 = 500 - MaxY;
-                    float PercentToGround = (100 / YDist2) * YDist;
+                    float PercentToGround = (100 / (500 - MaxY)) * (CurrentPosition.Y - MaxY);
+                    float SizeScale = (2*PercentToGround) / 100;
+                    float ColorScale = (150 - PercentToGround) / 100;
 
-                    float Thing = (PercentToGround) / 100;
-                    Thing = MathHelper.Clamp(Thing, 1f, 1.5f);
-                    Vector2 ShadowScale = new Vector2(Thing * Scale, Thing * Scale);
+                    ColorScale = MathHelper.Clamp(ColorScale, 0.005f, 1f);
+                    SizeScale = MathHelper.Clamp(SizeScale, 1f, 2f);
 
-                    Color ShadowColor = Color.Lerp(Color.Transparent, Color.Black, 0.1f);
+                    Vector2 ShadowScale = new Vector2(SizeScale * Scale, SizeScale * Scale);
+                    Color ShadowColor = Color.Lerp(Color.Transparent, Color.Black, ColorScale*0.05f);
+
+                    spriteBatch.Draw(Texture,
+                        new Rectangle((int)CurrentPosition.X, (int)MaxY + 4, (int)(Texture.Width * ShadowScale.X / 2), (int)(Texture.Height * ShadowScale.Y / 2)),
+                        null, Color.Lerp(Color.Transparent, ShadowColor, CurrentTransparency),
+                        MathHelper.ToRadians(CurrentRotation), Origin, SpriteEffects.None, (DestinationRectangle.Bottom / 1080));
+
+                    spriteBatch.Draw(Texture,
+                        new Rectangle((int)CurrentPosition.X, (int)MaxY + 4, (int)(Texture.Width * ShadowScale.X / 1.7f), (int)(Texture.Height * ShadowScale.Y / 1.5f)),
+                        null, Color.Lerp(Color.Transparent, ShadowColor, CurrentTransparency),
+                        MathHelper.ToRadians(CurrentRotation), Origin, SpriteEffects.None, (DestinationRectangle.Bottom / 1080));
+
+                    spriteBatch.Draw(Texture,
+                        new Rectangle((int)CurrentPosition.X, (int)MaxY + 4, (int)(Texture.Width * ShadowScale.X / 1.5f), (int)(Texture.Height * ShadowScale.Y / 1.5f)),
+                        null, Color.Lerp(Color.Transparent, ShadowColor, CurrentTransparency),
+                        MathHelper.ToRadians(CurrentRotation), Origin, SpriteEffects.None, (DestinationRectangle.Bottom / 1080));
+
+                    spriteBatch.Draw(Texture,
+                        new Rectangle((int)CurrentPosition.X, (int)MaxY + 4, (int)(Texture.Width * ShadowScale.X / 1.3f), (int)(Texture.Height * ShadowScale.Y / 1.5f)),
+                        null, Color.Lerp(Color.Transparent, ShadowColor, CurrentTransparency),
+                        MathHelper.ToRadians(CurrentRotation), Origin, SpriteEffects.None, (DestinationRectangle.Bottom / 1080));
 
                     spriteBatch.Draw(Texture,
                         new Rectangle((int)CurrentPosition.X, (int)MaxY + 4, (int)(Texture.Width * ShadowScale.X), (int)(Texture.Height * ShadowScale.Y)),

@@ -15,7 +15,6 @@ namespace TowerDefensePrototype
             WaveList = new List<Wave>();
 
             Wave Wave1 = new Wave(false, 200, 6000,
-                 new Tank(new Vector2(2050, 600)),
                  new Soldier(new Vector2(2050, 600)),
                  new Soldier(new Vector2(2050, 600)),
                  new Soldier(new Vector2(2050, 600)),

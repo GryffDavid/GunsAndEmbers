@@ -10,12 +10,12 @@ namespace TowerDefensePrototype
 {
     public abstract class HeavyProjectile
     {
-        public Texture2D Texture, Shadow;
+        public Texture2D Texture;
         public string TextureName;
         public List<Emitter> EmitterList;
-        public Vector2 Velocity, Position, YRange;
+        public Vector2 Velocity, Position, YRange, Scale, Origin, Direction;
         public float Angle, Speed, Gravity, CurrentRotation, CurrentTransparency, MaxY;
-        public bool Active, Rotate, Fade, CanBounce, BouncedOnGround, StopBounce, HardBounce;
+        public bool Active, Rotate, Fade, CanBounce, BouncedOnGround, StopBounce, HardBounce, Shadow;
         public Color CurrentColor;
         public HeavyProjectileType HeavyProjectileType;
         public Rectangle DestinationRectangle, CollisionRectangle;
@@ -24,7 +24,6 @@ namespace TowerDefensePrototype
 
         public void LoadContent(ContentManager contentManager)
         {
-            Shadow = contentManager.Load<Texture2D>("Shadow");
             Texture = contentManager.Load<Texture2D>(TextureName);
 
             foreach (Emitter emitter in EmitterList)
@@ -35,6 +34,9 @@ namespace TowerDefensePrototype
             CurrentTransparency = 0;
 
             MaxY = Random.Next((int)YRange.X, (int)YRange.Y);
+            Scale = new Vector2(1, 1);
+            Origin = new Vector2(Texture.Width / 2, Texture.Height / 2);
+            Shadow = true;
         }
 
         public virtual void Update(GameTime gameTime)
@@ -150,17 +152,58 @@ namespace TowerDefensePrototype
         {           
             if (Active == true)
             {
-                spriteBatch.Draw(Shadow, new Rectangle((int)Position.X, (int)MaxY, Texture.Width, Texture.Height / 3), Color.Lerp(Color.White, Color.Transparent, 0.75f));
-
                 CurrentColor = Color.Lerp(Color.White, Color.Transparent, CurrentTransparency);
-                DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, Texture.Width, Texture.Height);
+                DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, Texture.Width*(int)Scale.X, Texture.Height*(int)Scale.Y);
                 CollisionRectangle = new Rectangle(DestinationRectangle.X, DestinationRectangle.Y, DestinationRectangle.Width / 2, DestinationRectangle.Height / 2);
                 spriteBatch.Draw(Texture, DestinationRectangle, null, CurrentColor, CurrentRotation,
-                    new Vector2(Texture.Width / 2, Texture.Height / 2), SpriteEffects.None, MaxY / 1080);
+                    new Vector2(Origin.X, Origin.Y), SpriteEffects.None, MaxY / 1080);
 
                 foreach (Emitter emitter in EmitterList)
                 {
                     emitter.Draw(spriteBatch);
+                }
+            }
+        }
+
+        public void DrawShadow(SpriteBatch spriteBatch)
+        {
+            if (Active == true)
+            {
+                if (Shadow == true)
+                {
+                    //This makes the scale change depending on distance to ground
+                    float PercentToGround = (100 / MaxY) * (Position.Y - MaxY);
+                    float ClampedGroundPercent = MathHelper.Clamp((100 - PercentToGround) / 100, 1f, 2f);
+                    Vector2 ShadowScale = new Vector2(ClampedGroundPercent * Scale.X, ClampedGroundPercent * Scale.Y);
+
+                    //This makes the scale change depending on perspective distance from foreground
+                    float PercentToFore = (100 / (YRange.Y - YRange.X)) * (YRange.Y - MaxY);
+                    float ClampedForePercent = MathHelper.Clamp((115 - PercentToFore) / 100, 0.3f, 0.7f);
+
+                    //Multiply both values to get distance and perspective based shadow
+                    ShadowScale = ShadowScale * ClampedForePercent;
+
+                    Color ShadowColor = Color.Lerp(Color.Transparent, Color.Black, 0.02f);
+
+                    spriteBatch.Draw(Texture,
+                        new Rectangle((int)Position.X, (int)MaxY + 4, (int)(Texture.Width * ShadowScale.X/2), (int)(Texture.Height * ShadowScale.Y/2)),
+                        null, ShadowColor, CurrentRotation, Origin, SpriteEffects.None, (DestinationRectangle.Bottom / 1080));
+
+                    spriteBatch.Draw(Texture,
+                       new Rectangle((int)Position.X, (int)MaxY + 4, (int)(Texture.Width * ShadowScale.X/1.7f), (int)(Texture.Height * ShadowScale.Y/1.7f)),
+                       null, ShadowColor, CurrentRotation, Origin, SpriteEffects.None, (DestinationRectangle.Bottom / 1080));
+
+                    spriteBatch.Draw(Texture,
+                       new Rectangle((int)Position.X, (int)MaxY + 4, (int)(Texture.Width * ShadowScale.X / 1.5f), (int)(Texture.Height * ShadowScale.Y / 1.5f)),
+                       null, ShadowColor, CurrentRotation, Origin, SpriteEffects.None, (DestinationRectangle.Bottom / 1080));
+
+                    spriteBatch.Draw(Texture,
+                       new Rectangle((int)Position.X, (int)MaxY + 4, (int)(Texture.Width * ShadowScale.X / 1.3f), (int)(Texture.Height * ShadowScale.Y / 1.3f)),
+                       null, ShadowColor, CurrentRotation, Origin, SpriteEffects.None, (DestinationRectangle.Bottom / 1080));
+
+                    spriteBatch.Draw(Texture,
+                       new Rectangle((int)Position.X, (int)MaxY + 4, (int)(Texture.Width * ShadowScale.X), (int)(Texture.Height * ShadowScale.Y)),
+                       null, ShadowColor, CurrentRotation, Origin, SpriteEffects.None, (DestinationRectangle.Bottom / 1080));
                 }
             }
         }

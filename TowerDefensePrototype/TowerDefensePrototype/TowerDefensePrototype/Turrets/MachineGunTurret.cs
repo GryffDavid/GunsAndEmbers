@@ -19,11 +19,11 @@ namespace TowerDefensePrototype
             Selected = true;
             FireDelay = 200;
             Damage = 4;
-            AngleOffset = 4;
+            AngleOffset = 2.5f;
             Animated = false;
             Looping = false;
             ResourceCost = 200;
-            MaxHeat = 100;
+            MaxHeat = 150;
             MaxHeatTime = 2000;
             CoolValue = 0.5f;
             ShotHeat = 10;

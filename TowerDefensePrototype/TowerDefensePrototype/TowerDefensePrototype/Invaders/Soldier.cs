@@ -16,9 +16,9 @@ namespace TowerDefensePrototype
             MoveVector = new Vector2(-1f, 0);
             Position = position;
             CurrentHP = 20;
-            MaxHP = 20;
+            MaxHP = 15;
             MoveDelay = 5;
-            ResourceMinMax = new Vector2(1, 5);
+            ResourceMinMax = new Vector2(100, 200);
             CurrentAttackDelay = 0;
             AttackDelay = 1500;
             AttackPower = 24;
