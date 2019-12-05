@@ -13,6 +13,13 @@ namespace TowerDefensePrototype
         public double CurrentTime, MaxTime;
         public bool Detonated = false;
 
+        public TimerHeavyProjectile(float maxTime, Texture2D texture, Vector2 position, 
+                                    float speed, float angle, float gravity, float damage, Vector2? yrange = null)
+            : base(texture, position, speed, angle, gravity, damage, yrange)
+        {
+            MaxTime = maxTime;
+        }
+
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);

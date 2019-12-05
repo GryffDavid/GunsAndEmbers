@@ -11,7 +11,6 @@ namespace TowerDefensePrototype
     public abstract class HeavyProjectile
     {
         public Texture2D Texture;
-        public string TextureName;
         public List<Emitter> EmitterList;
         public Vector2 Velocity, Position, YRange, Scale, Origin, Direction;
         public float Angle, Speed, Gravity, CurrentRotation, CurrentTransparency, MaxY, DrawDepth;
@@ -22,22 +21,42 @@ namespace TowerDefensePrototype
         public float Damage, BlastRadius;
         static Random Random = new Random();
 
-        public HeavyProjectile()
-        {
+        //This is the constructor without the texture and particletexture built in
+        //public HeavyProjectile(Vector2 position, float speed, float angle, float gravity, float damage, Vector2? yrange = null)
+        //{
 
+        //}
+
+        public HeavyProjectile(Texture2D texture, Vector2 position, float speed, float angle, float gravity, float damage, 
+                               Vector2? yrange = null, float? blastRadius = null)
+        {
+            Active = true;
+            Texture = texture;
+            Angle = angle;
+            Speed = speed;
+            Gravity = gravity;
+            Position = position;
+            Damage = damage;
+            
+            Velocity.X = (float)(Math.Cos(angle) * speed);
+            Velocity.Y = (float)(Math.Sin(angle) * speed);
+
+            if (yrange == null)
+            {
+                YRange = new Vector2(500, 600);
+            }
+            else
+            {
+                YRange = yrange.Value;
+            }
+
+            if (blastRadius.HasValue)
+                BlastRadius = blastRadius.Value;
         }
 
-        public void LoadContent(ContentManager contentManager)
+        public void Initialize()
         {
-            //Texture = contentManager.Load<Texture2D>(TextureName);
-
-            //foreach (Emitter emitter in EmitterList)
-            //{
-            //    emitter.LoadContent(contentManager);
-            //}
-
             CurrentTransparency = 0;
-
             MaxY = Random.Next((int)YRange.X, (int)YRange.Y);
             Scale = new Vector2(1, 1);
             Origin = new Vector2(Texture.Width / 2, Texture.Height / 2);

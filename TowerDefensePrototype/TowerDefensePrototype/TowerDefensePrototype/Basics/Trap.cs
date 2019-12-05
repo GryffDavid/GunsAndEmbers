@@ -34,6 +34,17 @@ namespace TowerDefensePrototype
         public FreezeStruct InvaderFreeze;
         public float NormalDamage;
 
+        //public Trap(Vector2 position, float maxHP, float detonateDelay, float detonateLimit, bool solid)
+        //{
+        //    //Position = position;
+        //    //Solid = false;
+        //    //MaxHP = 50;
+        //    //TrapType = TrapType.SawBlade;
+        //    //DetonateDelay = 2000;
+        //    //DetonateLimit = 5;
+        //    //AffectedTime = 300;
+        //}
+
         public virtual void Initialize()
         {
             Active = true;
@@ -176,6 +187,7 @@ namespace TowerDefensePrototype
             foreach (EffectPass pass in basicEffect.CurrentTechnique.Passes)
             {
                 pass.Apply();
+
                 if (DetonateDelay > 0)
                     TimingBar.Draw(graphicsDevice);
                     

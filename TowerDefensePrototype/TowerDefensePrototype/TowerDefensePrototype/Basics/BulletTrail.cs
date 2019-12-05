@@ -32,11 +32,6 @@ namespace TowerDefensePrototype
             Color.A = 255;
         }
 
-        public void LoadContent(ContentManager contentManager)
-        {
-
-        }
-
         public void Update(GameTime gameTime)
         {
             Color = Color.Lerp(Color, Color.Transparent, FadeOutRate * (float)(gameTime.ElapsedGameTime.TotalSeconds * 60));

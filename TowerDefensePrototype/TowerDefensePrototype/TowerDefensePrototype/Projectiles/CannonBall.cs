@@ -12,33 +12,18 @@ namespace TowerDefensePrototype
     {
         Vector2 startingPosition;
 
-        public CannonBall(Texture2D texture, Texture2D particleTexture, Vector2 position, float speed, float angle, float gravity, float damage, float blastRadius, Vector2? yrange = null)
+        public CannonBall(Texture2D texture, Texture2D particleTexture, Vector2 position, 
+                          float speed, float angle, float gravity, float damage, float blastRadius, Vector2? yrange = null) 
+            : base(texture, position, speed, angle, gravity, damage, yrange, blastRadius)
         {
-            Active = true;
+            HeavyProjectileType = HeavyProjectileType.CannonBall;
+
             Rotate = true;
             Fade = false;
-            //TextureName = "Projectiles/CannonRound";
-            Texture = texture;
-            HeavyProjectileType = HeavyProjectileType.CannonBall;
-            Angle = angle;
-            Speed = speed;
-            Gravity = gravity;
-            Position = position;
+            
             startingPosition = position;
-            BlastRadius = blastRadius;
+
             EmitterList = new List<Emitter>();
-
-            if (yrange == null)
-            {
-                YRange = new Vector2(500, 600);
-            }
-            else
-            {
-                YRange = yrange.Value;
-            }
-
-            Velocity.X = (float)(Math.Cos(angle) * speed);
-            Velocity.Y = (float)(Math.Sin(angle) * speed);
 
             Color ParticleColor2 = Color.Lerp(Color.DarkGray, Color.Transparent, 0.25f);
             Color ParticleColor1 = Color.Lerp(Color.Gray, Color.Transparent, 0.25f);
@@ -47,8 +32,6 @@ namespace TowerDefensePrototype
                 new Vector2(0, 0), new Vector2(40, 60), 0.9f, true, new Vector2(0, 360), new Vector2(-0.5f, 0.5f),
                 new Vector2(0.25f, 0.5f), ParticleColor1, ParticleColor2, -0.00f, -1, 10, 1, false, new Vector2(0, 720), null, null,
                 null, null, null, null, null, null, null, true, true));
-
-            Damage = damage;
         }
 
         public override void Update(GameTime gameTime)

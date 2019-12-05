@@ -11,8 +11,8 @@ namespace TowerDefensePrototype
 {
     class WeaponBox : UIWeaponInfoTip
     {
-        public Nullable<TurretType> ContainsTurret = null;
-        public Nullable<TrapType> ContainsTrap = null;
+        //public Nullable<TurretType> ContainsTurret = null;
+        //public Nullable<TrapType> ContainsTrap = null;
 
         MouseState CurrentMouseState, PreviousMouseState;
         public MousePosition CurrentMousePosition, PreviousMousePosition;

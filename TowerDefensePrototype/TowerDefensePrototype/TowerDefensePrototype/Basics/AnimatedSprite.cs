@@ -16,7 +16,8 @@ namespace TowerDefensePrototype
         public Rectangle SourceRectangle;
         public String AssetName;
         public Vector2 Scale, FrameSize, Position;
-        public int ElapsedTime, FrameTime, FrameCount, CurrentFrame;        
+        public float ElapsedTime, FrameTime;
+        public int CurrentFrame, FrameCount;        
         public bool Active, Looping;
 
         public AnimatedSprite(string assetName, Vector2 position, Vector2 frameSize, int frameCount, int frameTime, Color color, Vector2 scale, bool looping)
@@ -48,7 +49,7 @@ namespace TowerDefensePrototype
             if (Active == false)
                 return;
 
-            ElapsedTime += (int)gameTime.ElapsedGameTime.TotalMilliseconds;
+            ElapsedTime += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
 
             if (ElapsedTime > FrameTime)
             {

@@ -10,17 +10,10 @@ namespace TowerDefensePrototype
 {
     class BeamProjectile : LightProjectile
     {
-        public BeamProjectile(Vector2 position, Vector2 Direction, float? damage = null)
+        public BeamProjectile(Vector2 position, Vector2 direction, float? damage = null)
+            : base(position, direction, damage)
         {
-            Active = true;
-            Position = position;
-            Ray = new Ray(new Vector3(Position.X, Position.Y, 0), new Vector3(Direction.X, Direction.Y, 0));
             LightProjectileType = LightProjectileType.Beam;
-
-            if (damage != null)
-                Damage = damage.Value;
-            else
-                Damage = 0;
         }
     }
 }

@@ -32,6 +32,8 @@ namespace TowerDefensePrototype
 
         Fin Fin1, Fin2;//, Fin3;
 
+        public Powerup Powerup;
+
         //List<Fin> FinList = new List<Fin>();
 
         public PowerupDelivery(Texture2D shellTexture, Vector2 position, Texture2D trailTexture, Texture2D finTexture)

@@ -144,8 +144,6 @@ namespace TowerDefensePrototype
                     case TurretType.Beam:
                         WeaponName = "Beam Cannon";
                         break;
-
-
                 }
 
                 Bar1Value = (int)(100f / (float)UIBar1.MaxValue * (float)UIBar1.CurrentValue);
@@ -206,7 +204,7 @@ namespace TowerDefensePrototype
 
             for (int i = 0; i < WeaponTip.Length; i++)
             {
-                if ((i % 40) == 0)
+                if ((i % 38) == 1 && i != 1)
                 {
                     int k;
                     k = WeaponTip.LastIndexOf(" ", i);
@@ -303,7 +301,7 @@ namespace TowerDefensePrototype
                         Color.DodgerBlue, 0, new Vector2(0, 0), 1f, SpriteEffects.None, 0);
 
                     //Draw the weapon tip, e.g. "Fire into a closely packed crowed for maximum carnage"
-                    spriteBatch.DrawString(RobotoItalic20_0, WeaponTip, new Vector2(Position.X + 5, Position.Y - 62),
+                    spriteBatch.DrawString(RobotoItalic20_0, WeaponTip, new Vector2(Position.X + 5, DividerVertices1[0].Position.Y + 4),
                         Color.White, 0, new Vector2(0, 0), 0.7f, SpriteEffects.None, 0);
 
 
