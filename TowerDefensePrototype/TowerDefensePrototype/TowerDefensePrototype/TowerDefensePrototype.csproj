@@ -111,6 +111,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Basics\Explosion.cs" />
+    <Compile Include="Basics\LightningBolt.cs" />
     <Compile Include="Basics\RangedInvader.cs" />
     <Compile Include="Basics\TimerHeavyProjectile.cs" />
     <Compile Include="Basics\World.cs" />
@@ -148,7 +149,8 @@
     <Compile Include="DefenseTraps\TarTrap.cs" />
     <Compile Include="Invaders\Tank.cs" />
     <Compile Include="Projectiles\MachineGunProjectile.cs" />
-    <Compile Include="Turrets\GatlingTurret.cs" />
+    <Compile Include="Basics\TextInput.cs" />
+    <Compile Include="Turrets\MachineTurret.cs" />
     <Compile Include="Turrets\BlankTurret.cs" />
     <Compile Include="DefenseTraps\CatapultTrap.cs" />
     <Compile Include="OffenseTraps\FireTrap.cs" />
@@ -167,6 +169,7 @@
     <Compile Include="Turrets\FlameThrowerTurret.cs" />
     <Compile Include="Basics\Wave.cs" />
     <Compile Include="Basics\Upgrade.cs" />
+    <Compile Include="Turrets\LightningTurret.cs" />
     <Compile Include="Upgrades\Upgrade1.cs" />
     <Compile Include="World\IceWorld.cs" />
     <Compile Include="World\LavaWorld.cs" />

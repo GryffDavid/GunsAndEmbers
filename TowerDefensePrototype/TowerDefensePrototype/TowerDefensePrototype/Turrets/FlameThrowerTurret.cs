@@ -15,12 +15,20 @@ namespace TowerDefensePrototype
         {
             Active = true;
             TurretType = TurretType.FlameThrower;
-            TurretAsset = "Turrets/FlameThrowerBarrel";
             BaseAsset = "Turrets/FlameThrowerBase";
             Position = position;
             Selected = true;
             FireDelay = 40;
             Damage = 20;
+
+            Animated = false;
+            Looping = false;
+
+            CurrentAnimation = new Animation()
+            {
+                AssetName = "Turrets/FlameThrowerBarrel",
+                TotalFrames = 1
+            }; 
         }
 
         public override void Draw(SpriteBatch spriteBatch)

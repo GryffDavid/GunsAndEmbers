@@ -22,7 +22,7 @@ namespace TowerDefensePrototype
         public Vector2 YRange;
         public abstract void TrapDamage(TrapType trapType);
         public int AttackPower;
-        public Random Random;
+        static Random Random = new Random();
         public float Gravity, BurnDamage, DrawDepth;
         public double BurnDelay, FreezeDelay, CurrentBurnDelay, CurrentFreezeDelay,
                         CurrentBurnInterval, BurnInterval, SlowDelay, CurrentSlowDelay;

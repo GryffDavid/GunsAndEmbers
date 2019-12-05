@@ -19,7 +19,7 @@ namespace TowerDefensePrototype
         public bool Active, Fade, CanBounce, AddMore, Shrink;
         public string TextureName;
         public int Burst;
-        Random Random;
+        static Random Random = new Random();
 
         public Emitter(String textureName, Vector2 position, Vector2 angleRange, Vector2 speedRange, Vector2 hpRange, 
             float startingTransparency, bool fade, Vector2 startingRotationRange, Vector2 rotationIncrement, Vector2 scaleRange, 
@@ -57,7 +57,6 @@ namespace TowerDefensePrototype
             else
                 DrawDepth = drawDepth.Value;
 
-            Random = new Random();
             MaxY = Random.Next((int)yrange.X, (int)yrange.Y);
             AddMore = true;
         }

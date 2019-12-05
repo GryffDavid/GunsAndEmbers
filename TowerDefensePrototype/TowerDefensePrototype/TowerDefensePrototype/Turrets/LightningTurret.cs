@@ -5,20 +5,19 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Input;
 
 namespace TowerDefensePrototype
-{    
-    class GatlingTurret : Turret
-    {      
-        public GatlingTurret(Vector2 position)
+{
+    class LightningTurret : Turret
+    {
+        public LightningTurret(Vector2 position)
         {
             Active = true;
-            TurretType = TurretType.Gatling;
+            TurretType = TurretType.Lightning;
             BaseAsset = "Turrets/MachineTurretBase";
             Position = position;
             Selected = true;
-            FireDelay = 200;
+            FireDelay = 400;
             Damage = 7;
             AngleOffset = 2;
             Animated = false;

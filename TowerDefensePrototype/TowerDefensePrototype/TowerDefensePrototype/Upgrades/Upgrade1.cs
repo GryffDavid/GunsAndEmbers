@@ -7,9 +7,6 @@ namespace TowerDefensePrototype
 {
     public class Upgrade1 : Upgrade
     {
-        public Upgrade1()
-        {
-
-        }
+        
     }
 }

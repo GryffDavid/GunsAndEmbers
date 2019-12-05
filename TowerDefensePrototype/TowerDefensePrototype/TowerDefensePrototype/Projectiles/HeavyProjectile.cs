@@ -20,7 +20,7 @@ namespace TowerDefensePrototype
         public HeavyProjectileType HeavyProjectileType;
         public Rectangle DestinationRectangle, CollisionRectangle;
         public int Damage;
-        public Random Random = new Random();
+        static Random Random = new Random();
 
         public void LoadContent(ContentManager contentManager)
         {            
@@ -30,8 +30,6 @@ namespace TowerDefensePrototype
             Emitter.LoadContent(contentManager);
 
             CurrentTransparency = 0;
-
-            //Random = new Random();
 
             MaxY = Random.Next((int)YRange.X, (int)YRange.Y);
         }

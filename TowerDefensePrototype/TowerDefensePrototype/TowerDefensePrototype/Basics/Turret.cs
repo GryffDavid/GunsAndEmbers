@@ -22,7 +22,7 @@ namespace TowerDefensePrototype
         public Color Color;
         public double FireDelay;
         public int Damage, AngleOffset;
-        public Random Random;
+        public static Random Random = new Random();
         public Vector2 FireDirection;
         public float FireRotation;
         public TurretType TurretType;
@@ -52,9 +52,7 @@ namespace TowerDefensePrototype
                 FrameSize = new Vector2(TurretBarrel.Width / CurrentAnimation.TotalFrames, TurretBarrel.Height);
             }
 
-            SelectBox = new Rectangle((int)Position.X, (int)Position.Y-24, 64, 64);
-
-            Random = new Random();            
+            SelectBox = new Rectangle((int)Position.X, (int)Position.Y-24, 64, 64);         
         }
 
         public void Update(GameTime gameTime)
