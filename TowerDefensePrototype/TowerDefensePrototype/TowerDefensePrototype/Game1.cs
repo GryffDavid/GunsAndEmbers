@@ -5793,7 +5793,12 @@ namespace TowerDefensePrototype
                     //Traps should only be hit by projectiles with a similar DrawDepth
                     //Projectiles needs to have shadows drawn on the ground too, to prevent confusion
                     #region TRAP was hit
-                    Trap trap = TrapList.FirstOrDefault(Trap => Trap.BoundingBox.Intersects(heavyProjectile.BoundingBox) && Trap.Solid == true);
+                    Trap trap = TrapList.FirstOrDefault(Trap => 
+                        Trap.BoundingBox.Intersects(heavyProjectile.BoundingBox) && 
+                        Trap.Solid == true &&
+                        //ONLY COLLIDES WITH TRAP IF THEY HAVE A SIMILAR DEPTH
+                        (heavyProjectile.MaxY > Trap.CollisionBox.Min.Y - 6 &&
+                         heavyProjectile.MaxY < Trap.CollisionBox.Max.Y + 6));
 
                     if (trap != null)
                     {
@@ -7458,6 +7463,12 @@ namespace TowerDefensePrototype
                 SphereIntersections.RemoveAll(Drawable => Drawable.GetType() == typeof(Shield) && (Drawable as Shield).ShieldOn == false);
                 Intersections.RemoveAll(Drawable => Drawable.GetType().BaseType == typeof(Trap) && (Drawable as Trap).Solid == false);
 
+                Intersections.RemoveAll(Drawable => 
+                                        Drawable.GetType().BaseType == typeof(Trap) && 
+                                        (Drawable as Trap).TrapType == TrapType.Wall &&
+                                        (CursorPosition.Y < (Drawable as Trap).CollisionBox.Min.Y ||
+                                         CursorPosition.Y > (Drawable as Trap).CollisionBox.Max.Y));
+
                 #region Make sure TURRETS can't shoot themselves or other TURRETS
                 if (sourceTurret != null)
                 {
@@ -7509,6 +7520,15 @@ namespace TowerDefensePrototype
                 Trap HitTrap = hitObject as Trap;
                 PowerupDelivery HitPowerupDelivery = hitObject as PowerupDelivery;
                 Shield HitShield = hitObject as Shield;
+
+                //if (HitTrap != null && HitTrap.TrapType == TrapType.Wall)
+                //{
+                //    if (CursorPosition.Y < HitTrap.CollisionBox.Min.Y ||
+                //        CursorPosition.Y > HitTrap.CollisionBox.Max.Y)
+                //    {
+                //        HitTrap = null;
+                //    }
+                //}
 
                 if (hitObject == null)
                 {
@@ -8872,7 +8892,8 @@ namespace TowerDefensePrototype
                                                         MathHelper.ToDegrees(-(float)Math.Atan2(Direction.Y, Direction.X)) + 30),
                                                         new Vector2(8, 12), new Vector2(100, 200), 1f, false,
                                                         new Vector2(0, 0), new Vector2(0, 0), new Vector2(0.25f, 0.25f),
-                                                        Color.Yellow, Color.Orange, 0f, 0.05f, 100, 7, false, new Vector2(0, 1080), true,
+                                                        new Color(Color.Yellow.R, Color.Yellow.G, Color.Yellow.B, 20), 
+                                                        new Color(Color.Orange.R, Color.Orange.G, Color.Orange.B, 255), 0f, 0.05f, 100, 7, false, new Vector2(0, 1080), true,
                                                         1.0f, null, null, null, null, null, true, new Vector2(0.25f, 0.25f), false, false,
                                                         null, false, false, false);
 
@@ -8884,7 +8905,8 @@ namespace TowerDefensePrototype
                                                         MathHelper.ToDegrees(-(float)Math.Atan2(Direction.Y, Direction.X)) + 5),
                                                         new Vector2(12, 15), new Vector2(80, 150), 1f, false,
                                                         new Vector2(0, 0), new Vector2(0, 0), new Vector2(0.35f, 0.35f),
-                                                        Color.LightYellow, Color.Yellow, 0f, 0.05f, 100, 7, false, new Vector2(0, 1080), true,
+                                                        Color.LightYellow,
+                                                        new Color(Color.Orange.R, Color.Orange.G, Color.Orange.B, 50), 0f, 0.05f, 100, 7, false, new Vector2(0, 1080), true,
                                                         1.0f, null, null, null, null, null, true, new Vector2(0.18f, 0.18f), false, false,
                                                         null, false, false, false);
 

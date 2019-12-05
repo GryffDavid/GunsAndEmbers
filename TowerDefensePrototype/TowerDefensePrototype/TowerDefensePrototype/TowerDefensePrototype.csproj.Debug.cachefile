@@ -245,6 +245,7 @@ Content\Sounds\Implosion.xnb
 Content\Sounds\Implosion2.xnb
 Content\Sounds\TurretOverheat.xnb
 Content\Sounds\Menu\MenuMusic1.xnb
+Content\Sounds\BatteringRamDrop1.xnb
 Content\Fonts\SpriteFont1.xnb
 Content\ParticleEffect.xnb
 Content\ShadowBlur.xnb
@@ -252,4 +253,3 @@ Content\Shaders\HealthBarEffect.xnb
 Content\StoryDialogue\Level1Dialogue.xnb
 Content\StoryDialogue\Level2Dialogue.xnb
 Content\StoryDialogue\LoadoutMenuDialogue.xnb
-Content\Sounds\BatteringRamDrop1.xnb
