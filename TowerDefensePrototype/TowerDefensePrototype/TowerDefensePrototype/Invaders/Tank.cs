@@ -30,7 +30,7 @@ namespace TowerDefensePrototype
             CurrentFrame = 0;
             InvaderType = InvaderType.Tank;
             Scale = new Vector2(1.5f, 1.5f);
-            YRange = new Vector2(510, 530);
+            YRange = new Vector2(475, 560);
         }
 
         public override void TrapDamage(TrapType trapType)

@@ -15,8 +15,8 @@ namespace TowerDefensePrototype
             Active = true;
             Rotate = true;
             Fade = false;
-            TextureName = "Blank";
-            HeavyProjectileType = HeavyProjectileType.FlameThrower;
+            TextureName = "AcidProjectileSprite";
+            HeavyProjectileType = HeavyProjectileType.Acid;
             Angle = angle;
             Speed = speed;
             Gravity = gravity;

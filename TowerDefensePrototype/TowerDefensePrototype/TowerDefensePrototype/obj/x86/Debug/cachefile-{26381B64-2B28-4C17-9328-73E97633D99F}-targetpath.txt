@@ -2,6 +2,7 @@ Content\ResourceFont.xnb
 Content\MenuFont.xnb
 Content\ProfileFont.xnb
 Content\Blank.xnb
+Content\FireTrap1.xnb
 Content\Soldier.xnb
 Content\BasicTurret.xnb
 Content\BasicTurretBase.xnb
@@ -13,7 +14,6 @@ Content\Button.xnb
 Content\Wall.xnb
 Content\SpikeTrap.xnb
 Content\TrapButton.xnb
-Content\Ground.xnb
 Content\Projectile.xnb
 Content\DefaultCursor.xnb
 Content\Crosshair.xnb
@@ -59,7 +59,9 @@ Content\BombIcon.xnb
 Content\BasicTurretIcon2.xnb
 Content\CannonTurretIcon.xnb
 Content\FlameThrowerTurretIcon.xnb
-Content\FireTrap1.xnb
+Content\Ground.xnb
 Content\Ground5.xnb
 Content\TestBackground.xnb
 Content\Ground7.xnb
+Content\SpiderSprite.xnb
+Content\AcidProjectileSprite.xnb

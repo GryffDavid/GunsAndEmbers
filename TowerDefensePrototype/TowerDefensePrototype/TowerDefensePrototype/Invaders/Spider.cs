@@ -3,33 +3,37 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace TowerDefensePrototype
 {
-    class Soldier : Invader
-    {      
-        public Soldier(Vector2 position)
-        {
+    class Spider : RangedInvader
+    {
+        public Spider(Vector2 position)
+         {
             Active = true;
             CanMove = true;
             MoveVector = new Vector2(-1, 0);
             Position = position;
-            AssetName = "PixelTestStrip";
+            AssetName = "SpiderSprite";
             CurrentHP = 50;
             MaxHP = 50;
-            MoveDelay = 5;
+            MoveDelay = 20;
             ResourceMinMax = new Vector2(1, 5);
             CurrentAttackDelay = 0;
-            AttackDelay = 1500;
-            AttackPower = 4;
-            FrameSize = new Vector2(30, 60);
-            FrameDelay = 120;
-            TotalFrames = 9;
+            AttackDelay = 3000;
+            AttackPower = 1;
+            FrameSize = new Vector2(60, 30);
+            FrameDelay = 500;
+            TotalFrames = 3;
             CurrentFrame = 0;
-            InvaderType = InvaderType.Soldier;
-            YRange = new Vector2(475, 560);          
+            InvaderType = InvaderType.Spider;
+            YRange = new Vector2(475, 560);
+
+            Range = new Vector2(200, 600); 
+            AngleRange = new Vector2(110, 160);
+            PowerRange = new Vector2(9, 12);            
         }
 
         public override void Update(GameTime gameTime)
@@ -45,7 +49,7 @@ namespace TowerDefensePrototype
                 {
                     case TrapType.Fire:
                         CurrentHP -= 10;
-                        DamageOverTime(3000, 2, 300, Color.Lime);
+                        DamageOverTime(3000, 2, 300, Color.Red);
                         break;
 
                     case TrapType.Spikes:

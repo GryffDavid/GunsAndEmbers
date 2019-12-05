@@ -19,6 +19,7 @@ namespace TowerDefensePrototype
         public Color CurrentColor;
         public HeavyProjectileType HeavyProjectileType;
         public Rectangle DestinationRectangle, CollisionRectangle;
+        public int Damage;
 
         public void LoadContent(ContentManager contentManager)
         {            

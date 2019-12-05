@@ -211,10 +211,11 @@ namespace TowerDefensePrototype
             }
         }
 
-        public void Freeze(float milliseconds)
+        public void Freeze(float milliseconds, Color frozenColor)
         {
             if (Frozen == false)
             {
+                FrozenColor = frozenColor;
                 Frozen = true;
                 FreezeDelay = milliseconds;
             }

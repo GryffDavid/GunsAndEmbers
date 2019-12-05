@@ -8,17 +8,11 @@ using Microsoft.Xna.Framework.Content;
 
 namespace TowerDefensePrototype
 {
-    public class LightProjectile
+    public abstract class LightProjectile
     {
         public Ray Ray;
         public bool Active;
         public Vector2 Position;
-
-        public LightProjectile(Vector2 position, Vector2 Direction)
-        {
-            Active = true;
-            Position = position;
-            Ray = new Ray(new Vector3(Position.X, Position.Y, 0), new Vector3(Direction.X, Direction.Y, 0));
-        }
+        public LightProjectileType LightProjectileType;
     }
 }
