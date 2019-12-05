@@ -22,6 +22,7 @@ namespace TowerDefensePrototype
         FlameThrower,
         Glue
     };
+
     public enum TrapAnimationState { Untriggered, Triggering, Active, Resetting };
 
     public abstract class Trap : Drawable

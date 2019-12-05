@@ -307,9 +307,12 @@ namespace TowerDefensePrototype
 
         #region Trap sprites
         //NEW_TRAP B **trap animations list declarations here**
-        public List<TrapAnimation> WallTrapAnimations, BarrelTrapAnimations, CatapultTrapAnimations, IceTrapAnimations, TarTrapAnimations,
-                                   LineTrapAnimations, SawBladeTrapAnimations, SpikeTrapAnimations, FireTrapAnimations, LandMineTrapAnimations,
-                                   FlameThrowerTrapAnimations, GlueTrapAnimations;
+
+        Dictionary<string, List<TrapAnimation>> TrapAnimationsDictionary = new Dictionary<string, List<TrapAnimation>>();
+
+        //public List<TrapAnimation> WallTrapAnimations, BarrelTrapAnimations, CatapultTrapAnimations, IceTrapAnimations, TarTrapAnimations,
+        //                           LineTrapAnimations, SawBladeTrapAnimations, SpikeTrapAnimations, FireTrapAnimations, LandMineTrapAnimations,
+        //                           FlameThrowerTrapAnimations, GlueTrapAnimations;
 
         public Texture2D WallAmbShadow;
         #endregion
@@ -317,22 +320,10 @@ namespace TowerDefensePrototype
         #region Turret sprites
         //NEW_TURRET B **turret sprite declarations here**
         Texture2D TurretSelectBox;
-        public Texture2D MachineGunTurretBase, MachineGunTurretBarrel, MachineGunTurretBarrelGib;
-        public Texture2D CannonTurretBase, CannonTurretBarrel;
-        public Texture2D LightningTurretBase, LightningTurretBarrel;
-        public Texture2D BeamTurretBase, BeamTurretBarrel;
-        public Texture2D ClusterTurretBase, ClusterTurretBarrel;
-        public Texture2D GrenadeTurretBase, GrenadeTurretBarrel;
-        public Texture2D GasGrenadeTurretBase, GasGrenadeTurretBarrel;
-        public Texture2D ShotgunTurretBase, ShotgunTurretBarrel;
-        public Texture2D FlameThrowerTurretBase, FlameThrowerTurretBarrel;
-        public Texture2D PersistentBeamTurretBase, PersistentBeamTurretBarrel;
-        public Texture2D FelCannonTurretBase, FelCannonTurretBarrel;
-        public Texture2D FreezeTurretBase, FreezeTurretBarrel;
-        public Texture2D BoomerangTurretBase, BoomerangTurretBarrel;
-        public Texture2D HarpoonTurretBase, HarpoonTurretBarrel;
-        public Texture2D StickyMineTurretBase, StickyMineTurretBarrel;
 
+        Dictionary<string, Texture2D> TurretSpriteDictionary = new Dictionary<string, Texture2D>();
+
+        public Texture2D MachineGunTurretBarrelGib;
         #endregion
 
         #region Enemy sprites
@@ -405,8 +396,22 @@ namespace TowerDefensePrototype
 
         #region Projectile sprites
         //NEW_HEAVYPROJECTILE B **heavy projectile sprite declarations here**
-        Texture2D CannonBallSprite, GrenadeSprite, GasGrenadeSprite, FlameSprite, ClusterBombSprite,
-                  ClusterShellSprite, BoomerangSprite, AcidSprite, FlameProjectileSprite, HarpoonProjectileSprite;
+        //Dictionary<string, Texture2D> HeavySpriteDictionary = new Dictionary<string, Texture2D>();
+
+        public Texture2D CannonBallProjectileSprite,
+                         FlameThrowerProjectileSprite,
+                         ArrowProjectileSprite,
+                         AcidProjectileSprite,
+                         TorpedoProjectileSprite,
+                         ClusterBombProjectileSprite,
+                         ClusterBombShellProjectileSprite,
+                         FelProjectileSprite,
+                         BoomerangProjectileSprite,
+                         GrenadeProjectileSprite,
+                         GasGrenadeProjectileSprite,
+                         FireGrenadeProjectileSprite,
+                         HarpoonProjectileSprite;
+
         #endregion
 
         #region Powerup Icon sprites
@@ -1608,174 +1613,193 @@ namespace TowerDefensePrototype
         private void LoadTrapSprites()
         {
             //NEW_TRAP C **trap animations loaded here**
-
-            #region Wall animations
-            WallAmbShadow = Content.Load<Texture2D>("Traps/Wall/WallShadow");
-            WallTrapAnimations = new List<TrapAnimation>()
-            {
-                new TrapAnimation()
-                {
-                    CurrentTrapState = TrapAnimationState.Untriggered,
-                    Texture = Content.Load<Texture2D>("Traps/Wall/WallTrap"),
-                    Animated = false,
-                    CurrentFrame = 0,
-                    TotalFrames = 1,
-                    
-                    AnimationType = AnimationType.Normal
-                },
-            };
-            #endregion
-
-            #region FlameThrower animations
-            //WallAmbShadow = Content.Load<Texture2D>("Traps/Wall/WallShadow");
-            FlameThrowerTrapAnimations = new List<TrapAnimation>()
-            {
-                new TrapAnimation()
-                {
-                    CurrentTrapState = TrapAnimationState.Untriggered,
-                    Texture = Content.Load<Texture2D>("Traps/FlameThrower/FlameThrowerTrapUntriggered"),
-                    Animated = false,
-                    CurrentFrame = 0,
-                    TotalFrames = 1,
-                    
-                    AnimationType = AnimationType.Regular
-                },
-
-                new TrapAnimation()
-                {
-                    CurrentTrapState = TrapAnimationState.Active,
-                    Texture = Content.Load<Texture2D>("Traps/FlameThrower/FlameThrowerTrapActive"),
-                    Animated = false,
-                    CurrentFrame = 0,
-                    TotalFrames = 1,
-                    
-                    AnimationType = AnimationType.Regular
-                },
-
-
-                new TrapAnimation()
-                {
-                    CurrentTrapState = TrapAnimationState.Triggering,
-                    Texture = Content.Load<Texture2D>("Traps/FlameThrower/FlameThrowerTrapTriggering"),
-                    Animated = true,
-                    //Looping = true,
-                    CurrentFrame = 0,
-                    TotalFrames = 17,
-                    
-                    AnimationType = AnimationType.Regular
-                },
-
-                new TrapAnimation()
-                {
-                    CurrentTrapState = TrapAnimationState.Resetting,
-                    Texture = Content.Load<Texture2D>("Traps/FlameThrower/FlameThrowerTrapResetting"),
-                    Animated = true,
-                    //Looping = true,
-                    CurrentFrame = 0,
-                    TotalFrames = 17,
-                    
-                    AnimationType = AnimationType.Regular
-                },
-            };
-            #endregion
-
-            #region Fire trap animations
-            FireTrapAnimations = new List<TrapAnimation>()
-            {
-                new TrapAnimation()
-                {
-                    CurrentTrapState = TrapAnimationState.Untriggered,
-                    Texture = Content.Load<Texture2D>("Traps/FireTrap"),
-                    Animated = false,
-                    CurrentFrame = 0,
-                    TotalFrames = 1,
-                    AnimationType = AnimationType.Regular
-                },
-            };
-            #endregion
-
-            #region Catapult trap animations
-            CatapultTrapAnimations = new List<TrapAnimation>()
-            {
-                new TrapAnimation()
-                {
-                    CurrentTrapState = TrapAnimationState.Untriggered,
-                    Texture = Content.Load<Texture2D>("Traps/CatapultTrap"),
-                    Animated = false,
-                    CurrentFrame = 0,
-                    TotalFrames = 1,
-                    AnimationType = AnimationType.Regular
-                },
-            };
-            #endregion
-
-            #region Land Mine trap animations
-            LandMineTrapAnimations = new List<TrapAnimation>()
-            {
-                new TrapAnimation()
-                {
-                    CurrentTrapState = TrapAnimationState.Untriggered,
-                    Texture = Content.Load<Texture2D>("Traps/LandMine"),
-                    Animated = false,
-                    CurrentFrame = 0,
-                    TotalFrames = 1,
-                    AnimationType = AnimationType.Regular
-                }
-            };
-            #endregion
-
-            #region Barrel Trap Animations
-            BarrelTrapAnimations = new List<TrapAnimation>()
-            {
-                new TrapAnimation()
-                {
-                    CurrentTrapState = TrapAnimationState.Untriggered,
-                    Texture = Content.Load<Texture2D>("Traps/BarrelTrap"),
-                    Animated = false,
-                    CurrentFrame = 0,
-                    TotalFrames = 1,
-                    AnimationType = AnimationType.Regular
-                }
-            };
-            #endregion
-
-            #region Glue Trap Animations
-            GlueTrapAnimations = new List<TrapAnimation>()
-            {
-                new TrapAnimation()
-                {
-                    CurrentTrapState = TrapAnimationState.Untriggered,
-                    Texture = Content.Load<Texture2D>("Traps/GlueTrap"),
-                    Animated = false,
-                    CurrentFrame = 0,
-                    TotalFrames = 1,
-                    AnimationType = AnimationType.Regular
-                }
-            };
-            #endregion
-
-            //NEW_TRAP D **if traps aren't showing up, make sure you added this**
-            //foreach (TrapAnimation animation in TRAPANIMATIONLIST)
-            //{
-            //    animation.GetFrameSize();
-            //}
-
             foreach (TrapType trapType in Enum.GetValues(typeof(TrapType)))
             {
-                string TrapAnimationsName = trapType.ToString() + "TrapAnimations";
-
-                var foo = this.GetType().GetField(TrapAnimationsName);//.GetValue(this);
-
-                if (foo != null)
+                string entryName = trapType.ToString() + "TrapAnimations";
+                List<TrapAnimation> AnimationsList = new List<TrapAnimation>();
+                
+                TrapAnimationsDictionary.Add(entryName, null);
+                
+                switch (trapType)
                 {
-                    var anims = foo.GetValue(this);
-
-                    if (anims != null)
-                    {
-                        foreach (TrapAnimation anim in (List<TrapAnimation>)anims)
+                    #region Wall
+                    case TrapType.Wall:
                         {
-                            anim.GetFrameSize();
+                            WallAmbShadow = Content.Load<Texture2D>("Traps/Wall/WallShadow");
+
+                            AnimationsList = new List<TrapAnimation>()
+                            {
+                                new TrapAnimation()
+                                {
+                                    CurrentTrapState = TrapAnimationState.Untriggered,
+                                    Texture = Content.Load<Texture2D>("Traps/Wall/WallTrap"),
+                                    Animated = false,
+                                    CurrentFrame = 0,
+                                    TotalFrames = 1,
+                    
+                                    AnimationType = AnimationType.Normal
+                                }
+                            };
                         }
+                        break;
+                    #endregion
+                        
+                    #region FlameThrower
+                    case TrapType.FlameThrower:
+                        {
+                            AnimationsList = new List<TrapAnimation>()
+                            {
+                                new TrapAnimation()
+                                {
+                                    CurrentTrapState = TrapAnimationState.Untriggered,
+                                    Texture = Content.Load<Texture2D>("Traps/FlameThrower/FlameThrowerTrapUntriggered"),
+                                    Animated = false,
+                                    CurrentFrame = 0,
+                                    TotalFrames = 1,
+                    
+                                    AnimationType = AnimationType.Regular
+                                },
+
+                                new TrapAnimation()
+                                {
+                                    CurrentTrapState = TrapAnimationState.Active,
+                                    Texture = Content.Load<Texture2D>("Traps/FlameThrower/FlameThrowerTrapActive"),
+                                    Animated = false,
+                                    CurrentFrame = 0,
+                                    TotalFrames = 1,
+                    
+                                    AnimationType = AnimationType.Regular
+                                },
+
+                                new TrapAnimation()
+                                {
+                                    CurrentTrapState = TrapAnimationState.Triggering,
+                                    Texture = Content.Load<Texture2D>("Traps/FlameThrower/FlameThrowerTrapTriggering"),
+                                    Animated = true,
+                                    CurrentFrame = 0,
+                                    TotalFrames = 17,
+                    
+                                    AnimationType = AnimationType.Regular
+                                },
+
+                                new TrapAnimation()
+                                {
+                                    CurrentTrapState = TrapAnimationState.Resetting,
+                                    Texture = Content.Load<Texture2D>("Traps/FlameThrower/FlameThrowerTrapResetting"),
+                                    Animated = true,
+                                    CurrentFrame = 0,
+                                    TotalFrames = 17,
+                    
+                                    AnimationType = AnimationType.Regular
+                                }
+                            };
+                        }
+                        break; 
+                    #endregion
+
+                    #region Fire
+                    case TrapType.Fire:
+                        {
+                            AnimationsList = new List<TrapAnimation>()
+                            {
+                                new TrapAnimation()
+                                {
+                                    CurrentTrapState = TrapAnimationState.Untriggered,
+                                    Texture = Content.Load<Texture2D>("Traps/FireTrap"),
+                                    Animated = false,
+                                    CurrentFrame = 0,
+                                    TotalFrames = 1,
+                                    AnimationType = AnimationType.Regular
+                                }
+                            };
+                        }
+                        break; 
+                    #endregion
+
+                    #region Catapult
+                    case TrapType.Catapult:
+                        {
+                            AnimationsList = new List<TrapAnimation>()
+                            {
+                                new TrapAnimation()
+                                {
+                                    CurrentTrapState = TrapAnimationState.Untriggered,
+                                    Texture = Content.Load<Texture2D>("Traps/CatapultTrap"),
+                                    Animated = false,
+                                    CurrentFrame = 0,
+                                    TotalFrames = 1,
+                                    AnimationType = AnimationType.Regular
+                                }
+                            };
+                        }
+                        break; 
+                    #endregion
+
+                    #region LandMine
+                    case TrapType.LandMine:
+                        {
+                            AnimationsList = new List<TrapAnimation>()
+                            {
+                                new TrapAnimation()
+                                {
+                                    CurrentTrapState = TrapAnimationState.Untriggered,
+                                    Texture = Content.Load<Texture2D>("Traps/LandMine"),
+                                    Animated = false,
+                                    CurrentFrame = 0,
+                                    TotalFrames = 1,
+                                    AnimationType = AnimationType.Regular
+                                }
+                            };
+                        }
+                        break; 
+                    #endregion
+
+                    #region Barrel
+                    case TrapType.Barrel:
+                        {
+                            AnimationsList = new List<TrapAnimation>()
+                            {
+                                new TrapAnimation()
+                                {
+                                    CurrentTrapState = TrapAnimationState.Untriggered,
+                                    Texture = Content.Load<Texture2D>("Traps/BarrelTrap"),
+                                    Animated = false,
+                                    CurrentFrame = 0,
+                                    TotalFrames = 1,
+                                    AnimationType = AnimationType.Regular
+                                }
+                            };
+                        }
+                        break; 
+                    #endregion
+
+                    #region Glue
+                    case TrapType.Glue:
+                        {
+                            AnimationsList = new List<TrapAnimation>()
+                            {
+                                new TrapAnimation()
+                                {
+                                    CurrentTrapState = TrapAnimationState.Untriggered,
+                                    Texture = Content.Load<Texture2D>("Traps/GlueTrap"),
+                                    Animated = false,
+                                    CurrentFrame = 0,
+                                    TotalFrames = 1,
+                                    AnimationType = AnimationType.Regular
+                                }
+                            };
+                        }
+                        break;
+                    #endregion
+                }
+
+                TrapAnimationsDictionary[entryName] = AnimationsList;
+
+                if (TrapAnimationsDictionary[entryName] != null)
+                {
+                    foreach (TrapAnimation trapAnimation in TrapAnimationsDictionary[entryName])
+                    {
+                        trapAnimation.GetFrameSize();
                     }
                 }
             }
@@ -1784,17 +1808,12 @@ namespace TowerDefensePrototype
         private void LoadProjectileSprites()
         {
             //NEW_HEAVYPROJECTILE C **heavy projectile sprites loaded here**
-
-            CannonBallSprite = Content.Load<Texture2D>("Projectiles/CannonRound");
-            GrenadeSprite = Content.Load<Texture2D>("Projectiles/Grenade");
-            GasGrenadeSprite = Content.Load<Texture2D>("Projectiles/Grenade");
-            FlameSprite = Content.Load<Texture2D>("Projectiles/CannonRound");
-            ClusterBombSprite = Content.Load<Texture2D>("Projectiles/CannonRound");
-            ClusterShellSprite = Content.Load<Texture2D>("Projectiles/CannonRound");
-            BoomerangSprite = Content.Load<Texture2D>("Projectiles/CannonRound");
-            AcidSprite = Content.Load<Texture2D>("Projectiles/CannonRound");
-            FlameProjectileSprite = Content.Load<Texture2D>("Projectiles/FlameProjectile");
-            HarpoonProjectileSprite = Content.Load<Texture2D>("Projectiles/HarpoonProjectile");
+            foreach (HeavyProjectileType heavyProjectileType in Enum.GetValues(typeof(HeavyProjectileType)))
+            {
+                string projectileTextureName = heavyProjectileType.ToString()+"ProjectileSprite";
+                var thing = this.GetType().GetField(projectileTextureName);
+                thing.SetValue(this, Content.Load<Texture2D>("Projectiles/" + heavyProjectileType.ToString() + "Projectile"));
+            }
         }
 
         private void LoadTurretSprites()
@@ -1803,6 +1822,8 @@ namespace TowerDefensePrototype
             
             TurretSelectBox = Content.Load<Texture2D>("SelectBox");
 
+            MachineGunTurretBarrelGib = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineGunTurretBarrelGib");
+
             foreach (TurretType turretType in Enum.GetValues(typeof(TurretType)))
             {
                 string TurretBaseName = "Turrets\\" + turretType.ToString() + "Turret\\" + turretType.ToString() + "TurretBase";
@@ -1810,73 +1831,20 @@ namespace TowerDefensePrototype
 
                 string TurretBaseTextureName = turretType.ToString() + "TurretBase";
                 string TurretBarrelTextureName = turretType.ToString() + "TurretBarrel";
-
-                var baseTexture = this.GetType().GetField(TurretBaseTextureName);
-                var barrelTexture = this.GetType().GetField(TurretBarrelTextureName);
-
+                
                 string pat = Directory.GetCurrentDirectory() + "\\Content\\" + TurretBaseName + ".xnb";
 
                 if (File.Exists(pat))
                 {
-                    baseTexture.SetValue(this, Content.Load<Texture2D>(TurretBaseName));
-                    barrelTexture.SetValue(this, Content.Load<Texture2D>(TurretBarrelName));
+                    TurretSpriteDictionary.Add(TurretBaseTextureName, Content.Load<Texture2D>(TurretBaseName));
+                    TurretSpriteDictionary.Add(TurretBarrelTextureName, Content.Load<Texture2D>(TurretBarrelName));
                 }
                 else
                 {
-                    baseTexture.SetValue(this, Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineGunTurretBase"));
-                    barrelTexture.SetValue(this, Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineGunTurretBarrel"));
+                    TurretSpriteDictionary.Add(TurretBaseTextureName, Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineGunTurretBase"));
+                    TurretSpriteDictionary.Add(TurretBarrelTextureName, Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineGunTurretBarrel"));
                 }
-
-                //thing.SetValue(this, SecondaryContent.Load<Texture2D>(TurretIconName));
             }
-
-
-            //MachineGunTurretBase = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBase");
-            //MachineGunTurretBarrel = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBarrel");
-
-            //MachineGunTurretBarrelGib = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBarrelGib");
-
-            //CannonTurretBase = Content.Load<Texture2D>("Turrets/CannonTurret/CannonTurretBase");
-            //CannonTurretBarrel = Content.Load<Texture2D>("Turrets/CannonTurret/CannonTurretBarrel");
-
-            //LightningTurretBase = Content.Load<Texture2D>("Turrets/LightningTurret/LightningTurretBase");
-            //LightningTurretBarrel = Content.Load<Texture2D>("Turrets/LightningTurret/LightningTurretBarrel");
-
-            //BeamTurretBase = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBase");
-            //BeamTurretBarrel = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBarrel");
-
-            //ClusterTurretBase = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBase");
-            //ClusterTurretBarrel = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBarrel");
-
-            //GrenadeTurretBase = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBase");
-            //GrenadeTurretBarrel = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBarrel");
-
-            //GasGrenadeTurretBase = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBase");
-            //GasGrenadeTurretBarrel = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBarrel");
-
-            //ShotgunTurretBase = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBase");
-            //ShotgunTurretBarrel = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBarrel");
-
-            //FlameThrowerTurretBase = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBase");
-            //FlameThrowerTurretBarrel = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBarrel");
-
-            //PersistentBeamTurretBase = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBase");
-            //PersistentBeamTurretBarrel = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBarrel");
-
-            //FelCannonTurretBase = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBase");
-            //FelCannonTurretBarrel = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBarrel");
-
-            //BoomerangTurretBase = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBase");
-            //BoomerangTurretBarrel = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBarrel");
-
-            //FreezeTurretBase = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBase");
-            //FreezeTurretBarrel = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBarrel");
-
-            //HarpoonTurretBase = Content.Load<Texture2D>("Turrets/HarpoonTurret/HarpoonTurretBase");
-            //HarpoonTurretBarrel = Content.Load<Texture2D>("Turrets/HarpoonTurret/HarpoonTurretBarrel");
-
-            //StickyMineTurretBase = Content.Load<Texture2D>("Turrets/StickyMineTurret/StickyMineTurretBase");
-            //StickyMineTurretBarrel = Content.Load<Texture2D>("Turrets/StickyMineTurret/StickyMineTurretBarrel");
         }
 
         private void LoadWeatherSprites()
@@ -2369,7 +2337,7 @@ namespace TowerDefensePrototype
 
                 foreach (HeavyProjectile heavyProjectile in HeavyProjectileList)
                 {
-                    if (heavyProjectile.HeavyProjectileType == HeavyProjectileType.FelProjectile)
+                    if (heavyProjectile.HeavyProjectileType == HeavyProjectileType.Fel)
                         heavyProjectile.Draw(spriteBatch);
                 }
 
@@ -3917,20 +3885,20 @@ namespace TowerDefensePrototype
 
                         ApplyPowerups();
 
-                        //#region Sort Drawables if there is a change and overlap
-                        //foreach (Drawable drawable in DrawableList)
-                        //{
-                        //    foreach (Drawable drawable2 in DrawableList)
-                        //    {
-                        //        if (drawable != drawable2 &&
-                        //            drawable.PreviousMaxY != drawable.MaxY &&
-                        //            Approx(drawable.PreviousMaxY, drawable2.MaxY, 0.5f))
-                        //        {
-                        //            SortDrawables();
-                        //        }
-                        //    }
-                        //}
-                        //#endregion
+                        #region Sort Drawables if there is a change and overlap
+                        foreach (Drawable drawable in DrawableList)
+                        {
+                            foreach (Drawable drawable2 in DrawableList)
+                            {
+                                if (drawable != drawable2 &&
+                                    drawable.PreviousMaxY != drawable.MaxY &&
+                                    Approx(drawable.PreviousMaxY, drawable2.MaxY, 0.5f))
+                                {
+                                    SortDrawables();
+                                }
+                            }
+                        }
+                        #endregion
                     }
                     break;
                 #endregion
@@ -4487,10 +4455,13 @@ namespace TowerDefensePrototype
                                             switch (newTurret.TurretType)
                                             {
                                                 default:
-                                                    var TurretBase = this.GetType().GetField(newTurret.TurretType.ToString() + "TurretBase").GetValue(this);
-                                                    var TurretBarrel = this.GetType().GetField(newTurret.TurretType.ToString() + "TurretBarrel").GetValue(this);
-                                                    newTurret.TurretBase = (Texture2D)TurretBase;
-                                                    newTurret.TurretBarrel = (Texture2D)TurretBarrel;
+                                                    TurretSpriteDictionary.TryGetValue(newTurret.TurretType.ToString() + "TurretBase", out newTurret.TurretBase);
+                                                    TurretSpriteDictionary.TryGetValue(newTurret.TurretType.ToString() + "TurretBarrel", out newTurret.TurretBarrel);
+
+                                                    //var TurretBase = this.GetType().GetField(newTurret.TurretType.ToString() + "TurretBase").GetValue(this);
+                                                    //var TurretBarrel = this.GetType().GetField(newTurret.TurretType.ToString() + "TurretBarrel").GetValue(this);
+                                                    //newTurret.TurretBase = (Texture2D)TurretBase;
+                                                    //newTurret.TurretBarrel = (Texture2D)TurretBarrel;
                                                     break;
                                             }
 
@@ -5478,7 +5449,7 @@ namespace TowerDefensePrototype
                         #region Spider
                         case InvaderType.Spider:
                             {
-                                HeavyProjectile heavyProjectile = new AcidProjectile(heavyRangedInvader, AcidSprite, RoundSparkParticle,
+                                HeavyProjectile heavyProjectile = new AcidProjectile(heavyRangedInvader, AcidProjectileSprite, RoundSparkParticle,
                                             heavyRangedInvader.Center,
                                             Random.Next((int)(heavyRangedInvader.LaunchVelocityRange.X), (int)(heavyRangedInvader.LaunchVelocityRange.Y)),
                                             -MathHelper.ToRadians(Random.Next((int)(heavyRangedInvader.AngleRange.X), (int)(heavyRangedInvader.AngleRange.Y))),
@@ -5493,7 +5464,7 @@ namespace TowerDefensePrototype
                         #region Archer
                         case InvaderType.Archer:
                             {
-                                HeavyProjectile heavyProjectile = new AcidProjectile(heavyRangedInvader, AcidSprite, RoundSparkParticle,
+                                HeavyProjectile heavyProjectile = new AcidProjectile(heavyRangedInvader, AcidProjectileSprite, RoundSparkParticle,
                                             heavyRangedInvader.Center,
                                             Random.Next((int)(heavyRangedInvader.LaunchVelocityRange.X), (int)(heavyRangedInvader.LaunchVelocityRange.Y)),
                                             -MathHelper.ToRadians(Random.Next((int)(heavyRangedInvader.AngleRange.X), (int)(heavyRangedInvader.AngleRange.Y))),
@@ -5508,7 +5479,7 @@ namespace TowerDefensePrototype
                         #region Stationary Cannon
                         case InvaderType.StationaryCannon:
                             {
-                                HeavyProjectile heavyProjectile = new CannonBall(heavyRangedInvader, CannonBallSprite, ToonSmoke3,
+                                HeavyProjectile heavyProjectile = new CannonBall(heavyRangedInvader, CannonBallProjectileSprite, ToonSmoke3,
                                            new Vector2(heavyRangedInvader.BarrelEnd.X, heavyRangedInvader.BarrelEnd.Y),
                                            Random.Next((int)(heavyRangedInvader.LaunchVelocityRange.X), (int)(heavyRangedInvader.LaunchVelocityRange.Y)),
                                            (float)Math.PI + heavyRangedInvader.CurrentAngle, 0.2f, heavyRangedInvader.RangedDamage, 40,
@@ -7796,7 +7767,7 @@ namespace TowerDefensePrototype
                 switch (type)
                 {
                     case HeavyProjectileType.ClusterBomb:
-                        heavyProjectile = new ClusterBomb(source, ClusterShellSprite, SmokeParticle, position, speed, (float)RandomDouble(angleRange.X, angleRange.Y), 0.3f, 5, yRange);
+                        heavyProjectile = new ClusterBomb(source, ClusterBombShellProjectileSprite, SmokeParticle, position, speed, (float)RandomDouble(angleRange.X, angleRange.Y), 0.3f, 5, yRange);
                         break;
 
                     default:
@@ -8233,14 +8204,14 @@ namespace TowerDefensePrototype
 
                             AvgY /= InvaderList.Count;
 
-                            HeavyProjectile = new CannonBall(turret, CannonBallSprite, ToonSmoke3,
+                            HeavyProjectile = new CannonBall(turret, CannonBallProjectileSprite, ToonSmoke3,
                                 new Vector2(turret.BarrelEnd.X, turret.BarrelEnd.Y), turret.LaunchVelocity,
                                 turret.FireRotation, 0.35f, turret.Damage, turret.BlastRadius,
                                 new Vector2(Math.Max(AvgY - 32, 690), Math.Max(AvgY + 32, 930)));
                         }
                         else
                         {
-                            HeavyProjectile = new CannonBall(turret, CannonBallSprite, ToonSmoke3,
+                            HeavyProjectile = new CannonBall(turret, CannonBallProjectileSprite, ToonSmoke3,
                                 new Vector2(turret.BarrelEnd.X, turret.BarrelEnd.Y), turret.LaunchVelocity,
                                 turret.FireRotation, 0.35f, turret.Damage, turret.BlastRadius,
                                 new Vector2(MathHelper.Clamp(turret.Position.Y + 32, 690, 930), 930));
@@ -8289,7 +8260,7 @@ namespace TowerDefensePrototype
                 #region Flamethrower turret
                 case TurretType.FlameThrower:
                     {
-                        HeavyProjectile = new FlameProjectile(turret, FlameSprite, FireParticle2, new Vector2(turret.BarrelEnd.X, turret.BarrelEnd.Y),
+                        HeavyProjectile = new FlameProjectile(turret, FlameThrowerProjectileSprite, FireParticle2, new Vector2(turret.BarrelEnd.X, turret.BarrelEnd.Y),
                             (float)RandomDouble(7, 9), turret.Rotation, 0.3f, 5,
                             new Vector2(MathHelper.Clamp(turret.Position.Y + 32, 690, 930), 930));
 
@@ -8375,7 +8346,7 @@ namespace TowerDefensePrototype
                                 new Vector2(0, 1080), true, null, null, null, null, null, null, null, new Vector2(0.08f, 0.08f), true, true);
                         YSortedEmitterList.Add(SmokeEmitter);
 
-                        heavyProjectile = new ClusterBombShell(turret, 1000, ClusterBombSprite, SmokeParticle,
+                        heavyProjectile = new ClusterBombShell(turret, 1000, ClusterBombProjectileSprite, SmokeParticle,
                                             new Vector2(turret.BarrelEnd.X, turret.BarrelEnd.Y), 12, turret.Rotation, 0.2f, 5, 0,
                                             new Vector2(MathHelper.Clamp(turret.Position.Y + 32, 690, 930), 930));
                         //heavyProjectile.Initialize();
@@ -8426,7 +8397,7 @@ namespace TowerDefensePrototype
                 #region Boomerang turret
                 case TurretType.Boomerang:
                     {
-                        HeavyProjectile = new BoomerangProjectile(turret, BoomerangSprite, SmokeParticle, new Vector2(turret.BarrelEnd.X, turret.BarrelEnd.Y), 12, turret.Rotation, 0.2f, turret.Damage, 100,
+                        HeavyProjectile = new BoomerangProjectile(turret, BoomerangProjectileSprite, SmokeParticle, new Vector2(turret.BarrelEnd.X, turret.BarrelEnd.Y), 12, turret.Rotation, 0.2f, turret.Damage, 100,
                             new Vector2(MathHelper.Clamp(turret.Position.Y + 32, 690, 930), 930));
 
                         //HeavyProjectile.Initialize();
@@ -8441,7 +8412,7 @@ namespace TowerDefensePrototype
                     {
                         TimerHeavyProjectile heavyProjectile;
 
-                        heavyProjectile = new GrenadeProjectile(turret, 2500, GrenadeSprite, SmokeParticle,
+                        heavyProjectile = new GrenadeProjectile(turret, 2500, GrenadeProjectileSprite, SmokeParticle,
                             new Vector2(turret.BarrelEnd.X, turret.BarrelEnd.Y), 8, turret.Rotation, 0.1f, 5, 0,
                             new Vector2(MathHelper.Clamp(turret.Position.Y + 32, 690, 930), 930), true);
 
@@ -8459,7 +8430,7 @@ namespace TowerDefensePrototype
                     {
                         TimerHeavyProjectile heavyProjectile;
 
-                        heavyProjectile = new GasGrenadeProjectile(turret, 2500, GrenadeSprite, SmokeParticle,
+                        heavyProjectile = new GasGrenadeProjectile(turret, 2500, GrenadeProjectileSprite, SmokeParticle,
                             new Vector2(turret.BarrelEnd.X, turret.BarrelEnd.Y), 16, turret.Rotation, 0.3f, 5, 0,
                             new Vector2(MathHelper.Clamp(turret.Position.Y + 32, 690, 930), 930), true);
 
@@ -8984,19 +8955,37 @@ namespace TowerDefensePrototype
                i.e. in newTrap = new FireTrap(Position); 
              */
 
+                NewTrap = trap;
+                string EntryName = trap.TrapType.ToString() + "TrapAnimations";
+
+                switch (trap.TrapType)
+                {
+                    default:
+                        {
+                            NewTrap.AnimationList = new List<TrapAnimation>();
+
+                            for (int i = 0; i < TrapAnimationsDictionary[EntryName].Count; i++)
+                            {
+                                TrapAnimation animation = new TrapAnimation();
+                                animation = TrapAnimationsDictionary[EntryName][i].ShallowCopy();
+                                NewTrap.AnimationList.Add(animation);
+                            }
+
+                            NewTrap.TrapState = NewTrap.TrapState;
+                            NewTrap.Position = trapPosition;
+                            TrapList.Add(NewTrap);
+                            AddDrawable(NewTrap);
+                            NewTrap.Initialize();
+                        }
+                        break;
+                }
+
                 switch (trap.TrapType)
                 {
                     #region Wall
                     case TrapType.Wall:
                         {
-                            NewTrap = trap;
-                            NewTrap.AnimationList = WallTrapAnimations;
-                            NewTrap.TrapState = NewTrap.TrapState;
                             NewTrap.AmbientShadowTexture = WallAmbShadow;
-                            NewTrap.Position = trapPosition;
-                            TrapList.Add(NewTrap);
-                            AddDrawable(NewTrap);
-                            NewTrap.Initialize();
                         }
                         break;
                     #endregion
@@ -9004,86 +8993,34 @@ namespace TowerDefensePrototype
                     #region FlameThrower
                     case TrapType.FlameThrower:
                         {
-                            NewTrap = trap;
-                            NewTrap.AnimationList = new List<TrapAnimation>();
 
-                            for (int i = 0; i < FlameThrowerTrapAnimations.Count; i++)
-                            {
-                                TrapAnimation animation = new TrapAnimation();
-                                animation = FlameThrowerTrapAnimations[i].ShallowCopy();
-                                NewTrap.AnimationList.Add(animation);
-                            }
-
-                            //NewTrap.AnimationList = FlameThrowerAnimations;
-                            NewTrap.TrapState = NewTrap.TrapState;
-                            //NewTrap.AmbientShadowTexture = WallAmbShadow;
-                            NewTrap.Position = trapPosition;
-                            TrapList.Add(NewTrap);
-                            AddDrawable(NewTrap);
-                            NewTrap.Initialize();
                         }
                         break;
                     #endregion
 
+                    #region Glue
                     case TrapType.Glue:
                         {
-                            NewTrap = trap;
-                            NewTrap.AnimationList = new List<TrapAnimation>();
 
-                            for (int i = 0; i < GlueTrapAnimations.Count; i++)
-                            {
-                                TrapAnimation animation = new TrapAnimation();
-                                animation = GlueTrapAnimations[i].ShallowCopy();
-                                NewTrap.AnimationList.Add(animation);
-                            }
-
-                            //NewTrap.AnimationList = FlameThrowerAnimations;
-                            NewTrap.TrapState = NewTrap.TrapState;
-                            //NewTrap.AmbientShadowTexture = WallAmbShadow;
-                            NewTrap.Position = trapPosition;
-                            TrapList.Add(NewTrap);
-                            AddDrawable(NewTrap);
-                            NewTrap.Initialize();
                         }
                         break;
+                    #endregion
 
                     #region Fire
                     case TrapType.Fire:
                         {
                             FireTrapStart.Play();
 
-                            NewTrap = trap;
-                            NewTrap.AnimationList = FireTrapAnimations;
-                            NewTrap.TrapState = NewTrap.TrapState;
-                            NewTrap.Position = trapPosition;
-                            NewTrap.Initialize();
-                            TrapList.Add(NewTrap);
-
                             Emitter FireEmitter = new Emitter(ExplosionParticle2, new Vector2(NewTrap.Position.X + NewTrap.CurrentAnimation.FrameSize.X / 2,
-                                            NewTrap.Position.Y + NewTrap.CurrentAnimation.FrameSize.Y - 8), new Vector2(150f, 30f), new Vector2(0f, 0.5f), 
-                                new Vector2(899f, 1490f), 0.94f, false, new Vector2(-6f, 6f), new Vector2(-0.5f, 1f), 
+                                            NewTrap.Position.Y + NewTrap.CurrentAnimation.FrameSize.Y - 8), new Vector2(150f, 30f), new Vector2(0f, 0.5f),
+                                new Vector2(899f, 1490f), 0.94f, false, new Vector2(-6f, 6f), new Vector2(-0.5f, 1f),
                                 new Vector2(0.1025f, 0.1355f), new Color(255, 128, 0, 0), new Color(0, 0, 0, 255), -0.015f,
-                                -1f, 93f, 3, false, new Vector2(0f, 720f), true, (NewTrap.DestinationRectangle.Bottom + 1.0f) / 1080f, false, false, new Vector2(0f, 0f), 
+                                -1f, 93f, 3, false, new Vector2(0f, 720f), true, (NewTrap.DestinationRectangle.Bottom + 1.0f) / 1080f, false, false, new Vector2(0f, 0f),
                                 new Vector2(0f, 0f), 0f, false, new Vector2(0.069f, 0f), false, false, 0f, false, false, true, null);
-
-                            //Emitter FireEmitter = new Emitter(FireParticle,
-                            //    new Vector2(NewTrap.Position.X + NewTrap.CurrentAnimation.FrameSize.X / 2,
-                            //                NewTrap.Position.Y + NewTrap.CurrentAnimation.FrameSize.Y - 8),
-                            //    new Vector2(80, 100), new Vector2(0.5f, 0.75f), new Vector2(1500, 2000), 1f, false,
-                            //    new Vector2(-0, 0), new Vector2(-0.25f, 0.25f), new Vector2(0.12f, 0.15f), FireColor, Color.Black * 0.75f,
-                            //    0.0f, -1, 75, 1, false, new Vector2(0, 1080), true, (NewTrap.DestinationRectangle.Bottom + 1.0f) / 1080f,
-                            //    null, null, null, null, null, null, null, true, true, null, false, false, false, null);
                             FireEmitter.TextureName = "FireParticle";
-
-                            //Emitter SmokeEmitter = new Emitter(SmokeParticle,
-                            //    new Vector2(NewTrap.Position.X + NewTrap.CurrentAnimation.FrameSize.X / 2, NewTrap.Position.Y + NewTrap.CurrentAnimation.FrameSize.Y - 16),
-                            //    new Vector2(85, 95), new Vector2(0.2f, 0.5f), new Vector2(250, 350), 0.9f, true, new Vector2(-20, 20),
-                            //    new Vector2(-2, 2), new Vector2(0.6f, 1f), SmokeColor, SmokeColor2, 0.0f, -1, 150, 1, false,
-                            //    new Vector2(0, 1080), true, (NewTrap.DestinationRectangle.Bottom) / 1080f, null, null, null, null, null, null, null, true, true, 250);
-                            //SmokeEmitter.TextureName = "SmokeParticle";
-
+                            
                             Emitter SparkEmitter = new Emitter(RoundSparkParticle,
-                                   new Vector2(NewTrap.Position.X + NewTrap.CurrentAnimation.FrameSize.X / 2, 
+                                   new Vector2(NewTrap.Position.X + NewTrap.CurrentAnimation.FrameSize.X / 2,
                                                NewTrap.Position.Y + NewTrap.CurrentAnimation.FrameSize.Y - 16),
                                    new Vector2(80, 100), new Vector2(1, 4), new Vector2(800, 1600), 1f, true, new Vector2(0, 0),
                                    new Vector2(0, 0), new Vector2(0.1f, 0.3f), Color.LightYellow, Color.White, -0.001f, -1f, 100, 1, false,
@@ -9102,121 +9039,49 @@ namespace TowerDefensePrototype
                     #endregion
 
                     #region Spikes
-                    //case TrapType.Spikes:
-                    //    {
-                    //        NewTrap = trap;
-                    //        NewTrap.TextureList = SpikeTrapSprite;
-                    //        NewTrap.CurrentTexture = NewTrap.TextureList[0];
+                    case TrapType.Spikes:
+                        {
 
-                    //        NewTrap.Position = trapPosition;
-                    //        TrapList.Add(NewTrap); 
-                    //        AddDrawable(NewTrap);
-                    //        NewTrap.Initialize();
-                    //    }
-                    //    break;
+                        }
+                        break;
                     #endregion
 
                     #region Catapult
                     case TrapType.Catapult:
                         {
-                            NewTrap = trap;
-                            NewTrap.AnimationList = CatapultTrapAnimations;
-                            NewTrap.TrapState = NewTrap.TrapState;
-
-                            NewTrap.Position = trapPosition;
-                            TrapList.Add(NewTrap);
-                            AddDrawable(NewTrap);
-                            NewTrap.Initialize();
+                        
                         }
                         break;
                     #endregion
 
                     #region Ice
-                    //case TrapType.Ice:
-                    //    {
-                    //        //NewTrap = trap;
-                    //        //NewTrap.TextureList = IceTrapSprite;
+                    case TrapType.Ice:
+                        {
 
-                    //        //NewTrap.Position = trapPosition;
-                    //        //TrapList.Add(NewTrap); AddDrawable(NewTrap);
-                    //        //NewTrap.Initialize();
-
-                    //        NewTrap = trap;
-                    //        NewTrap.TextureList = IceTrapSprite;
-                    //        NewTrap.CurrentTexture = NewTrap.TextureList[0];
-
-                    //        NewTrap.Position = trapPosition;
-                    //        TrapList.Add(NewTrap); 
-                    //        AddDrawable(NewTrap);
-                    //        NewTrap.Initialize();
-                    //    }
-                    //    break;
+                        }
+                        break;
                     #endregion
 
                     #region Barrel
                     case TrapType.Barrel:
                         {
-                            NewTrap = trap;
-                            NewTrap.AnimationList = BarrelTrapAnimations;
-                            NewTrap.TrapState = NewTrap.TrapState;
 
-                            NewTrap.Position = trapPosition;
-                            TrapList.Add(NewTrap);
-                            AddDrawable(NewTrap);
-                            NewTrap.Initialize();
                         }
                         break;
                     #endregion
 
                     #region Sawblade
-                    //case TrapType.SawBlade:
-                    //    {
-                    //        NewTrap = trap;
-                    //        NewTrap.TextureList = SawBladeTrapSprite;
-                    //        NewTrap.CurrentTexture = NewTrap.TextureList[0];
+                    case TrapType.SawBlade:
+                        {
 
-                    //        NewTrap.Position = trapPosition;
-                    //        TrapList.Add(NewTrap); 
-                    //        AddDrawable(NewTrap);
-                    //        NewTrap.Initialize();
-                    //    }
-                    //    break;
-                    #endregion
-
-                    #region Line
-                    //case TrapType.Line:
-                    //    {
-                    //        NewTrap = trap;
-                    //        NewTrap.TextureList = LineTrapSprite;
-                    //        NewTrap.CurrentTexture = NewTrap.TextureList[0];
-
-                    //        NewTrap.Position = trapPosition;
-                    //        TrapList.Add(NewTrap);
-                    //        AddDrawable(NewTrap);
-                    //        //DrawableList.
-                    //        NewTrap.Initialize();
-
-                    //        Emitter FireEmitter = new Emitter(FireParticle, new Vector2(NewTrap.Position.X, NewTrap.Position.Y),
-                    //          new Vector2(0, 0), new Vector2(1.5f, 2.0f), new Vector2(40 * 1.5f, 60 * 1.5f), 0.01f, true, new Vector2(-4, 4),
-                    //          new Vector2(-4, 4), new Vector2(1 * 1.5f, 2 * 1.5f), FireColor, FireColor2, 0.0f, -1, 25 * 1.5f, 3, false, new Vector2(0, 1080),
-                    //          false, CursorPosition.Y / 1080);
-
-                    //        NewTrap.TrapEmitterList.Add(FireEmitter);
-                    //    }
-                    //    break;
+                        }
+                        break;
                     #endregion
 
                     #region LandMine
                     case TrapType.LandMine:
                         {
-                            NewTrap = trap;
-                            NewTrap.AnimationList = LandMineTrapAnimations;
-                            NewTrap.TrapState = NewTrap.TrapState;
 
-                            NewTrap.Position = trapPosition;
-                            TrapList.Add(NewTrap);
-                            AddDrawable(NewTrap);
-                            NewTrap.Initialize();
                         }
                         break;
                     #endregion
@@ -9415,7 +9280,7 @@ namespace TowerDefensePrototype
 
                         if (airStrike.CurrentTime > airStrike.TimeInterval)
                         {
-                            TimerHeavyProjectile AirStrikeProjectile = new ClusterBombShell(CurrentSpecialAbility, 1000, ClusterBombSprite, SmokeParticle, airStrike.CurrentPosition, 10, 0, 0.2f, 5, 0, new Vector2(690, 930));
+                            TimerHeavyProjectile AirStrikeProjectile = new ClusterBombShell(CurrentSpecialAbility, 1000, ClusterBombProjectileSprite, SmokeParticle, airStrike.CurrentPosition, 10, 0, 0.2f, 5, 0, new Vector2(690, 930));
                             //AirStrikeProjectile.Initialize();
                             AddDrawable(AirStrikeProjectile);
                             airStrike.CurrentTime = 0;

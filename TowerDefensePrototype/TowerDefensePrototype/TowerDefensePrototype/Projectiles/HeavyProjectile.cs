@@ -19,7 +19,7 @@ namespace TowerDefensePrototype
         Torpedo,
         ClusterBomb,
         ClusterBombShell,
-        FelProjectile,
+        Fel,
         Boomerang,
         Grenade,
         GasGrenade,

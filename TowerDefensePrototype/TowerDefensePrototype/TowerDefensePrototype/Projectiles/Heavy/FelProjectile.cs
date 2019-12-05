@@ -14,7 +14,7 @@ namespace TowerDefensePrototype
                             float speed, float angle, float gravity, float damage, float blastRadius, Vector2? yrange = null) 
             : base(source, texture, position, speed, angle, gravity, damage, yrange, blastRadius)
         {
-            HeavyProjectileType = HeavyProjectileType.FelProjectile;
+            HeavyProjectileType = HeavyProjectileType.Fel;
 
             Rotate = true;
 
