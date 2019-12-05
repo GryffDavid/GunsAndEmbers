@@ -10,7 +10,7 @@ namespace TowerDefensePrototype
 {
     public class UITrapQuickInfo
     {
-        public Texture2D CircularBarTexture;
+        public Texture2D CircularBarTexture, RightClickIcon;
         public SpriteFont Italics, Font, BoldFont;
 
         Vector2 BoxSize, NameBoxSize, Position;
@@ -41,7 +41,7 @@ namespace TowerDefensePrototype
 
         Color RemoveTrapTextColor;
 
-        float CurrentVisibilityDelay;
+        public float CurrentVisibilityDelay;
 
         //Info needed:
         //HP, cooldown time, detonations remaining, 
@@ -58,7 +58,7 @@ namespace TowerDefensePrototype
             BoxSize = new Vector2(250, 150);
             NameBoxSize = new Vector2(250, 40);
 
-            Detontations = new PartitionedBar(2, 5, new Vector2(BoxSize.X - 10, 12), new Vector2(Position.X + 5, Position.Y - 45));
+            Detontations = new PartitionedBar(2, 5, new Vector2(BoxSize.X - 10, 12), new Vector2(Position.X + 5, Position.Y - 100));
 
             HealthBar = new UIBar(new Vector2(Position.X, Position.Y - BoxSize.Y + 5), new Vector2(BoxSize.X, 12), Color.White);
             TimingBar = new UIBar(new Vector2(Position.X, Position.Y - BoxSize.Y + 5 + 12 + 5), new Vector2(BoxSize.X, 12), Color.Red);
@@ -209,8 +209,22 @@ namespace TowerDefensePrototype
             #endregion
         }
 
+        
         public void Update(GameTime gameTime)
         {
+            if (CurrentVisibilityDelay <= 500)
+                CurrentVisibilityDelay += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+
+            if (CurrentVisibilityDelay > 500)
+            {
+                Visible = true;
+            }
+
+            //These should only be updated if the values change.
+            Detontations.Update(Trap.CurrentDetonateLimit, Trap.DetonateLimit);
+            HealthBar.Update(Trap.MaxHP, Trap.MaxHP);
+            TimingBar.Update(Trap.DetonateDelay, Trap.CurrentDetonateDelay);
+
             if (Trap.CurrentDetonateLimit < Trap.DetonateLimit)
             {
                 RemoveTrapTextColor = Color.Gray;
@@ -219,18 +233,6 @@ namespace TowerDefensePrototype
             {
                 RemoveTrapTextColor = Color.White;
             }
-
-            if (CurrentVisibilityDelay < 500)
-                CurrentVisibilityDelay += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
-
-            if (CurrentVisibilityDelay > 500)
-            {
-                Visible = true;
-            }
-
-            Detontations.Update(Trap.CurrentDetonateLimit, Trap.DetonateLimit);
-            HealthBar.Update(Trap.MaxHP, Trap.MaxHP);
-            TimingBar.Update(Trap.DetonateDelay, Trap.CurrentDetonateDelay);
         }
 
         public void Draw(GraphicsDevice graphics, BasicEffect basicEffect, SpriteBatch spriteBatch)
@@ -247,8 +249,10 @@ namespace TowerDefensePrototype
                         new Vector2(Position.X + 4, Position.Y - BoxSize.Y - NameBoxSize.Y + 2), Color.White,
                         0, new Vector2(0, 0), 0.5f, SpriteEffects.None, 0);
 
-                    spriteBatch.DrawString(Font, "Middle-click to remove this trap", new Vector2(Position.X + 5, Position.Y - 23),
-                            RemoveTrapTextColor, 0, new Vector2(0, 0), 0.7f, SpriteEffects.None, 0);
+                    Vector2 iconSize = new Vector2(RightClickIcon.Width/2, RightClickIcon.Height/2);
+                    spriteBatch.Draw(RightClickIcon, new Rectangle((int)Position.X + 19, (int)(Position.Y - 12 - iconSize.Y), (int)(iconSize.X -1), (int)(iconSize.Y)), Color.White);
+
+                    spriteBatch.DrawString(Font, "To remove this trap", new Vector2(Position.X + 35 + 15, Position.Y - 23 - 9), RemoveTrapTextColor, 0, new Vector2(0, 0), 0.7f, SpriteEffects.None, 0);
 
                     //DRAW BARS HERE INSTEAD OF TEXT - Detontations.Draw(spriteBatch);
 
@@ -270,17 +274,17 @@ namespace TowerDefensePrototype
                             BoxIndices, 0, 2,
                             VertexPositionColor.VertexDeclaration);
 
-                        graphics.DrawUserIndexedPrimitives(
-                           PrimitiveType.TriangleList,
-                           DividerVertices1.ToArray(), 0, 4,
-                           DividerIndices1, 0, 2,
-                           VertexPositionColor.VertexDeclaration);
+                        //graphics.DrawUserIndexedPrimitives(
+                        //   PrimitiveType.TriangleList,
+                        //   DividerVertices1.ToArray(), 0, 4,
+                        //   DividerIndices1, 0, 2,
+                        //   VertexPositionColor.VertexDeclaration);
 
-                        graphics.DrawUserIndexedPrimitives(
-                           PrimitiveType.TriangleList,
-                           DividerVertices2.ToArray(), 0, 4,
-                           DividerIndices2, 0, 2,
-                           VertexPositionColor.VertexDeclaration);
+                        //graphics.DrawUserIndexedPrimitives(
+                        //   PrimitiveType.TriangleList,
+                        //   DividerVertices2.ToArray(), 0, 4,
+                        //   DividerIndices2, 0, 2,
+                        //   VertexPositionColor.VertexDeclaration);
 
                         HealthBar.Draw(graphics);
                         TimingBar.Draw(graphics);

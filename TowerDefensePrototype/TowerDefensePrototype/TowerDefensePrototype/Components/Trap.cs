@@ -36,7 +36,7 @@ namespace TowerDefensePrototype
         public int ResourceCost, DetonateLimit, CurrentDetonateLimit, CurrentFrame, PowerCost;
         public double CurrentFrameDelay;
         public double CurrentRemovalTime;
-        public double MaxRemovalTime = 2000;
+        public double MaxRemovalTime = 1000;
         public static Random Random = new Random();
         public UIBar TimingBar, HealthBar;
         
@@ -47,6 +47,7 @@ namespace TowerDefensePrototype
         public float NormalDamage;
 
         public UITrapQuickInfo TrapQuickInfo;
+        public UIOutline TrapOutline;
 
         public TrapAnimation CurrentAnimation;
         public List<TrapAnimation> AnimationList;

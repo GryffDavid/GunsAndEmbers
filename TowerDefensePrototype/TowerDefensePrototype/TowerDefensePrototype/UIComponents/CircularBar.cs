@@ -10,7 +10,7 @@ namespace TowerDefensePrototype
 {
     public class CircularBar
     {
-        Texture2D Texture;
+        public Texture2D Texture;
         public Vector2 Position, Size;
         public float MaxSize = 1.0f; //The total percentage that the image can show - 50% = half a circle
         public float CurrentValue, MaxValue;

@@ -62,7 +62,6 @@ Content\Tower.xnb
 Content\Backgrounds\Foreground.xnb
 Content\Invaders\Invader.xnb
 Content\Buttons\WeaponBox.xnb
-Content\HealthBarSprite.xnb
 Content\Invaders\BlankTank.xnb
 Content\Particles\Smoke.xnb
 Content\Decals\ExplosionDecal1.xnb
@@ -188,3 +187,7 @@ Content\ShadowBlur.xnb
 Content\EmissiveBlur.xnb
 Content\ParticleEffect.xnb
 Content\StoryDialogue\StoryDialogue1.xnb
+Content\Icons\MouseLeftClickIcon.xnb
+Content\Icons\MouseMiddleClickIcon.xnb
+Content\Icons\MouseRightClickIcon.xnb
+Content\CircularBar.xnb

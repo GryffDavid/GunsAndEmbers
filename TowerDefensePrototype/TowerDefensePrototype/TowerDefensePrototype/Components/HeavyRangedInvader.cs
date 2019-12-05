@@ -111,14 +111,7 @@ namespace TowerDefensePrototype
         }
 
         public override void Update(GameTime gameTime, Vector2 cursorPosition)
-        {            
-            //if (DistToTower <= MinRange)
-            //{
-            //    //Whether the invader stops or not should be based on their MicroBehaviour
-            //    Velocity.X = 0;
-            //    InRange = true;
-            //}
-
+        {
             #region Update Barrel Animation
             if (BarrelAnimation != null)
             {

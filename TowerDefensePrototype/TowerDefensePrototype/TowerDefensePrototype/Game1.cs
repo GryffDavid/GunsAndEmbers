@@ -271,7 +271,7 @@ namespace TowerDefensePrototype
         #endregion
 
         #region Icon sprites
-        Texture2D LockIcon, HealthIcon, OverHeatIcon, CurrencyIcon, PowerUnitIcon;
+        Texture2D LockIcon, HealthIcon, OverHeatIcon, CurrencyIcon, PowerUnitIcon, RightClickIcon;
 
         //Turret icons
         public Texture2D BeamTurretIcon, BoomerangTurretIcon, CannonTurretIcon, ClusterTurretIcon, FelCannonTurretIcon, FlameThrowerTurretIcon,
@@ -503,10 +503,9 @@ namespace TowerDefensePrototype
         List<CooldownButton> CooldownButtonList = new List<CooldownButton>();
 
         List<UIWeaponInfoTip> UIWeaponInfoList = new List<UIWeaponInfoTip>();
-        List<UITrapQuickInfo> UITrapQuickInfoList = new List<UITrapQuickInfo>();
-
-        List<UIOutline> UITrapOutlineList = new List<UIOutline>();
-        List<UIOutline> UITurretOutlineList = new List<UIOutline>();
+        //List<UITrapQuickInfo> UITrapQuickInfoList = new List<UITrapQuickInfo>();
+        //List<UIOutline> UITrapOutlineList = new List<UIOutline>();
+        //List<UIOutline> UITurretOutlineList = new List<UIOutline>();
 
         List<ShellCasing> VerletShells = new List<ShellCasing>();
         List<GrassBlade> GrassBladeList = new List<GrassBlade>();
@@ -666,6 +665,10 @@ namespace TowerDefensePrototype
             GameState = GameState.Menu;
             ProfileManagementState = ProfileManagementState.Loadout;
             ContainerName = "Profiles";
+
+            string thing = Directory.GetParent(Path.Combine(Directory.GetCurrentDirectory(), "..\\..\\..\\..\\..\\")).Name;
+            Window.Title = thing;
+
             Tower = new Tower("Tower", new Vector2(100, 450), 350, 120, 3, 5000, 20);
             TowerButtons = (int)Tower.Slots;
             ScreenRectangle = new Rectangle(-256, -256, 1920 + 256, 1080 + 256);
@@ -679,8 +682,7 @@ namespace TowerDefensePrototype
             BasicEffect2 = new BasicEffect(graphics.GraphicsDevice);
             BasicEffect2.Projection = QuadProjection;
             BasicEffect2.VertexColorEnabled = true;
-
-
+            
             LoadFonts();
 
             #region Load button sprites
@@ -1001,7 +1003,7 @@ namespace TowerDefensePrototype
 
                 HealthBarEffect = Content.Load<Effect>("Shaders/HealthBarEffect");
                 HealthBarEffect.Parameters["MatrixTransform"].SetValue(Projection);
-                HealthBarSprite = Content.Load<Texture2D>("HealthBarSprite");
+                HealthBarSprite = Content.Load<Texture2D>("CircularBar");
 
                 ShockWaveEffect = Content.Load<Effect>("Shaders/ShockWaveEffect");
                 ShockWaveEffect.Parameters["MatrixTransform"].SetValue(Projection);
@@ -1073,10 +1075,6 @@ namespace TowerDefensePrototype
                 //Not clearing these lists causes a Disposed Object error to show up for some reason
                 //Don't forget to clear the lists between levels or even when moving from menu back to game
                 UIWeaponInfoList.Clear();
-
-                UITrapQuickInfoList.Clear();
-                UITrapOutlineList.Clear();
-                UITurretOutlineList.Clear();
                 UITurretInfo = null;
                 ClearTurretSelect();
                 ClearSelected();
@@ -1657,6 +1655,7 @@ namespace TowerDefensePrototype
             LockIcon = SecondaryContent.Load<Texture2D>("Icons/LockIcon");
             HealthIcon = SecondaryContent.Load<Texture2D>("Icons/HealthIcon");
             OverHeatIcon = SecondaryContent.Load<Texture2D>("Icons/OverHeatIcon");
+            RightClickIcon = SecondaryContent.Load<Texture2D>("Icons/MouseRightClickIcon");
 
             //Turret icons
             BeamTurretIcon = SecondaryContent.Load<Texture2D>("Icons/TurretIcons/BeamTurretIcon");
@@ -1990,7 +1989,7 @@ namespace TowerDefensePrototype
 
                 #region Draw things sorted according to their Y value - To create depth illusion
                 //DrawableList = DrawableList.OrderBy(Drawable => Drawable.DrawDepth).ToList();
-                spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null);
+                spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearWrap, null, null);
 
                 foreach (Drawable drawable in DrawableList)
                 {
@@ -2258,9 +2257,9 @@ namespace TowerDefensePrototype
                     spriteBatch.DrawString(DefaultFont, "InvaderTime:" + CurrentInvaderTime.ToString(), new Vector2(0, 248 + 16), Color.Lime);
                     spriteBatch.DrawString(DefaultFont, "WaveTime:" + CurrentWaveTime.ToString(), new Vector2(0, 248 + 32), Color.Lime);
                     spriteBatch.DrawString(DefaultFont, "PauseTime:" + CurrentWavePauseTime, new Vector2(0, 248 + 32 + 16), Color.Lime);
-                    spriteBatch.DrawString(DefaultFont, "UIQuickInfo:" + UITrapQuickInfoList.Count.ToString(), new Vector2(0, 248 + 64), Color.Lime);
-                    spriteBatch.DrawString(DefaultFont, "UITrapOutlines:" + UITrapOutlineList.Count.ToString(), new Vector2(0, 248 + 64 + 16), Color.Lime);
-                    spriteBatch.DrawString(DefaultFont, "UITurretOutlines:" + UITurretOutlineList.Count.ToString(), new Vector2(0, 248 + 64 + 32), Color.Lime);
+                    //spriteBatch.DrawString(DefaultFont, "UIQuickInfo:" + UITrapQuickInfoList.Count.ToString(), new Vector2(0, 248 + 64), Color.Lime);
+                    //spriteBatch.DrawString(DefaultFont, "UITrapOutlines:" + UITrapOutlineList.Count.ToString(), new Vector2(0, 248 + 64 + 16), Color.Lime);
+                    //spriteBatch.DrawString(DefaultFont, "UITurretOutlines:" + UITurretOutlineList.Count.ToString(), new Vector2(0, 248 + 64 + 32), Color.Lime);
                     spriteBatch.DrawString(DefaultFont, "WeatherSprites:" + WeatherSpriteList.Count.ToString(), new Vector2(0, 248 + 64 + 32 + 16), Color.Lime);                    
                     spriteBatch.DrawString(DefaultFont, "CurrentPowerUnits:" + Tower.CurrentPowerUnits.ToString(), new Vector2(0, 248 + 64 + 32 + 32), Color.Lime);
 
@@ -2269,6 +2268,7 @@ namespace TowerDefensePrototype
                         spriteBatch.DrawString(RobotoRegular20_0, invader.InvaderAnimationState.ToString(), invader.Position, Color.White, 0, Vector2.Zero, 0.85f, SpriteEffects.None, 0);
                         spriteBatch.DrawString(RobotoRegular20_0, "Micro:" + invader.CurrentMicroBehaviour.ToString(), invader.Position + new Vector2(0, 16), Color.White, 0, Vector2.Zero, 0.85f, SpriteEffects.None, 0);
                         spriteBatch.DrawString(RobotoRegular20_0, "Macro:" + invader.CurrentMacroBehaviour.ToString(), invader.Position + new Vector2(0, 32), Color.White, 0, Vector2.Zero, 0.85f, SpriteEffects.None, 0);
+                        spriteBatch.DrawString(RobotoRegular20_0, "Int:" + invader.Intelligence.ToString(), invader.Position + new Vector2(0, 48), Color.White);
                     }
 
                     foreach (Turret turret in TurretList.Where(Turret => Turret != null))
@@ -2335,8 +2335,7 @@ namespace TowerDefensePrototype
                     towerSlot.Draw(spriteBatch);
                 }
 
-
-                #region Draw turret bars
+                #region Draw turret bars and outlines
                 foreach (Turret turret in TurretList)
                 {
                     if (turret != null)
@@ -2344,15 +2343,18 @@ namespace TowerDefensePrototype
                         if (turret.Active == true)
                         {
                             turret.DrawBars(GraphicsDevice, QuadEffect);
+                            turret.TurretOutline.Draw(spriteBatch);
                         }
                     }
                 }
                 #endregion
 
-                #region Draw trap bars
+                #region Draw trap bars, outline and quickinfo
                 foreach (Trap trap in TrapList)
                 {
                     trap.DrawBars(GraphicsDevice, QuadEffect);
+                    trap.TrapOutline.Draw(spriteBatch);
+                    trap.TrapQuickInfo.Draw(GraphicsDevice, QuadEffect, spriteBatch);
                 }
                 #endregion
 
@@ -2378,35 +2380,7 @@ namespace TowerDefensePrototype
 
                 UIPowerupsList.RemoveAll(UIPowerup => UIPowerup.Active == false);
                 #endregion
-
-
-                #region Draw outlines around traps when moused-over
-                foreach (Trap trap in TrapList)
-                {
-                    if (trap != null && trap.DestinationRectangle.Contains(VectorToPoint(CursorPosition)))
-                    {
-                        foreach (UIOutline trapOutline in UITrapOutlineList)
-                        {
-                            if (trapOutline.Trap == trap && trap.Active == true)
-                                trapOutline.Draw(spriteBatch);
-                        }
-                    }
-                }
-                #endregion
-
-                #region Draw outlines around turrets when moused-over
-                foreach (Turret turret in TurretList)
-                {
-                    if (turret != null && turret.SelectBox.Contains(VectorToPoint(CursorPosition)))
-                    {
-                        foreach (UIOutline turretOutline in UITurretOutlineList)
-                        {
-                            turretOutline.Draw(spriteBatch);
-                        }
-                    }
-                }
-                #endregion
-
+                
                 #region Draw outlines and health bars around invaders when moused over
                 foreach (Invader invader in InvaderList)
                 {
@@ -2423,8 +2397,6 @@ namespace TowerDefensePrototype
                 }
                 #endregion
 
-
-
                 #region Draw Weapon Info Boxes
                 foreach (UIWeaponInfoTip uiWeaponInfo in UIWeaponInfoList)
                 {
@@ -2433,17 +2405,9 @@ namespace TowerDefensePrototype
                 }
                 #endregion
 
-                #region Draw Trap Quick Info
-                foreach (UITrapQuickInfo uiTrapQuickInfo in UITrapQuickInfoList)
-                {
-                    uiTrapQuickInfo.Draw(GraphicsDevice, QuadEffect, spriteBatch);
-                }
-                #endregion
-
                 if (GameState != GameState.Paused)
                     StoryDialogueBox.Draw(spriteBatch, GraphicsDevice, QuadEffect);
-
-
+                
                 #region Draw the debug bounding boxes
                 if (BoundingBoxes == true)
                 {
@@ -2531,31 +2495,39 @@ namespace TowerDefensePrototype
 
                 spriteBatch.End();
                 #endregion
-            }
 
-            #region Draw the circular bars
-            if (GameState != GameState.Loading && GameState == GameState.Playing)
-            {
+                #region Draw the circular bars
                 //THIS MAY HAVE BEEN CAUSING UNEXPECTED ERROR. IT WASN'T CHECKING IF GAMESTATE != LOADING FIRST
                 //MOVED IT INSIDE THE ABOVE CURSOR DRAW CHECK.
-                spriteBatch.Begin(SpriteSortMode.Texture, BlendState.NonPremultiplied, SamplerState.PointClamp,
-                                  DepthStencilState.None, RasterizerState.CullCounterClockwise, HealthBarEffect);
+                spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.LinearClamp, null, null, HealthBarEffect);
 
-                
-
-                foreach (UITrapQuickInfo trapInfo in UITrapQuickInfoList)
+                foreach (Trap trap in TrapList)
                 {
-                    float val = (1 / trapInfo.RemovalBar.MaxValue) * trapInfo.RemovalBar.CurrentValue;
+                    float val = (float)trap.CurrentRemovalTime / 1000;
                     HealthBarEffect.Parameters["meterValue"].SetValue(val);
-                    spriteBatch.Draw(HealthBarSprite, new Rectangle((int)trapInfo.RemovalBar.Position.X, (int)trapInfo.RemovalBar.Position.Y, (int)trapInfo.RemovalBar.Size.X, (int)trapInfo.RemovalBar.Size.Y), null, trapInfo.RemovalBar.FrontColor, 0, 
-                                     new Vector2(32, 32), SpriteEffects.None, 0);
+                    CircularBar bar = trap.TrapQuickInfo.RemovalBar;
+
+                    spriteBatch.Draw(bar.Texture,
+                                 new Rectangle((int)bar.Position.X, (int)bar.Position.Y,
+                                               (int)bar.Size.X, (int)bar.Size.Y), null, Color.White,
+                                               MathHelper.ToRadians(-90), new Vector2(256, 256), SpriteEffects.None, 0);
                 }
+
+                //foreach (UITrapQuickInfo trapInfo in UITrapQuickInfoList)
+                //{
+                //    float val = (1 / trapInfo.RemovalBar.MaxValue) * trapInfo.RemovalBar.CurrentValue;
+                //    HealthBarEffect.Parameters["meterValue"].SetValue(val);
+                //    spriteBatch.Draw(HealthBarSprite, new Rectangle((int)trapInfo.RemovalBar.Position.X, (int)trapInfo.RemovalBar.Position.Y, (int)trapInfo.RemovalBar.Size.X, (int)trapInfo.RemovalBar.Size.Y), null, trapInfo.RemovalBar.FrontColor, 0,
+                //                     new Vector2(32, 32), SpriteEffects.None, 0);
+                //}
+
                 //spriteBatch.Draw(HealthBarSprite, new Vector2(CursorPosition.X, CursorPosition.Y), null, Color.White, MathHelper.ToRadians(-90),
                 //           new Vector2(HealthBarSprite.Width / 2, HealthBarSprite.Height / 2), 1f, SpriteEffects.None, 0);
 
                 spriteBatch.End();
+                #endregion
+
             }
-            #endregion
 
             #region Draw everything to the backbuffer
             GraphicsDevice.SetRenderTarget(null);
@@ -2586,6 +2558,7 @@ namespace TowerDefensePrototype
             }
             #endregion
 
+            targetBatch.DrawString(RobotoRegular20_0, "Version: " + Window.Title, new Vector2(0 + 5, 1080 - 24), HalfWhite);
             CursorDraw(targetBatch);
             targetBatch.End();
             #endregion
@@ -4348,6 +4321,10 @@ namespace TowerDefensePrototype
                                             }
 
                                             newTurret.Initialize(Content);
+
+                                            newTurret.TurretOutline = new UIOutline(new Vector2(newTurret.SelectBox.X, newTurret.SelectBox.Y), new Vector2(newTurret.SelectBox.Width, newTurret.SelectBox.Height), null, newTurret);
+                                            newTurret.TurretOutline.OutlineTexture = TurretSelectBox;
+
                                             newTurret.TurretClickHappened += OnTurretClick;
                                             TurretList[Index] = newTurret;
                                             AddDrawable(newTurret);
@@ -7202,19 +7179,21 @@ namespace TowerDefensePrototype
                 }
                 #endregion
 
-                #region Check what turret is currently moused-over
-                if (turret.SelectBox.Contains(VectorToPoint(CursorPosition)) && UITurretOutlineList.Count == 0)
+                //#region Check what turret is currently moused-over
+                if (turret.SelectBox.Contains(VectorToPoint(CursorPosition)))
                 {
-                    UIOutline turretOutline = new UIOutline(new Vector2(turret.SelectBox.X, turret.SelectBox.Y), new Vector2(turret.SelectBox.Width, turret.SelectBox.Height), null, turret);
-                    turretOutline.OutlineTexture = TurretSelectBox;
-                    UITurretOutlineList.Add(turretOutline);
+                    turret.TurretOutline.Visible = true;
+                }
+                else
+                {
+                    turret.TurretOutline.Visible = false;
                 }
 
-                if (!turret.SelectBox.Contains(VectorToPoint(CursorPosition)))
-                {
-                    UITurretOutlineList.RemoveAll(turretOutline => turretOutline.Turret == turret);
-                }
-                #endregion
+                //if (!turret.SelectBox.Contains(VectorToPoint(CursorPosition)))
+                //{
+                //    UITurretOutlineList.RemoveAll(turretOutline => turretOutline.Turret == turret);
+                //}
+                //#endregion
 
                 #region Remove turret when middle clicked and refund resources
                 if (turret.Active == true &&
@@ -7229,7 +7208,7 @@ namespace TowerDefensePrototype
                     TurretList[TurretList.IndexOf(turret)] = null;
                     DrawableList.Remove(turret);
                     //Remove the outline from around the turret
-                    UITurretOutlineList.RemoveAll(uiOutline => uiOutline.Turret == turret);
+                    //UITurretOutlineList.RemoveAll(uiOutline => uiOutline.Turret == turret);
                     return;
                 }
                 #endregion
@@ -7754,10 +7733,6 @@ namespace TowerDefensePrototype
         #region TRAP stuff
         private void TrapUpdate(GameTime gameTime)
         {
-            //foreach (Trap trap in TrapList)
-            UITrapOutlineList.RemoveAll(trapOutline => trapOutline.Trap == null || trapOutline.Trap.Active == false);
-            UITrapQuickInfoList.RemoveAll(trapQuickInfo => trapQuickInfo.Trap == null || trapQuickInfo.Trap.Active == false);
-
             for (int t = 0; t < TrapList.Count; t++)
             {
                 Trap trap = TrapList[t];
@@ -7769,81 +7744,19 @@ namespace TowerDefensePrototype
                     TrapList.Remove(trap);
                     DrawableList.Remove(trap);
                 }
-
-                #region Update the trap quick info
-                if (UITrapQuickInfoList.Count > 0)
+                                
+                if (trap.DestinationRectangle.Contains(new Point((int)CursorPosition.X, (int)CursorPosition.Y)))
                 {
-                    
-
-                    foreach (UITrapQuickInfo trapQuickInfo in UITrapQuickInfoList)
+                    #region Remove trap if right-clicked for long enough
+                    if (CurrentMouseState.RightButton == ButtonState.Pressed &&
+                        PreviousMouseState.RightButton == ButtonState.Pressed)
                     {
-                        trapQuickInfo.Update(gameTime);
-                        trapQuickInfo.RemovalBar.Update((float)trap.CurrentRemovalTime);
-                    }
-                }
-                #endregion
+                        trap.CurrentRemovalTime += gameTime.ElapsedGameTime.TotalMilliseconds;
 
-                #region Check what trap is currently moused-over
-                if (trap.DestinationRectangle.Contains(VectorToPoint(CursorPosition)) && UITrapOutlineList.Count == 0)
-                {
-                    //The outline around the trap
-                    UIOutline trapOutline = new UIOutline(trap.Position, new Vector2(trap.DestinationRectangle.Width, trap.DestinationRectangle.Height), trap, null);
-                    trapOutline.OutlineTexture = TurretSelectBox;
-                    UITrapOutlineList.Add(trapOutline);
-
-                    //The trap quick info
-                    UITrapQuickInfo uiTrapQuickInfo = new UITrapQuickInfo(trap.Position, trap);
-
-                    uiTrapQuickInfo.RemovalBar = new CircularBar(trap.Position, new Vector2(64, 64), 0, (float)trap.MaxRemovalTime, Color.Transparent, Color.White, HealthBarSprite);
-                    uiTrapQuickInfo.Detontations.Texture = WhiteBlock;
-                    uiTrapQuickInfo.BoldFont = RobotoBold40_2;
-                    uiTrapQuickInfo.Font = RobotoRegular20_0;
-                    uiTrapQuickInfo.Italics = RobotoItalic20_0;
-                    UITrapQuickInfoList.Add(uiTrapQuickInfo);
-                }
-
-                if (!trap.DestinationRectangle.Contains(VectorToPoint(CursorPosition)))
-                {
-                    UITrapOutlineList.RemoveAll(trapOutline => trapOutline.Trap == trap);
-                    UITrapQuickInfoList.RemoveAll(trapQuickInfo => trapQuickInfo.Trap == trap);
-                }
-                #endregion
-
-                #region Remove trap if middle-clicked
-                //if (trap.DestinationRectangle.Contains(new Point((int)CursorPosition.X, (int)CursorPosition.Y)) &&
-                //    CurrentMouseState.MiddleButton == ButtonState.Released &&
-                //    PreviousMouseState.MiddleButton == ButtonState.Pressed)
-                //{
-                //    if (trap.Active == true && trap.CurrentHP == trap.MaxHP && trap.CurrentDetonateLimit == trap.DetonateLimit)
-                //    {
-                //        trap.Active = false;
-                //        Resources += trap.ResourceCost;
-
-                //        foreach (Emitter emitter in YSortedEmitterList.Where(emit => emit.Tether == trap))
-                //        {
-                //            emitter.AddMore = false;
-                //        }
-
-                //        TrapList.Remove(trap);
-                //        DrawableList.Remove(trap);
-
-                //        //Remove the outline from around the trap
-                //        UITrapOutlineList.RemoveAll(uiOutline => uiOutline.Trap == trap);
-                //        UITrapQuickInfoList.RemoveAll(trapQuickInfo => trapQuickInfo.Trap == trap);
-                //    }
-                //}
-                #endregion
-
-                #region Remove trap if right-clicked for long enough
-                if (trap.DestinationRectangle.Contains(new Point((int)CursorPosition.X, (int)CursorPosition.Y)) &&
-                    CurrentMouseState.RightButton == ButtonState.Pressed &&
-                    PreviousMouseState.RightButton == ButtonState.Pressed)
-                {
-                    trap.CurrentRemovalTime += gameTime.ElapsedGameTime.TotalMilliseconds;
-
-                    if (trap.CurrentRemovalTime > trap.MaxRemovalTime)
-                    {
-                        if (trap.Active == true && trap.CurrentHP == trap.MaxHP && trap.CurrentDetonateLimit == trap.DetonateLimit)
+                        if (trap.CurrentRemovalTime > trap.MaxRemovalTime &&
+                            trap.Active == true &&
+                            trap.CurrentHP == trap.MaxHP &&
+                            trap.CurrentDetonateLimit == trap.DetonateLimit)
                         {
                             trap.Active = false;
                             Resources += trap.ResourceCost;
@@ -7854,20 +7767,26 @@ namespace TowerDefensePrototype
                             }
 
                             TrapList.Remove(trap);
-                            DrawableList.Remove(trap);
-
-                            //Remove the outline from around the trap
-                            UITrapOutlineList.RemoveAll(uiOutline => uiOutline.Trap == trap);
-                            UITrapQuickInfoList.RemoveAll(trapQuickInfo => trapQuickInfo.Trap == trap);
+                            DrawableList.Remove(trap); ;
                         }
                     }
+                    else
+                    {
+                        trap.CurrentRemovalTime = 0;
+                    }
+                    #endregion
+                    
+                    trap.TrapQuickInfo.Update(gameTime);
+                    trap.TrapOutline.Visible = true;
                 }
                 else
                 {
+                    trap.TrapQuickInfo.Visible = false;
+                    trap.TrapOutline.Visible = false;
+                    trap.TrapQuickInfo.CurrentVisibilityDelay = 0;
                     trap.CurrentRemovalTime = 0;
                 }
-                #endregion
-
+                
                 #region Specific behaviour based on the trap type
                 switch (trap.TrapType)
                 {
@@ -8238,10 +8157,10 @@ namespace TowerDefensePrototype
 
             //Place the trap fully upgraded onto the terrain when the mouse is clicked
             //Still need to do a better check if there is a trap under where a new trap is going to be placed
-            if (CursorPosition.Y < 672 || CursorPosition.Y > 928)
-            {
-                return;
-            }
+            //if (CursorPosition.Y < 672 || CursorPosition.Y > 928)
+            //{
+            //    return;
+            //}
 
             Vector2 NewTrapPosition = new Vector2(CursorPosition.X - CursorPosition.X % 32, CursorPosition.Y - CursorPosition.Y % 32);
             int resourceCost = TrapCost(SelectedTrap.Value);
@@ -8250,11 +8169,26 @@ namespace TowerDefensePrototype
             {
                 Resources -= resourceCost;
 
-                Trap newTrap = ApplyTrapUpgrades(SelectedTrap.Value, NewTrapPosition);
+                Trap newTrap = ApplyTrapUpgrades(SelectedTrap.Value, NewTrapPosition);                              
                 PlaceUpgradedTrap(newTrap, NewTrapPosition);
 
-                //Make sure that the cooldowns are applied only to trap buttons as they're placed
-                //i.e. not when the button is clicked
+                //Trap outline
+                newTrap.TrapOutline = new UIOutline(newTrap.Position, new Vector2(newTrap.DestinationRectangle.Width, newTrap.DestinationRectangle.Height), newTrap);  
+                newTrap.TrapOutline.OutlineTexture = TurretSelectBox;
+
+                //The trap quick info
+                newTrap.TrapQuickInfo = new UITrapQuickInfo(newTrap.Position, newTrap);
+                newTrap.TrapQuickInfo.RightClickIcon = RightClickIcon;
+                newTrap.TrapQuickInfo.Detontations.Texture = WhiteBlock;
+                newTrap.TrapQuickInfo.BoldFont = RobotoBold40_2;
+                newTrap.TrapQuickInfo.Font = RobotoRegular20_2;
+                newTrap.TrapQuickInfo.Italics = RobotoItalic20_0;
+
+                newTrap.TrapQuickInfo.RemovalBar = new CircularBar(newTrap.Position + new Vector2(25, -25), new Vector2(41, 41), 0,
+                                        (float)newTrap.MaxRemovalTime, Color.Transparent, Color.White, HealthBarSprite);
+
+
+                #region Start button cooldown when trap is placed
                 for (int i = 0; i < CooldownButtonList.Count; i++)
                 {
                     if (CurrentProfile.Buttons[i] != null && CurrentProfile.Buttons[i].CurrentTrap == newTrap.TrapType && StartWave == true)
@@ -8262,6 +8196,7 @@ namespace TowerDefensePrototype
                         CooldownButtonList[i].CoolingDown = true;
                     }
                 }
+                #endregion
 
                 #region Effects to create when a trap is placed, e.g. A dust puff when a wall is placed
                 switch (newTrap.TrapType)

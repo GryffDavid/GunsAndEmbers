@@ -63,6 +63,8 @@ namespace TowerDefensePrototype
         public UIBar TimingBar, HealthBar;
         public AmmoBelt AmmoBelt;
 
+        public UIOutline TurretOutline;
+
         //Chance to Effect - i.e. fire, slow, freeze etc.
         public float ChanceToEffect;
 

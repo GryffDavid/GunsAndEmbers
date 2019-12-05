@@ -24,7 +24,7 @@ namespace TowerDefensePrototype
             Trap = trap;
             Turret = turret;
             Invader = invader;
-            Visible = true;
+            Visible = false;
         }
 
         public void Draw(SpriteBatch spriteBatch)

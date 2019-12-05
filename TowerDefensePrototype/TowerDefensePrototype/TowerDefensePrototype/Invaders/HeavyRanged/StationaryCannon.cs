@@ -24,6 +24,7 @@ namespace TowerDefensePrototype
             MaxHP = 200;
             ResourceMinMax = new Vector2(8, 20);
             YRange = new Vector2(700, 900);
+            IntelligenceRange = new Vector2(0.8f, 1.0f);
 
             InvaderType = InvaderType.StationaryCannon;
 
@@ -60,6 +61,11 @@ namespace TowerDefensePrototype
                                     {
                                         TrapPosition = TargetTrap.BoundingBox.Min.X;
                                         Position.X += (Math.Abs(TargetTrap.BoundingBox.Max.X - BoundingBox.Min.X) + 1);
+
+                                        //INTELLIGENCE DECISION REQUIRED HERE
+                                        //It should affect the number of loop times
+                                        //Chance to change behaviour 
+                                        //and time to change
 
                                         #region Only adjust to AttackTraps if the invader is intelligent or stuck in a loop
                                         if (Random.NextDouble() > 0.1 || AttackTowerLoopCounter > 3)
@@ -116,6 +122,9 @@ namespace TowerDefensePrototype
 
                                         //Definitely stuck between two traps. Attack the one behind it.
                                         //Might let other invaders in to help with the one in front
+
+                                        //INTELLIGENCE DECISION REQUIRED HERE
+                                        //It should affect the number of loop times
                                         if (BounceLoopCounter > 2)
                                         {
                                             InTrapRange = true;
@@ -315,6 +324,10 @@ namespace TowerDefensePrototype
                                                 //Could also check the height of the Top of the trap above the invader. 
                                                 //Too high up means it should back up and attack the trap. 
                                                 //Low enough down means it should just back up and ajust its trajectory
+
+                                                //INTELLIGENCE DECISION REQUIRED HERE
+                                                //It should affect the chance to change behaviour
+                                                //as well as the time it takes to change
                                                 if (Random.NextDouble() > 0.5)
                                                 {
                                                     CanAttack = false;
@@ -405,7 +418,7 @@ namespace TowerDefensePrototype
                                                     CurrentMacroBehaviour = MacroBehaviour.AttackTower;
                                                     ResetCollisions();
                                                     break;
-                                                }                                            
+                                                }
                                             #endregion
 
                                             #region Hit the shield, must be quite close to tower. Attack tower instead
@@ -442,6 +455,11 @@ namespace TowerDefensePrototype
                                             }
                                             #endregion
                                         }
+                                    }
+                                    else
+                                    {
+                                        CurrentAngle = 0;
+                                        CurrentMicroBehaviour = MicroBehaviour.AdjustTrajectory;
                                     }
                                 }
                                 break;

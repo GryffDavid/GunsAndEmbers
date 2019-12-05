@@ -167,6 +167,8 @@ namespace TowerDefensePrototype
             }
         }
 
+        //public double CurrentMacroChangeTime, MaxMacroChangeTime; //The time it takes for the MacroBehaviour to change
+        //public MacroBehaviour NextMacroBehaviour;// { get; set; }
         public MacroBehaviour PreviousMacroBehaviour;
         private MacroBehaviour _CurrentMacroBehaviour;
         public MacroBehaviour CurrentMacroBehaviour
@@ -179,6 +181,8 @@ namespace TowerDefensePrototype
             }
         }
 
+        //public double CurrentMicroChangeTime, MaxMicroChangeTime; //The time it takes for the MicroBehaviour to change
+        //public MicroBehaviour NextMicroBehaviour;// { get; set; }
         public MicroBehaviour PreviousMicroBehavior;
         private MicroBehaviour _CurrentMicroBehaviour;
         public MicroBehaviour CurrentMicroBehaviour
@@ -230,7 +234,12 @@ namespace TowerDefensePrototype
         public double BeamDelay, CurrentBeamDelay,
                       HealDelay, CurrentHealDelay;
 
-        public float Intelligence;
+        public Vector2 IntelligenceRange;
+        public float Intelligence;        
+
+        public Vector2 CowardiceRange;
+        public float Cowardice; //The chance that this invader will decide to rather back up to avoid damage after taking a big hit
+                                //0 means the invader will never, ever back up even after taking a heavy hit
         #endregion
 
         public virtual void Initialize()
@@ -249,6 +258,11 @@ namespace TowerDefensePrototype
             HealthBar = new UIBar(new Vector2(100, 100), new Vector2(32, 4), Color.DarkRed, false);
 
             Color = Color.White;
+
+            if (IntelligenceRange != Vector2.Zero)
+            {
+                Intelligence = (Random.Next((int)IntelligenceRange.X * 100, (int)IntelligenceRange.Y * 100))/10;
+            }
 
             #region Set up Vertices
             #region Sprite Vertices
@@ -342,6 +356,36 @@ namespace TowerDefensePrototype
                 {
                     InvaderAnimationState = AnimationState_Invader.Stand;
                 }
+
+                #region Update behaviours and behaviour delays
+                //#region Micro Behviour
+                //if (CurrentMicroChangeTime < MaxMicroChangeTime &&
+                //    CurrentMicroBehaviour != NextMicroBehaviour)
+                //{
+                //    CurrentMicroChangeTime += gameTime.ElapsedGameTime.TotalMilliseconds;
+                //}
+
+                //if (CurrentMicroChangeTime >= MaxMicroChangeTime)
+                //{
+                //    CurrentMicroBehaviour = NextMicroBehaviour;
+                //    CurrentMicroChangeTime = 0;
+                //}
+                //#endregion
+
+                //#region Macro Behaviour
+                //if (CurrentMacroChangeTime < MaxMacroChangeTime &&
+                //    CurrentMacroBehaviour != NextMacroBehaviour)
+                //{
+                //    CurrentMacroChangeTime += gameTime.ElapsedGameTime.TotalMilliseconds;
+                //}
+
+                //if (CurrentMacroChangeTime >= MaxMacroChangeTime)
+                //{
+                //    CurrentMacroBehaviour = NextMacroBehaviour;
+                //    CurrentMacroChangeTime = 0;
+                //}
+                //#endregion
+                #endregion
 
                 #region Update position and vertices
                 if (Velocity != Vector2.Zero)
