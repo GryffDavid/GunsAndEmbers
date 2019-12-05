@@ -58,6 +58,7 @@ namespace TowerDefensePrototype
                 MaxFireDelay = 1500,
                 CurrentFireDelay = 0
             };
+
             //MaxFireDelay = 1500;
             //CurrentFireDelay = 0;
             RangedDamage = 40;
@@ -222,8 +223,7 @@ namespace TowerDefensePrototype
                                         //When the invader gets in range. It chooses the final firing angle
                                         if (InTowerRange == false)
                                         {
-                                            float nextAngle = Random.Next((int)AngleRange.X, (int)AngleRange.Y);
-                                            EndAngle = MathHelper.ToRadians(nextAngle);
+                                            EndAngle = GetNextAngle();
                                             Speed = 0.75f;
                                         }
 
@@ -269,7 +269,7 @@ namespace TowerDefensePrototype
                                         //When the invader gets in range. It chooses the final firing angle
                                         if (InTowerRange == false)
                                         {
-                                            EndAngle = MathHelper.ToRadians(Random.Next((int)AngleRange.X, (int)AngleRange.Y));
+                                            EndAngle = GetNextAngle();
                                         }
 
                                         InTowerRange = true;
@@ -287,8 +287,7 @@ namespace TowerDefensePrototype
                                     if (DistToTrap >= MinTrapRange)
                                     {
                                         InTrapRange = true;
-                                        float nextAngle = Random.Next((int)10, (int)30);
-                                        EndAngle = MathHelper.ToRadians(nextAngle);
+                                        EndAngle = MathHelper.ToRadians(Random.Next((int)10, (int)30));
                                         CurrentMicroBehaviour = MicroBehaviour.AdjustTrajectory;
                                         CurrentBehaviourDelay = 0;
                                         Velocity.X = 0;

@@ -50,6 +50,7 @@ namespace TowerDefensePrototype
 
         //VertexPositionColorTexture[] vertices = new VertexPositionColorTexture[4];
         //int[] indices = new int[6];
+
         public Vector2[] texCoords = new Vector2[4];
 
         public Particle(Texture2D texture, Vector2 position, float angle, float speed, float maxTime,
@@ -236,11 +237,12 @@ namespace TowerDefensePrototype
                     vertices[1].Position = new Vector3(CurrentPosition.X + (Texture.Width * CurrentScale) / 2, CurrentPosition.Y - (Texture.Height * CurrentScale) / 2, 0);
                     vertices[2].Position = new Vector3(CurrentPosition.X + (Texture.Width * CurrentScale) / 2, CurrentPosition.Y + (Texture.Height * CurrentScale) / 2, 0);
                     vertices[3].Position = new Vector3(CurrentPosition.X - (Texture.Width * CurrentScale) / 2, CurrentPosition.Y + (Texture.Height * CurrentScale) / 2, 0);
+
+                    DestinationRectangle = new Rectangle((int)CurrentPosition.X, (int)CurrentPosition.Y, (int)(Texture.Width * CurrentScale), (int)(Texture.Height * CurrentScale));
                 }
 
                 Velocity.Y += Gravity * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
 
-                DestinationRectangle = new Rectangle((int)CurrentPosition.X, (int)CurrentPosition.Y, (int)(Texture.Width * CurrentScale), (int)(Texture.Height * CurrentScale));
                 #endregion
 
                 #region Handle bouncing
@@ -353,12 +355,12 @@ namespace TowerDefensePrototype
                     DrawDepth = DestinationRectangle.Center.Y / 1080.0f;
                 }
 
-                if (CurrentColor != EndColor)
-                {
-                    CurrentColor = Color.Lerp(EndColor, StartColor, PercentageTime);
-                }
+                //if (CurrentColor != EndColor)
+                //{
+                //    CurrentColor = Color.Lerp(EndColor, StartColor, PercentageTime);
+                //}
 
-                Color = CurrentColor * CurrentTransparency;
+                //Color = CurrentColor * CurrentTransparency;
 
                 //if (RotationIncrement != 0)
                 RadRotation = MathHelper.ToRadians(CurrentRotation);
@@ -377,27 +379,29 @@ namespace TowerDefensePrototype
         {
             //This should only be applied if the rotation changes.
             //If the particle does not have a rotation increment, it should inherit its World Matrix from the emitter
-            //This should stop each particle having to change the world value for the effect
+            ////This should stop each particle having to change the world value for the effect
 
             //*****************************************************************
             //NOTE: THE TEXTURE PARAMETER IS NOW SET IN THE BASE DRAWABLE CLASS
             //*****************************************************************
 
-            effect.Parameters["World"].SetValue(Matrix.CreateTranslation(new Vector3(-CurrentPosition.X, -CurrentPosition.Y, 0)) *
-                                                Matrix.CreateRotationZ(RadRotation) *
-                                                Matrix.CreateTranslation(new Vector3(CurrentPosition.X, CurrentPosition.Y, 0)));
+            //TODO Could perform this matrix multiplication on the GPU instead. Reduce CPU load per particle
+            Matrix world = Matrix.CreateTranslation(new Vector3(-CurrentPosition.X, -CurrentPosition.Y, 0)) *
+                           Matrix.CreateRotationZ(RadRotation) *
+                           Matrix.CreateTranslation(new Vector3(CurrentPosition.X, CurrentPosition.Y, 0));
+
+            effect.Parameters["World"].SetValue(world);
             
-            effect.Parameters["Color"].SetValue(new Vector4(Color.R / 255f, Color.G / 255f, Color.B / 255f, Color.A / 255f));
+            //effect.Parameters["Color"].SetValue(new Vector4(Color.R / 255f, Color.G / 255f, Color.B / 255f, Color.A / 255f));
+
+            //TODO: COULD MAKE THIS SO THAT IF A PARTICLE HAS THE SAME START AND END COLORS THAT THE COLOR IS ONLY SET INSTEAD OF THE OTHER VARIABLES
+            effect.Parameters["StartColor"].SetValue(new Vector4(StartColor.R / 255f, StartColor.G / 255f, StartColor.B / 255f, StartColor.A / 255f));
+            effect.Parameters["EndColor"].SetValue(new Vector4(EndColor.R / 255f, EndColor.G / 255f, EndColor.B / 255f, EndColor.A / 255f));
+            effect.Parameters["LerpPerc"].SetValue(PercentageTime);
+            effect.Parameters["Trans"].SetValue(CurrentTransparency);
+            
 
             base.Draw(graphics, effect);
-            //effect.Parameters ["Color"].SetValue(new Vector4(Color.R / 255f, Color.G / 255f, Color.B / 255f, Color.A / 255f));
-
-            //foreach (EffectPass pass in effect.CurrentTechnique.Passes)
-            //{
-            //    pass.Apply();
-            //    graphics.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, vertices, 0, 4, indices, 0, 2, VertexPositionColorTexture.VertexDeclaration);
-            //}
-
         }
 
         public override void DrawSpriteDepth(GraphicsDevice graphics, Effect effect)

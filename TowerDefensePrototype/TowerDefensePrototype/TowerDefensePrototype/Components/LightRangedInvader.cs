@@ -227,5 +227,14 @@ namespace TowerDefensePrototype
             HitTurret = 0;
             HitTrap = 0;
         }
+
+        /// <summary>
+        /// Returns a random angle in radians between the range set by AngleRange.X and AngleRange.Y
+        /// </summary>
+        /// <returns></returns>
+        public float GetNextAngle()
+        {
+            return MathHelper.ToRadians(Random.Next((int)AngleRange.X, (int)AngleRange.Y));
+        }
     }
 }

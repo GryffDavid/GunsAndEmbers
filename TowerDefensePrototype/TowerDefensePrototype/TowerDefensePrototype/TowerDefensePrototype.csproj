@@ -191,7 +191,6 @@
     <Compile Include="UIComponents\FrameRateCounter.cs" />
     <Compile Include="Components\LightRangedInvader.cs" />
     <Compile Include="UIComponents\ProgressBar.cs" />
-    <Compile Include="Components\LightningBolt.cs" />
     <Compile Include="Basics\Profile.cs" />
     <Compile Include="Components\HeavyRangedInvader.cs" />
     <Compile Include="Basics\Quad.cs" />

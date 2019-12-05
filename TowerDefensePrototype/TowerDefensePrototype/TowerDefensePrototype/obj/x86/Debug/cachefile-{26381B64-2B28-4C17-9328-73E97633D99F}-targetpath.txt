@@ -235,6 +235,7 @@ Content\Icons\TurretIcons\FelCannonTurretIcon.xnb
 Content\Icons\TrapIcons\PopFragTrapIcon.xnb
 Content\Traps\GlueTrap.xnb
 Content\Particles\PaintSplat4.xnb
+Content\Backgrounds\GroundNormalMap.xnb
 Content\Sounds\Menu\MenuClick.xnb
 Content\Sounds\FireTrapStart.xnb
 Content\Sounds\Menu\MenuAmbiance.xnb
@@ -272,4 +273,3 @@ Content\Shaders\NoBlack.xnb
 Content\StoryDialogue\Level1Dialogue.xnb
 Content\StoryDialogue\Level2Dialogue.xnb
 Content\StoryDialogue\LoadoutMenuDialogue.xnb
-Content\Backgrounds\GroundNormalMap.xnb

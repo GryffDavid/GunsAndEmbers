@@ -18,17 +18,18 @@ namespace TowerDefensePrototype
         int previousFrameRate = 0;
         int frameCounter = 0;
         TimeSpan elapsedTime = TimeSpan.Zero;
+        List<int> FPSList = new List<int>();
 
         public void Update(GameTime gameTime)
         {
-
             elapsedTime += gameTime.ElapsedGameTime;
 
-            if (elapsedTime > TimeSpan.FromSeconds(1))
+            if (elapsedTime > TimeSpan.FromSeconds(0.25f))
             {
-                elapsedTime -= TimeSpan.FromSeconds(1);
+                elapsedTime -= TimeSpan.FromSeconds(1f);
                 frameRate = frameCounter;
                 frameCounter = 0;
+                FPSList.Add(frameRate);
             }
 
             if (frameRate > MaxFrameRate)
@@ -40,7 +41,6 @@ namespace TowerDefensePrototype
             {
                 MinFrameRate = frameRate;
             }
-
 
             previousFrameRate = frameRate;
 

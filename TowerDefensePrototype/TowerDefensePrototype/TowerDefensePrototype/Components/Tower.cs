@@ -86,6 +86,11 @@ namespace TowerDefensePrototype
             //base.DrawSpriteNormal(spriteBatch);
         }
 
+        public void Draw(SpriteBatch spriteBatch)
+        {
+            spriteBatch.Draw(Texture, DestinationRectangle, new Rectangle(0, 0, Texture.Width, Texture.Height/2), Color, 0, Vector2.Zero, SpriteEffects.None, 1);
+        }
+
         //public override void Draw(SpriteBatch spriteBatch)
         //{
         //    spriteBatch.Draw(Texture, DestinationRectangle, null, Color, 0, Vector2.Zero, SpriteEffects.None, 1);
@@ -110,11 +115,6 @@ namespace TowerDefensePrototype
         //    //base.DrawSpriteDepth(graphics, effect);
         //}
 
-        public void Draw(SpriteBatch spriteBatch)
-        {
-            //DRAW SHADOW HERE
-            spriteBatch.Draw(Texture, DestinationRectangle, new Rectangle(0, 0, Texture.Width, Texture.Height/2), Color, 0, Vector2.Zero, SpriteEffects.None, 1);
-        }
 
         public void TakeDamage(float value)
         {

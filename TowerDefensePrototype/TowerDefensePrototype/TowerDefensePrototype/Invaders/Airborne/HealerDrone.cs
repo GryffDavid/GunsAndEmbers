@@ -17,8 +17,6 @@ namespace TowerDefensePrototype
         public Vector2 HealHeightRange = new Vector2(400, 500);
         public float CurrentHeight;
         public bool IsHealing = false;
-        public LightningBolt Bolt = new LightningBolt(Vector2.One, Vector2.Zero, Color.Transparent, 1f);
-        public List<LightningBolt> BoltList = new List<LightningBolt>();
 
         //MEDBOT
         //Flies above the other invaders and heals them when necessary.
@@ -184,7 +182,6 @@ namespace TowerDefensePrototype
                 {
                     TargettingInvader = false;
                     IsHealing = false;
-                    BoltList.Clear();
 
                     CurrentHeight = (float)Game1.RandomDouble(YRange.X, YRange.Y);
                     Velocity.X = 0;
@@ -216,15 +213,7 @@ namespace TowerDefensePrototype
                     Velocity.Y = Game1.LerpTime(Velocity.Y, -1 * Speed, 0.1f, gameTime);
                 }
             }
-
-            
-
-            foreach (LightningBolt bolt in BoltList)
-            {
-                bolt.Update(gameTime);
-            }
-
-            BoltList.RemoveAll(Bolt => Bolt.Alpha <= 0);
+                        
             base.Update(gameTime, cursorPosition);
         }
 

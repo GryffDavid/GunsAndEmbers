@@ -19,6 +19,9 @@ namespace TowerDefensePrototype
 
         public Profile()
         {
+            //TurretDictionary.Add(TurretType.MachineGun, true);
+            //TrapDictionary.Add(TrapType.Wall, true);
+
             foreach (TurretType turretType in Enum.GetValues(typeof(TurretType)))
             {
                 TurretDictionary.Add(turretType, true);

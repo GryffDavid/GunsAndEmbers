@@ -38,7 +38,7 @@ namespace TowerDefensePrototype
         public bool Grow;
         public string TextureName;
         public int Burst;
-        static Random Random = new Random();
+        //static Random Random = new Random();
         public double IntervalTime, CurrentTime;
         public SpriteEffects Orientation = SpriteEffects.None;
         public Invader Anchor;
@@ -521,8 +521,6 @@ namespace TowerDefensePrototype
 
         public override void Draw(GraphicsDevice graphics, Effect effect)
         {
-            //effect.Parameters["Texture"].SetValue(Texture);
-
             foreach (Particle particle in ParticleList)
             {
                 particle.Draw(graphics, effect);
@@ -539,11 +537,11 @@ namespace TowerDefensePrototype
 
         public override void DrawSpriteOcclusion(GraphicsDevice graphics, BasicEffect effect)
         {
-
             foreach (Particle particle in ParticleList)
             {
                 particle.DrawSpriteOcclusion(graphics, effect);
             }
+
             base.DrawSpriteOcclusion(graphics, effect);
         }
 

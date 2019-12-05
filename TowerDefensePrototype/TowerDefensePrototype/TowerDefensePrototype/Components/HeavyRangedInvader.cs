@@ -163,28 +163,28 @@ namespace TowerDefensePrototype
                 barrelVertices[0] = new VertexPositionColorTexture()
                 {
                     Position = new Vector3(BarrelDestinationRectangle.Left, BarrelDestinationRectangle.Top, 0),
-                    TextureCoordinate = BarrelAnimation.dTopLeftTexCooord,
+                    TextureCoordinate = BarrelAnimation.DiffuseCoords.TopLeft,
                     Color = Color
                 };
 
                 barrelVertices[1] = new VertexPositionColorTexture()
                 {
                     Position = new Vector3(BarrelDestinationRectangle.Left + BarrelDestinationRectangle.Width, BarrelDestinationRectangle.Top, 0),
-                    TextureCoordinate = BarrelAnimation.dTopRightTexCoord,
+                    TextureCoordinate = BarrelAnimation.DiffuseCoords.TopRight,
                     Color = Color
                 };
 
                 barrelVertices[2] = new VertexPositionColorTexture()
                 {
                     Position = new Vector3(BarrelDestinationRectangle.Left + BarrelDestinationRectangle.Width, BarrelDestinationRectangle.Top + BarrelDestinationRectangle.Height, 0),
-                    TextureCoordinate = BarrelAnimation.dBottomRightTexCoord,
+                    TextureCoordinate = BarrelAnimation.DiffuseCoords.BottomRight,
                     Color = Color
                 };
 
                 barrelVertices[3] = new VertexPositionColorTexture()
                 {
                     Position = new Vector3(BarrelDestinationRectangle.Left, BarrelDestinationRectangle.Top + BarrelDestinationRectangle.Height, 0),
-                    TextureCoordinate = BarrelAnimation.dBottomLeftTexCoord,
+                    TextureCoordinate = BarrelAnimation.DiffuseCoords.BottomLeft,
                     Color = Color
                 };
 
@@ -238,28 +238,28 @@ namespace TowerDefensePrototype
                 barrelVertices[0] = new VertexPositionColorTexture()
                 {
                     Position = new Vector3(BarrelDestinationRectangle.Left, BarrelDestinationRectangle.Top, 0),
-                    TextureCoordinate = BarrelAnimation.dTopLeftTexCooord,
+                    TextureCoordinate = BarrelAnimation.DiffuseCoords.TopLeft,
                     Color = Color
                 };
 
                 barrelVertices[1] = new VertexPositionColorTexture()
                 {
                     Position = new Vector3(BarrelDestinationRectangle.Left + BarrelDestinationRectangle.Width, BarrelDestinationRectangle.Top, 0),
-                    TextureCoordinate = BarrelAnimation.dTopRightTexCoord,
+                    TextureCoordinate = BarrelAnimation.DiffuseCoords.TopRight,
                     Color = Color
                 };
 
                 barrelVertices[2] = new VertexPositionColorTexture()
                 {
                     Position = new Vector3(BarrelDestinationRectangle.Left + BarrelDestinationRectangle.Width, BarrelDestinationRectangle.Top + BarrelDestinationRectangle.Height, 0),
-                    TextureCoordinate = BarrelAnimation.dBottomRightTexCoord,
+                    TextureCoordinate = BarrelAnimation.DiffuseCoords.BottomRight,
                     Color = Color
                 };
 
                 barrelVertices[3] = new VertexPositionColorTexture()
                 {
                     Position = new Vector3(BarrelDestinationRectangle.Left, BarrelDestinationRectangle.Top + BarrelDestinationRectangle.Height, 0),
-                    TextureCoordinate = BarrelAnimation.dBottomLeftTexCoord,
+                    TextureCoordinate = BarrelAnimation.DiffuseCoords.BottomLeft,
                     Color = Color
                 };
 
@@ -364,6 +364,9 @@ namespace TowerDefensePrototype
                   
         }
 
+        /// <summary>
+        /// Reset the numbers of collisions back to 0
+        /// </summary>
         public void ResetCollisions()
         {
             TotalHits = 0;
@@ -374,6 +377,24 @@ namespace TowerDefensePrototype
             HitTurret = 0;
             HitTrap = 0;
             HitScreen = 0;
+        }
+
+        /// <summary>
+        /// Returns a random angle in radians between the range set by AngleRange.X and AngleRange.Y
+        /// </summary>
+        /// <returns></returns>
+        public float GetNextAngle()
+        {
+            return MathHelper.ToRadians(Random.Next((int)AngleRange.X, (int)AngleRange.Y)); 
+        }
+
+        /// <summary>
+        /// Return a random launch velocity between the range set by AngleRange.X and AngleRange.Y
+        /// </summary>
+        /// <returns></returns>
+        public float GetLaunchVelocity()
+        {
+            return Random.Next((int)(LaunchVelocityRange.X), (int)(LaunchVelocityRange.Y));
         }
     }
 }

@@ -72,8 +72,7 @@ namespace TowerDefensePrototype
                                             //When the invader gets in range. It chooses the final firing angle
                                             if (InTowerRange == false)
                                             {
-                                                float nextAngle = Random.Next((int)AngleRange.X, (int)AngleRange.Y);
-                                                EndAngle = MathHelper.ToRadians(nextAngle);
+                                                EndAngle = GetNextAngle();
                                                 Speed = 0.75f;
                                             }
 

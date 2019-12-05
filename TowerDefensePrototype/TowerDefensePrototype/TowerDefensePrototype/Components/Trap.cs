@@ -116,10 +116,10 @@ namespace TowerDefensePrototype
 
             #region Sprite Vertices
             base.Initialize();
-            vertices[0].TextureCoordinate = CurrentAnimation.dTopLeftTexCooord;
-            vertices[1].TextureCoordinate = CurrentAnimation.dTopRightTexCoord;
-            vertices[2].TextureCoordinate = CurrentAnimation.dBottomRightTexCoord;
-            vertices[3].TextureCoordinate = CurrentAnimation.dBottomLeftTexCoord;
+            vertices[0].TextureCoordinate = CurrentAnimation.DiffuseCoords.TopLeft;
+            vertices[1].TextureCoordinate = CurrentAnimation.DiffuseCoords.TopRight;
+            vertices[2].TextureCoordinate = CurrentAnimation.DiffuseCoords.BottomRight;
+            vertices[3].TextureCoordinate = CurrentAnimation.DiffuseCoords.BottomLeft;
             #endregion
 
             if (OnGround == false)
@@ -155,10 +155,10 @@ namespace TowerDefensePrototype
             //}
             //#endregion
 
-            vertices[0].TextureCoordinate = CurrentAnimation.dTopLeftTexCooord;
-            vertices[1].TextureCoordinate = CurrentAnimation.dTopRightTexCoord;
-            vertices[2].TextureCoordinate = CurrentAnimation.dBottomRightTexCoord;
-            vertices[3].TextureCoordinate = CurrentAnimation.dBottomLeftTexCoord;
+            vertices[0].TextureCoordinate = CurrentAnimation.DiffuseCoords.TopLeft;
+            vertices[1].TextureCoordinate = CurrentAnimation.DiffuseCoords.TopRight;
+            vertices[2].TextureCoordinate = CurrentAnimation.DiffuseCoords.BottomRight;
+            vertices[3].TextureCoordinate = CurrentAnimation.DiffuseCoords.BottomLeft;
 
             #region Handle the timing between detonations and detonate limits
             if (CurrentDetonateDelay < DetonateDelay)
@@ -278,7 +278,7 @@ namespace TowerDefensePrototype
         {
             //Draw the lower half of the sprite (The normal map) with a basic effect applied
             if (Active == true)
-                if (CurrentAnimation.AnimationType == AnimationType.Normal || CurrentAnimation.AnimationType == AnimationType.Emissive)
+                if (CurrentAnimation.AnimationType == GraphicsType.Normal || CurrentAnimation.AnimationType == GraphicsType.Emissive)
                 {
                     effect.TextureEnabled = true;
                     effect.VertexColorEnabled = true;
@@ -287,28 +287,28 @@ namespace TowerDefensePrototype
                     normalVertices[0] = new VertexPositionColorTexture()
                     {
                         Position = new Vector3(DestinationRectangle.Left, DestinationRectangle.Top, 0),
-                        TextureCoordinate = CurrentAnimation.nTopLeftTexCooord,
+                        TextureCoordinate = CurrentAnimation.NormalCoords.TopLeft,
                         Color = Color
                     };
 
                     normalVertices[1] = new VertexPositionColorTexture()
                     {
                         Position = new Vector3(DestinationRectangle.Left + DestinationRectangle.Width, DestinationRectangle.Top, 0),
-                        TextureCoordinate = CurrentAnimation.nTopRightTexCoord,
+                        TextureCoordinate = CurrentAnimation.NormalCoords.TopRight,
                         Color = Color
                     };
 
                     normalVertices[2] = new VertexPositionColorTexture()
                     {
                         Position = new Vector3(DestinationRectangle.Left + DestinationRectangle.Width, DestinationRectangle.Top + DestinationRectangle.Height, 0),
-                        TextureCoordinate = CurrentAnimation.nBottomRightTexCoord,
+                        TextureCoordinate = CurrentAnimation.NormalCoords.BottomRight,
                         Color = Color
                     };
 
                     normalVertices[3] = new VertexPositionColorTexture()
                     {
                         Position = new Vector3(DestinationRectangle.Left, DestinationRectangle.Top + DestinationRectangle.Height, 0),
-                        TextureCoordinate = CurrentAnimation.nBottomLeftTexCoord,
+                        TextureCoordinate = CurrentAnimation.NormalCoords.BottomLeft,
                         Color = Color
                     };
 

@@ -15,7 +15,7 @@ namespace TowerDefensePrototype
         //public Shield Shield;// = new Shield();
         public UIBar ShieldBar;
         public float ShieldRadius = 80f;
-        public List<LightningBolt> BoltList = new List<LightningBolt>();
+        //public List<LightningBolt> BoltList = new List<LightningBolt>();
 
         public ShieldGenerator(Vector2 position, Vector2? yRange = null)
             : base(position, yRange)
@@ -100,12 +100,12 @@ namespace TowerDefensePrototype
                 #endregion
             }
 
-            foreach (LightningBolt bolt in BoltList)
-            {
-                bolt.Update(gameTime);
-            }
+            //foreach (LightningBolt bolt in BoltList)
+            //{
+            //    bolt.Update(gameTime);
+            //}
 
-            BoltList.RemoveAll(Bolt => Bolt.Alpha <= 0);
+            //BoltList.RemoveAll(Bolt => Bolt.Alpha <= 0);
 
             base.Update(gameTime, cursorPosition);
         }

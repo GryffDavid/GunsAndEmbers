@@ -281,6 +281,7 @@ namespace TowerDefensePrototype
                                     {
                                         UpdateFireDelay(gameTime);
 
+                                        //TargetTrap ended up null here for some reason. Not too important because this code should be temporary                                        
                                         if (Math.Abs(Position.X - TargetTrap.DestinationRectangle.Left) > 200)
                                         {
                                             CurrentMicroBehaviour = MicroBehaviour.MovingForwards;

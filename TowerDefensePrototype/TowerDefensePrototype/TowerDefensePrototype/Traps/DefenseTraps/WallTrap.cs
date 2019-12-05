@@ -23,6 +23,7 @@ namespace TowerDefensePrototype
             MaxHP = 100;
             TrapType = TrapType.Wall;
             DetonateLimit = -1;
+            Normal = true;
         }
     }
 }

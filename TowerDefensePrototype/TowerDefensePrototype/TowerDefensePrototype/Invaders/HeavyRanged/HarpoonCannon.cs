@@ -42,6 +42,7 @@ namespace TowerDefensePrototype
                 MaxFireDelay = 6500,
                 CurrentFireDelay = 0
             };
+
             //MaxFireDelay = 6500;
             //CurrentFireDelay = 0;
             RangedDamage = 10;
@@ -62,9 +63,10 @@ namespace TowerDefensePrototype
                         {
                             Velocity.X = 0;
 
+                            //The invader has pulled down a turret. Move forwards again for another go
                             if (Rope == null || Rope.Sticks.Count == 0)
                             {
-                                CurrentMicroBehaviour = MicroBehaviour.MovingForwards;                                
+                                CurrentMicroBehaviour = MicroBehaviour.MovingForwards;
                             }
                         }
                         break;
@@ -84,32 +86,24 @@ namespace TowerDefensePrototype
 
                             switch (CurrentMacroBehaviour)
                             {
-                                #region Attack Tower
+                                #region AttackTower
                                 case MacroBehaviour.AttackTower:
                                     {
+                                        //If the invader is in range, get an angle and start adjusting the barrel
                                         if (DistToTower <= MinTowerRange)
                                         {
-                                            //When the invader gets in range. It chooses the final firing angle
+                                            CurrentMicroBehaviour = MicroBehaviour.Stationary;
+
                                             if (InTowerRange == false)
                                             {
-                                                float nextAngle = Random.Next((int)AngleRange.X, (int)AngleRange.Y);
-                                                EndAngle = MathHelper.ToRadians(nextAngle);
-                                                Speed = 0.75f;
+                                                EndAngle = GetNextAngle();
                                             }
 
                                             InTowerRange = true;
                                             CurrentMicroBehaviour = MicroBehaviour.AdjustTrajectory;
                                         }
                                     }
-                                    break;
-                                #endregion
-
-                                #region Attack Traps
-                                case MacroBehaviour.AttackTraps:
-                                    {
-
-                                    }
-                                    break;
+                                    break; 
                                 #endregion
                             }
                         }
@@ -119,6 +113,7 @@ namespace TowerDefensePrototype
                     #region MovingBackwards
                     case MicroBehaviour.MovingBackwards:
                         {
+                            //This is done after the harpoon is attached. Start pulling backwards
                             #region Move
                             Direction.X = 1;
 
@@ -166,19 +161,32 @@ namespace TowerDefensePrototype
                                 #region Attack Tower
                                 case MacroBehaviour.AttackTower:
                                     {
-                                        if (InTowerRange == true && HarpoonCannonBehaviour == SpecificBehaviour.Unattached)
+                                        //In range, but the harpoon is currently not attached to anything
+                                        if (InTowerRange == true &&
+                                            HarpoonCannonBehaviour == SpecificBehaviour.Unattached)
                                         {
                                             UpdateFireDelay(gameTime);
 
+                                            //There was a collision of some sort
                                             if (TotalHits > 0)
                                             {
-                                                if (HitTurret == 1)
+                                                //Hit a turret! The rope is attached to the turret now. Retract the rope until taut.
+                                                if (HitTurret >= 1)
                                                 {
-                                                    HarpoonCannonBehaviour = SpecificBehaviour.Attached;                                                    
+                                                    HarpoonCannonBehaviour = SpecificBehaviour.Attached;
                                                     ResetCollisions();
                                                 }
 
-                                                if (HitScreen == 1)
+                                                //Hit the edge of the screen. Do nothing. Retract the rope.
+                                                if (HitScreen >= 1)
+                                                {
+                                                    HarpoonCannonBehaviour = SpecificBehaviour.Retract;
+                                                    ResetCollisions();
+                                                }
+
+                                                //Hit the tower (Technically impossible because of collision check code for harpoon projectiles
+                                                //Do nothing. Retract the rope
+                                                if (HitTower >= 1)
                                                 {
                                                     HarpoonCannonBehaviour = SpecificBehaviour.Retract;
                                                     ResetCollisions();
@@ -186,15 +194,7 @@ namespace TowerDefensePrototype
                                             }
                                         }
                                     }
-                                    break;
-                                #endregion
-
-                                #region Attack Traps
-                                case MacroBehaviour.AttackTraps:
-                                    {
-
-                                    }
-                                    break;
+                                    break; 
                                 #endregion
                             }
                         }
@@ -206,17 +206,17 @@ namespace TowerDefensePrototype
             #region Handle Rope Behaviour
             switch (HarpoonCannonBehaviour)
             {
+                #region Unattached
                 case SpecificBehaviour.Unattached:
                     {
 
                     }
                     break;
+                #endregion
 
+                #region Attached
                 case SpecificBehaviour.Attached:
                     {
-                        //Rope.StartPoint = new Vector2(0, 0);
-                        //Rope.EndPoint = new Vector2(1920 / 2, 1080 / 2);
-
                         RopeDelay += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
 
                         if (Rope.Sticks.Count > 50 &&
@@ -226,10 +226,10 @@ namespace TowerDefensePrototype
                             Rope.Segments = Rope.Sticks.Count;
                             Rope.Sticks.RemoveAt(Rope.Sticks.Count - 1);
                             Rope.StartPoint = BarrelEnd;
-                            //Rope.EndPoint = new Vector2(0, 0);
                             RopeDelay = 0;
                         }
 
+                        //The turret was destroyed! Retract the rope and move forwards again
                         if (HarpoonedTurret.CurrentHealth == 0)
                         {
                             Rope.Sticks.RemoveAt(0);
@@ -237,19 +237,24 @@ namespace TowerDefensePrototype
                             break;
                         }
 
+                        //The rope has been retracted enough to be taut. Move backwards to pull the turret down
                         if (Rope.Sticks.Count == 50 && Rope.Sticks[0] != null)
                         {
                             HarpoonCannonBehaviour = SpecificBehaviour.PullTaut;
                             break;
                         }
                     }
-                    break;
+                    break; 
+                #endregion
 
+                #region PullTaut
                 case SpecificBehaviour.PullTaut:
                     {
+                        //The rope is shorter now. Move backwards to pull the turret down
                         Rope.StartPoint = BarrelEnd;
                         CurrentMicroBehaviour = MicroBehaviour.MovingBackwards;
 
+                        //Moved back 300 pixels. Destroy the turret and detach the rope
                         if (DistToTower > MinTowerRange + 300)
                         {
                             if (Rope.Sticks.Count == 50 && Rope.Sticks[0] != null)
@@ -262,6 +267,7 @@ namespace TowerDefensePrototype
                             }
                         }
 
+                        //The turret was destroyed before it could be pulled down by this invader. Detach the rope
                         if (HarpoonedTurret.CurrentHealth == 0)
                         {
                             Rope.Sticks.RemoveAt(0);
@@ -271,14 +277,16 @@ namespace TowerDefensePrototype
                         }
                     }
                     break;
+                #endregion
 
+                #region Retract
                 case SpecificBehaviour.Retract:
                     {
                         if (Rope != null)
                         {
+                            //Remove a rope segment every few milliseconds to retract the rope - make it shorter
                             RopeDelay += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
-
-
+                                                        
                             if (Rope.Sticks.Count > 1 &&
                                 RopeDelay > MaxRopeDelay)
                             {
@@ -286,6 +294,7 @@ namespace TowerDefensePrototype
 
                                 if (Rope.Segments > 0)
                                     Rope.Segments = Rope.Sticks.Count - 1;
+
                                 Rope.Sticks.RemoveAt(Rope.Sticks.Count - 1);
                                 Rope.StartPoint = BarrelEnd;
                                 RopeDelay = 0;
@@ -299,6 +308,7 @@ namespace TowerDefensePrototype
                         }
                     }
                     break;
+                #endregion
             } 
             #endregion
                 

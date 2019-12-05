@@ -433,38 +433,38 @@ namespace TowerDefensePrototype
             #region Sprite Vertices
 
             base.Initialize();
-            vertices[0].TextureCoordinate = CurrentAnimation.dTopLeftTexCooord;
-            vertices[1].TextureCoordinate = CurrentAnimation.dTopRightTexCoord;
-            vertices[2].TextureCoordinate = CurrentAnimation.dBottomRightTexCoord;
-            vertices[3].TextureCoordinate = CurrentAnimation.dBottomLeftTexCoord;
+            vertices[0].TextureCoordinate = CurrentAnimation.DiffuseCoords.TopLeft;
+            vertices[1].TextureCoordinate = CurrentAnimation.DiffuseCoords.TopRight;
+            vertices[2].TextureCoordinate = CurrentAnimation.DiffuseCoords.BottomRight;
+            vertices[3].TextureCoordinate = CurrentAnimation.DiffuseCoords.BottomLeft;
             #endregion
 
             #region Normal Vertices
             normalVertices[0] = new VertexPositionColorTexture()
             {
                 Position = new Vector3(DestinationRectangle.Left, DestinationRectangle.Top, 0),
-                TextureCoordinate = CurrentAnimation.nTopLeftTexCooord,
+                TextureCoordinate = CurrentAnimation.NormalCoords.TopLeft,
                 Color = Color.White
             };
 
             normalVertices[1] = new VertexPositionColorTexture()
             {
                 Position = new Vector3(DestinationRectangle.Left + DestinationRectangle.Width, DestinationRectangle.Top, 0),
-                TextureCoordinate = CurrentAnimation.nTopRightTexCoord,
+                TextureCoordinate = CurrentAnimation.NormalCoords.TopRight,
                 Color = Color.White
             };
 
             normalVertices[2] = new VertexPositionColorTexture()
             {
                 Position = new Vector3(DestinationRectangle.Left + DestinationRectangle.Width, DestinationRectangle.Top + DestinationRectangle.Height, 0),
-                TextureCoordinate = CurrentAnimation.nBottomRightTexCoord,
+                TextureCoordinate = CurrentAnimation.NormalCoords.BottomRight,
                 Color = Color.White
             };
 
             normalVertices[3] = new VertexPositionColorTexture()
             {
                 Position = new Vector3(DestinationRectangle.Left, DestinationRectangle.Top + DestinationRectangle.Height, 0),
-                TextureCoordinate = CurrentAnimation.nBottomLeftTexCoord,
+                TextureCoordinate = CurrentAnimation.NormalCoords.BottomLeft,
                 Color = Color.White
             };
 
@@ -676,29 +676,29 @@ namespace TowerDefensePrototype
                     {
                         case SpriteEffects.None:
                             {
-                                vertices[0].TextureCoordinate = CurrentAnimation.dTopLeftTexCooord;
-                                vertices[1].TextureCoordinate = CurrentAnimation.dTopRightTexCoord;
-                                vertices[2].TextureCoordinate = CurrentAnimation.dBottomRightTexCoord;
-                                vertices[3].TextureCoordinate = CurrentAnimation.dBottomLeftTexCoord;
+                                vertices[0].TextureCoordinate = CurrentAnimation.DiffuseCoords.TopLeft;
+                                vertices[1].TextureCoordinate = CurrentAnimation.DiffuseCoords.TopRight;
+                                vertices[2].TextureCoordinate = CurrentAnimation.DiffuseCoords.BottomRight;
+                                vertices[3].TextureCoordinate = CurrentAnimation.DiffuseCoords.BottomLeft;
 
-                                normalVertices[0].TextureCoordinate = CurrentAnimation.nTopLeftTexCooord;
-                                normalVertices[1].TextureCoordinate = CurrentAnimation.nTopRightTexCoord;
-                                normalVertices[2].TextureCoordinate = CurrentAnimation.nBottomRightTexCoord;
-                                normalVertices[3].TextureCoordinate = CurrentAnimation.nBottomLeftTexCoord;
+                                normalVertices[0].TextureCoordinate = CurrentAnimation.NormalCoords.TopLeft;
+                                normalVertices[1].TextureCoordinate = CurrentAnimation.NormalCoords.TopRight;
+                                normalVertices[2].TextureCoordinate = CurrentAnimation.NormalCoords.BottomRight;
+                                normalVertices[3].TextureCoordinate = CurrentAnimation.NormalCoords.BottomLeft;
                             }
                             break;
 
                         case SpriteEffects.FlipHorizontally:
                             {
-                                vertices[0].TextureCoordinate = CurrentAnimation.dTopRightTexCoord;
-                                vertices[1].TextureCoordinate = CurrentAnimation.dTopLeftTexCooord;
-                                vertices[2].TextureCoordinate = CurrentAnimation.dBottomLeftTexCoord;
-                                vertices[3].TextureCoordinate = CurrentAnimation.dBottomRightTexCoord;
+                                vertices[0].TextureCoordinate = CurrentAnimation.DiffuseCoords.TopRight;
+                                vertices[1].TextureCoordinate = CurrentAnimation.DiffuseCoords.TopLeft;
+                                vertices[2].TextureCoordinate = CurrentAnimation.DiffuseCoords.BottomLeft;
+                                vertices[3].TextureCoordinate = CurrentAnimation.DiffuseCoords.BottomRight;
                                                                 
-                                normalVertices[0].TextureCoordinate = CurrentAnimation.nTopRightTexCoord;
-                                normalVertices[1].TextureCoordinate = CurrentAnimation.nTopLeftTexCooord;
-                                normalVertices[2].TextureCoordinate = CurrentAnimation.nBottomLeftTexCoord;
-                                normalVertices[3].TextureCoordinate = CurrentAnimation.nBottomRightTexCoord;                                
+                                normalVertices[0].TextureCoordinate = CurrentAnimation.NormalCoords.TopRight;
+                                normalVertices[1].TextureCoordinate = CurrentAnimation.NormalCoords.TopLeft;
+                                normalVertices[2].TextureCoordinate = CurrentAnimation.NormalCoords.BottomLeft;
+                                normalVertices[3].TextureCoordinate = CurrentAnimation.NormalCoords.BottomRight;                                
                             }
                             break;
                     }
@@ -813,28 +813,28 @@ namespace TowerDefensePrototype
                     //        shadowVertices[0] = new VertexPositionColorTexture()
                     //        {
                     //            Position = new Vector3(ShadowPosition.X, ShadowPosition.Y, 0),
-                    //            TextureCoordinate = CurrentAnimation.dBottomLeftTexCoord,
+                    //            TextureCoordinate = CurrentAnimation.DiffuseCoords.BottomLeft,
                     //            Color = ShadowColor
                     //        };
 
                     //        shadowVertices[1] = new VertexPositionColorTexture()
                     //        {
                     //            Position = new Vector3(ShadowPosition.X + CurrentAnimation.FrameSize.X, ShadowPosition.Y, 0),
-                    //            TextureCoordinate = CurrentAnimation.dBottomRightTexCoord,
+                    //            TextureCoordinate = CurrentAnimation.DiffuseCoords.BottomRight,
                     //            Color = ShadowColor
                     //        };
 
                     //        shadowVertices[2] = new VertexPositionColorTexture()
                     //        {
                     //            Position = new Vector3(ShadowPosition.X + CurrentAnimation.FrameSize.X + (direction.X * width), ShadowPosition.Y + (direction.Y * ShadowHeight), 0),
-                    //            TextureCoordinate = CurrentAnimation.dTopRightTexCoord,
+                    //            TextureCoordinate = CurrentAnimation.DiffuseCoords.TopRight,
                     //            Color = ShadowColor * 0.85f
                     //        };
 
                     //        shadowVertices[3] = new VertexPositionColorTexture()
                     //        {
                     //            Position = new Vector3(ShadowPosition.X + (direction.X * width), ShadowPosition.Y + (direction.Y * ShadowHeight), 0),
-                    //            TextureCoordinate = CurrentAnimation.dTopLeftTexCooord,
+                    //            TextureCoordinate = CurrentAnimation.DiffuseCoords.TopLeft,
                     //            Color = ShadowColor * 0.85f
                     //        };
 
@@ -914,7 +914,7 @@ namespace TowerDefensePrototype
             if (Active == true)
             {
                 #region Draw the sprite normal map
-                if (CurrentAnimation.AnimationType == AnimationType.Normal || CurrentAnimation.AnimationType == AnimationType.Emissive)
+                if (CurrentAnimation.AnimationType == GraphicsType.Normal || CurrentAnimation.AnimationType == GraphicsType.Emissive)
                 {
                     effect.TextureEnabled = true;
                     effect.VertexColorEnabled = true;

@@ -28,95 +28,141 @@ namespace TowerDefensePrototype
             //THE OVERFLOW BOOL VARIABLE NEEDS TO GO IN THE CURRENT WAVE TO CREATE OVERFLOW, NOT THE NEXT WAVE.
             //WAVE 2 WILL NOT START IF WAVE 1 HAS A FALSE OVERFLOW BUT WAVE 2 HAS A TRUE OVERFLOW.
             //KEEPS CATCHING ME OUT AND I END UP DEBUGGING IT OVER AND OVER AGAIN
+            #region TestWave
+            Wave TestWave = new Wave(false, 350, 100,
+
+                new RifleMan(new Vector2(2050, 600), new Vector2(700, 850)),
+                new RifleMan(new Vector2(2050, 600), new Vector2(700, 850)),
+                new RifleMan(new Vector2(2050, 600), new Vector2(700, 850)),
+                new RifleMan(new Vector2(2050, 600), new Vector2(700, 850)),
+                new RifleMan(new Vector2(2050, 600), new Vector2(700, 850)),
+
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+
+                new StationaryCannon(new Vector2(2050, 600), new Vector2(700, 850)),
+                new StationaryCannon(new Vector2(2050, 600), new Vector2(700, 850)),
+                new StationaryCannon(new Vector2(2050, 600), new Vector2(700, 850)),
+
+                new HarpoonCannon(new Vector2(2050, 600), new Vector2(700, 850)),
+                new HarpoonCannon(new Vector2(2050, 600), new Vector2(700, 850)),
+                new HarpoonCannon(new Vector2(2050, 600), new Vector2(700, 850)),
+                new HarpoonCannon(new Vector2(2050, 600), new Vector2(700, 850)),
+                new HarpoonCannon(new Vector2(2050, 600), new Vector2(700, 850)),
+
+                2000,
+
+                new BatteringRam(new Vector2(2050, 600), new Vector2(700, 850)),
+                new BatteringRam(new Vector2(2050, 600), new Vector2(700, 850)),
+
+                5000,
+
+                new HealDrone(new Vector2(2050, 600), new Vector2(700, 850)),
+                new HealDrone(new Vector2(2050, 600), new Vector2(700, 850)),
+                new HealDrone(new Vector2(2050, 600), new Vector2(700, 850)),
+                new HealDrone(new Vector2(2050, 600), new Vector2(700, 850)),
+                new HealDrone(new Vector2(2050, 600), new Vector2(700, 850)),
+                new HealDrone(new Vector2(2050, 600), new Vector2(700, 850)),
+                new HealDrone(new Vector2(2050, 600), new Vector2(700, 850)),
+
+                new DropShip(new Vector2(2050, 300), new Vector2(300, 300),
+                        new BatteringRam(new Vector2(1800, 0), new Vector2(700, 850)),
+                        new BatteringRam(new Vector2(1800, 0), new Vector2(700, 850)))
+                );
+
+            #endregion
+
+
             #region Wave1
             Wave Wave1 = new Wave(false, 350, 100,
 
-                //new RifleMan(new Vector2(2050, 600), new Vector2(700, 850)),
-                //new RifleMan(new Vector2(2050, 600), new Vector2(700, 850)),
-                //new RifleMan(new Vector2(2050, 600), new Vector2(700, 850)),
-                //new RifleMan(new Vector2(2050, 600), new Vector2(700, 850)),
-                //new RifleMan(new Vector2(2050, 600), new Vector2(700, 850))
-
-                //new JumpMan(new Vector2(2050, 600), new Vector2(700, 850)),
-
+                new RifleMan(new Vector2(2050, 600), new Vector2(700, 850)),
+                new RifleMan(new Vector2(2050, 600), new Vector2(700, 850)),
+                new RifleMan(new Vector2(2050, 600), new Vector2(700, 850)),
+                new RifleMan(new Vector2(2050, 600), new Vector2(700, 850)),
+                new RifleMan(new Vector2(2050, 600), new Vector2(700, 850)),
+                
                 new FlameJetTrooper(new Vector2(2050, 600), new Vector2(700, 850)),
                 new FlameJetTrooper(new Vector2(2050, 600), new Vector2(700, 850)),
                 new FlameJetTrooper(new Vector2(2050, 600), new Vector2(700, 850)),
 
-                //new JumpMan(new Vector2(2050, 600), new Vector2(700, 850)),
-                //new JumpMan(new Vector2(2050, 600), new Vector2(700, 850)),
-                //new JumpMan(new Vector2(2050, 600), new Vector2(700, 850)),
-                //new JumpMan(new Vector2(2050, 600), new Vector2(700, 850))
+                new JumpMan(new Vector2(2050, 600), new Vector2(700, 850)),
+                new JumpMan(new Vector2(2050, 600), new Vector2(700, 850)),
+                new JumpMan(new Vector2(2050, 600), new Vector2(700, 850)),
+                new JumpMan(new Vector2(2050, 600), new Vector2(700, 850)),
 
-                //new RifleMan(new Vector2(2050, 600), new Vector2(700, 850)),
-                //3500,
-                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850))
-                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
 
                 new StationaryCannon(new Vector2(2050, 600), new Vector2(700, 850)),
                 new StationaryCannon(new Vector2(2050, 600), new Vector2(700, 850)),
-                new StationaryCannon(new Vector2(2050, 600), new Vector2(700, 850))
+                new StationaryCannon(new Vector2(2050, 600), new Vector2(700, 850)),
 
-                //new HarpoonCannon(new Vector2(2050, 600), new Vector2(700, 850)),
-                //new HarpoonCannon(new Vector2(2050, 600), new Vector2(700, 850)),
-                //new HarpoonCannon(new Vector2(2050, 600), new Vector2(700, 850)),
-                //new HarpoonCannon(new Vector2(2050, 600), new Vector2(700, 850)),
-                //new HarpoonCannon(new Vector2(2050, 600), new Vector2(700, 850)),
+                new HarpoonCannon(new Vector2(2050, 600), new Vector2(700, 850)),
+                new HarpoonCannon(new Vector2(2050, 600), new Vector2(700, 850)),
+                new HarpoonCannon(new Vector2(2050, 600), new Vector2(700, 850)),
+                new HarpoonCannon(new Vector2(2050, 600), new Vector2(700, 850)),
+                new HarpoonCannon(new Vector2(2050, 600), new Vector2(700, 850)),
 
-                //    //2000,
+                2000,
 
-                //    //new BatteringRam(new Vector2(2050, 600), new Vector2(700, 850)),
-                ////new BatteringRam(new Vector2(2050, 600), new Vector2(700, 850)),
+                new BatteringRam(new Vector2(2050, 600), new Vector2(700, 850)),
+                new BatteringRam(new Vector2(2050, 600), new Vector2(700, 850)),
 
-                //    5000,
+                5000,
 
-                //new HealDrone(new Vector2(2050, 600), new Vector2(700, 850)),
-                //new HealDrone(new Vector2(2050, 600), new Vector2(700, 850)),
-                //new HealDrone(new Vector2(2050, 600), new Vector2(700, 850))
-                //new HealDrone(new Vector2(2050, 600), new Vector2(700, 850)),
-                //new HealDrone(new Vector2(2050, 600), new Vector2(700, 850)),
-                //new HealDrone(new Vector2(2050, 600), new Vector2(700, 850)),
-                //new HealDrone(new Vector2(2050, 600), new Vector2(700, 850))//,
+                new HealDrone(new Vector2(2050, 600), new Vector2(700, 850)),
+                new HealDrone(new Vector2(2050, 600), new Vector2(700, 850)),
+                new HealDrone(new Vector2(2050, 600), new Vector2(700, 850)),
+                new HealDrone(new Vector2(2050, 600), new Vector2(700, 850)),
+                new HealDrone(new Vector2(2050, 600), new Vector2(700, 850)),
+                new HealDrone(new Vector2(2050, 600), new Vector2(700, 850)),
+                new HealDrone(new Vector2(2050, 600), new Vector2(700, 850)),
 
-                //new GunShip(new Vector2(2050, 600), new Vector2(700, 850))
-                //new DropShip(new Vector2(2050, 600), new Vector2(700, 850))
+                new DropShip(new Vector2(2050, 300), new Vector2(300, 300),
+                        new BatteringRam(new Vector2(1800, 0), new Vector2(700, 850)),
+                        new BatteringRam(new Vector2(1800, 0), new Vector2(700, 850)))
                  );            
             #endregion
 
-            #region Wave2
-            Wave Wave2 = new Wave(false, 350, 100,
-                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)));
 
-            #endregion
+            WaveList.Add(TestWave);
+            //WaveList.Add(Wave1);
 
-            WaveList.Add(Wave1);
-            WaveList.Add(Wave2);
+
+            TrapUnlocks.Add(TrapType.Barrel);
+            TurretUnlocks.Add(TurretType.Freeze);
+
+            //TrapUnlocks[0] = TrapType.Barrel;
+            //TurretUnlocks[0] = TurretType.Freeze;
         }
 
         public override void LoadContent(ContentManager contentManager)

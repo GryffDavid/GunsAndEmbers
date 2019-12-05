@@ -21,6 +21,10 @@ namespace TowerDefensePrototype
         public Weather StartWeather;
         public List<SoundEffect> AmbienceList = new List<SoundEffect>();
         public LevelDialogue LevelDialogue;
+
+        public List<TurretType> TurretUnlocks = new List<TurretType>();
+        public List<TrapType> TrapUnlocks = new List<TrapType>();
+
         //public StoryDialogueItems DialogueItems;
         
         //public LevelDialogue LevelDialogue;

@@ -9,11 +9,12 @@ namespace TowerDefensePrototype
 {
     public abstract class Drawable
     {
+        public GraphicsType GraphicsType = GraphicsType.Diffuse;
+
         public static Random Random = new Random();
 
         public bool Active;
-        public float DrawDepth;
-        public float PreviousMaxY;
+        public float DrawDepth, PreviousMaxY;
 
         private float _MaxY;
         public float MaxY
@@ -52,21 +53,19 @@ namespace TowerDefensePrototype
         public VertexPositionColorTexture[] vertices = new VertexPositionColorTexture[4];
         public int[] indices = new int[6];
 
-        //public virtual void Update(GameTime gameTime)
-        //{
+        public TexCoord DiffuseCoords, NormalCoords, EmissiveCoords;
+        public Rectangle DiffuseSourceRectangle, NormalSourceRectangle, EmissiveSourceRectangle;
 
-        //}
 
         public virtual void Initialize()
         {
-            //DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y
-
+            #region Vertex Declarations
             vertices[0] = new VertexPositionColorTexture()
-            {
-                Position = new Vector3(DestinationRectangle.Left, DestinationRectangle.Top, 0),
-                TextureCoordinate = new Vector2(0, 0),
-                Color = Color
-            };
+               {
+                   Position = new Vector3(DestinationRectangle.Left, DestinationRectangle.Top, 0),
+                   TextureCoordinate = new Vector2(0, 0),
+                   Color = Color
+               };
 
             vertices[1] = new VertexPositionColorTexture()
             {
@@ -95,13 +94,58 @@ namespace TowerDefensePrototype
             indices[3] = 2;
             indices[4] = 3;
             indices[5] = 0;
+            #endregion
+
+            switch (GraphicsType)
+            {
+                case GraphicsType.Diffuse:
+                    {
+                        Emissive = false;
+                        Normal = false;
+                    }
+                    break;
+
+                case GraphicsType.Normal:
+                    {
+                        Emissive = false;
+                        Normal = true;
+
+                        #region Normal
+                        
+                        #endregion
+                    }
+                    break;
+
+                case GraphicsType.Emissive:
+                    {
+                        Emissive = true;
+                        Normal = false;
+
+                        #region Emissive
+
+                        #endregion
+                    }
+                    break;
+                    
+                case GraphicsType.NormalEmissive:
+                    {
+                        Emissive = true;
+                        Normal = true;
+
+                        #region Normal
+                        
+                        #endregion
+
+                        #region Emissive
+                        
+                        #endregion
+                    }
+                    break;
+            }
+            
         }
 
-        //public virtual void Update()
-        //{
-        //    DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, (int)Texture.Width, (int)Texture.Height);
-        //}
-
+        
         public virtual void Draw(SpriteBatch spriteBatch)
         {
 

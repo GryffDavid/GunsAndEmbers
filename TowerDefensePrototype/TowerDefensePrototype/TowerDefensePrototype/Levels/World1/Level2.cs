@@ -27,39 +27,68 @@ namespace TowerDefensePrototype
             //An int in the middle of the list creates a pause without changing the timing
             #region Wave1
             Wave Wave1 = new Wave(true, 350, 100,
+                new RifleMan(new Vector2(2050, 600), new Vector2(700, 850)),
+                new RifleMan(new Vector2(2050, 600), new Vector2(700, 850)),
+                new RifleMan(new Vector2(2050, 600), new Vector2(700, 850)),
+                new RifleMan(new Vector2(2050, 600), new Vector2(700, 850)),
+                new RifleMan(new Vector2(2050, 600), new Vector2(700, 850)),
+
+                new FlameJetTrooper(new Vector2(2050, 600), new Vector2(700, 850)),
+                new FlameJetTrooper(new Vector2(2050, 600), new Vector2(700, 850)),
+                new FlameJetTrooper(new Vector2(2050, 600), new Vector2(700, 850)),
+
+                new JumpMan(new Vector2(2050, 600), new Vector2(700, 850)),
+                new JumpMan(new Vector2(2050, 600), new Vector2(700, 850)),
+                new JumpMan(new Vector2(2050, 600), new Vector2(700, 850)),
+                new JumpMan(new Vector2(2050, 600), new Vector2(700, 850)),
+
                 //new RifleMan(new Vector2(2050, 600), new Vector2(700, 850)),
-                //new RifleMan(new Vector2(2050, 600), new Vector2(700, 850)),
-                //new RifleMan(new Vector2(2050, 600), new Vector2(700, 850)),
-                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850))
+                //3500,
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
 
-                new HarpoonCannon(new Vector2(2050, 600), new Vector2(700, 850))
-                //new HarpoonCannon(new Vector2(2050, 600), new Vector2(700, 850)),
-                //new HarpoonCannon(new Vector2(2050, 600), new Vector2(700, 850)),
-                //new HarpoonCannon(new Vector2(2050, 600), new Vector2(700, 850)),
-                //new HarpoonCannon(new Vector2(2050, 600), new Vector2(700, 850)),
+                new StationaryCannon(new Vector2(2050, 600), new Vector2(700, 850)),
+                new StationaryCannon(new Vector2(2050, 600), new Vector2(700, 850)),
+                new StationaryCannon(new Vector2(2050, 600), new Vector2(700, 850)),
 
-                //    //2000,
+                new HarpoonCannon(new Vector2(2050, 600), new Vector2(700, 850)),
+                new HarpoonCannon(new Vector2(2050, 600), new Vector2(700, 850)),
+                new HarpoonCannon(new Vector2(2050, 600), new Vector2(700, 850)),
+                new HarpoonCannon(new Vector2(2050, 600), new Vector2(700, 850)),
+                new HarpoonCannon(new Vector2(2050, 600), new Vector2(700, 850)),
 
-                //    //new BatteringRam(new Vector2(2050, 600), new Vector2(700, 850)),
-                ////new BatteringRam(new Vector2(2050, 600), new Vector2(700, 850)),
+                2000,
 
-                //    5000,
+                new BatteringRam(new Vector2(2050, 600), new Vector2(700, 850)),
+                new BatteringRam(new Vector2(2050, 600), new Vector2(700, 850)),
 
-                //new HealDrone(new Vector2(2050, 600), new Vector2(700, 850)),
-                //new HealDrone(new Vector2(2050, 600), new Vector2(700, 850)),
-                //new HealDrone(new Vector2(2050, 600), new Vector2(700, 850)),
-                //new HealDrone(new Vector2(2050, 600), new Vector2(700, 850)),
-                //new HealDrone(new Vector2(2050, 600), new Vector2(700, 850)),
-                //new HealDrone(new Vector2(2050, 600), new Vector2(700, 850)),
-                //new HealDrone(new Vector2(2050, 600), new Vector2(700, 850))//,
+                5000,
 
+                new HealDrone(new Vector2(2050, 600), new Vector2(700, 850)),
+                new HealDrone(new Vector2(2050, 600), new Vector2(700, 850)),
+                new HealDrone(new Vector2(2050, 600), new Vector2(700, 850)),
+                new HealDrone(new Vector2(2050, 600), new Vector2(700, 850)),
+                new HealDrone(new Vector2(2050, 600), new Vector2(700, 850)),
+                new HealDrone(new Vector2(2050, 600), new Vector2(700, 850)),
+                new HealDrone(new Vector2(2050, 600), new Vector2(700, 850)),
+
+                new DropShip(new Vector2(2050, 300), new Vector2(300, 300),
+                        new BatteringRam(new Vector2(1800, 0), new Vector2(700, 850)),
+                        new BatteringRam(new Vector2(1800, 0), new Vector2(700, 850)))
                  );            
             #endregion
 
