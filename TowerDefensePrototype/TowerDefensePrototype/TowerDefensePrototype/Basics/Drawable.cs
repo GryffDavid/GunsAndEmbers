@@ -15,6 +15,7 @@ namespace TowerDefensePrototype
         public bool Emissive = false;
         public bool Normal = false;
 
+
         public virtual void Draw(SpriteBatch spriteBatch)
         {
 
@@ -25,29 +26,17 @@ namespace TowerDefensePrototype
 
         }
 
-        public virtual void Draw(SpriteBatch spriteBatch, BasicEffect effect, GraphicsDevice graphicsDevice, Effect shadowEffect, List<Light> lightList)
-        {
+        public virtual void Draw(GraphicsDevice graphics, BasicEffect effect, Effect shadowEffect, List<Light> lightList)
+        { 
 
         }
-
 
         public virtual void DrawSpriteDepth(GraphicsDevice graphics, Effect effect)
         {
 
         }
 
-        public virtual void DrawSpriteDepth(SpriteBatch spriteBatch)
-        {
-
-        }
-
-
         public virtual void DrawSpriteNormal(GraphicsDevice graphics, BasicEffect basicEffect)
-        {
-
-        }
-
-        public virtual void DrawSpriteNormal(SpriteBatch spriteBatch)
         {
 
         }

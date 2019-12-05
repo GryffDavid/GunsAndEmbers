@@ -25,6 +25,7 @@ namespace TowerDefensePrototype
         public double IntervalTime, CurrentTime;
         public SpriteEffects Orientation = SpriteEffects.None;
         public Invader Anchor;
+        public object Tether;
 
         //VertexPositionColorTexture[] 
 
@@ -273,6 +274,17 @@ namespace TowerDefensePrototype
         {
             if (Active == true)
             {
+                ////Stop adding particles if the tethered object is no longer active
+                //if (Tether.GetType().GetMember("Active") != null)
+                //{
+                //    Drawable tether = Tether as Drawable;
+
+                //    if (tether.Active == false)
+                //    {
+                //        AddMore = false;                        
+                //    }
+                //}
+
                 //If the emitter is given a value smaller than or equal to 0, it will carry on emitting infinitely//
                 //If the value is bigger than zero, it will only emit particles for the length of time given//
                 if (ActiveSeconds > 0)
@@ -442,13 +454,15 @@ namespace TowerDefensePrototype
             //}
         }
 
-        //public override void Draw(GraphicsDevice graphics, Effect effect)
-        //{
-        //    foreach (Particle particle in ParticleList)
-        //    {
-        //        particle.Draw(graphics, effect);
-        //    }
-        //}
+        public override void Draw(GraphicsDevice graphics, Effect effect)
+        {
+            effect.Parameters["Texture"].SetValue(Texture);
+
+            foreach (Particle particle in ParticleList)
+            {
+                particle.Draw(graphics, effect);
+            }
+        }
 
         public double DoubleRange(double one, double two)
         {

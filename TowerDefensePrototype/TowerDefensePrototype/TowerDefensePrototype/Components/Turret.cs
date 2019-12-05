@@ -269,13 +269,17 @@ namespace TowerDefensePrototype
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-        //    ///
-        //    //Draw stylized health bars with quads instead.
-        //    ///
 
-        //    //TimingBar.Draw(spriteBatch);
-        //    //HealthBar.Draw(spriteBatch);
-        //    //HeatBar.Draw(spriteBatch);
+        }
+
+        public override void  DrawSpriteDepth(GraphicsDevice graphics, Effect effect)
+        {
+
+        }
+
+        public override void DrawSpriteNormal(GraphicsDevice graphics, BasicEffect basicEffect)
+        {
+
         }
 
         public bool InsideRotatedRectangle(Rectangle originalRectangle, Vector2 rotationPoint, Vector2 mousePoint, float rotationAngle)
@@ -374,10 +378,5 @@ namespace TowerDefensePrototype
                 HealthBar.Draw(graphicsDevice);
             }
         }
-
-        //public void UpdateFireDirection()
-        //{
-        //    FireRotation = Rotation + MathHelper.ToRadians((float)(-AngleOffset + Random.NextDouble() * (AngleOffset - (-AngleOffset))));
-        //}
     }
 }

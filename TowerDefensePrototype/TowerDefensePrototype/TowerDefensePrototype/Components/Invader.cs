@@ -347,175 +347,62 @@ namespace TowerDefensePrototype
         }
 
         
-        public override void Draw(SpriteBatch spriteBatch, BasicEffect effect, GraphicsDevice graphics, Effect shadowEffect, List<Light> lightList)
+        public override void Draw(GraphicsDevice graphics, BasicEffect effect, Effect shadowEffect, List<Light> lightList)
         {
             if (Active == true)
             {
-                if (CurrentAnimation != null)
+                effect.TextureEnabled = true;
+                effect.VertexColorEnabled = true;
+                effect.Texture = CurrentAnimation.Texture;
+
+                invaderVertices[0] = new VertexPositionColorTexture()
                 {
-                    effect.TextureEnabled = true;
-                    effect.VertexColorEnabled = true;
-                    effect.Texture = CurrentAnimation.Texture;
+                    Position = new Vector3(DestinationRectangle.Left, DestinationRectangle.Top, 0),
+                    TextureCoordinate = CurrentAnimation.dTopLeftTexCooord,
+                    Color = Color.White
+                };
 
-                    float animX = (float)(1f / CurrentAnimation.TotalFrames) * CurrentAnimation.CurrentFrame;
-                    float animWid = (float)(1f / CurrentAnimation.TotalFrames);
-
-                    //There should be a limit on the number of shadows drawn. Could be set in the options menu by the player
-                    //To help with performance
-                    #region Draw the shadows
-                    foreach (Light light in lightList)
-                    {
-                        float lightDistance = Vector2.Distance(ShadowPosition, new Vector2(light.Position.X, light.Position.Y));
-
-                        if (lightDistance < light.Radius)
-                        {
-                            Vector2 direction = ShadowPosition - new Vector2(light.Position.X, light.Position.Y);
-                            direction.Normalize();
-
-                            heightMod = lightDistance / (light.Range / 10);
-                            height = MathHelper.Clamp(CurrentAnimation.FrameSize.Y * heightMod, 16, 64);
-                            float width = MathHelper.Clamp(CurrentAnimation.FrameSize.Y * heightMod, 16, 92);
-
-                            shadowColor = Color.Lerp(Color.Lerp(Color.Black, Color.Transparent, 0f), Color.Transparent, lightDistance / light.Radius);
-                            foreach (Light light3 in lightList.FindAll(Light2 => Vector2.Distance(ShadowPosition, new Vector2(Light2.Position.X, Light2.Position.Y)) < light.Radius && Light2 != light).ToList())
-                            {
-                                shadowColor *= MathHelper.Clamp(Vector2.Distance(new Vector2(light3.Position.X, light3.Position.Y), ShadowPosition) / light3.Radius, 0.8f, 1f);
-                            }
-
-                            shadowVertices[0] = new VertexPositionColorTexture()
-                            {
-                                Position = new Vector3(ShadowPosition.X, ShadowPosition.Y, 0),
-                                TextureCoordinate = new Vector2(animX, 0.5f),
-                                Color = shadowColor
-                            };
-
-                            shadowVertices[1] = new VertexPositionColorTexture()
-                            {
-                                Position = new Vector3(ShadowPosition.X + CurrentAnimation.FrameSize.X, ShadowPosition.Y, 0),
-                                TextureCoordinate = new Vector2(animX + animWid, 0.5f),
-                                Color = shadowColor
-                            };
-
-                            shadowVertices[2] = new VertexPositionColorTexture()
-                            {
-                                Position = new Vector3(ShadowPosition.X + CurrentAnimation.FrameSize.X + (direction.X * width), ShadowPosition.Y + (direction.Y * height), 0),
-                                TextureCoordinate = new Vector2(animX + animWid, 0),
-                                Color = shadowColor
-                            };
-
-                            shadowVertices[3] = new VertexPositionColorTexture()
-                            {
-                                Position = new Vector3(ShadowPosition.X + (direction.X * width), ShadowPosition.Y + (direction.Y * height), 0),
-                                TextureCoordinate = new Vector2(animX, 0),
-                                Color = shadowColor
-                            };
-
-                            //This stops backface culling when the shadow flips vertically
-                            if (direction.Y > 0)
-                            {
-                                shadowIndices[0] = 0;
-                                shadowIndices[1] = 1;
-                                shadowIndices[2] = 2;
-                                shadowIndices[3] = 2;
-                                shadowIndices[4] = 3;
-                                shadowIndices[5] = 0;
-                            }
-                            else
-                            {
-                                shadowIndices[0] = 3;
-                                shadowIndices[1] = 2;
-                                shadowIndices[2] = 1;
-                                shadowIndices[3] = 1;
-                                shadowIndices[4] = 0;
-                                shadowIndices[5] = 3;
-                            }
-
-                            shadowEffect.Parameters["Texture"].SetValue(CurrentAnimation.Texture);
-                            shadowEffect.Parameters["texSize"].SetValue(CurrentAnimation.FrameSize);
-
-                            foreach (EffectPass pass in shadowEffect.CurrentTechnique.Passes)
-                            {
-                                pass.Apply();
-                                graphics.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, shadowVertices, 0, 4, shadowIndices, 0, 2, VertexPositionColorTexture.VertexDeclaration);
-                            }
-                        }
-                    }
-                    #endregion
-
-                    #region Draw the sprite
-
-                    graphics.SamplerStates[0] = SamplerState.PointClamp;
-                    invaderVertices[0] = new VertexPositionColorTexture()
-                    {
-                        Color = Color,
-                        Position = new Vector3(DestinationRectangle.X, DestinationRectangle.Y, 0),
-                        TextureCoordinate = new Vector2(animX, 0)
-                    };
-
-                    invaderVertices[1] = new VertexPositionColorTexture()
-                    {
-                        Color = Color,
-                        Position = new Vector3(DestinationRectangle.X + CurrentAnimation.DiffuseSourceRectangle.Width, DestinationRectangle.Y, 0),
-                        TextureCoordinate = new Vector2(animX + animWid, 0)
-                    };
-
-                    invaderVertices[2] = new VertexPositionColorTexture()
-                    {
-                        Color = Color,
-                        Position = new Vector3(DestinationRectangle.X + CurrentAnimation.DiffuseSourceRectangle.Width, DestinationRectangle.Y + CurrentAnimation.DiffuseSourceRectangle.Height, 0),
-                        TextureCoordinate = new Vector2(animX + animWid, 0.5f)
-                    };
-
-                    invaderVertices[3] = new VertexPositionColorTexture()
-                    {
-                        Color = Color,
-                        Position = new Vector3(DestinationRectangle.X, DestinationRectangle.Y + CurrentAnimation.DiffuseSourceRectangle.Height, 0),
-                        TextureCoordinate = new Vector2(animX, 0.5f)
-                    };
-
-                    invaderIndices[0] = 0;
-                    invaderIndices[1] = 1;
-                    invaderIndices[2] = 2;
-                    invaderIndices[3] = 2;
-                    invaderIndices[4] = 3;
-                    invaderIndices[5] = 0;
-
-                    foreach (EffectPass pass in effect.CurrentTechnique.Passes)
-                    {
-                        pass.Apply();
-                        graphics.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, invaderVertices, 0, 4, invaderIndices, 0, 2, VertexPositionColorTexture.VertexDeclaration);
-                    }
-                    #endregion
-                }
-
-                if (HealthEmitter != null)
+                invaderVertices[1] = new VertexPositionColorTexture()
                 {
-                    HealthEmitter.Draw(graphics, effect);
-                }
+                    Position = new Vector3(DestinationRectangle.Left + DestinationRectangle.Width, DestinationRectangle.Top, 0),
+                    TextureCoordinate = CurrentAnimation.dTopRightTexCoord,
+                    Color = Color.White
+                };
 
-                if (FireEmitter != null)
+                invaderVertices[2] = new VertexPositionColorTexture()
                 {
-                    FireEmitter.Draw(spriteBatch);
-                }
-               
-                if (Frozen == true)
+                    Position = new Vector3(DestinationRectangle.Left + DestinationRectangle.Width, DestinationRectangle.Top + DestinationRectangle.Height, 0),
+                    TextureCoordinate = CurrentAnimation.dBottomRightTexCoord,
+                    Color = Color.White
+                };
+
+                invaderVertices[3] = new VertexPositionColorTexture()
                 {
-                    double IceTransparency = ((75 / FreezeDelay) * CurrentFreezeDelay) / 100;
-                    spriteBatch.Draw(IceBlock, 
-                        new Rectangle(
-                            (int)Position.X, 
-                            DestinationRectangle.Bottom - IceBlock.Height + 8, 
-                            IceBlock.Width, IceBlock.Height), 
-                        null, Color.Lerp(Color.White, Color.Transparent, (float)IceTransparency), 0,
-                        Vector2.Zero, Orientation, DrawDepth + 0.0001f);
+                    Position = new Vector3(DestinationRectangle.Left, DestinationRectangle.Top + DestinationRectangle.Height, 0),
+                    TextureCoordinate = CurrentAnimation.dBottomLeftTexCoord,
+                    Color = Color.White
+                };
+
+                invaderIndices[0] = 0;
+                invaderIndices[1] = 1;
+                invaderIndices[2] = 2;
+                invaderIndices[3] = 2;
+                invaderIndices[4] = 3;
+                invaderIndices[5] = 0;
+
+                foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+                {
+                    pass.Apply();
+                    graphics.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, invaderVertices, 0, 4, invaderIndices, 0, 2, VertexPositionColorTexture.VertexDeclaration);
                 }
             }
         }
 
         public override void DrawSpriteDepth(GraphicsDevice graphics, Effect effect)
         {
-            if (CurrentAnimation != null)
-            {                
+            //Draw the same sprite as the color map, but with the depth effect applied
+            if (Active == true)
+            {
                 effect.Parameters["Texture"].SetValue(CurrentAnimation.Texture);
                 effect.Parameters["depth"].SetValue(DrawDepth);
 
@@ -529,58 +416,55 @@ namespace TowerDefensePrototype
 
         public override void DrawSpriteNormal(GraphicsDevice graphics, BasicEffect effect)
         {
-            if (CurrentAnimation != null)
-            {
-                effect.TextureEnabled = true;
-                effect.VertexColorEnabled = true;
-                effect.Texture = CurrentAnimation.Texture;
-
-                float animX = (float)(1f / CurrentAnimation.TotalFrames) * CurrentAnimation.CurrentFrame;
-                float animWid = (float)(1f / CurrentAnimation.TotalFrames);
-
-                #region Draw the sprite
-                normalVertices[0] = new VertexPositionColorTexture()
+            //Draw the lower half of the sprite with a basic effect applied
+            if (Active == true)
+                if (CurrentAnimation.AnimationType == AnimationType.Normal || CurrentAnimation.AnimationType == AnimationType.Emissive)
                 {
-                    Color = Color.White,
-                    Position = new Vector3(DestinationRectangle.X, DestinationRectangle.Y, 0),
-                    TextureCoordinate = new Vector2(animX, 0.5f)
-                };
+                    effect.TextureEnabled = true;
+                    effect.VertexColorEnabled = true;
+                    effect.Texture = CurrentAnimation.Texture;
 
-                normalVertices[1] = new VertexPositionColorTexture()
-                {
-                    Color = Color.White,
-                    Position = new Vector3(DestinationRectangle.X + CurrentAnimation.NormalSourceRectangle.Width, DestinationRectangle.Y, 0),
-                    TextureCoordinate = new Vector2(animX + animWid, 0.5f)
-                };
+                    normalVertices[0] = new VertexPositionColorTexture()
+                    {
+                        Position = new Vector3(DestinationRectangle.Left, DestinationRectangle.Top, 0),
+                        TextureCoordinate = CurrentAnimation.nTopLeftTexCooord,
+                        Color = Color.White
+                    };
 
-                normalVertices[2] = new VertexPositionColorTexture()
-                {
-                    Color = Color.White,
-                    Position = new Vector3(DestinationRectangle.X + CurrentAnimation.NormalSourceRectangle.Width, DestinationRectangle.Y + CurrentAnimation.NormalSourceRectangle.Height, 0),
-                    TextureCoordinate = new Vector2(animX + animWid, 1f)
-                };
+                    normalVertices[1] = new VertexPositionColorTexture()
+                    {
+                        Position = new Vector3(DestinationRectangle.Left + DestinationRectangle.Width, DestinationRectangle.Top, 0),
+                        TextureCoordinate = CurrentAnimation.nTopRightTexCoord,
+                        Color = Color.White
+                    };
 
-                normalVertices[3] = new VertexPositionColorTexture()
-                {
-                    Color = Color.White,
-                    Position = new Vector3(DestinationRectangle.X, DestinationRectangle.Y + CurrentAnimation.NormalSourceRectangle.Height, 0),
-                    TextureCoordinate = new Vector2(animX, 1f)
-                };
+                    normalVertices[2] = new VertexPositionColorTexture()
+                    {
+                        Position = new Vector3(DestinationRectangle.Left + DestinationRectangle.Width, DestinationRectangle.Top + DestinationRectangle.Height, 0),
+                        TextureCoordinate = CurrentAnimation.nBottomRightTexCoord,
+                        Color = Color.White
+                    };
 
-                normalIndices[0] = 0;
-                normalIndices[1] = 1;
-                normalIndices[2] = 2;
-                normalIndices[3] = 2;
-                normalIndices[4] = 3;
-                normalIndices[5] = 0;
+                    normalVertices[3] = new VertexPositionColorTexture()
+                    {
+                        Position = new Vector3(DestinationRectangle.Left, DestinationRectangle.Top + DestinationRectangle.Height, 0),
+                        TextureCoordinate = CurrentAnimation.nBottomLeftTexCoord,
+                        Color = Color.White
+                    };
 
-                foreach (EffectPass pass in effect.CurrentTechnique.Passes)
-                {
-                    pass.Apply();
-                    graphics.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, normalVertices, 0, 4, normalIndices, 0, 2, VertexPositionColorTexture.VertexDeclaration);
+                    normalIndices[0] = 0;
+                    normalIndices[1] = 1;
+                    normalIndices[2] = 2;
+                    normalIndices[3] = 2;
+                    normalIndices[4] = 3;
+                    normalIndices[5] = 0;
+
+                    foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+                    {
+                        pass.Apply();
+                        graphics.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, normalVertices, 0, 4, normalIndices, 0, 2, VertexPositionColorTexture.VertexDeclaration);
+                    }
                 }
-                #endregion
-            }
         }
 
 

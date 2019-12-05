@@ -45,6 +45,7 @@ namespace TowerDefensePrototype
     public enum InvaderBehaviour { AttackTraps, AttackTower, AttackTurrets };
 
     public enum TrapState { Untriggered, Triggering, Active, Resetting };
+    public enum TurretState { Overheated, ReadyToFire };
     
     public enum SpecialType { AirStrike };
     public enum DamageType { Fire, Electric, Concussive, Kinetic, Radiation };
@@ -1433,6 +1434,8 @@ namespace TowerDefensePrototype
         bool ShowMapping = false;
         Texture2D MappingOutlines;
 
+        Effect ParticleEffect;
+
         #endregion
 
         public Game1()
@@ -1956,6 +1959,9 @@ namespace TowerDefensePrototype
                 #region Loading shaders
                 Debug.WriteLine("Started loading Shaders");
 
+                ParticleEffect = Content.Load<Effect>("ParticleEffect");
+                ParticleEffect.Parameters["Projection"].SetValue(Projection);
+
                 Debug.WriteLine("Crepuscular Rays", "Shaders");
                 CrepuscularEffect = Content.Load<Effect>("Shaders/CrepuscularRaysEffect");
                 CrepuscularEffect.Parameters["Projection"].SetValue(Matrix.CreateOrthographicOffCenter(0, 1920, 1080, 0, 0, 1));
@@ -2226,6 +2232,7 @@ namespace TowerDefensePrototype
                 { 
                     CurrentInvaderState = InvaderState.Walk,
                     Texture = Content.Load<Texture2D>("Invaders/Soldier/SoldierWalk"),
+                    AnimationType = AnimationType.Normal,
                     Animated = true,
                     CurrentFrame = 0,
                     FrameDelay = 150,
@@ -2237,6 +2244,7 @@ namespace TowerDefensePrototype
                 {
                     CurrentInvaderState = InvaderState.Melee,
                     Texture = Content.Load<Texture2D>("Invaders/Soldier/SoldierMelee"),
+                    AnimationType = AnimationType.Normal,
                     Animated = true,
                     CurrentFrame = 0,
                     FrameDelay = 150,
@@ -2248,6 +2256,7 @@ namespace TowerDefensePrototype
                 {
                     CurrentInvaderState = InvaderState.Stand,
                     Texture = Content.Load<Texture2D>("Invaders/Soldier/SoldierStand"),
+                    AnimationType = AnimationType.Normal,
                     Animated = true,
                     CurrentFrame = 0,
                     FrameDelay = 150,
@@ -2269,6 +2278,7 @@ namespace TowerDefensePrototype
                 { 
                     CurrentInvaderState = InvaderState.Walk,
                     Texture = Content.Load<Texture2D>("Invaders/Soldier/SoldierWalk"),
+                    AnimationType = AnimationType.Normal,
                     Animated = true,
                     CurrentFrame = 0,
                     FrameDelay = 150,
@@ -2280,6 +2290,7 @@ namespace TowerDefensePrototype
                 {
                     CurrentInvaderState = InvaderState.Melee,
                     Texture = Content.Load<Texture2D>("Invaders/Soldier/SoldierMelee"),
+                    AnimationType = AnimationType.Normal,
                     Animated = true,
                     CurrentFrame = 0,
                     FrameDelay = 150,
@@ -2291,6 +2302,7 @@ namespace TowerDefensePrototype
                 {
                     CurrentInvaderState = InvaderState.Stand,
                     Texture = Content.Load<Texture2D>("Invaders/Soldier/SoldierStand"),
+                    AnimationType = AnimationType.Normal,
                     Animated = true,
                     CurrentFrame = 0,
                     FrameDelay = 150,
@@ -2326,7 +2338,9 @@ namespace TowerDefensePrototype
                     Texture = Content.Load<Texture2D>("Traps/WallTrap"),
                     Animated = false,
                     CurrentFrame = 0,
-                    TotalFrames = 1
+                    TotalFrames = 1,
+                    
+                    AnimationType = AnimationType.Normal
                 },
             };
 
@@ -2345,7 +2359,7 @@ namespace TowerDefensePrototype
                     Animated = false,
                     CurrentFrame = 0,
                     TotalFrames = 1,
-                    Normal = false
+                    AnimationType = AnimationType.Regular
                 },
             };
             foreach (TrapAnimation animation in FireTrapAnimations)
@@ -2758,7 +2772,7 @@ namespace TowerDefensePrototype
                 #endregion
 
                 #region Draw things sorted according to their Y value - To create depth illusion
-                //DrawableList = DrawableList.OrderBy(Drawable => Drawable.DrawDepth).ToList();
+                DrawableList = DrawableList.OrderBy(Drawable => Drawable.DrawDepth).ToList();
                 spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, null);
 
                 foreach (Drawable drawable in DrawableList)
@@ -2770,14 +2784,21 @@ namespace TowerDefensePrototype
                         if (drawable.BlendState != BlendState.AlphaBlend)
                         {
                             GraphicsDevice.BlendState = drawable.BlendState;
-                            drawable.Draw(spriteBatch, BasicEffect, GraphicsDevice, ShadowBlurEffect, LightList);
+                            drawable.Draw(GraphicsDevice, BasicEffect, ShadowBlurEffect, LightList);
                             GraphicsDevice.BlendState = BlendState.AlphaBlend;
                         }
                         else
-                            drawable.Draw(spriteBatch, BasicEffect, GraphicsDevice, ShadowBlurEffect, LightList);
+                        {
+                            drawable.Draw(GraphicsDevice, BasicEffect, ShadowBlurEffect, LightList);
+                        }
                     }
                     else
                     {
+                        if (drawable.GetType() == typeof(Emitter))
+                        {
+                            drawable.Draw(GraphicsDevice, ParticleEffect);
+                        }
+                        else
                         drawable.Draw(spriteBatch);
                     }
                 }
@@ -2852,6 +2873,7 @@ namespace TowerDefensePrototype
                 #endregion
 
 
+
                 #region Draw to the normal map
                 GraphicsDevice.SetRenderTarget(LightNormalMap);
                 GraphicsDevice.Clear(new Color(127, 127, 255));
@@ -2862,7 +2884,7 @@ namespace TowerDefensePrototype
                 foreach (Drawable drawable in DrawableList)
                 {
                     drawable.DrawSpriteNormal(GraphicsDevice, BasicEffect);
-                    drawable.DrawSpriteNormal(spriteBatch);
+                    //drawable.DrawSpriteNormal(spriteBatch);
                 }
 
                 spriteBatch.End();
@@ -2876,7 +2898,7 @@ namespace TowerDefensePrototype
                 foreach (Drawable drawable in DrawableList)
                 {
                     drawable.DrawSpriteDepth(GraphicsDevice, DepthEffect);
-                    drawable.DrawSpriteDepth(spriteBatch);
+                    //drawable.DrawSpriteDepth(spriteBatch);
                 }
 
                 spriteBatch.End();
@@ -2932,6 +2954,8 @@ namespace TowerDefensePrototype
                 spriteBatch.End();
                 #endregion
 
+
+
                 GraphicsDevice.SetRenderTarget(GameRenderTarget);
                 GraphicsDevice.Clear(Color.CornflowerBlue);
 
@@ -2945,24 +2969,40 @@ namespace TowerDefensePrototype
                 #endregion                
 
                 #region Draw the lightmap and color map combined
+                spriteBatch.Begin();
+                if (Keyboard.GetState().IsKeyDown(Keys.Tab))
+                {
+                    spriteBatch.Draw(LightNormalMap, LightNormalMap.Bounds, Color.White);
+                }
+
+                if (Keyboard.GetState().IsKeyDown(Keys.OemTilde))
+                {
+                    spriteBatch.Draw(DepthMap, LightNormalMap.Bounds, Color.White);
+                }
+                spriteBatch.End();
+
                 spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, null, LightCombinedEffect);
 
-                LightCombinedEffect.CurrentTechnique = LightCombinedEffect.Techniques["DeferredCombined"];
-                LightCombinedEffect.Parameters["ambient"].SetValue(1f);
-                LightCombinedEffect.Parameters["lightAmbient"].SetValue(4f);
-                LightCombinedEffect.Parameters["ambientColor"].SetValue(AmbientLight.ToVector4());
+                if (Keyboard.GetState().IsKeyUp(Keys.OemTilde) && Keyboard.GetState().IsKeyUp(Keys.Tab))
+                {
+                    LightCombinedEffect.CurrentTechnique = LightCombinedEffect.Techniques["DeferredCombined"];
+                    LightCombinedEffect.Parameters["ambient"].SetValue(1f);
+                    LightCombinedEffect.Parameters["lightAmbient"].SetValue(4f);
+                    LightCombinedEffect.Parameters["ambientColor"].SetValue(AmbientLight.ToVector4());
 
-                LightCombinedEffect.Parameters["ColorMap"].SetValue(LightColorMap);
-                LightCombinedEffect.Parameters["ShadingMap"].SetValue(LightShadowMap);
-                LightCombinedEffect.Parameters["NormalMap"].SetValue(LightNormalMap);
-                LightCombinedEffect.Parameters["EmissiveMap"].SetValue(EmissiveMap);
+                    LightCombinedEffect.Parameters["ColorMap"].SetValue(LightColorMap);
+                    LightCombinedEffect.Parameters["ShadingMap"].SetValue(LightShadowMap);
+                    LightCombinedEffect.Parameters["NormalMap"].SetValue(LightNormalMap);
+                    LightCombinedEffect.Parameters["EmissiveMap"].SetValue(EmissiveMap);
 
-                LightCombinedEffect.CurrentTechnique.Passes[0].Apply();
-
-                spriteBatch.Draw(LightColorMap, Vector2.Zero, Color.White);
+                    LightCombinedEffect.CurrentTechnique.Passes[0].Apply();
+                    spriteBatch.Draw(LightColorMap, Vector2.Zero, Color.White);
+                }
 
                 spriteBatch.End();
                 #endregion
+
+                
                 #endregion
 
 
@@ -8983,7 +9023,9 @@ namespace TowerDefensePrototype
                                                 FrameDelay = invaderAnimationList[i].FrameDelay / Multiplier,
                                                 TotalFrames = invaderAnimationList[i].TotalFrames,
                                                 FrameSize = invaderAnimationList[i].FrameSize,
+                                                NormalizedFrameSize = invaderAnimationList[i].NormalizedFrameSize,
                                                 CurrentInvaderState = invaderAnimationList[i].CurrentInvaderState,
+                                                AnimationType = invaderAnimationList[i].AnimationType,
                                                 CurrentFrameDelay = 0
                                             });
                                         }

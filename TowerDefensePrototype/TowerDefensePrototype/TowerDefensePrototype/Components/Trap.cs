@@ -163,21 +163,12 @@ namespace TowerDefensePrototype
             }
         }
 
-         public override void Draw(SpriteBatch spriteBatch, BasicEffect effect, GraphicsDevice graphics, Effect shadowEffect, List<Light> lightList)
+
+        public override void Draw(GraphicsDevice graphics, BasicEffect effect, Effect shadowEffect, List<Light> lightList)
         {
-            if (TrapEmitterList.Count > 0)
-            {
-                foreach (Emitter emitter in TrapEmitterList)
-                {
-                    emitter.Draw(spriteBatch);
-                }
-            }
-
+            //Draw the colour map using a basic effect
             if (Active == true)
-            {
-                //spriteBatch.Draw(CurrentAnimation.Texture, DestinationRectangle, CurrentAnimation.DiffuseSourceRectangle, Color.White, 
-                //                 MathHelper.ToRadians(0), Vector2.Zero, SpriteEffects.None, DrawDepth);
-
+            {                
                 effect.TextureEnabled = true;
                 effect.VertexColorEnabled = true;
                 effect.Texture = CurrentAnimation.Texture;
@@ -185,28 +176,28 @@ namespace TowerDefensePrototype
                 trapVertices[0] = new VertexPositionColorTexture()
                 {
                     Position = new Vector3(DestinationRectangle.Left, DestinationRectangle.Top, 0),
-                    TextureCoordinate = new Vector2(0, 0),
+                    TextureCoordinate = CurrentAnimation.dTopLeftTexCooord,
                     Color = Color.White
                 };
 
                 trapVertices[1] = new VertexPositionColorTexture()
                 {
-                    Position = new Vector3(DestinationRectangle.Right, DestinationRectangle.Top, 0),
-                    TextureCoordinate = new Vector2(1, 0),
+                    Position = new Vector3(DestinationRectangle.Left + DestinationRectangle.Width, DestinationRectangle.Top, 0),
+                    TextureCoordinate = CurrentAnimation.dTopRightTexCoord,
                     Color = Color.White
                 };
 
                 trapVertices[2] = new VertexPositionColorTexture()
                 {
-                    Position = new Vector3(DestinationRectangle.Right, DestinationRectangle.Bottom, 0),
-                    TextureCoordinate = new Vector2(1, 0.5f),
+                    Position = new Vector3(DestinationRectangle.Left + DestinationRectangle.Width, DestinationRectangle.Top + DestinationRectangle.Height, 0),
+                    TextureCoordinate = CurrentAnimation.dBottomRightTexCoord,
                     Color = Color.White
                 };
 
                 trapVertices[3] = new VertexPositionColorTexture()
                 {
-                    Position = new Vector3(DestinationRectangle.Left, DestinationRectangle.Bottom, 0),
-                    TextureCoordinate = new Vector2(0, 0.5f),
+                    Position = new Vector3(DestinationRectangle.Left, DestinationRectangle.Top + DestinationRectangle.Height, 0),
+                    TextureCoordinate = CurrentAnimation.dBottomLeftTexCoord,
                     Color = Color.White
                 };
 
@@ -225,19 +216,21 @@ namespace TowerDefensePrototype
             }
         }
 
-         public override void DrawSpriteNormal(GraphicsDevice graphics, BasicEffect effect)
+        public override void Draw(SpriteBatch spriteBatch)
         {
-            //if (Active == true)
-            //{
-            //    spriteBatch.Draw(CurrentAnimation.Texture, DestinationRectangle, CurrentAnimation.NormalSourceRectangle, Color.White,
-            //                     MathHelper.ToRadians(0), Vector2.Zero, SpriteEffects.None, DrawDepth);
-            //}
+            if (TrapEmitterList.Count > 0)
+            {
+                foreach (Emitter emitter in TrapEmitterList)
+                {
+                    emitter.Draw(spriteBatch);
+                }
+            }
         }
 
-         public override void DrawSpriteDepth(GraphicsDevice graphics, Effect effect)
+        public override void DrawSpriteDepth(GraphicsDevice graphics, Effect effect)
         {
-            //spriteBatch.Draw(CurrentAnimation.Texture, DestinationRectangle, CurrentAnimation.DiffuseSourceRectangle, new Color(DrawDepth * 255, DrawDepth * 255, DrawDepth * 255));
-            if (CurrentAnimation != null)
+            //Draw the same sprite as the color map, but with the depth effect applied
+            if (Active == true)
             {
                 effect.Parameters["Texture"].SetValue(CurrentAnimation.Texture);
                 effect.Parameters["depth"].SetValue(DrawDepth);
@@ -249,6 +242,60 @@ namespace TowerDefensePrototype
                 }
             }
         }
+
+        public override void DrawSpriteNormal(GraphicsDevice graphics, BasicEffect effect)
+        {
+            //Draw the lower half of the sprite (The normal map) with a basic effect applied
+            if (Active == true)
+                if (CurrentAnimation.AnimationType == AnimationType.Normal || CurrentAnimation.AnimationType == AnimationType.Emissive)
+                {
+                    effect.TextureEnabled = true;
+                    effect.VertexColorEnabled = true;
+                    effect.Texture = CurrentAnimation.Texture;
+
+                    normalVertices[0] = new VertexPositionColorTexture()
+                    {
+                        Position = new Vector3(DestinationRectangle.Left, DestinationRectangle.Top, 0),
+                        TextureCoordinate = CurrentAnimation.nTopLeftTexCooord,
+                        Color = Color.White
+                    };
+
+                    normalVertices[1] = new VertexPositionColorTexture()
+                    {
+                        Position = new Vector3(DestinationRectangle.Left + DestinationRectangle.Width, DestinationRectangle.Top, 0),
+                        TextureCoordinate = CurrentAnimation.nTopRightTexCoord,
+                        Color = Color.White
+                    };
+
+                    normalVertices[2] = new VertexPositionColorTexture()
+                    {
+                        Position = new Vector3(DestinationRectangle.Left + DestinationRectangle.Width, DestinationRectangle.Top + DestinationRectangle.Height, 0),
+                        TextureCoordinate = CurrentAnimation.nBottomRightTexCoord,
+                        Color = Color.White
+                    };
+
+                    normalVertices[3] = new VertexPositionColorTexture()
+                    {
+                        Position = new Vector3(DestinationRectangle.Left, DestinationRectangle.Top + DestinationRectangle.Height, 0),
+                        TextureCoordinate = CurrentAnimation.nBottomLeftTexCoord,
+                        Color = Color.White
+                    };
+
+                    normalIndices[0] = 0;
+                    normalIndices[1] = 1;
+                    normalIndices[2] = 2;
+                    normalIndices[3] = 2;
+                    normalIndices[4] = 3;
+                    normalIndices[5] = 0;
+
+                    foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+                    {
+                        pass.Apply();
+                        graphics.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, normalVertices, 0, 4, normalIndices, 0, 2, VertexPositionColorTexture.VertexDeclaration);
+                    }
+                }
+        }
+
 
         public void DrawBars(GraphicsDevice graphicsDevice, BasicEffect basicEffect)
         {

@@ -141,6 +141,7 @@ Content\JetSprite3.xnb
 Content\SmallLight.xnb
 Content\BaseLight.xnb
 Content\tileNormal.xnb
+Content\MappingOutlines.xnb
 Content\Sounds\Menu\MenuClick.xnb
 Content\Sounds\FireTrapStart.xnb
 Content\Sounds\Menu\MenuAmbiance.xnb
@@ -177,4 +178,4 @@ Content\LightEffect.xnb
 Content\ShadowBlur.xnb
 Content\EmissiveBlur.xnb
 Content\StoryDialogue\StoryDialogue1.xnb
-Content\MappingOutlines.xnb
+Content\ParticleEffect.xnb
