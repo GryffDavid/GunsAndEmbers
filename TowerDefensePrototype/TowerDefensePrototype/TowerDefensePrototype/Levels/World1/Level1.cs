@@ -101,6 +101,15 @@ namespace TowerDefensePrototype
             StoryDialogueItems DialogueItems = contentManager.Load<StoryDialogueItems>("StoryDialogue/Level1Dialogue");
             LevelDialogue.ItemsList = DialogueItems.DialogueItems;
 
+            LevelDialogue.TutorialMarker = new ButtonMarker(new Vector2(100, 100), contentManager.Load<Texture2D>("WhiteBlock"));
+            //LevelDialogue.TutorialMarker.Texture = contentManager.Load<Texture2D>("WhiteBlock");
+
+            LevelDialogue.DialogueBox = new StoryDialogueBox();
+            //LevelDialogue.DialogueBox.Position = new Vector2(100, 100);
+            LevelDialogue.DialogueBox.BoxTexture = contentManager.Load<Texture2D>("WhiteBlock");
+            LevelDialogue.DialogueBox.DialogueFont = contentManager.Load<SpriteFont>("Fonts/RobotoBold20_0_Outline");
+            LevelDialogue.DialogueBox.TipFont = contentManager.Load<SpriteFont>("Fonts/RobotoLight20_2");
+
             //DialogueItems = contentManager.Load<StoryDialogueItems>("StoryDialogue/Level1Dialogue");
             //LevelDialogue = contentManager.Load<LevelDialogue>("StoryDialogue/StoryDialogue1");            
             GroundTexture = contentManager.Load<Texture2D>("Backgrounds/Ground");

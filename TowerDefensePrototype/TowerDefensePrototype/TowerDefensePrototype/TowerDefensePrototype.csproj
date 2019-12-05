@@ -127,8 +127,11 @@
     <Compile Include="Invaders\DropShipSkids.cs" />
     <Compile Include="Invaders\HeavyRanged\HarpoonCannon.cs" />
     <Compile Include="Invaders\ShieldGenerator.cs" />
+    <Compile Include="LevelDialogue\Level2Dialogue.cs" />
+    <Compile Include="LevelDialogue\LoadoutScreenDialogue.cs" />
     <Compile Include="LevelDialogue\Level1Dialogue.cs" />
     <Compile Include="Basics\LevelDialogue.cs" />
+    <Compile Include="Levels\World1\Level2.cs" />
     <Compile Include="ParticleSystem\Corpse.cs" />
     <Compile Include="ParticleSystem\ExplosionEffect.cs" />
     <Compile Include="ParticleSystem\JetEngine.cs" />
@@ -152,7 +155,7 @@
     <Compile Include="Basics\Powerup.cs" />
     <Compile Include="Invaders\LightRanged\RifleMan.cs" />
     <Compile Include="UIComponents\CircularBar.cs" />
-    <Compile Include="UIComponents\TutorialBox.cs" />
+    <Compile Include="UIComponents\StoryDialogueBox.cs" />
     <Compile Include="UIComponents\PartitionedBar.cs" />
     <Compile Include="Projectiles\BeamProjectile.cs" />
     <Compile Include="Animations\TrapAnimation.cs" />
@@ -171,7 +174,7 @@
     <Compile Include="Turrets\Heavy\GlueTurret.cs" />
     <Compile Include="UIComponents\CooldownButton.cs" />
     <Compile Include="UIComponents\Tabs.cs" />
-    <Compile Include="UIComponents\Tutorial\TutorialMarker.cs" />
+    <Compile Include="UIComponents\Tutorial\ButtonMarker.cs" />
     <Compile Include="UIComponents\UIBar.cs" />
     <Compile Include="Components\Decal.cs" />
     <Compile Include="UIComponents\DialogBox.cs" />
@@ -192,7 +195,6 @@
     <Compile Include="UIComponents\UIWeaponInfoTip.cs" />
     <Compile Include="UIComponents\WaveCountDown.cs" />
     <Compile Include="UIComponents\NumberChange.cs" />
-    <Compile Include="Levels\TutorialLevel.cs" />
     <Compile Include="Components\PowerupDelivery.cs" />
     <Compile Include="SpecialAbilities\AirStrikeSpecial.cs" />
     <Compile Include="Projectiles\Beam\PersistentBeamProjectile.cs" />
@@ -201,7 +203,6 @@
     <Compile Include="Basics\World.cs" />
     <Compile Include="UIComponents\Tooltip.cs" />
     <Compile Include="Components\Level.cs" />
-    <Compile Include="Levels\World1\Level2.cs" />
     <Compile Include="Levels\World1\Level1.cs" />
     <Compile Include="Projectiles\Beam\LaserProjectile.cs" />
     <Compile Include="Projectiles\Heavy\BoomerangProjectile..cs" />

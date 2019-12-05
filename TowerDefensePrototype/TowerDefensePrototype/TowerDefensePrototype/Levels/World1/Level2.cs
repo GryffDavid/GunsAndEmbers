@@ -5,50 +5,57 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Media;
+using Microsoft.Xna.Framework.Audio;
+using GameDataTypes;
 
 namespace TowerDefensePrototype
 {
     public class Level2 : Level
-    {
-        public Level2()
+    {        
+        public Level2(Game1 game)
         {
+            //DialogueItems = new StoryDialogueItems();
+            LevelDialogue = new Level2Dialogue(game);
             Number = 2;
             WaveList = new List<Wave>();
             WorldType = WorldType.Snowy;
             StartWeather = Weather.Snow;
-            Resources = 1300;
-
-            Wave Wave1 = new Wave(false, 800, 5000,
-                new Soldier(new Vector2(2050, 400)),
-                new Soldier(new Vector2(2050, 400)),
-                //new Spider(new Vector2(2050, 400)),
-                //new Soldier(new Vector2(2050, 400)),
-                //new Soldier(new Vector2(2050, 400)),
-                //new Spider(new Vector2(2050, 400)),
-                //new Soldier(new Vector2(2050, 400)),
-                //new Soldier(new Vector2(2050, 400)),
-                //new Spider(new Vector2(2050, 400)),
-                //new Soldier(new Vector2(2050, 400)),
-                //new Soldier(new Vector2(2050, 400)),
-                //new Soldier(new Vector2(2050, 400)),
-                //new Soldier(new Vector2(2050, 400)),
-                //new Soldier(new Vector2(2050, 400)),
-                //new Spider(new Vector2(2050, 400)),
-                //new Spider(new Vector2(2050, 400)),
-                //new Spider(new Vector2(2050, 400)),
-                //new Spider(new Vector2(2050, 400)),
-                //new Spider(new Vector2(2050, 400)),
-                //new Spider(new Vector2(2050, 400))
-                new Soldier(new Vector2(2050, 400)));
+            Resources = 200;
+                        
+            //A float in the middle of the list changes the delay between invaders
+            //An int in the middle of the list creates a pause without changing the timing
+            #region Wave1
+            Wave Wave1 = new Wave(false, 350, 100,
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850))
+                 );            
+            #endregion
 
             WaveList.Add(Wave1);
         }
 
         public override void LoadContent(ContentManager contentManager)
         {
+            StoryDialogueItems DialogueItems = contentManager.Load<StoryDialogueItems>("StoryDialogue/Level2Dialogue");
+            LevelDialogue.ItemsList = DialogueItems.DialogueItems;
+
+            LevelDialogue.TutorialMarker = new ButtonMarker(new Vector2(100, 100), contentManager.Load<Texture2D>("WhiteBlock"));
+
+            LevelDialogue.DialogueBox = new StoryDialogueBox();
+            LevelDialogue.DialogueBox.BoxTexture = contentManager.Load<Texture2D>("WhiteBlock");
+            LevelDialogue.DialogueBox.DialogueFont = contentManager.Load<SpriteFont>("Fonts/RobotoBold20_0_Outline");
+            LevelDialogue.DialogueBox.TipFont = contentManager.Load<SpriteFont>("Fonts/RobotoLight20_2");
+       
             GroundTexture = contentManager.Load<Texture2D>("Backgrounds/Ground");
             ForegroundTexture = contentManager.Load<Texture2D>("Backgrounds/Foreground");
             SkyBackgroundTexture = contentManager.Load<Texture2D>("Backgrounds/Sky");
-        }
+        }        
     }
 }

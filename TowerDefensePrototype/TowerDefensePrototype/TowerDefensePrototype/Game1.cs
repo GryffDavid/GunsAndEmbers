@@ -391,7 +391,7 @@ namespace TowerDefensePrototype
         #region Fonts
         SpriteFont DefaultFont, TooltipFont, ResourceFont, BigUIFont,
                    RobotoBold40_2, RobotoRegular40_2, RobotoRegular20_2, RobotoRegular20_0, RobotoItalic20_0,
-                   DialogueFont;
+                   DialogueFont, RobotoBold20_0_Outline, RobotoBold20_2_Outline;
         #endregion
 
         #region Projectile sprites
@@ -512,7 +512,8 @@ namespace TowerDefensePrototype
         #endregion
 
         #region List declarations
-        List<Button> TowerButtonList, MainMenuButtonList, PauseButtonList,
+        public List<Button> TowerButtonList;
+        List<Button> MainMenuButtonList, PauseButtonList,
                      ProfileButtonList, ProfileDeleteList, PlaceWeaponList,
                      SpecialAbilitiesButtonList;
 
@@ -541,7 +542,7 @@ namespace TowerDefensePrototype
 
         List<WeaponBox> SelectTurretList, SelectTrapList;
 
-        List<CooldownButton> CooldownButtonList = new List<CooldownButton>();
+        public List<CooldownButton> CooldownButtonList = new List<CooldownButton>();
 
         List<UIWeaponInfoTip> UIWeaponInfoList = new List<UIWeaponInfoTip>();
 
@@ -620,7 +621,7 @@ namespace TowerDefensePrototype
         PartitionedBar PowerUnitsBar, MusicVolumeBar, SoundEffectsVolumeBar;
         CheckBox BloodEffectsToggle, FullscreenToggle;
 
-        List<TutorialBox> TutorialBoxList = new List<TutorialBox>();
+        List<StoryDialogueBox> TutorialBoxList = new List<StoryDialogueBox>();
 
         Texture2D ShieldBoundingSphere, RopeTexture1;
 
@@ -643,6 +644,8 @@ namespace TowerDefensePrototype
 
         List<Rope> RopeList = new List<Rope>();
         List<JetEngine> JetEngineList = new List<JetEngine>();
+
+        public LevelDialogue LoadoutMenuDialogue;
         
         //StoryDialogueItems Level1Dialogue;
 
@@ -1954,6 +1957,9 @@ namespace TowerDefensePrototype
             DialogueFont = SecondaryContent.Load<SpriteFont>("Fonts/RobotoRegular20_2");
             //ButtonFont = SecondaryContent.Load<SpriteFont>("Fonts/RobotoRegular20_2");
 
+            RobotoBold20_0_Outline = SecondaryContent.Load<SpriteFont>("Fonts/RobotoBold20_0_Outline");
+            RobotoBold20_2_Outline = SecondaryContent.Load<SpriteFont>("Fonts/RobotoBold20_2_Outline");
+
             TooltipFont = SecondaryContent.Load<SpriteFont>("Fonts/SpriteFont1");
             BigUIFont = SecondaryContent.Load<SpriteFont>("Fonts/RobotoRegular40_2");
             ResourceFont = Content.Load<SpriteFont>("Fonts/RobotoRegular20_2");
@@ -2139,6 +2145,11 @@ namespace TowerDefensePrototype
 
                             ProfileManagementPlay.Draw(spriteBatch);
                             ProfileManagementBack.Draw(spriteBatch);
+
+                            if (LoadoutMenuDialogue != null)
+                            {
+                                LoadoutMenuDialogue.DialogueBox.Draw(spriteBatch);
+                            }
                         }
                         break;
                     #endregion
@@ -2229,6 +2240,7 @@ namespace TowerDefensePrototype
                         {
                             spriteBatch.Draw(WhiteBlock, new Rectangle(665, 180, 590, 720), null, Color.Lerp(Color.Black, Color.Transparent, 0.5f), 0, new Vector2(0, 0), SpriteEffects.None, 1);
                             spriteBatch.DrawString(RobotoRegular40_2, "mission completed", new Vector2(1920 / 2, 210), Color.White, 0, RobotoBold40_2.MeasureString("mission completed") / 2, 1, SpriteEffects.None, 0);
+                            spriteBatch.DrawString(RobotoRegular40_2, "unlocked", new Vector2(1920 / 2, 280), Color.White, 0, RobotoBold40_2.MeasureString("unlocked") / 2, 1, SpriteEffects.None, 0);
                             VictoryContinue.Draw(spriteBatch);
                         }
                         break;
@@ -2470,7 +2482,9 @@ namespace TowerDefensePrototype
 
                 spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
 
-                spriteBatch.DrawString(DialogueFont, CurrentLevel.LevelDialogue.CurrentText, new Vector2(100, 100), Color.White);
+                //spriteBatch.DrawString(DialogueFont, CurrentLevel.LevelDialogue.CurrentText, new Vector2(100, 100), Color.White);
+                CurrentLevel.LevelDialogue.DialogueBox.Draw(spriteBatch);
+                CurrentLevel.LevelDialogue.TutorialMarker.Draw(spriteBatch);
 
                 #region Draw diagnostics
                 if (Diagnostics == true)
@@ -3258,6 +3272,16 @@ namespace TowerDefensePrototype
             {
                 CreateRightClick();
             }
+
+            //Press Ctrl+Shift+V for instant victory
+            //TODO: URGENT. REMOVE BEFORE RELEASE
+            if (CurrentKeyboardState.IsKeyDown(Keys.LeftShift) && 
+                CurrentKeyboardState.IsKeyDown(Keys.LeftControl) &&
+                PreviousKeyboardState.IsKeyUp(Keys.V) && 
+                CurrentKeyboardState.IsKeyDown(Keys.V))
+            {
+                PlayerVictory();
+            }
             
             #region Turret and Trap can't be selected to place at the same time
             if (GameState == GameState.Playing || GameState == GameState.ProfileManagement)
@@ -4033,6 +4057,16 @@ namespace TowerDefensePrototype
                     }
                     break;
                 #endregion
+
+                case TowerDefensePrototype.GameState.ProfileManagement:
+                    {
+                        if (LoadoutMenuDialogue != null)
+                        {
+                            LoadoutMenuDialogue.Update(gameTime);
+                            //LoadoutMenuDialogue.Update(gameTime);                            
+                        }
+                    }
+                    break;
             }
                        
 
@@ -5183,6 +5217,21 @@ namespace TowerDefensePrototype
                             {
                                 if (button == VictoryContinue)
                                 {
+                                    if (CurrentProfile.LevelNumber == 1)
+                                    {
+                                        LoadoutMenuDialogue = new LoadoutDialogue(this);
+                                        StoryDialogueItems DialogueItems = Content.Load<StoryDialogueItems>("StoryDialogue/LoadoutMenuDialogue");
+                                        LoadoutMenuDialogue.ItemsList = DialogueItems.DialogueItems;
+
+                                        LoadoutMenuDialogue.TutorialMarker = new ButtonMarker(new Vector2(100, 100), Content.Load<Texture2D>("WhiteBlock"));
+
+                                        LoadoutMenuDialogue.DialogueBox = new StoryDialogueBox();
+                                        LoadoutMenuDialogue.DialogueBox.BoxTexture = Content.Load<Texture2D>("WhiteBlock");
+                                        LoadoutMenuDialogue.DialogueBox.DialogueFont = Content.Load<SpriteFont>("Fonts/RobotoBold20_0_Outline");
+                                        LoadoutMenuDialogue.DialogueBox.TipFont = Content.Load<SpriteFont>("Fonts/RobotoLight20_0");
+
+                                    }
+
                                     CurrentProfile.LevelNumber++;
                                     StorageDevice.BeginShowSelector(this.SaveProfile, null);
                                     GameState = GameState.ProfileManagement;
@@ -5372,7 +5421,7 @@ namespace TowerDefensePrototype
                 #region Show damage and healing values
                 if (invader.CurrentHP < invader.PreviousHP)
                 {
-                    NumberChangeList.Add(new NumberChange(RobotoRegular20_0, invader.Position, new Vector2(0, -1.5f), 0 - (int)(invader.PreviousHP - invader.CurrentHP), Color.Red));
+                    NumberChangeList.Add(new NumberChange(DialogueFont, invader.Position, new Vector2(0, -1.5f), 0 - (int)(invader.PreviousHP - invader.CurrentHP), Color.Red));
                 }
 
                 invader.PreviousHP = invader.CurrentHP;

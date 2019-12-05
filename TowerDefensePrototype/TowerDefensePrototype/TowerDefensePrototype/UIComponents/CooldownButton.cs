@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace TowerDefensePrototype
 {
-    class CooldownButton
+    public class CooldownButton
     {
         public event ButtonClickHappenedEventHandler ButtonClickHappened;
         public void CreateButtonClick(MouseButton button)
