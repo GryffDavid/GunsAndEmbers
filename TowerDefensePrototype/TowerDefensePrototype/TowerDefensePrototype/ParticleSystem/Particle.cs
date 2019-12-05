@@ -44,8 +44,8 @@ namespace TowerDefensePrototype
             RotationIncrement = rotationChange;
             CurrentRotation = startingRotation;
 
-            Direction.X = (float)Math.Sin(MathHelper.ToRadians(Angle));
-            Direction.Y = (float)Math.Cos(MathHelper.ToRadians(Angle));
+            //Direction.X = (float)Math.Sin(MathHelper.ToRadians(Angle));
+            //Direction.Y = (float)Math.Cos(MathHelper.ToRadians(Angle));
 
             Direction.X = (float)Math.Cos(Angle);
             Direction.Y = (float)Math.Sin(Angle);

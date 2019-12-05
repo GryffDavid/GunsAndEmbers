@@ -313,9 +313,9 @@ namespace TowerDefensePrototype
         public void Draw(SpriteBatch spriteBatch)
         {
             SpriteBatch = spriteBatch;
-            Color newColor, newColor2, drawColor;
-            newColor = Color.Lerp(TextColor, Color.Transparent, 0.5f);
-            newColor2 = TextColor;
+            Color ReleasedColor, PressedColor, drawColor;
+            ReleasedColor = Color.Lerp(TextColor, Color.Transparent, 0.5f);
+            PressedColor = TextColor;
             drawColor = TextColor;
 
             if (ButtonActive == true)
@@ -326,24 +326,24 @@ namespace TowerDefensePrototype
                 {
                     if (CurrentButtonState != ButtonSpriteState.Pressed)                    
                         spriteBatch.Draw(IconTexture, IconRectangle, null, CurrentIconColor, MathHelper.ToRadians(0), Vector2.Zero, 
-                            SpriteEffects.None, 0.5f);
+                            SpriteEffects.None, 0.991f);
                     else
                         spriteBatch.Draw(IconTexture, new Rectangle(IconRectangle.X + 2, IconRectangle.Y + 2, IconRectangle.Width,
-                            IconRectangle.Height), null, CurrentIconColor, MathHelper.ToRadians(0), Vector2.Zero, SpriteEffects.None, 0.5f);              
+                            IconRectangle.Height), null, CurrentIconColor, MathHelper.ToRadians(0), Vector2.Zero, SpriteEffects.None, 0.991f);              
                 }
 
                 switch (CurrentButtonState)
                 {
                     case ButtonSpriteState.Pressed:
-                        drawColor = newColor2;
+                        drawColor = PressedColor;
                         break;
 
                     case ButtonSpriteState.Hover:
-                        drawColor = newColor2;
+                        drawColor = PressedColor;
                         break;
 
                     case ButtonSpriteState.Released:
-                        drawColor = newColor;
+                        drawColor = ReleasedColor;
                         break;
                 }
 

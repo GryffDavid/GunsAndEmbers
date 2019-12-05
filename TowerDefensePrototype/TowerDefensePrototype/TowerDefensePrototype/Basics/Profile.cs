@@ -11,15 +11,14 @@ namespace TowerDefensePrototype
     {
         public string Name;
         public int LevelNumber, Points, Credits, ShotsFired;
-        public List<string> Buttons;
-        public List<TurretType> Buttons2;
+        public List<Weapon> Buttons;
         public List<Upgrade> UpgradesList;
 
         //What turrets the player has access to
-        public bool FlameThrowerTurret, MachineGunTurret, CannonTurret, LightningTurret, ClusterTurret,
-                    FelCannonTurret, BeamTurret, FreezeTurret, GrenadeTurret;
+        public bool FlameThrower, MachineGun, Cannon, Lightning, Cluster,
+                    FelCannon, Beam, Freeze, Grenade, Boomerang;
 
         //What traps the player has access to
-        public bool FireTrap, SpikesTrap, WallTrap, CatapultTrap, SawBladeTrap, IceTrap, BarrelTrap;
+        public bool Fire, Spikes, Wall, Catapult, SawBlade, Ice, Barrel;
     }
 }

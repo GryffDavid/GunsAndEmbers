@@ -115,6 +115,7 @@
     <Compile Include="Basics\BulletTrail.cs" />
     <Compile Include="Basics\DialogBox.cs" />
     <Compile Include="Basics\Explosion.cs" />
+    <Compile Include="Basics\Light.cs" />
     <Compile Include="Basics\ProgressBar.cs" />
     <Compile Include="Basics\LightningBolt.cs" />
     <Compile Include="Basics\Profile.cs" />
@@ -150,7 +151,6 @@
     <Compile Include="Turrets\BeamTurret.cs" />
     <Compile Include="Turrets\BoomerangTurret.cs" />
     <Compile Include="Turrets\FreezeTurret.cs" />
-    <Compile Include="Turrets\EnergyTurret.cs" />
     <Compile Include="Turrets\FelCannon.cs" />
     <Compile Include="Turrets\GrenadeTurret.cs" />
     <Compile Include="Upgrades\Upgrade2.cs" />
@@ -209,6 +209,8 @@
     <Compile Include="Upgrades\Upgrade1.cs" />
     <Compile Include="Basics\Wave.cs" />
     <Compile Include="Basics\WeaponBox.cs" />
+    <Compile Include="Basics\Weapon.cs" />
+    <Compile Include="VictoryScreen.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Service References\aOtherStuff\Game.ico" />

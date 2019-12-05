@@ -17,7 +17,8 @@ namespace TowerDefensePrototype
             BaseAsset = "Turrets/MachineTurretBase";
             Position = position;
             Selected = true;
-            FireDelay = 6000;
+            //FireDelay = 6000;
+            FireDelay = 200;
             Damage = 150;
             AngleOffset = 2;
             Animated = false;
@@ -25,7 +26,7 @@ namespace TowerDefensePrototype
 
             CurrentAnimation = new Animation()
             {
-                AssetName = "Turrets/MachineTurretAnimation4",
+                AssetName = "Turrets/MachineTurretBarrel",
                 TotalFrames = 6
             };            
         }
