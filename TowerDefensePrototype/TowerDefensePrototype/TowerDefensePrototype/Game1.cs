@@ -273,13 +273,17 @@ namespace TowerDefensePrototype
 
         //Turret icons
         //NEW_TURRET E **turret icon declarations**
-        public Texture2D BeamTurretIcon, BoomerangTurretIcon, CannonTurretIcon, ClusterTurretIcon, FelCannonTurretIcon, FlameThrowerTurretIcon,
-                         FreezeTurretIcon, GrenadeTurretIcon, GasGrenadeTurretIcon, LightningTurretIcon, MachineGunTurretIcon,
-                         PersistentBeamTurretIcon, ShotgunTurretIcon, HarpoonTurretIcon, StickyMineTurretIcon, GrappleTurretIcon;
+
+        Dictionary<string, Texture2D> TurretIconDictionary = new Dictionary<string, Texture2D>();
+        Dictionary<string, Texture2D> TrapIconDictionary = new Dictionary<string, Texture2D>();
+
+        //public Texture2D BeamTurretIcon, BoomerangTurretIcon, CannonTurretIcon, ClusterTurretIcon, FelCannonTurretIcon, FlameThrowerTurretIcon,
+        //                 FreezeTurretIcon, GrenadeTurretIcon, GasGrenadeTurretIcon, LightningTurretIcon, MachineGunTurretIcon,
+        //                 PersistentBeamTurretIcon, ShotgunTurretIcon, HarpoonTurretIcon, StickyMineTurretIcon, GrappleTurretIcon;
 
         //Trap Icons
-        public Texture2D CatapultTrapIcon, IceTrapIcon, TarTrapIcon, WallTrapIcon, BarrelTrapIcon, FireTrapIcon, LineTrapIcon, SawBladeTrapIcon,
-                         SpikesTrapIcon, LandMineTrapIcon, TriggerTrapIcon, FlameThrowerTrapIcon, GlueTrapIcon;
+        //public Texture2D CatapultTrapIcon, IceTrapIcon, TarTrapIcon, WallTrapIcon, BarrelTrapIcon, FireTrapIcon, LineTrapIcon, SawBladeTrapIcon,
+        //                 SpikesTrapIcon, LandMineTrapIcon, TriggerTrapIcon, FlameThrowerTrapIcon, GlueTrapIcon;
 
         //Emotion Icons
         public Texture2D FearEmotionIcon;
@@ -1358,9 +1362,10 @@ namespace TowerDefensePrototype
 
                 TurretSpriteDictionary.Clear();
                 TrapAnimationsDictionary.Clear();
+                LightList.Clear();
+                CrepLightList.Clear();
 
                 Content.Unload();
-
             }
         } //This is called when the player exits to the main menu. Unloads game content, not menu content
 
@@ -2161,28 +2166,69 @@ namespace TowerDefensePrototype
 
         private void LoadIcons()
         {
+            //#region Turret Icons
+            ////NEW_TURRET F **Icons need to be added to corresponding folder**
+            //foreach (TurretType turretType in Enum.GetValues(typeof(TurretType)))
+            //{
+            //    string TurretIconName = "Icons/TurretIcons/" + turretType.ToString() + "TurretIcon";
+            //    string TurretTextureName = turretType.ToString() + "TurretIcon";
+
+            //    var thing = this.GetType().GetField(TurretTextureName);
+            //    thing.SetValue(this, SecondaryContent.Load<Texture2D>(TurretIconName));
+            //}
+            //#endregion
+
+            //#region Trap Icons
+            //foreach (TrapType trapType in Enum.GetValues(typeof(TrapType)))
+            //{
+            //    string TrapIconName = "Icons/TrapIcons/" + trapType.ToString() + "TrapIcon";
+            //    string TrapTextureName = trapType.ToString() + "TrapIcon";
+
+            //    var thing = this.GetType().GetField(TrapTextureName);
+            //    thing.SetValue(this, SecondaryContent.Load<Texture2D>(TrapIconName));
+            //}
+            //#endregion
+
             #region Turret Icons
-            //NEW_TURRET F **Icons need to be added to corresponding folder**
             foreach (TurretType turretType in Enum.GetValues(typeof(TurretType)))
             {
-                string TurretIconName = "Icons/TurretIcons/" + turretType.ToString() + "TurretIcon";
-                string TurretTextureName = turretType.ToString() + "TurretIcon";
+                string TurretIconName = "Icons\\TurretIcons\\" + turretType.ToString() + "TurretIcon";
 
-                var thing = this.GetType().GetField(TurretTextureName);
-                thing.SetValue(this, SecondaryContent.Load<Texture2D>(TurretIconName));
+                string TurretIconTextureName = turretType.ToString() + "TurretIcon";
+
+                string pat = Directory.GetCurrentDirectory() + "\\Content\\" + TurretIconName + ".xnb";
+
+                if (File.Exists(pat))
+                {
+                    TurretIconDictionary.Add(TurretIconTextureName, SecondaryContent.Load<Texture2D>(TurretIconName));
+                }
+                else
+                {
+                    TurretIconDictionary.Add(TurretIconTextureName, SecondaryContent.Load<Texture2D>("Icons/TurretIcons/MachineGunTurretIcon"));                    
+                }
             }
             #endregion
 
             #region Trap Icons
-            foreach (TrapType trapType in Enum.GetValues(typeof(TrapType)))
+            foreach (TrapType TrapType in Enum.GetValues(typeof(TrapType)))
             {
-                string TrapIconName = "Icons/TrapIcons/" + trapType.ToString() + "TrapIcon";
-                string TrapTextureName = trapType.ToString() + "TrapIcon";
+                string TrapIconName = "Icons\\TrapIcons\\" + TrapType.ToString() + "TrapIcon";
 
-                var thing = this.GetType().GetField(TrapTextureName);
-                thing.SetValue(this, SecondaryContent.Load<Texture2D>(TrapIconName));
+                string TrapIconTextureName = TrapType.ToString() + "TrapIcon";
+
+                string pat = Directory.GetCurrentDirectory() + "\\Content\\" + TrapIconName + ".xnb";
+
+                if (File.Exists(pat))
+                {
+                    TrapIconDictionary.Add(TrapIconTextureName, SecondaryContent.Load<Texture2D>(TrapIconName));
+                }
+                else
+                {
+                    TrapIconDictionary.Add(TrapIconTextureName, SecondaryContent.Load<Texture2D>("Icons/TrapIcons/FireTrapIcon"));
+                }
             }
             #endregion
+     
 
             PowerUnitIcon = SecondaryContent.Load<Texture2D>("Icons/PowerUnitIcon");
             CurrencyIcon = SecondaryContent.Load<Texture2D>("Icons/CurrencyIcon");
@@ -8442,6 +8488,7 @@ namespace TowerDefensePrototype
         
         public void UpdateBeams()
         {
+            //THIS IS FOR PERSISTENT BEAMS
             if (CurrentMouseState.LeftButton == ButtonState.Pressed)
             {
                 LightProjectile projectile = CurrentBeam;
@@ -11393,9 +11440,11 @@ namespace TowerDefensePrototype
 
                     default:
                         {
-                            string WeaponName = turret.ToString();
-                            var icon = this.GetType().GetField(WeaponName + "TurretIcon").GetValue(this);
-                            Icon = (Texture2D)icon;
+                            //string WeaponName = turret.ToString();
+                            //var icon = this.GetType().GetField(WeaponName + "TurretIcon").GetValue(this);
+                            //Icon = (Texture2D)icon;
+
+                            TurretIconDictionary.TryGetValue(CurrentProfile.Buttons[slot].CurrentTurret.ToString() + "TurretIcon", out Icon);
                         }
                         break;
                 }
@@ -11413,9 +11462,11 @@ namespace TowerDefensePrototype
 
                     default:
                         {
-                            string WeaponName = trap.ToString();
-                            var icon = this.GetType().GetField(WeaponName + "TrapIcon").GetValue(this);
-                            Icon = (Texture2D)icon;
+                            //string WeaponName = trap.ToString();
+                            //var icon = this.GetType().GetField(WeaponName + "TrapIcon").GetValue(this);
+                            //Icon = (Texture2D)icon;
+
+                            TrapIconDictionary.TryGetValue(CurrentProfile.Buttons[slot].CurrentTrap.ToString() + "TrapIcon", out Icon);
                         }
                         break;
                 }
@@ -11659,9 +11710,11 @@ namespace TowerDefensePrototype
 
                         default:
                             {
-                                string WeaponName = CurrentProfile.Buttons[Index].CurrentTurret.ToString();
-                                var icon = this.GetType().GetField(WeaponName + "TurretIcon").GetValue(this);
-                                PressedButton.IconTexture = (Texture2D)icon;
+                                TurretIconDictionary.TryGetValue(CurrentProfile.Buttons[Index].CurrentTurret.ToString() + "TurretIcon", out PressedButton.IconTexture);
+
+                                //string WeaponName = CurrentProfile.Buttons[Index].CurrentTurret.ToString();
+                                //var icon = this.GetType().GetField(WeaponName + "TurretIcon").GetValue(this);
+                                //PressedButton.IconTexture = (Texture2D)icon;
                             }
                             break;
                     }
@@ -11679,9 +11732,11 @@ namespace TowerDefensePrototype
 
                         default:
                             {
-                                string WeaponName = CurrentProfile.Buttons[Index].CurrentTrap.ToString();
-                                var icon = this.GetType().GetField(WeaponName + "TrapIcon").GetValue(this);
-                                PressedButton.IconTexture = (Texture2D)icon;
+                                //string WeaponName = CurrentProfile.Buttons[Index].CurrentTrap.ToString();
+                                //var icon = this.GetType().GetField(WeaponName + "TrapIcon").GetValue(this);
+                                //PressedButton.IconTexture = (Texture2D)icon;
+
+                                TrapIconDictionary.TryGetValue(CurrentProfile.Buttons[Index].CurrentTrap.ToString() + "TrapIcon", out PressedButton.IconTexture);
                             }
                             break;
                     }

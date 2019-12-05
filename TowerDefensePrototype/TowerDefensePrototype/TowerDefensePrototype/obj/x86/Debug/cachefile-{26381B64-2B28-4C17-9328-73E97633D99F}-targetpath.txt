@@ -45,6 +45,7 @@ Content\Icons\TurretIcons\CannonTurretIcon.xnb
 Content\Icons\TurretIcons\FlameThrowerTurretIcon.xnb
 Content\Icons\TurretIcons\LightningTurretIcon.xnb
 Content\Icons\TurretIcons\ClusterTurretIcon.xnb
+Content\Icons\TurretIcons\GrappleTurretIcon.xnb
 Content\Icons\TurretIcons\BeamTurretIcon.xnb
 Content\Icons\TurretIcons\FreezeTurretIcon.xnb
 Content\Icons\TurretIcons\GrenadeTurretIcon.xnb
@@ -228,6 +229,9 @@ Content\Traps\Spikes\SpikesTrapTriggering.xnb
 Content\Traps\Spikes\SpikesTrapResetting.xnb
 Content\Traps\Spikes\SpikesTrapActive.xnb
 Content\Traps\Spikes\SpikesTrapUntriggered.xnb
+Content\Turrets\GrappleTurret\GrappleTurretBarrel.xnb
+Content\Turrets\GrappleTurret\GrappleTurretBase.xnb
+Content\Icons\TurretIcons\FelCannonTurretIcon.xnb
 Content\Sounds\Menu\MenuClick.xnb
 Content\Sounds\FireTrapStart.xnb
 Content\Sounds\Menu\MenuAmbiance.xnb
@@ -264,7 +268,3 @@ Content\Shaders\LightEffect.xnb
 Content\StoryDialogue\Level1Dialogue.xnb
 Content\StoryDialogue\Level2Dialogue.xnb
 Content\StoryDialogue\LoadoutMenuDialogue.xnb
-Content\Turrets\GrappleTurret\GrappleTurretBarrel.xnb
-Content\Turrets\GrappleTurret\GrappleTurretBase.xnb
-Content\Icons\TurretIcons\GrappleTurretIcon.xnb
-Content\Icons\TurretIcons\FelCannonTurretIcon.xnb
