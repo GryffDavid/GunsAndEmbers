@@ -29,12 +29,12 @@ namespace TowerDefensePrototype
             if (color == null)
                 Color = Color.White;
             else
-                Color = color.Value;
+                Color = color.Value;           
         }
 
         public void LoadContent(ContentManager contentManager)
         {
-            Texture = contentManager.Load<Texture2D>(AssetName);            
+            Texture = contentManager.Load<Texture2D>(AssetName);
         }
 
         public void Draw(SpriteBatch spriteBatch)

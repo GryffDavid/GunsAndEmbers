@@ -17,14 +17,16 @@ namespace TowerDefensePrototype
         public Rectangle BaseRectangle, BarrelRectangle;
         MouseState CurrentMouseState, PreviousMouseState;
         public float Rotation;
-        public bool Selected, Active, JustClicked;
+        public bool Selected, Active, JustClicked;//, CanShoot;
         public Color Color;
-        public MuzzleFlash Flash;
+        //public MuzzleFlash Flash;
+        public double FireDelay;
+
+        //double ElapsedTime = 0;
 
         public void LoadContent(ContentManager contentManager)
         {
-           
-
+            //CanShoot = true;
             Color = Color.White;
             BaseRectangle = new Rectangle();
             BarrelRectangle = new Rectangle();
@@ -33,12 +35,20 @@ namespace TowerDefensePrototype
             {
                 TurretBase = contentManager.Load<Texture2D>(BaseAsset);
                 TurretBarrel = contentManager.Load<Texture2D>(TurretAsset);
-                Flash = new MuzzleFlash(contentManager, TurretBarrel.Bounds.Width);
+                //Flash = new MuzzleFlash(contentManager, TurretBarrel.Bounds.Width);
             }
         }
 
-        public void Update()
+        public void Update(GameTime gameTime)
         {
+            //ElapsedTime += gameTime.ElapsedGameTime.TotalSeconds;
+
+            //if (ElapsedTime >= FireDelay)
+            //{
+            //    CanShoot = true;
+            //    ElapsedTime = 0;
+            //}
+
             CurrentMouseState = Mouse.GetState();
 
             if (Active == true)
@@ -48,7 +58,7 @@ namespace TowerDefensePrototype
                     CurrentMouseState = Mouse.GetState();
                     MousePosition = new Vector2(CurrentMouseState.X, CurrentMouseState.Y);
 
-                    Direction = MousePosition - Position;
+                    Direction = MousePosition - new Vector2(BarrelRectangle.X, BarrelRectangle.Y);
                     Direction.Normalize();
 
                     Rotation = (float)Math.Atan2((double)Direction.Y, (double)Direction.X);
@@ -61,33 +71,35 @@ namespace TowerDefensePrototype
                 }
             }
 
-            if (BaseRectangle.Contains(new Point(CurrentMouseState.X, CurrentMouseState.Y)) && CurrentMouseState.LeftButton == ButtonState.Released && PreviousMouseState.LeftButton == ButtonState.Pressed)            
-            {
-                JustClicked = true;
-            }
-            else
-            {
-                JustClicked = false;
-            }            
+            #region Handle selection
+                if (BaseRectangle.Contains(new Point(CurrentMouseState.X, CurrentMouseState.Y)) && CurrentMouseState.LeftButton == ButtonState.Released && PreviousMouseState.LeftButton == ButtonState.Pressed)            
+                {
+                    JustClicked = true;
+                }
+                else
+                {
+                    JustClicked = false;
+                }            
             
-            if (Selected == true)
-            {
-                Color = Color.Red;
-            }
-            else
-                Color = Color.White;  
+                if (Selected == true)
+                {
+                    Color = Color.Red;
+                }
+                else
+                    Color = Color.White;
+            #endregion
 
             PreviousMouseState = CurrentMouseState;
         }
 
-        public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
-        {
+        public void Draw(SpriteBatch spriteBatch)
+        {          
             if (Active == true)
             {
                 BaseRectangle = new Rectangle((int)Position.X - 12, (int)Position.Y - 16-6, TurretBase.Width, TurretBase.Height);
                 BarrelRectangle = new Rectangle((int)Position.X+8, (int)Position.Y-6, TurretBarrel.Width, TurretBarrel.Height);
 
-                Flash.Draw(spriteBatch, gameTime, new Vector2(BarrelRectangle.X, BarrelRectangle.Y), Rotation);
+                //Flash.Draw(spriteBatch, gameTime, new Vector2(BarrelRectangle.X, BarrelRectangle.Y), Rotation);
 
                 spriteBatch.Draw(TurretBarrel, BarrelRectangle, null, Color, Rotation, new Vector2(24, TurretBarrel.Height / 2), SpriteEffects.None, 1f);
                 spriteBatch.Draw(TurretBase, BaseRectangle, Color);

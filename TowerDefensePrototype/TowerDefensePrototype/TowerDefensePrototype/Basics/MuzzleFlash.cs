@@ -10,7 +10,7 @@ namespace TowerDefensePrototype
 {
     public class MuzzleFlash
     {
-        bool Visible;
+        public bool Visible;
         Vector2 Position;
         float Rotation;
         double Alpha, FadeIncrement, FadeTime;

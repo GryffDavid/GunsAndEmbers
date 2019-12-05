@@ -21,3 +21,4 @@ Content\TurretCrosshair.xnb
 Content\Flash1.xnb
 Content\Flash2.xnb
 Content\Flash3.xnb
+Content\OrcMinion.xnb

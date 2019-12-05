@@ -20,6 +20,7 @@ namespace TowerDefensePrototype
         public abstract void Behaviour();
         public bool CanMove;
         public Color Color;
+        public BoundingBox BoundingBox;
 
         public void LoadContent(ContentManager contentManager)
         {
@@ -30,16 +31,17 @@ namespace TowerDefensePrototype
         public void Update()
         {
             if (HP <= 0)
-                Active = false;
-
-            if (Active == true)
-            DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, Texture.Width, Texture.Height);
+                Active = false;            
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
             if (Active == true)
-            spriteBatch.Draw(Texture, DestinationRectangle, Color);
+            {                
+                DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, Texture.Width, Texture.Height);
+                BoundingBox = new BoundingBox(new Vector3(Position.X, Position.Y, 0), new Vector3(Position.X + 32, Position.Y + 32, 0));
+                spriteBatch.Draw(Texture, DestinationRectangle, Color);
+            }
         }
 
         public void ChangeHP(int change)

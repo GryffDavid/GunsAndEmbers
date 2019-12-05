@@ -30,8 +30,7 @@ namespace TowerDefensePrototype
         List<Turret> TurretList;
         List<Invader> InvaderList;
         List<string> IconNameList;
-
-        //Custom class Declarations
+        
         Tower Tower;
         StaticSprite Ground;
         TrapType SelectedTrap;
@@ -40,11 +39,14 @@ namespace TowerDefensePrototype
 
         GameTime GameTime;
 
-        Ray TestRay;
+        List<Ray> RayList;
+
+        int Rounds = 0;
 
         //Basic XNA calls
         public UserInterface(int trapButtons, int towerButtons, int resources, ContentManager contentManager)
         {
+            RayList = new List<Ray>();
             Tower = new Tower("Tower", new Vector2(32, 304-65));          
             Ground = new StaticSprite("Ground", new Vector2(0, 720 - 160 - 65));
             
@@ -113,12 +115,12 @@ namespace TowerDefensePrototype
                 }            
 
                 InvaderList = new List<Invader>();
-                for (int i = 0; i < 8; i++)
+                for (int i = 0; i < 300; i++)
                 {
                     InvaderList.Add(new Soldier(new Vector2(1260+(32*i), 720 - 160 - 37-65)));
                     InvaderList[i].LoadContent(ContentManager);
                 }
-            #endregion           
+            #endregion                                       
         }
 
         public void LoadContent(ContentManager contentManager)
@@ -132,6 +134,7 @@ namespace TowerDefensePrototype
 
         public void Update(GameTime gameTime)
         {
+            //RayList.Clear();
             //This is just the stuff that needs to be updated every step
             //This is where I call all the smaller procedures that I broke the update into 
             GameTime = gameTime;
@@ -141,20 +144,30 @@ namespace TowerDefensePrototype
                                       
             SelectButtonsUpdate();
             TowerButtonUpdate();
-            TrapButtonUpdate();            
+            TrapButtonUpdate();
+            
+            TurretUpdate();
 
             PreviousMouseState = CurrentMouseState;
+
+            for (int i = 0; i < InvaderList.Count; i++)
+            {
+                if (InvaderList[i].HP <= 0)
+                {
+                    InvaderList.RemoveAt(i);
+                }
+            }
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.DrawString(ResourceFont, "Resources: " + Resources.ToString(), new Vector2(0, 0), Color.White); 
+            spriteBatch.DrawString(ResourceFont, "Resources: " + Resources.ToString(), new Vector2(0, 0), Color.White);
+            spriteBatch.DrawString(ResourceFont, "Rounds: " + Rounds.ToString(), new Vector2(0, 32), Color.White);
 
-            Ground.Draw(spriteBatch);
-            Tower.Draw(spriteBatch);
-
-            InvaderUpdate();
-            TurretUpdate();
+            #region Background stuff
+                Ground.Draw(spriteBatch);
+                Tower.Draw(spriteBatch);
+            #endregion            
 
             #region Drawing buttons
                 spriteBatch.Draw(BackgroundTexture, DestinationRectangle, Color.White);
@@ -188,13 +201,16 @@ namespace TowerDefensePrototype
 
                 foreach (Turret turret in TurretList)
                 {
-                    turret.Update();
-                    turret.Draw(spriteBatch, GameTime);
+                    turret.Update(GameTime);
+                    turret.Draw(spriteBatch);
                 }
             #endregion
 
             CursorDraw(spriteBatch);
 
+            //This is here to make sure that the invader movement doesn't look jumpy
+                     
+            InvaderUpdate();
             TurretShoot();
         }
 
@@ -289,7 +305,7 @@ namespace TowerDefensePrototype
                                 TurretList[Index].LoadContent(ContentManager);
                                 Resources -= 100;
                                 SelectedTurret = TurretType.Blank;
-                                TurretList[Index].Selected = false;
+                                TurretList[Index].Selected = false;                                
                             }
                             break;
                     }
@@ -382,6 +398,23 @@ namespace TowerDefensePrototype
             {
                 invader.Update();
                 invader.Behaviour();
+
+                for (int p = 0; p < RayList.Count; p++)
+                {
+                    if (RayList[p].Intersects(invader.BoundingBox) != null)
+                    {
+                        invader.Active = false;
+                        RayList.RemoveAt(p);
+                    }
+                }
+            }
+
+            for (int i = 0; i < InvaderList.Count; i++)
+            {
+                if (InvaderList[i].Active == false)
+                {
+                    InvaderList.RemoveAt(i);
+                }
             }
         }
 
@@ -400,9 +433,9 @@ namespace TowerDefensePrototype
                         {
                             turret2.Selected = false;
                         }
-                    }
+                    }                    
                 }
-            }
+            }         
         }
 
         private void TrapUpdate(GameTime gameTime)
@@ -412,6 +445,7 @@ namespace TowerDefensePrototype
                 trap.Update(gameTime);
             }
         }
+
 
         private void CursorDraw(SpriteBatch spriteBatch)
         {
@@ -468,25 +502,22 @@ namespace TowerDefensePrototype
 
         }
 
+
         private void TurretShoot()
         {
+            RayList.Clear();
+
             foreach (Turret turret in TurretList)
-            {                
-                if (turret.Selected == true)
-                if (CurrentMouseState.LeftButton == ButtonState.Pressed && CurrentMouseState.Y < 720-160)
+            {
+                if (turret.Selected == true && CurrentMouseState.LeftButton == ButtonState.Pressed)
                 {
-                    turret.Flash.Flash(0, 3);
+                    RayList.Add(new Ray(new Vector3(turret.BarrelRectangle.X, turret.BarrelRectangle.Y, 0), new Vector3(turret.Direction.X, turret.Direction.Y, 0)));
                 }
             }
         }
 
-        private void ProjectilesUpdate()
-        {
-
-        }
-
-
-
+        
+        #region Various functions to clear current selections
         private void ClearTurretSelect()
         {
             //This forces all turrets to become un-selected.
@@ -515,5 +546,6 @@ namespace TowerDefensePrototype
             SelectedTurret = TurretType.Blank;
             SelectedTrap = TrapType.Blank;
         }
+        #endregion
     }
 }
