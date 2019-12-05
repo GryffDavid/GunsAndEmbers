@@ -10,13 +10,86 @@ namespace TowerDefensePrototype
 {
     abstract class HeavyRangedInvader : Invader
     {
+        private object _HitObject;
+        public new object HitObject
+        {
+            get { return _HitObject; }
+            set
+            {
+                PreviousHitObject = _HitObject;
+                _HitObject = value;
+
+                TotalHits++;
+
+                if (_HitObject != null)
+                {
+                    #region Hit the ground
+                    if (_HitObject.GetType() == typeof(StaticSprite))
+                    {
+                        HitGround++;
+                        return;
+                    }
+                    #endregion
+
+                    #region Hit the shield
+                    if (_HitObject.GetType() == typeof(Shield))
+                    {
+                        HitShield++;
+                        return;
+                    }
+                    #endregion
+
+                    #region Hit the tower
+                    if (_HitObject.GetType() == typeof(Tower))
+                    {
+                        HitTower++;
+                        return;
+                    }
+                    #endregion
+
+                    #region Hit a turret
+                    if (_HitObject.GetType().BaseType == typeof(Turret))
+                    {
+                        HitTurret++;
+                        return;
+                    }
+                    #endregion
+
+                    #region Hit a trap
+                    if (_HitObject.GetType().BaseType == typeof(Trap))
+                    {
+                        HitTrap++;
+                        return;
+                    }
+                    #endregion
+                }
+            }
+        }
+
         #region For drawing barrel animations
         public InvaderAnimation BarrelAnimation;
-        public VertexPositionColorTexture[] barrelVertices = new VertexPositionColorTexture[4];        
+        public VertexPositionColorTexture[] barrelVertices = new VertexPositionColorTexture[4];
         public Rectangle BarrelDestinationRectangle;
         public Vector2 BarrelPivot, BasePivot, BarrelEnd;
         public int[] barrelIndices = new int[6];
         #endregion
+
+        #region For handling ranged attacking
+        public InvaderFireType FireType; //Whether the invader fires a single projectile, fires a burst or fires a beam etc.
+        public Vector2 TowerDistanceRange, TrapDistanceRange; //How far away from the tower the invader will be before stopping to fire
+        public Vector2 AngleRange; //The angle that the projectile is fired at.
+        public Vector2 LaunchVelocityRange; //The range of speeds that the invader can use to launch a heavy projectile
+        
+        public bool InTowerRange = false;
+        public bool InTrapRange = false;
+        public float DistToTower = 1920;
+        public float DistToTrap, TrapPosition;
+        public float MinTowerRange, MinTrapRange;
+
+        public float RangedDamage; //How much damage the projectile does
+        public float LaunchVelocity; //How fast the heavy projectile is travelling when launched
+        public float CurrentFireDelay, MaxFireDelay; //How many milliseconds between shots
+        public int CurrentBurstShots, MaxBurstShots; //How many shots are fired in a row before a longer recharge is needed
 
         public float CurrentAngle = 0;
         public float EndAngle;
@@ -28,11 +101,12 @@ namespace TowerDefensePrototype
         public int HitShield = 0;
         public int HitTurret = 0;
         public int HitTrap = 0;
+        #endregion        
 
         public override void Initialize()
         {
-            MinTowerRange = Random.Next((int)DistanceRange.X,
-                                   (int)DistanceRange.Y);
+            MinTowerRange = Random.Next((int)TowerDistanceRange.X,
+                                        (int)TowerDistanceRange.Y);
             base.Initialize();
         }
 
@@ -139,6 +213,17 @@ namespace TowerDefensePrototype
             {
                 CanAttack = false;
             }            
+        }
+
+        public void ResetCollisions()
+        {
+            TotalHits = 0;
+
+            HitGround = 0;
+            HitTower = 0;
+            HitShield = 0;
+            HitTurret = 0;
+            HitTrap = 0;
         }
     }
 }

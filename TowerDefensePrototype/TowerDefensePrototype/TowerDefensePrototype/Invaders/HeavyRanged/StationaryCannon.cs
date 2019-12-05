@@ -10,6 +10,13 @@ namespace TowerDefensePrototype
 {
     class StationaryCannon : HeavyRangedInvader
     {
+        int AttackTowerLoopCounter; //How many times the invader made the decision to 
+                                    //try shoot the tower instead of the trap after it ran into a trap
+
+        int BounceLoopCounter; //How many time the invader has bounced between two solid traps
+
+        Trap RecentTrapCollision;
+
         public StationaryCannon(Vector2 position)
         {
             Position = position;
@@ -25,7 +32,8 @@ namespace TowerDefensePrototype
             CurrentMicroBehaviour = MicroBehaviour.MovingForwards;
 
             AngleRange = new Vector2(30, 60);
-            DistanceRange = new Vector2(750, 850);
+            TowerDistanceRange = new Vector2(750, 850);
+            TrapDistanceRange = new Vector2(250, 350);
             LaunchVelocityRange = new Vector2(10, 15);
             MaxFireDelay = 1500;
             CurrentFireDelay = 0;
@@ -37,13 +45,6 @@ namespace TowerDefensePrototype
 
         public override void Update(GameTime gameTime, Vector2 cursorPosition)
         {
-            //Should possibly consider tracking a variable called something like NumLoops
-            //To make sure that invaders doesn't get stuck in an infinite loop of getting stuck on a trap
-            //then backing up, firing again, moving forward getting stuck on the trap etc. After say NumLoops = 6
-            //change the Macro behaviour to something else - try a different tactic
-
-            //Check how many times the CurrentMicroBehaviour changes without switching to Attack
-            //This will let the invader know it's stuck in a loop and needs to change MacroBehaviour
             switch (CurrentMicroBehaviour)
             {
                 #region Stationary
@@ -54,31 +55,40 @@ namespace TowerDefensePrototype
                             #region Attack Tower
                             case MacroBehaviour.AttackTower:
                                 {
-                                    if (InTowerRange == true && EndAngle != CurrentAngle)
+                                    #region Hit a trap while moving forwards
+                                    if (InTowerRange == false && TargetTrap != null && Velocity.X < 0)
                                     {
-                                        CurrentMicroBehaviour = MicroBehaviour.AdjustTrajectory;
-                                    }
+                                        TrapPosition = TargetTrap.BoundingBox.Min.X;
+                                        Position.X += (Math.Abs(TargetTrap.BoundingBox.Max.X - BoundingBox.Min.X) + 1);
 
-                                    if (InTowerRange == true && EndAngle == CurrentAngle)
-                                    {
-                                        Speed = 0.75f;
-                                        CurrentMicroBehaviour = MicroBehaviour.Attack;
-                                    }
+                                        #region Only adjust to AttackTraps if the invader is intelligent or stuck in a loop
+                                        if (Random.NextDouble() > 0.1 || AttackTowerLoopCounter > 3)
+                                        {
+                                            MinTrapRange = Random.Next((int)TrapDistanceRange.X,
+                                                                       (int)TrapDistanceRange.Y);
+                                            CurrentMacroBehaviour = MacroBehaviour.AttackTraps;
+                                            AttackTowerLoopCounter = 0;
+                                        }
+                                        else
+                                        {
+                                            MinTowerRange = Position.X + MinTrapRange;
+                                            AttackTowerLoopCounter++;
+                                        }
+                                        #endregion
 
-                                    if (InTowerRange == false && Velocity.X < 0)
-                                    {
-                                        Position.X += 3;
-                                        TrapPosition = Position.X;
-                                        MinTrapRange = 100;
-                                        CurrentMacroBehaviour = MacroBehaviour.AttackTraps;
                                         CurrentMicroBehaviour = MicroBehaviour.MovingBackwards;
                                     }
+                                    #endregion
 
-                                    if (InTowerRange == false && Velocity.X > 0)
+                                    #region Hit a trap while moving backwards
+                                    if (InTowerRange == false && TargetTrap != null && Velocity.X > 0)
                                     {
-                                        Position.X -= 3;
+                                        TrapPosition = TargetTrap.BoundingBox.Min.X;
+                                        Position.X -= (Math.Abs(TargetTrap.BoundingBox.Min.X - BoundingBox.Max.X) + 1);
+
                                         CurrentMicroBehaviour = MicroBehaviour.MovingForwards;
                                     }
+                                    #endregion
                                 }
                                 break;
                             #endregion
@@ -86,12 +96,45 @@ namespace TowerDefensePrototype
                             #region Attack Traps
                             case MacroBehaviour.AttackTraps:
                                 {
+                                    #region Hit a trap while moving backwards
+                                    if (InTowerRange == false && TargetTrap != null && Velocity.X > 0)
+                                    {
+                                        TrapPosition = TargetTrap.BoundingBox.Min.X;
+                                        Position.X -= (Math.Abs(TargetTrap.BoundingBox.Min.X - BoundingBox.Max.X) + 1);
+                                        MinTowerRange = Random.Next((int)TowerDistanceRange.X, (int)TowerDistanceRange.Y);
 
+                                        CurrentMicroBehaviour = MicroBehaviour.MovingForwards;
+                                        BounceLoopCounter++;
+                                    }
+                                    #endregion
+
+                                    #region Hit a trap while moving forwards - Bouncing back after reversing into a trap
+                                    if (InTowerRange == false && TargetTrap != null && Velocity.X < 0)
+                                    {
+                                        TrapPosition = TargetTrap.BoundingBox.Min.X;
+                                        Position.X += (Math.Abs(TargetTrap.BoundingBox.Max.X - BoundingBox.Min.X) + 1);
+
+                                        //Definitely stuck between two traps. Attack the one behind it.
+                                        //Might let other invaders in to help with the one in front
+                                        if (BounceLoopCounter > 2)
+                                        {
+                                            InTrapRange = true;
+                                            EndAngle = MathHelper.ToRadians(180);
+                                            CurrentMicroBehaviour = MicroBehaviour.AdjustTrajectory;
+                                            BounceLoopCounter = 0;
+                                        }
+                                        else
+                                        {
+                                            CurrentMicroBehaviour = MicroBehaviour.MovingBackwards;
+                                        }
+                                    }
+                                    #endregion
                                 }
                                 break;
                             #endregion
                         }
 
+                        CanAttack = false;
                         Velocity.X = 0;
                     }
                     break;
@@ -100,19 +143,34 @@ namespace TowerDefensePrototype
                 #region MovingForwards
                 case MicroBehaviour.MovingForwards:
                     {
+                        #region Move
                         Direction.X = -1;
+                        CanAttack = false;
 
                         if (Slow == true)
                             Velocity.X = Direction.X * SlowSpeed;
                         else
                             Velocity.X = Direction.X * Speed;
-                        
+                        #endregion
+
                         switch (CurrentMacroBehaviour)
                         {
                             #region Attack Tower
                             case MacroBehaviour.AttackTower:
                                 {
+                                    if (DistToTower <= MinTowerRange)
+                                    {
+                                        //When the invader gets in range. It chooses the final firing angle
+                                        if (InTowerRange == false)
+                                        {
+                                            float nextAngle = Random.Next((int)AngleRange.X, (int)AngleRange.Y);
+                                            EndAngle = MathHelper.ToRadians(nextAngle);
+                                            Speed = 0.75f;
+                                        }
 
+                                        InTowerRange = true;
+                                        CurrentMicroBehaviour = MicroBehaviour.AdjustTrajectory;
+                                    }
                                 }
                                 break;
                             #endregion
@@ -132,19 +190,32 @@ namespace TowerDefensePrototype
                 #region MovingBackwards
                 case MicroBehaviour.MovingBackwards:
                     {
+                        #region Move
                         Direction.X = 1;
+                        CanAttack = false;
 
                         if (Slow == true)
                             Velocity.X = Direction.X * SlowSpeed;
                         else
                             Velocity.X = Direction.X * Speed;
+                        #endregion
 
                         switch (CurrentMacroBehaviour)
                         {
                             #region Attack Tower
                             case MacroBehaviour.AttackTower:
                                 {
+                                    if (MinTowerRange <= DistToTower)
+                                    {
+                                        //When the invader gets in range. It chooses the final firing angle
+                                        if (InTowerRange == false)
+                                        {
+                                            EndAngle = MathHelper.ToRadians(Random.Next((int)AngleRange.X, (int)AngleRange.Y));
+                                        }
 
+                                        InTowerRange = true;
+                                        CurrentMicroBehaviour = MicroBehaviour.AdjustTrajectory;
+                                    }
                                 }
                                 break;
                             #endregion
@@ -157,7 +228,9 @@ namespace TowerDefensePrototype
                                     if (DistToTrap >= MinTrapRange)
                                     {
                                         InTrapRange = true;
-                                        CurrentMicroBehaviour = MicroBehaviour.Stationary;
+                                        float nextAngle = Random.Next((int)10, (int)30);
+                                        EndAngle = MathHelper.ToRadians(nextAngle);
+                                        CurrentMicroBehaviour = MicroBehaviour.AdjustTrajectory;
                                     }
                                 }
                                 break;
@@ -171,6 +244,7 @@ namespace TowerDefensePrototype
                 case MicroBehaviour.AdjustTrajectory:
                     {
                         Velocity.X = 0;
+                        CanAttack = false;
 
                         if (CurrentAngle != EndAngle)
                         {
@@ -181,7 +255,7 @@ namespace TowerDefensePrototype
                             else
                             {
                                 EndAngle = CurrentAngle;
-                                CurrentMicroBehaviour = MicroBehaviour.Stationary;
+                                CurrentMicroBehaviour = MicroBehaviour.Attack;
                             }
                         }
                     }
@@ -190,98 +264,188 @@ namespace TowerDefensePrototype
 
                 #region Attack
                 case MicroBehaviour.Attack:
-                    {
-                        if (InTowerRange == true)
+                    {                        
+                        switch (CurrentMacroBehaviour)
                         {
-                            UpdateFireDelay(gameTime);
-
-                            //Check what the most recently fired projectiles hit and 
-                            //adjust accordingly based on MacroBehaviour
-
-                            #region Check most recently hit objects
-                            if (HitObject != null)
-                            {
-                                TotalHits++;
-
-                                //Hit the ground
-                                if (HitObject.GetType() == typeof(StaticSprite))
+                            #region Attack Tower
+                            case MacroBehaviour.AttackTower:
                                 {
-                                    HitGround++;
-                                }
+                                    if (InTowerRange == true)
+                                    {
+                                        UpdateFireDelay(gameTime);
 
-                                //Hit the shield
-                                if (HitObject.GetType() == typeof(Shield))
-                                {
-                                    HitShield++;
-                                }
-
-                                //Hit the tower
-                                if (HitObject.GetType() == typeof(Tower))
-                                {
-                                    HitTower++;
-                                }
-
-                                //Hit a turret
-                                if (HitObject.GetType().BaseType == typeof(Turret))
-                                {
-                                    HitTurret++;
-                                }
-
-                                //Hit a trap
-                                if (HitObject.GetType().BaseType == typeof(Trap))
-                                {
-                                    HitTrap++;
-                                }
-
-                                HitObject = null;
-                            }
-                            #endregion
-
-                            if (TotalHits >= 10)
-                            {
-                                switch (CurrentMacroBehaviour)
-                                {
-                                    #region Attack TOWER
-                                    case MacroBehaviour.AttackTower:
+                                        if (TotalHits >= 10)
                                         {
+                                            #region Hit traps, but not significant enough to warrant a Macro change
+                                            if (HitTrap > 0 && HitTrap < HitShield)
+                                            {
+                                                CanAttack = false;
+                                                EndAngle = MathHelper.Clamp(CurrentAngle - MathHelper.ToRadians(Random.Next(5, 15)), 0, 15);
+                                                CurrentMicroBehaviour = MicroBehaviour.AdjustTrajectory;
+                                                ResetCollisions();
+                                                break;
+                                            }
+                                            #endregion
+
+                                            #region Hit the ground too much, move closer
                                             if (HitGround > HitShield)
                                             {
-                                                MinTowerRange -= 100;
-                                                InTowerRange = false;
-                                                CanAttack = false;
-                                                HitObject = null;
-                                                EndAngle = 0;
-                                                CurrentMicroBehaviour = MicroBehaviour.AdjustTrajectory;
+                                                if (MathHelper.ToDegrees(CurrentAngle) <= 10)
+                                                {
+                                                    EndAngle = MathHelper.Clamp(CurrentAngle + MathHelper.ToRadians(Random.Next(5, 15)), 0, 15);
+                                                    CurrentMicroBehaviour = MicroBehaviour.AdjustTrajectory;
+                                                    ResetCollisions();
+                                                }
+                                                else
+                                                {
+                                                    MinTowerRange -= 100;
+                                                    InTowerRange = false;
+                                                    CanAttack = false;
+                                                    EndAngle = 0;
+                                                    CurrentMicroBehaviour = MicroBehaviour.AdjustTrajectory;
+                                                    ResetCollisions();
+                                                }
+                                                break;
                                             }
+                                            #endregion
+
+                                            #region Hit traps a lot, change Macro to AttackTraps OR adjust trajectory up to shoot over the trap
+                                            if (HitTrap > HitShield)
+                                            {
+                                                //Could also check the height of the Top of the trap above the invader. 
+                                                //Too high up means it should back up and attack the trap. 
+                                                //Low enough down means it should just back up and ajust its trajectory
+                                                if (Random.NextDouble() > 0.5)
+                                                {
+                                                    CanAttack = false;
+                                                    InTrapRange = false;
+                                                    //MinTowerRange = Position.X + (MinTrapRange / 2);
+                                                    EndAngle = MathHelper.Clamp(CurrentAngle - MathHelper.ToRadians(Random.Next(5, 15)), 0, 15);
+                                                    CurrentMacroBehaviour = MacroBehaviour.AttackTraps;
+                                                    CurrentMicroBehaviour = MicroBehaviour.AdjustTrajectory;
+                                                    ResetCollisions();
+                                                    break;
+                                                }
+                                                else
+                                                {
+                                                    CanAttack = false;
+                                                    //MinTowerRange = Position.X + (MinTrapRange / 4);
+                                                    EndAngle = MathHelper.Clamp(CurrentAngle + MathHelper.ToRadians(Random.Next(5, 15)), 0, 15);
+                                                    CurrentMicroBehaviour = MicroBehaviour.AdjustTrajectory;
+                                                    ResetCollisions();
+                                                    break;
+                                                }
+                                            }
+                                            #endregion
                                         }
-                                        break;
-                                    #endregion
-
-                                    #region Attack TRAPS
-                                    case MacroBehaviour.AttackTraps:
-                                        {
-
-                                        }
-                                        break;
-                                    #endregion
-
-                                    #region Attack TURRETS
-                                    case MacroBehaviour.AttackTurrets:
-                                        {
-
-                                        }
-                                        break;
+                                    }
+                                    else
+                                    #region Not in range, but trying to attack. Move forwards
+                                    {
+                                        if (CurrentAngle == EndAngle)
+                                            CurrentMicroBehaviour = MicroBehaviour.MovingForwards;
+                                        else
+                                            CurrentMicroBehaviour = MicroBehaviour.AdjustTrajectory;
+                                    }
                                     #endregion
                                 }
+                                break;
+                            #endregion
 
-                                TotalHits = 0;
+                            #region Attack Traps
+                            case MacroBehaviour.AttackTraps:
+                                {
+                                    if (InTrapRange == true)
+                                    {
+                                        UpdateFireDelay(gameTime);
 
-                                HitGround = 0;
-                                HitTower = 0;
-                                HitShield = 0;
-                                HitTurret = 0;
-                                HitTrap = 0;
-                            }
+                                        #region If the target trap is not the closest, adjust accordingly
+                                        /*Need to check if the most recently hit trap is the one that was bumped into
+                                          If the most recently hit trap is further away than the one that was bumped into
+                                          Move the trajectory down. If it's closer, change the target trap
+                                          i.e. always target the closest trap because that's the one that's a problem.*/
+
+                                        if (HitObject != TargetTrap)
+                                        {
+                                            RecentTrapCollision = HitObject as Trap;
+
+                                            if (RecentTrapCollision != null && TargetTrap != null)
+                                            {
+                                                if (RecentTrapCollision.Position.X > TargetTrap.Position.X)
+                                                {
+                                                    TargetTrap = RecentTrapCollision;
+                                                }
+
+                                                if (RecentTrapCollision.Position.X < TargetTrap.Position.X)
+                                                {
+                                                    if (TargetTrap.CurrentHP <= 0)
+                                                    {
+                                                        TargetTrap = RecentTrapCollision;
+                                                    }
+
+                                                    HitObject = TargetTrap;
+                                                    EndAngle = MathHelper.Clamp(CurrentAngle - MathHelper.ToRadians(Random.Next(5, 15)), 0, 15);
+                                                    CurrentMicroBehaviour = MicroBehaviour.AdjustTrajectory;
+                                                }
+                                            }
+                                        }
+                                        #endregion
+
+                                        if (TotalHits >= 10)
+                                        {
+                                            #region Trap was destroyed, attack tower again
+                                            if (TargetTrap != null)
+                                                if (TargetTrap.CurrentHP <= 0)
+                                                {
+                                                    EndAngle = 0;
+                                                    TargetTrap = null;
+                                                    HitObject = null;
+                                                    InTrapRange = false;
+                                                    CurrentMicroBehaviour = MicroBehaviour.AdjustTrajectory;
+                                                    CurrentMacroBehaviour = MacroBehaviour.AttackTower;
+                                                    ResetCollisions();
+                                                    break;
+                                                }                                            
+                                            #endregion
+
+                                            #region Hit the shield, must be quite close to tower. Attack tower instead
+                                            if (HitShield > 0)
+                                            {
+                                                MinTowerRange = DistToTower;
+                                                InTowerRange = true;
+                                                EndAngle = CurrentAngle + MathHelper.ToRadians(Random.Next(5, 15));
+                                                CurrentMicroBehaviour = MicroBehaviour.AdjustTrajectory;
+                                                CurrentMacroBehaviour = MacroBehaviour.AttackTower;
+                                                ResetCollisions();
+                                                break;
+                                            }
+                                            #endregion
+
+                                            //If this trajectory is already very low it means the invader is too far away
+                                            //either adjust up or move closer
+                                            #region Hit the ground, but not a trap. Change trajectory.
+                                            if (HitTrap == 0 || HitGround > HitTrap)
+                                            {
+                                                if (CurrentAngle < MathHelper.ToRadians(15))
+                                                {
+                                                    EndAngle = MathHelper.Clamp(CurrentAngle + MathHelper.ToRadians(Random.Next(5, 15)), 0, 15);
+                                                }
+                                                else
+                                                {
+                                                    EndAngle = MathHelper.Clamp(CurrentAngle - MathHelper.ToRadians(Random.Next(5, 15)), 0, 15);
+
+                                                }
+
+                                                CurrentMicroBehaviour = MicroBehaviour.AdjustTrajectory;
+                                                ResetCollisions();
+                                                break;
+                                            }
+                                            #endregion
+                                        }
+                                    }
+                                }
+                                break;
+                            #endregion
                         }
                     }
                     break;

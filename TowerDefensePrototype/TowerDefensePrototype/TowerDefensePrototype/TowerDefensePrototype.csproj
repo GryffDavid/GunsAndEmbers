@@ -117,6 +117,7 @@
     <Compile Include="Animations\Animation.cs" />
     <Compile Include="Animations\InvaderAnimation.cs" />
     <Compile Include="Basics\Ballistics.cs" />
+    <Compile Include="Components\ResourceCounter.cs" />
     <Compile Include="Components\Shield.cs" />
     <Compile Include="Turrets\Light\SniperTurret.cs" />
     <Compile Include="UIComponents\CheckBox.cs" />
@@ -124,6 +125,7 @@
     <Compile Include="Components\Gibs.cs" />
     <Compile Include="Basics\Powerup.cs" />
     <Compile Include="Invaders\LighRanged\RifleMan.cs" />
+    <Compile Include="UIComponents\CircularBar.cs" />
     <Compile Include="UIComponents\TutorialBox.cs" />
     <Compile Include="UIComponents\PartitionedBar.cs" />
     <Compile Include="Projectiles\BeamProjectile.cs" />

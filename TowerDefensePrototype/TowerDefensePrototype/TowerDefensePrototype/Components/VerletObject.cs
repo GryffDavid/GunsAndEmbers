@@ -119,11 +119,13 @@ namespace TowerDefensePrototype
 
             foreach (Stick stick in Sticks)
             {
-                float currentLength = Vector2.Distance(stick.Point1.CurrentPosition, stick.Point2.CurrentPosition);
+                
+                Vector2 directioon = stick.Point1.CurrentPosition - stick.Point2.CurrentPosition;
+                float currentLength = directioon.Length();
 
                 if (currentLength != stick.Length)
                 {
-                    Vector2 directioon = stick.Point1.CurrentPosition - stick.Point2.CurrentPosition;
+                    
                     directioon.Normalize();
 
                     if (stick.Point2.Pinned == false)
@@ -134,13 +136,16 @@ namespace TowerDefensePrototype
                 }
             }
 
+            
+
             foreach (Stick stick in Sticks2)
             {
-                float currentLength = Vector2.Distance(stick.Point1.CurrentPosition, stick.Point2.CurrentPosition);
+                Vector2 directioon = stick.Point1.CurrentPosition - stick.Point2.CurrentPosition;
+                float currentLength = directioon.Length();
 
                 if (currentLength != stick.Length)
                 {
-                    Vector2 directioon = stick.Point1.CurrentPosition - stick.Point2.CurrentPosition;
+                    
                     directioon.Normalize();
 
                     if (stick.Point2.Pinned == false)

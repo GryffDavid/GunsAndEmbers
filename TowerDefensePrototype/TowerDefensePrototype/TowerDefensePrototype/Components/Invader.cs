@@ -83,24 +83,6 @@ namespace TowerDefensePrototype
     public abstract class Invader : Drawable
     {
         #region Variables used for invaders
-        #region For Ranged Invaders
-        public InvaderFireType FireType; //Whether the invader fires a single projectile, fires a burst or fires a beam etc.
-        public Vector2 DistanceRange; //How far away from the tower the invader will be before stopping to fire
-        public Vector2 AngleRange; //The angle that the projectile is fired at.
-        public Vector2 LaunchVelocityRange; //The range of speeds that the invader can use to launch a heavy projectile
-
-        public bool InTowerRange = false;
-        public bool InTrapRange = false;
-        public float DistToTower = 1920;
-        public float DistToTrap, TrapPosition;
-        public float MinTowerRange, MinTrapRange;
-
-        public float RangedDamage; //How much damage the projectile does
-        public float LaunchVelocity; //How fast the heavy projectile is travelling when launched
-        public float CurrentFireDelay, MaxFireDelay; //How many milliseconds between shots
-        public int CurrentBurstShots, MaxBurstShots; //How many shots are fired in a row before a longer recharge is needed
-        #endregion
-
         #region Vertex declarations
         public VertexPositionColorTexture[] shadowVertices = new VertexPositionColorTexture[4];
         public int[] shadowIndices = new int[6];
@@ -163,6 +145,8 @@ namespace TowerDefensePrototype
             }
         }
 
+        public Trap TargetTrap;
+
         private AnimationState_Invader _InvaderAnimationState;
         public AnimationState_Invader InvaderAnimationState
         {
@@ -183,41 +167,39 @@ namespace TowerDefensePrototype
             }
         }
 
+        public MacroBehaviour PreviousMacroBehaviour;
         private MacroBehaviour _CurrentMacroBehaviour;
         public MacroBehaviour CurrentMacroBehaviour
         {
             get { return _CurrentMacroBehaviour; }
-            set { _CurrentMacroBehaviour = value; }
+            set 
+            {
+                PreviousMacroBehaviour = _CurrentMacroBehaviour;
+                _CurrentMacroBehaviour = value; 
+            }
         }
 
+        public MicroBehaviour PreviousMicroBehavior;
         private MicroBehaviour _CurrentMicroBehaviour;
         public MicroBehaviour CurrentMicroBehaviour
         {
             get { return _CurrentMicroBehaviour; }
             set
             {
-                _CurrentMicroBehaviour = value;
-
-                //switch (_CurrentMicroBehaviour)
-                //{
-                //    case MicroBehaviour.MovingBackwards:
-                //        Direction.X = 1;
-                //        break;
-
-                //    case MicroBehaviour.MovingForwards:
-                //        Direction.X = -1;
-                //        break;
-                //}
+                PreviousMicroBehavior = _CurrentMicroBehaviour;
+                _CurrentMicroBehaviour = value;                
             }
         }
 
+        public object PreviousHitObject;
         private object _HitObject;
         public object HitObject
         {
             get { return _HitObject; }
-            set
+            set 
             {
-                _HitObject = value;
+                PreviousHitObject = _HitObject;
+                _HitObject = value; 
             }
         }
 
@@ -247,6 +229,8 @@ namespace TowerDefensePrototype
         //Could be handled by structs - like damage, slow, freeze etc.
         public double BeamDelay, CurrentBeamDelay,
                       HealDelay, CurrentHealDelay;
+
+        public float Intelligence;
         #endregion
 
         public virtual void Initialize()
@@ -873,5 +857,7 @@ namespace TowerDefensePrototype
 
             Velocity = velocity;
         }
+
+       
     }
 }

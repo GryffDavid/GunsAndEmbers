@@ -16,6 +16,7 @@ namespace TowerDefensePrototype
         public Color Color = Color.White;
         Vector2 MiddleScale, MiddleOrigin, CapOrigin;
         public Turret SourceTurret;
+        //float length;
 
         public BulletTrail(Vector2 source, Vector2 destination, float thickness = 1f)
         {
@@ -36,13 +37,14 @@ namespace TowerDefensePrototype
         public void Update(GameTime gameTime)
         {
             Color = Color.Lerp(Color, Color.Transparent, FadeOutRate * (float)(gameTime.ElapsedGameTime.TotalSeconds * 60));
+            //MiddleScale.X -= (length/10) * (float)(gameTime.ElapsedGameTime.TotalSeconds * 60);
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(Segment, Source, null, Color, Angle, MiddleOrigin, MiddleScale, SpriteEffects.FlipHorizontally, 0f);
-            spriteBatch.Draw(Cap, Source, null, Color, Angle, CapOrigin, ThicknessScale, SpriteEffects.None, 0f);
-            spriteBatch.Draw(Cap, Destination, null, Color, Angle + MathHelper.Pi, CapOrigin, ThicknessScale, SpriteEffects.None, 0f);
+            //spriteBatch.Draw(Cap, Source, null, Color, Angle, CapOrigin, ThicknessScale, SpriteEffects.None, 0f);
+            //spriteBatch.Draw(Cap, Destination, null, Color, Angle + MathHelper.Pi, CapOrigin, ThicknessScale, SpriteEffects.None, 0f);
         }
 
         public void SetUp()
@@ -52,6 +54,7 @@ namespace TowerDefensePrototype
             CapOrigin = new Vector2(Cap.Width, Cap.Height / 2);
             MiddleOrigin = new Vector2(0, Segment.Height / 2);
             MiddleScale = new Vector2(Direction.Length(), ThicknessScale);
+            //length = MiddleScale.X;
         }
     }
 }

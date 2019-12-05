@@ -8,8 +8,9 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace TowerDefensePrototype
 {
-    class UITrapQuickInfo
+    public class UITrapQuickInfo
     {
+        public Texture2D CircularBarTexture;
         public SpriteFont Italics, Font, BoldFont;
 
         Vector2 BoxSize, NameBoxSize, Position;
@@ -28,6 +29,7 @@ namespace TowerDefensePrototype
         public PartitionedBar Detontations;
 
         UIBar HealthBar, TimingBar;
+        public CircularBar RemovalBar;
 
         int[] BoxIndices = new int[6];
         int[] NameBoxIndices = new int[6];
@@ -61,7 +63,6 @@ namespace TowerDefensePrototype
             HealthBar = new UIBar(new Vector2(Position.X, Position.Y - BoxSize.Y + 5), new Vector2(BoxSize.X, 12), Color.White);
             TimingBar = new UIBar(new Vector2(Position.X, Position.Y - BoxSize.Y + 5 + 12 + 5), new Vector2(BoxSize.X, 12), Color.Red);
             
-
             #region Setting up the name box
             NameBoxVertices[0] =
             new VertexPositionColor()

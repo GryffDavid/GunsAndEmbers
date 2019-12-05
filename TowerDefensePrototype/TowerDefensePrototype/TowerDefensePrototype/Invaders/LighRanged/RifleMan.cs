@@ -26,7 +26,7 @@ namespace TowerDefensePrototype
             RangedDamage = 10;
             MaxFireDelay = 250;
             CurrentFireDelay = 0;
-            DistanceRange = new Vector2(600, 800);
+            TowerDistanceRange = new Vector2(600, 800);
         }
 
         public override void Update(GameTime gameTime, Vector2 cursorPosition)

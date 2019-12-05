@@ -81,9 +81,7 @@ namespace TowerDefensePrototype
             Gravity = gravity;
             Position = position;
             Damage = damage;
-
             
-
             Velocity = new Vector2((float)Math.Cos(angle) * speed, (float)Math.Sin(angle) * speed);
             Origin = new Vector2(Texture.Width / 2, Texture.Height / 2);
 

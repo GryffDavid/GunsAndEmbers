@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace TowerDefensePrototype
 {
-    class PartitionedBar
+    public class PartitionedBar
     {
         public Texture2D Texture;
         public int CurrentValue, MaxValue, Separation;
