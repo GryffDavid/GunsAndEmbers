@@ -29,7 +29,7 @@ namespace TowerDefensePrototype
             foreach (Emitter emitter in EmitterList)
             {
                 emitter.LoadContent(contentManager);
-            }            
+            }
 
             CurrentTransparency = 0;
 

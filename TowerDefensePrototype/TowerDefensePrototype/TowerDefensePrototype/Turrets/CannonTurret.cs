@@ -18,8 +18,8 @@ namespace TowerDefensePrototype
             BaseAsset = "Turrets/MachineTurretBase";
             Position = position;
             Selected = true;
-            FireDelay = 250;
-            Damage = 100;
+            FireDelay = 3000;
+            Damage = 30;
             Animated = false;
             Looping = false;
             Health = 500;
@@ -49,6 +49,8 @@ namespace TowerDefensePrototype
 
                 spriteBatch.Draw(TurretBase, BaseRectangle, null, Color, 0, BasePivot, SpriteEffects.None, 0.90f);
             }
+
+            base.Draw(spriteBatch);
         }        
     }
 }

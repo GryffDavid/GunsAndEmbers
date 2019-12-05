@@ -16,6 +16,19 @@ namespace TowerDefensePrototype
         public Color Color;
         static Random Random = new Random();
         public float Sway;
+        float Jaggedness;
+        Vector2 PreviousPoint;
+        float PreviousDisplacement;
+        float Pos;
+        float Scale;
+        float Envelope;
+        float Displacement;
+        List<float> Positions = new List<float>();
+        List<Line> Results = new List<Line>();
+        Vector2 Tangent;
+        Vector2 Normal;
+        Vector2 Point, Source, Destination;
+        float Length, Thickness;
 
         public LightningBolt(Vector2 source, Vector2 destination, Color color, float fadeRate, float? sway = null)
         {
@@ -23,6 +36,9 @@ namespace TowerDefensePrototype
                 Sway = 500f;
             else
                 Sway = sway.Value;
+
+            Source = source;
+            Destination = destination;            
 
             Segments = CreateBolt(source, destination, 2);
             Color = color;
@@ -39,6 +55,11 @@ namespace TowerDefensePrototype
 
         public void Update()
         {
+            //Results = new List<Line>();
+            //Segments = new List<Line>();
+            //Positions = new List<float>();
+            //Segments = CreateBolt(Source, Destination, 2);
+
             Alpha -= FadeOutRate;
         }
 
@@ -55,42 +76,38 @@ namespace TowerDefensePrototype
 
         public List<Line> CreateBolt(Vector2 source, Vector2 destination, float thickness)
         {
-            List<Line> Results = new List<Line>();
-            Vector2 Tangent = destination - source;
-            Vector2 Normal = Vector2.Normalize(new Vector2(Tangent.Y, -Tangent.X));
-            float Length = Tangent.Length();
-
-            List<float> Positions = new List<float>();
+            Tangent = destination - source;
+            Normal = Vector2.Normalize(new Vector2(Tangent.Y, -Tangent.X));
+            Length = Tangent.Length();
+            
             Positions.Add(0);
 
-            for (int i = 0; i < Length / 4; i++)
+            for (int i = 0; i < Length / 8; i++)
                 Positions.Add((float)RandomDouble(0,1));
 
             Positions.Sort();
 
-            float Jaggedness = 1.15f / Sway;
+            Jaggedness = 1.15f / Sway;
 
-            Vector2 PreviousPoint = source;
-            float PreviousDisplacement = 0;
+            PreviousPoint = source;
+            PreviousDisplacement = 0;
 
             for (int i = 1; i < Positions.Count; i++)
             {
-                float Pos = Positions[i];
+                Pos = Positions[i];
 
-                float Scale = (Length * 0.0023f) * (Pos - Positions[i - 1]);
-
-                float Envelope;
+                Scale = (Length * 0.0023f) * (Pos - Positions[i - 1]);
 
                 if (Pos > 0.95)
                     Envelope = 20 * (1 - Pos);
                 else
                     Envelope = 1;
 
-                float Displacement = (float)RandomDouble(-Sway, Sway);
+                Displacement = (float)RandomDouble(-Sway, Sway);
                 Displacement -= (Displacement - PreviousDisplacement) * (1 - Scale);
                 Displacement *= Envelope;
 
-                Vector2 Point = source + Pos * Tangent + Displacement * Normal;
+                Point = source + Pos * Tangent + Displacement * Normal;
                 Results.Add(new Line(PreviousPoint, Point, thickness));
                 PreviousPoint = Point;
                 PreviousDisplacement = Displacement;

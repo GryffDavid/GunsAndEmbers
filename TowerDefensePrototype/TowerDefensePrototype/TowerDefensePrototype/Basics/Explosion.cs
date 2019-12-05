@@ -19,15 +19,5 @@ namespace TowerDefensePrototype
             BlastRadius = blastRadius;
             Damage = damage;
         }
-
-        public void Update(GameTime gameTime)
-        {
-
-        }
-
-        public void Draw(GameTime gameTime)
-        {
-
-        }
     }
 }

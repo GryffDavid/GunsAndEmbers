@@ -116,14 +116,15 @@
     <Compile Include="Basics\Decal.cs" />
     <Compile Include="Basics\DialogBox.cs" />
     <Compile Include="Basics\Explosion.cs" />
-    <Compile Include="Basics\Light.cs" />
     <Compile Include="Basics\LightRangedInvader.cs" />
     <Compile Include="Basics\ProgressBar.cs" />
     <Compile Include="Basics\LightningBolt.cs" />
     <Compile Include="Basics\Profile.cs" />
     <Compile Include="Basics\HeavyRangedInvader.cs" />
+    <Compile Include="Basics\WaveCountDown.cs" />
     <Compile Include="Basics\WeaponInfoBox.cs" />
     <Compile Include="Basics\NumberChange.cs" />
+    <Compile Include="Basics\Light.cs" />
     <Compile Include="Projectiles\ShotgunProjectile.cs" />
     <Compile Include="Projectiles\PulseGunProjectile.cs" />
     <Compile Include="Projectiles\TimerHeavyProjectile.cs" />

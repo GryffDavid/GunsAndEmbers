@@ -37,7 +37,6 @@ namespace TowerDefensePrototype
         public float Bottom;
         public Animation CurrentAnimation;
         public Emitter DustEmitter;
-        public SpriteFont spriteFont;
 
         public void LoadContent(ContentManager contentManager)
         {
@@ -54,8 +53,6 @@ namespace TowerDefensePrototype
           
             if (DustEmitter != null)
             DustEmitter.LoadContent(contentManager);
-
-            spriteFont = contentManager.Load<SpriteFont>("Fonts/DefaultFont");
         }
 
         public virtual void Update(GameTime gameTime)

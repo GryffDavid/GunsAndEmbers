@@ -26,12 +26,13 @@ namespace TowerDefensePrototype
             TransparencyPercentage = 100;
             MaxTime = 100;
 
-            float PercentY = (100 / (maxV.Y - maxV.X)) * (maxV.Y - maxY);
-            float thing = (100 - PercentY) / 100;
+            //float PercentY = (100 / (maxV.Y - maxV.X)) * (maxV.Y - maxY);
+            //float thing = (100 - PercentY) / 100;
 
-            thing = MathHelper.Clamp(thing, imageScale * 0.45f, imageScale);
+            //thing = MathHelper.Clamp(thing, imageScale * 0.45f, imageScale);
 
-            Scale = new Vector2(thing, thing * (0.5f * thing));       
+            //Scale = new Vector2(thing, thing * (0.5f * thing));      
+            Scale = new Vector2(1*imageScale, 0.3f*imageScale);
         }
 
         public void Update(GameTime gameTime)

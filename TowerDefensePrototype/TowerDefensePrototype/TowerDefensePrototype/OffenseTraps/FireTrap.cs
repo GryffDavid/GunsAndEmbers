@@ -18,7 +18,7 @@ namespace TowerDefensePrototype
             AssetName = "Blank";
             MaxHP = 50;
             TrapType = TrapType.Fire;
-            DetonateDelay = 3000;
+            DetonateDelay = 1500;
             DetonateLimit = 5;
             AffectedTime = 300;
             ResourceCost = 200;

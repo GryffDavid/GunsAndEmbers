@@ -13,6 +13,7 @@ namespace TowerDefensePrototype
             Number = 1;
             WorldType = "Basic";
             WaveList = new List<Wave>();
+            StartDelay = 6;
 
             Wave Wave1 = new Wave(false, 200, 6000,
                  new Soldier(new Vector2(2050, 600)),
@@ -32,36 +33,7 @@ namespace TowerDefensePrototype
                  new Soldier(new Vector2(2050, 600)),
                  new Soldier(new Vector2(2050, 600)));
 
-            //Wave Wave2 = new Wave(false, 800, 6000,
-            //    new Soldier(new Vector2(2050, 600)),
-            //    new Soldier(new Vector2(2050, 600)),
-            //    new Soldier(new Vector2(2050, 600)),
-            //    new Soldier(new Vector2(2050, 600)),
-            //    new Soldier(new Vector2(2050, 600)),
-            //    new Soldier(new Vector2(2050, 600)),
-            //    new Soldier(new Vector2(2050, 600)),
-            //    new Soldier(new Vector2(2050, 600)),
-            //    new Soldier(new Vector2(2050, 600)),
-            //    new Soldier(new Vector2(2050, 600)),
-            //    new Soldier(new Vector2(2050, 600)),
-            //    new Soldier(new Vector2(2050, 600)),
-            //    new Soldier(new Vector2(2050, 600)),
-            //    new Soldier(new Vector2(2050, 600)),
-            //    new Soldier(new Vector2(2050, 600)),
-            //    new Soldier(new Vector2(2050, 600)),
-            //    new Soldier(new Vector2(2050, 600)),
-            //    new Soldier(new Vector2(2050, 600)),
-            //    new Soldier(new Vector2(2050, 600)),
-            //    new Soldier(new Vector2(2050, 600)),
-            //    new Soldier(new Vector2(2050, 600)),
-            //    new Soldier(new Vector2(2050, 600)),
-            //    new Soldier(new Vector2(2050, 600)),
-            //    new Soldier(new Vector2(2050, 600)),
-            //    new Soldier(new Vector2(2050, 600)),
-            //    new Soldier(new Vector2(2050, 600)));
-
             WaveList.Add(Wave1);
-            //WaveList.Add(Wave2);
         }
     }
 }

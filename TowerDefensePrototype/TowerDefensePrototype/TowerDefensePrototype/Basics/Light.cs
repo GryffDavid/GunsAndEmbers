@@ -10,42 +10,33 @@ namespace TowerDefensePrototype
 {
     public class Light
     {
-        Texture2D LightTexture;
-        Rectangle DestinationRectangle;
-        Vector2 Position, Size;
-        Color Color;
-        float Opacity;
-        byte Alpha;
+        public Texture2D LightTexture;
+        public Color LightColor;
+        public Vector2 LightPosition, Scale;
+        public string TextureName;
 
-        public Light(Vector2 position, float opacity, byte alpha, Color color, Vector2? size = null)
+        public Light(string textureName, Vector2 position, Vector2 scale, Color color)
         {
-            Position = position;
-            Opacity = opacity;
-            Alpha = alpha;
-            Color = color;
-            Size = size.Value;
-
-            if (size != null)
-                DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, (int)Size.X, (int)Size.Y);
-            else
-                DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, (int)LightTexture.Width, (int)LightTexture.Height);
+            TextureName = textureName;
+            LightPosition = position;
+            LightColor = color;
+            Scale = scale;
         }
 
-        public void LoadConent(ContentManager contentManager)
+        public void LoadContent(ContentManager contentManager)
         {
-            LightTexture = contentManager.Load<Texture2D>("Light");
+            LightTexture = contentManager.Load<Texture2D>(TextureName);
         }
 
         public void Update(GameTime gameTime)
         {
-            
+
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            //Color.A = Alpha;
-            //Color = Color.Lerp(Color, Color.Transparent, Opacity);
-            spriteBatch.Draw(LightTexture, DestinationRectangle, Color);
+            spriteBatch.Draw(LightTexture, new Rectangle((int)LightPosition.X, (int)LightPosition.Y, (int)(LightTexture.Width*Scale.X), (int)(LightTexture.Height*Scale.Y)),
+                null, LightColor, 0, new Vector2(LightTexture.Width / 2, LightTexture.Height / 2), SpriteEffects.None, 0);
         }
     }
 }

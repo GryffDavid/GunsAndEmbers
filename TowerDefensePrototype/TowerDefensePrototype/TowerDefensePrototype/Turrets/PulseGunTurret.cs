@@ -63,6 +63,8 @@ namespace TowerDefensePrototype
 
                 spriteBatch.DrawString(Font, AngleOffset.ToString(), Position, Color.Yellow, 0, Vector2.Zero, 1, SpriteEffects.None, 0.91f);
             }
+
+            base.Draw(spriteBatch);
         }
     }
 }

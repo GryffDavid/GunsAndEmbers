@@ -94,6 +94,79 @@ namespace TowerDefensePrototype
             AddMore = true;
         }
 
+        public Emitter(Texture2D texture, Vector2 position, Vector2 angleRange, Vector2 speedRange, Vector2 hpRange,
+           float startingTransparency, bool fade, Vector2 startingRotationRange, Vector2 rotationIncrement, Vector2 scaleRange,
+           Color startColor, Color endColor, float gravity, float activeSeconds, float interval, int burst, bool canBounce,
+           Vector2 yrange, bool? shrink = null, float? drawDepth = null, bool? stopBounce = null, bool? hardBounce = null, Vector2? emitterSpeed = null,
+           Vector2? emitterAngle = null, float? emitterGravity = null)
+        {
+            Active = true;
+            Texture = texture;
+            SpeedRange = speedRange;
+            HPRange = hpRange;
+            Transparency = startingTransparency;
+            Fade = fade;
+            StartingRotationRange = startingRotationRange;
+            RotationIncrementRange = rotationIncrement;
+            ScaleRange = scaleRange;
+            StartColor = startColor;
+            EndColor = endColor;
+            Position = position;
+            ParticleList = new List<Particle>();
+            AngleRange = angleRange;
+            Gravity = gravity;
+            ActiveSeconds = activeSeconds;
+            Interval = interval;
+            IntervalTime = Interval;
+            Burst = burst;
+            CanBounce = canBounce;
+
+            if (shrink == null)
+                Shrink = false;
+            else
+                Shrink = shrink.Value;
+
+            if (drawDepth == null)
+                DrawDepth = 0;
+            else
+                DrawDepth = drawDepth.Value;
+
+            if (stopBounce == null)
+                StopBounce = false;
+            else
+                StopBounce = stopBounce.Value;
+
+            if (hardBounce == null)
+                HardBounce = false;
+            else
+                HardBounce = hardBounce.Value;
+
+            if (emitterSpeed != null)
+                EmitterSpeed = (float)DoubleRange(emitterSpeed.Value.X, emitterSpeed.Value.Y);
+            else
+                EmitterSpeed = 0;
+
+            if (emitterAngle != null)
+                EmitterAngle = -MathHelper.ToRadians((float)DoubleRange(emitterAngle.Value.X, emitterAngle.Value.Y));
+            else
+                EmitterAngle = 0;
+
+            if (emitterGravity != null)
+                EmitterGravity = emitterGravity.Value;
+            else
+                EmitterGravity = 0;
+
+            if (EmitterSpeed != 0)
+            {
+                EmitterDirection.X = (float)Math.Sin(EmitterAngle);
+                EmitterDirection.Y = (float)Math.Cos(EmitterAngle);
+                EmitterVelocity = EmitterDirection * EmitterSpeed;
+            }
+
+            MaxY = Random.Next((int)yrange.X, (int)yrange.Y);
+            AddMore = true;
+        }
+
         public void LoadContent(ContentManager contentManager)
         {
             if (Active == true)

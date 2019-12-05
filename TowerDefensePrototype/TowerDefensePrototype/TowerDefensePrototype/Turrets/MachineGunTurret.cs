@@ -18,7 +18,7 @@ namespace TowerDefensePrototype
             Position = position;
             Selected = true;
             FireDelay = 200;
-            Damage = 4;
+            Damage = 3;
             AngleOffset = 2.5f;
             Animated = false;
             Looping = false;
@@ -59,6 +59,8 @@ namespace TowerDefensePrototype
 
                 spriteBatch.Draw(TurretBase, BaseRectangle, null, Color, 0, BasePivot, SpriteEffects.None, 0.90f);
             }
+
+            base.Draw(spriteBatch);
         }
     }
 }

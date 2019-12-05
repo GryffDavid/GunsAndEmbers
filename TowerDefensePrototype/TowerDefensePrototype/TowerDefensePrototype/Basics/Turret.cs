@@ -56,14 +56,16 @@ namespace TowerDefensePrototype
             CurrentHealth = Health;
             CurrentHeat = 0;
 
-            SelectBox = new Rectangle((int)Position.X - 32, (int)Position.Y - 32, 64, 64);
+            SelectBox = new Rectangle((int)Position.X - 32, (int)Position.Y - 32, 96, 96);
 
-            Rect = contentManager.Load<Texture2D>("Icons/TrapIcons/FireTrapIcon");
+            Rect = contentManager.Load<Texture2D>("SelectBox");
             Font = contentManager.Load<SpriteFont>("Fonts/DefaultFont");
         }
 
         public void Update(GameTime gameTime, Vector2 cursorPosition)
         {
+            MousePosition = cursorPosition;
+
             foreach (Emitter emitter in EmitterList)
             {
                 emitter.Update(gameTime);
@@ -148,8 +150,7 @@ namespace TowerDefensePrototype
             {
                 if (Selected == true)
                 {
-                    CurrentMouseState = Mouse.GetState();
-                    MousePosition = cursorPosition;
+                    CurrentMouseState = Mouse.GetState();                   
 
                     BarrelCenter = new Vector2(BarrelRectangle.X + (float)Math.Cos(Rotation - 90) * (BarrelPivot.Y - BarrelRectangle.Height / 2),
                                              BarrelRectangle.Y + (float)Math.Sin(Rotation - 90) * (BarrelPivot.Y - BarrelRectangle.Height / 2));
@@ -182,10 +183,12 @@ namespace TowerDefensePrototype
             SourceRectangle = new Rectangle(0 + (int)FrameSize.X * CurrentFrame, 0, (int)FrameSize.X, (int)FrameSize.Y);
 
             #region Handle selection
-            if ((InsideRotatedRectangle(BarrelRectangle, BarrelPivot,
-                new Vector2(cursorPosition.X, cursorPosition.Y), MathHelper.ToRadians(Rotation)) == true ||
-                new Rectangle((int)(BaseRectangle.X - BasePivot.X), (int)(BaseRectangle.Y - BasePivot.Y),
-                BaseRectangle.Width, BaseRectangle.Height).Contains(new Point((int)cursorPosition.X, (int)cursorPosition.Y)) == true) &&
+            //(InsideRotatedRectangle(BarrelRectangle, BarrelPivot,
+            //    new Vector2(cursorPosition.X, cursorPosition.Y), MathHelper.ToRadians(Rotation)) == true ||
+            //    new Rectangle((int)(BaseRectangle.X - BasePivot.X), (int)(BaseRectangle.Y - BasePivot.Y),
+            //    BaseRectangle.Width, BaseRectangle.Height).Contains(new Point((int)cursorPosition.X, (int)cursorPosition.Y)
+
+            if (SelectBox.Contains(new Point((int)cursorPosition.X, (int)cursorPosition.Y)) == true &&
                 CurrentMouseState.LeftButton == ButtonState.Released && PreviousMouseState.LeftButton == ButtonState.Pressed)
             {
                 JustClicked = true;

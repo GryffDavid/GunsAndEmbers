@@ -18,7 +18,7 @@ namespace TowerDefensePrototype
             CurrentHP = 20;
             MaxHP = 15;
             MoveDelay = 5;
-            ResourceMinMax = new Vector2(100, 200);
+            ResourceMinMax = new Vector2(25, 50);
             CurrentAttackDelay = 0;
             AttackDelay = 1500;
             AttackPower = 24;
@@ -33,9 +33,9 @@ namespace TowerDefensePrototype
 
             CurrentAnimation = new Animation() 
             { 
-                AssetName = "Invaders/Invader", 
-                TotalFrames = 1, 
-                FrameDelay = 300 
+                AssetName = "Invaders/Soldier3", 
+                TotalFrames = 4, 
+                FrameDelay = 150 
             };
 
             CurrentFrame = Random.Next(0, CurrentAnimation.TotalFrames);
