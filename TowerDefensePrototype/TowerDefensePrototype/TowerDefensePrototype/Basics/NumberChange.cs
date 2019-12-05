@@ -25,7 +25,15 @@ namespace TowerDefensePrototype
             Position = position;
             Change = change;
             Number = number;
-            Color = new Color(255, 255, 255, 255);
+
+            if (number < 0)
+            {
+                Color = new Color(255, 0, 0, 255);
+            }
+            else
+            {
+                Color = new Color(255, 255, 255, 255);
+            }
         }
 
         public void Update(GameTime gameTime)
@@ -34,7 +42,7 @@ namespace TowerDefensePrototype
 
             CurrentTime += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
 
-            if (CurrentTime > 1000)
+            if (CurrentTime > 2000)
             {                
                 CurrentTime = 0;
                 Active = false;

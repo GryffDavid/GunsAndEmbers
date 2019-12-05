@@ -2,7 +2,7 @@ Content\Blank.xnb
 Content\Cursors\DefaultCursor.xnb
 Content\Particles\Splodge.xnb
 Content\WhiteBlock.xnb
-Content\Particles\FireParticle.xnb
+Content\Particles\ExplosionParticle.xnb
 Content\Projectiles\Arrow.xnb
 Content\Projectiles\AcidProjectileSprite.xnb
 Content\Buttons\ButtonLeft.xnb
@@ -91,6 +91,9 @@ Content\Traps\SpikeTrap.xnb
 Content\Particles\RoundSpark.xnb
 Content\Invaders\Soldier\SoldierStand.xnb
 Content\Invaders\Soldier\SoldierMelee.xnb
+Content\Traps\FireTrap.xnb
+Content\Particles\FireParticle.xnb
+Content\Traps\WallTrap.xnb
 Content\Fonts\DefaultFont.xnb
 Content\Fonts\ButtonFont.xnb
 Content\Fonts\TooltipFont.xnb
@@ -123,5 +126,3 @@ Content\Shaders\ShockWaveEffect.xnb
 Content\Shaders\ShieldBubbleEffect.xnb
 Content\Shaders\BackgroundEffect.xnb
 Content\Shaders\ButtonBlurEffect.xnb
-Content\Shaders\UISplitShader.xnb
-Content\Shaders\AntiAlias.xnb

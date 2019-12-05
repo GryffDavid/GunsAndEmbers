@@ -19,24 +19,26 @@ namespace TowerDefensePrototype
         public Rectangle DestinationRectangle, SourceRectangle;
 
         public Color Color, TextColor;
-        public Texture2D ButtonStrip, IconTexture;       
+        public Texture2D ButtonStrip, IconTexture;
         SpriteFont Font;
         SpriteBatch SpriteBatch;
 
         MouseState CurrentMouseState, PreviousMouseState;
-        public MousePosition CurrentMousePosition, PreviousMousePosition;
+        MousePosition CurrentMousePosition, PreviousMousePosition;
         public ButtonSpriteState CurrentButtonState;
 
-        public int CurrentFrame;
+        int CurrentFrame;
         public bool Active, CanBeRightClicked, JustClicked, JustRightClicked;
         public bool ButtonActive;
         public Color CurrentIconColor;
         public bool PlayHover;
-        public float DrawDepth;
+        float DrawDepth;
         string Alignment;
 
+
         public Button(Texture2D buttonStrip, Vector2 position, Texture2D icon = null, Vector2? scale = null, 
-            Color? color = null, string text = "", SpriteFont font = null, string alignment = "Left", Color? textColor = null, bool? canBeRightClicked = null)
+                      Color? color = null, string text = "", SpriteFont font = null, string alignment = "Left", 
+                      Color? textColor = null, bool? canBeRightClicked = null)
         {
             ButtonActive = true;
 

@@ -220,7 +220,15 @@ namespace TowerDefensePrototype
 
         public virtual void Draw(SpriteBatch spriteBatch)
         {
-            
+
+            ///
+            //Draw stylized health bars with quads instead.
+            ///
+
+            //TimingBar.Draw(spriteBatch);
+            //HealthBar.Draw(spriteBatch);
+            //HeatBar.Draw(spriteBatch);
+
         }
 
         public bool InsideRotatedRectangle(Rectangle originalRectangle, Vector2 rotationPoint, Vector2 mousePoint, float rotationAngle)

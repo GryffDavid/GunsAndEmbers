@@ -36,7 +36,8 @@ namespace TowerDefensePrototype
         public Animation CurrentAnimation;
         public List<Texture2D> TextureList;
         public Emitter FireEmitter;
-        public InvaderState CurrentInvaderState, PreviousInvaderState;
+        public InvaderState CurrentInvaderState;
+        public InvaderState? PreviousInvaderState = null;
 
         public void Initialize()
         {
@@ -59,22 +60,7 @@ namespace TowerDefensePrototype
                 CurrentAttackDelay += gameTime.ElapsedGameTime.TotalMilliseconds;                
                 VulnerableToTurret = true;
 
-                if (Velocity.X != 0)
-                {
-                    CurrentInvaderState = InvaderState.Walking;
-                }
-                else
-                {
-                    CurrentInvaderState = InvaderState.Standing;
-                }
-
-                if (CurrentInvaderState != PreviousInvaderState)
-                {
-                    CurrentFrameDelay = 0;
-                    CurrentFrame = Random.Next(0, CurrentAnimation.TotalFrames);
-                }
-
-                FrameSize = new Vector2(CurrentTexture.Width / CurrentAnimation.TotalFrames, CurrentTexture.Height);
+                
 
                 //This disables the invader if it has 0 health left
                 if (CurrentHP <= 0)

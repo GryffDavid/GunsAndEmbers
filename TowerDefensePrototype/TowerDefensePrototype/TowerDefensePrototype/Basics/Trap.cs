@@ -26,7 +26,6 @@ namespace TowerDefensePrototype
         public float MaxHP, CurrentHP, DetonateDelay, CurrentDetonateDelay, AffectedTime, CurrentAffectedTime, DrawDepth, Bottom;
         public int ResourceCost, DetonateLimit, CurrentDetonateLimit, CurrentFrame;
         public double CurrentFrameDelay;
-        public TrapState CurrentTrapState, PreviousTrapState;
         public static Random Random = new Random();
         
         public virtual void Initialize()
@@ -44,8 +43,7 @@ namespace TowerDefensePrototype
             
             Affected = false;            
 
-            Bottom = BoundingBox.Max.Y;
-            DrawDepth = Bottom / 1080;
+            
         }
 
         public virtual void Update(GameTime gameTime)
@@ -104,13 +102,20 @@ namespace TowerDefensePrototype
             HealthBar.Update(new Vector2(DestinationRectangle.X, DestinationRectangle.Bottom + 24), (int)CurrentHP);
 
             //Handle the animations
-            if (CurrentTrapState != PreviousTrapState)
-            {
-                CurrentFrameDelay = 0;
-                CurrentFrame = Random.Next(0, CurrentAnimation.TotalFrames);
-            }
+            //if (CurrentTrapState != PreviousTrapState)
+            //{
+            //    CurrentFrameDelay = 0;
+            //    CurrentFrame = Random.Next(0, CurrentAnimation.TotalFrames);
+            //}
 
-            FrameSize = new Vector2(CurrentTexture.Width / CurrentAnimation.TotalFrames, CurrentTexture.Height);
+            if (CurrentAnimation != null)
+            {
+                FrameSize = new Vector2(CurrentTexture.Width / CurrentAnimation.TotalFrames, CurrentTexture.Height);
+            }
+            else
+            {
+                FrameSize = new Vector2(CurrentTexture.Width, CurrentTexture.Height);
+            }
 
             SourceRectangle = new Rectangle((int)(CurrentFrame * FrameSize.X), 0, (int)FrameSize.X, (int)FrameSize.Y);
             DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y,
@@ -118,6 +123,11 @@ namespace TowerDefensePrototype
 
             BoundingBox = new BoundingBox(new Vector3(Position.X, Position.Y, 0),
                                           new Vector3(Position.X + FrameSize.X, Position.Y + FrameSize.Y, 0));
+
+            Bottom = BoundingBox.Max.Y;
+            DrawDepth = (Bottom / 1080);
+
+            //Bottom = BoundingBox.Max.Y;
             //--------------------------------//
 
 
@@ -127,10 +137,10 @@ namespace TowerDefensePrototype
                 {
                     emitter.Update(gameTime);
 
-                    if (emitter.DrawDepth != (Bottom / 1080))
-                    {
-                        emitter.DrawDepth = (Bottom / 1080);
-                    }
+                    //if (emitter.DrawDepth != (Bottom / 1080))
+                    //{
+                    //    emitter.DrawDepth = (Bottom / 1080);
+                    //}
                 }
             }
         }

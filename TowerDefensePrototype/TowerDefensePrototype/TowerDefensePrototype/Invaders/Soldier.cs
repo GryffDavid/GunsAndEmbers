@@ -44,17 +44,33 @@ namespace TowerDefensePrototype
 
         public override void Update(GameTime gameTime)
         {
-            switch (CurrentInvaderState)
+            if (Velocity.X != 0)
             {
-                case InvaderState.Walking:
-                    CurrentTexture = TextureList[0];
-                    CurrentAnimation = new Animation() { Texture = CurrentTexture, TotalFrames = 4, FrameDelay = 150 };
-                    break;
+                CurrentInvaderState = InvaderState.Walking;
+            }
+            else
+            {
+                CurrentInvaderState = InvaderState.Standing;
+            }
 
-                case InvaderState.Standing:
-                    CurrentTexture = TextureList[1];
-                    CurrentAnimation = new Animation() { Texture = CurrentTexture, TotalFrames = 2, FrameDelay = 300 };
-                    break;
+            if (CurrentInvaderState != PreviousInvaderState || PreviousInvaderState == null)
+            {
+                switch (CurrentInvaderState)
+                {
+                    case InvaderState.Walking:
+                        CurrentTexture = TextureList[0];
+                        CurrentAnimation = new Animation() { Texture = CurrentTexture, TotalFrames = 4, FrameDelay = 150 };
+                        break;
+
+                    case InvaderState.Standing:
+                        CurrentTexture = TextureList[1];
+                        CurrentAnimation = new Animation() { Texture = CurrentTexture, TotalFrames = 2, FrameDelay = 300 };
+                        break;
+                }
+
+                FrameSize = new Vector2(CurrentTexture.Width / CurrentAnimation.TotalFrames, CurrentTexture.Height);
+                CurrentFrameDelay = 0;
+                CurrentFrame = Random.Next(1, CurrentAnimation.TotalFrames);
             }
 
             base.Update(gameTime);

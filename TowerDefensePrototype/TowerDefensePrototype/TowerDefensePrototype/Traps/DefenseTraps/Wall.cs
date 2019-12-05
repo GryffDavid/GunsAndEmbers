@@ -17,21 +17,6 @@ namespace TowerDefensePrototype
             MaxHP = 100;
             TrapType = TrapType.Wall;
             DetonateLimit = -1;
-
-            CurrentTrapState = TrapState.Untriggered;
-        }
-
-        public override void Update(GameTime gameTime)
-        {
-            switch (CurrentTrapState)
-            {
-                case TrapState.Untriggered:
-                    CurrentTexture = TextureList[0];
-                    CurrentAnimation = new Animation() { Texture = CurrentTexture, TotalFrames = 1, FrameDelay = 150 };
-                    break;
-            }
-
-            base.Update(gameTime);
         }
     }
 }
