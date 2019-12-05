@@ -11,15 +11,14 @@ namespace TowerDefensePrototype
 {
     class JumpMan : LightRangedInvader
     {
+        public override float OriginalSpeed { get { return 0.68f; } }
+
         public JumpMan(Vector2 position, Vector2? yRange = null)
             : base(position, yRange)
         {
-            Speed = 0.68f;
-            CurrentHP = 20;
             MaxHP = 20;
             ResourceMinMax = new Vector2(8, 20);
             InvaderType = InvaderType.JumpMan;
-            YRange = new Vector2(700, 900);
             InvaderAnimationState = AnimationState_Invader.Walk;
         }
 

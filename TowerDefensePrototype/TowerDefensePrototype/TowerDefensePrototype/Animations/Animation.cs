@@ -121,5 +121,10 @@ namespace TowerDefensePrototype
             dBottomRightTexCoord = new Vector2(nFrameX + NormalizedFrameSize.X, NormalizedFrameSize.Y);
             dBottomLeftTexCoord = new Vector2(nFrameX, NormalizedFrameSize.Y);
         }
+
+        public Animation ShallowCopy()
+        {
+            return (Animation) this.MemberwiseClone();
+        }
     }
 }

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -42,7 +44,8 @@ namespace TowerDefensePrototype
         AttackTower,
         AttackTraps,
         AttackTurrets,
-        OperateVehicle
+        OperateVehicle,
+        IsOperated
     }; 
     #endregion
 
@@ -107,7 +110,13 @@ namespace TowerDefensePrototype
     
     public abstract class Invader : Drawable
     {
+        
+        public virtual float OriginalSpeed { get { return 1.0f; } }
+
         #region Variables used for invaders
+        public static ObservableCollection<Trap> TrapList;
+        public static List<Invader> InvaderList;
+
         #region Vertex declarations
         public VertexPositionColorTexture[] shadowVertices = new VertexPositionColorTexture[4];
         public int[] shadowIndices = new int[6];
@@ -258,6 +267,7 @@ namespace TowerDefensePrototype
         public Invader TargetInvader;
         public Invader OperatingVehicle;
 
+        public bool TargettingInvader = false;
 
         public DamageOverTimeStruct CurrentDOT;
 
@@ -271,7 +281,8 @@ namespace TowerDefensePrototype
 
         public Texture2D Shadow, IceBlock;
         public Rectangle DestinationRectangle;
-        public Vector2 ResourceMinMax, YRange, Center, ShadowPosition;
+        public Vector2 YRange, Center, ShadowPosition;
+        public Vector2 ResourceMinMax;
 
         public Color DOTColor, FrozenColor, ShadowColor;
 
@@ -295,17 +306,19 @@ namespace TowerDefensePrototype
         public AnimatedSprite ThinkingAnimation;
         public Shield Shield;
 
-        public int CurrentOperators = 0;
         public int NeededOperators = 2;
         public int DeadOperators = 0; //Should maybe keep track of how many operators 
                                       //have died so that they don't ALL get lured away from the tower
-        public List<Invader> OperatorList = new List<Invader>();
+        public List<Invader> OperatorList;// = new List<Invader>();
 
         public bool ShowDiagnostics = false;
 
         public Pathfinder Pathfinder;
         public List<Vector2> Waypoints = new List<Vector2>();
-        int CurrentWaypoint = 0;
+        public int CurrentWaypoint = 0;
+
+        public bool TrapCollision = false;
+        public bool TowerCollision = false;
 
         #endregion
 
@@ -317,16 +330,26 @@ namespace TowerDefensePrototype
             {
                 YRange = yRange.Value;
             }
+
         }
 
         public virtual void Initialize()
         {
             base.Active = true;
+
+            ResourceValue = Random.Next((int)ResourceMinMax.X, (int)ResourceMinMax.Y);
+
+            if (NeededOperators > 0)
+            {
+                OperatorList = new List<Invader>();
+                //OperatorList.Add(null);
+                //OperatorList.Add(null);
+            }
+
             CurrentHP = MaxHP;
             //MaxY = Random.Next((int)YRange.X, (int)YRange.Y);
             NextYPos = MaxY;
 
-            ResourceValue = Random.Next((int)ResourceMinMax.X, (int)ResourceMinMax.Y);
             
             if (Airborne == true)
             {
@@ -437,6 +460,8 @@ namespace TowerDefensePrototype
                 PreviousMaxY = MaxY;
                 //PreviousBottom = Bottom;
 
+                OperatorList.RemoveAll(Invader => Invader.Active == false);
+
                 if (Waypoints.Count == 0)
                 {
                     if ((BoundingBox.Max.Y + Velocity.Y) < MaxY)
@@ -540,23 +565,6 @@ namespace TowerDefensePrototype
                     Center = new Vector2(DestinationRectangle.Center.X, DestinationRectangle.Center.Y);
                     HealthBar.Update(MaxHP, CurrentHP, gameTime, new Vector2(Center.X + Velocity.X, Position.Y - 8));
                 }
-
-                //#region Melee Attack
-                //if (MeleeDamageStruct != null)
-                //{
-                //    MeleeDamageStruct.CurrentAttackDelay += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
-
-                //    if (MeleeDamageStruct.CurrentAttackDelay >= MeleeDamageStruct.MaxAttackDelay)
-                //    {
-                //        CanAttack = true;
-                //        MeleeDamageStruct.CurrentAttackDelay = 0;
-                //    }
-                //    else
-                //    {
-                //        CanAttack = false;
-                //    }
-                //}
-                //#endregion
 
                 #region This makes sure that the invader can't take damage if it's off screen (i.e. before it's visible to the player)
                 if (Position.X > 1920)
@@ -667,24 +675,22 @@ namespace TowerDefensePrototype
                 #endregion
 
                 if (CurrentMicroBehaviour != MicroBehaviour.FollowWaypoints)
+                if (Airborne == false)
                 {
-                    if (Airborne == false)
+                    if ((BoundingBox.Max.Y + Velocity.Y) > MaxY)
                     {
-                        if ((BoundingBox.Max.Y + Velocity.Y) > MaxY)
-                        {
-                            Velocity.Y = 0;
-                            Gravity = 0;
-                            Position = new Vector2(Position.X, MaxY - DestinationRectangle.Height);
-                            InAir = false;
-                        }
+                        Velocity.Y = 0;
+                        Gravity = 0;
+                        Position = new Vector2(Position.X, MaxY - DestinationRectangle.Height);
+                        InAir = false;
+                    }
 
-                        if (BoundingBox.Max.Y < MaxY)
-                        {
-                            Gravity = 0.2f;
-                        }
+                    if (BoundingBox.Max.Y < MaxY)
+                    {
+                        Gravity = 0.2f;
                     }
                 }
-
+                
                 if (HitByBeam == true)
                 {
                     Color = Color.Black;
@@ -701,44 +707,6 @@ namespace TowerDefensePrototype
                 }
 
                 ShadowPosition = new Vector2(Position.X, Position.Y + CurrentAnimation.FrameSize.Y - 2);
-
-                if (CurrentMicroBehaviour == MicroBehaviour.FollowWaypoints)
-                {
-                    if (CurrentWaypoint < Waypoints.Count)
-                    {
-                        Direction = Waypoints[CurrentWaypoint] - (ShadowPosition + new Vector2(CurrentAnimation.FrameSize.X / 2, 4));
-                        Direction.Normalize();
-
-                        //Velocity = new Vector2(0, 0);
-                        Velocity = Direction * Speed;
-
-                        if (Vector2.Distance(ShadowPosition + new Vector2(CurrentAnimation.FrameSize.X / 2, 4), Waypoints[CurrentWaypoint]) < 2)
-                        {
-                            CurrentWaypoint++;
-                            Velocity = new Vector2(0, 0);
-                        }
-
-                        MaxY = DestinationRectangle.Bottom;
-                    }
-                    else if (Waypoints.Count > 0) //Checking the waypoint count here makes sure that the following code is only run once
-                    {
-                        Velocity = Vector2.Zero;
-                        Direction.X = -1f;
-                        CurrentWaypoint = 0;
-
-                        if (Pathfinder != null) //Not totally necessary, but prevents a crash if this code does get run twice - i.e. Pathfinder is already null
-                        {
-                            Pathfinder.TrapList.CollectionChanged -= Pathfinder.TrapsChanged;
-                            Pathfinder = null;
-                        }
-
-                        Waypoints.Clear();
-                    }
-                }
-
-                //Only change this if the value of MaxY actually changes
-                
-                DrawDepth = MaxY / 1080.0f;
             }
         }
 
@@ -1017,15 +985,14 @@ namespace TowerDefensePrototype
         }
 
 
-        public void FindPath(Vector2 startPoint, Vector2 endPoint)
-        {
-
-        }
-
-
-        public void SetOperatingVehicle(ref Invader operatingVehicle)
+        public void SetOperatingVehicle(Invader operatingVehicle)
         {
             OperatingVehicle = operatingVehicle;
+        }
+
+        public double RandomDouble(double a, double b)
+        {
+            return a + Random.NextDouble() * (b - a);
         }
     }
 }

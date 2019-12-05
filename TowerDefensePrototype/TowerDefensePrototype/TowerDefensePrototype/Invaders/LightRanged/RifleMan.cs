@@ -11,15 +11,14 @@ namespace TowerDefensePrototype
 {
     class RifleMan : LightRangedInvader
     {
+        public override float OriginalSpeed { get { return 0.68f; } }
+
         public RifleMan(Vector2 position, Vector2? yRange = null)
             : base(position, yRange)
-        {         
-            Speed = 0.68f;            
-            CurrentHP = 20;
+        {
             MaxHP = 20;
             ResourceMinMax = new Vector2(8, 20);
-            InvaderType = InvaderType.RifleMan;
-            YRange = new Vector2(700, 900);            
+            InvaderType = InvaderType.RifleMan;        
             InvaderAnimationState = AnimationState_Invader.Walk;
             
             AngleRange = new Vector2(170, 190);

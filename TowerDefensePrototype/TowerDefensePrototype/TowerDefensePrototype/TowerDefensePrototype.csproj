@@ -132,7 +132,7 @@
     <Compile Include="UIComponents\CheckBox.cs" />
     <Compile Include="Components\BulletTrail.cs" />
     <Compile Include="Basics\Powerup.cs" />
-    <Compile Include="Invaders\LighRanged\RifleMan.cs" />
+    <Compile Include="Invaders\LightRanged\RifleMan.cs" />
     <Compile Include="UIComponents\CircularBar.cs" />
     <Compile Include="UIComponents\TutorialBox.cs" />
     <Compile Include="UIComponents\PartitionedBar.cs" />
@@ -142,8 +142,8 @@
     <Compile Include="Animations\TurretAnimation.cs" />
     <Compile Include="Basics\Drawable.cs" />
     <Compile Include="Invaders\Airborne\HealerDrone.cs" />
-    <Compile Include="Invaders\LighRanged\JumpMan.cs" />
-    <Compile Include="Invaders\LighRanged\Sapper.cs" />
+    <Compile Include="Invaders\LightRanged\JumpMan.cs" />
+    <Compile Include="Invaders\LightRanged\Sapper.cs" />
     <Compile Include="ParticleSystem\AmmoBelt.cs" />
     <Compile Include="ParticleSystem\ShellCasing.cs" />
     <Compile Include="Components\VerletObject.cs" />
@@ -202,7 +202,7 @@
     <Compile Include="Turrets\Grenade\GrenadeTurret.cs" />
     <Compile Include="Invaders\HeavyRanged\Archer.cs" />
     <Compile Include="Invaders\HeavyRanged\FireElemental.cs" />
-    <Compile Include="Invaders\LighRanged\Healer.cs" />
+    <Compile Include="Invaders\LightRanged\Healer.cs" />
     <Compile Include="Invaders\Melee\Slime.cs" />
     <Compile Include="Invaders\Melee\Spider.cs" />
     <Compile Include="Invaders\Melee\SuicideBomber.cs" />

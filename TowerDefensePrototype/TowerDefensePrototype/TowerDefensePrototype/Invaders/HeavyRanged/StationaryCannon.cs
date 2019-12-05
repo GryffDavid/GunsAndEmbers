@@ -10,6 +10,8 @@ namespace TowerDefensePrototype
 {
     class StationaryCannon : HeavyRangedInvader
     {
+        public override float OriginalSpeed { get { return 0.59f; } }
+
         int AttackTowerLoopCounter; //How many times the invader made the decision to 
                                     //try shoot the tower instead of the trap after it ran into a trap
 
@@ -36,10 +38,8 @@ namespace TowerDefensePrototype
         public StationaryCannon(Vector2 position, Vector2? yRange = null)
             : base(position, yRange)
         {
-            Speed = 0.59f;
             MaxHP = 40;
             ResourceMinMax = new Vector2(8, 20);
-            YRange = new Vector2(700, 900);
             IntelligenceRange = new Vector2(0f, 1.0f);
 
             InvaderType = InvaderType.StationaryCannon;
@@ -54,7 +54,7 @@ namespace TowerDefensePrototype
             LaunchVelocityRange = new Vector2(12, 17);
             MaxFireDelay = 1500;
             CurrentFireDelay = 0;
-            RangedDamage = 10;
+            RangedDamage = 40;
 
             ZDepth = 24;
 
@@ -64,6 +64,31 @@ namespace TowerDefensePrototype
 
         public override void Update(GameTime gameTime, Vector2 cursorPosition)
         {
+            if (TrapCollision == true &&
+                CurrentMicroBehaviour == MicroBehaviour.MovingForwards)
+            {
+                CurrentMicroBehaviour = MicroBehaviour.Stationary;
+            }
+
+            if (TowerCollision == true &&
+                CurrentMicroBehaviour == MicroBehaviour.MovingForwards)
+            {
+                CurrentMicroBehaviour = MicroBehaviour.Stationary;
+                CurrentMacroBehaviour = MacroBehaviour.AttackTower;
+            }
+
+            if (Frozen == false &&
+                TowerCollision == false && 
+                TrapCollision == false && 
+                CurrentMicroBehaviour != MicroBehaviour.MovingBackwards &&
+                CurrentMicroBehaviour != MicroBehaviour.MovingForwards &&
+                CurrentAngle == EndAngle &&
+                InTowerRange == false &&
+                InTrapRange == false)
+            {
+                CurrentMicroBehaviour = MicroBehaviour.MovingForwards;
+            }
+
             if (CurrentBehaviourDelay > MaxBehaviourDelay)
             switch (CurrentMicroBehaviour)
             {
@@ -485,7 +510,6 @@ namespace TowerDefensePrototype
                                                 else
                                                 {
                                                     EndAngle = MathHelper.Clamp(CurrentAngle - MathHelper.ToRadians(Random.Next(5, 15)), 0, 15);
-
                                                 }
 
                                                 CurrentMicroBehaviour = MicroBehaviour.AdjustTrajectory;

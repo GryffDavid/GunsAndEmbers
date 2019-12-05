@@ -10,11 +10,13 @@ namespace TowerDefensePrototype
 {
     class HealDrone : LightRangedInvader
     {
+        enum SpecificBehaviour { Heal, GetTarget, Circle };
+
+        public override float OriginalSpeed { get { return 1.5f; } }
+
         public Vector2 HealHeightRange = new Vector2(400, 500);
         public float CurrentHeight;
         public bool IsHealing = false;
-        public bool HasTarget = false;
-        public Invader HealTarget;
         public LightningBolt Bolt = new LightningBolt(Vector2.One, Vector2.Zero, Color.Transparent, 1f);
         public List<LightningBolt> BoltList = new List<LightningBolt>();
 
@@ -28,16 +30,13 @@ namespace TowerDefensePrototype
         public HealDrone(Vector2 position, Vector2? yRange = null)
             : base(position, yRange)
         {
-            CurrentHeight = position.Y;
-            Speed = 1.5f;        
+            CurrentHeight = position.Y;   
             MaxHP = 30;
-            CurrentHP = MaxHP;
             ResourceMinMax = new Vector2(1, 5);
             InvaderType = InvaderType.HealDrone;
             YRange = new Vector2(100, 350);
             Airborne = true;
             InAir = true;
-            Active = true;
             InvaderAnimationState = AnimationState_Invader.Walk;
 
             AngleRange = new Vector2(170, 190);

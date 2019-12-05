@@ -10,14 +10,14 @@ namespace TowerDefensePrototype
 {
     class Spider : HeavyRangedInvader
     {
+        public override float OriginalSpeed { get { return 0.65f; } }
+
         public Spider(Vector2 position, Vector2? yRange = null)
             : base(position, yRange)
          {
-            CurrentHP = 40;
             MaxHP = 40;            
             ResourceMinMax = new Vector2(1, 5);
             InvaderType = InvaderType.Spider;
-            YRange = new Vector2(700, 900);
         }
     }
 }

@@ -8,5 +8,10 @@ namespace TowerDefensePrototype
     public class InvaderAnimation : Animation
     {
         public AnimationState_Invader CurrentInvaderState;
+
+        public new InvaderAnimation ShallowCopy()
+        {
+            return (InvaderAnimation)this.MemberwiseClone();
+        }
     }
 }

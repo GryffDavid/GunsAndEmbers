@@ -11,7 +11,20 @@ namespace TowerDefensePrototype
     {
         public bool Active;
         public float DrawDepth;
-        public float PreviousMaxY, MaxY;
+        public float PreviousMaxY;
+
+        private float _MaxY;
+
+        public float MaxY
+        {
+            get { return _MaxY; }
+            set 
+            { 
+                _MaxY = value;
+                DrawDepth = MaxY / 1080.0f;
+            }
+        }
+        
         public BlendState BlendState = BlendState.AlphaBlend;
         public BoundingBox CollisionBox;        
         public BoundingBox BoundingBox;        

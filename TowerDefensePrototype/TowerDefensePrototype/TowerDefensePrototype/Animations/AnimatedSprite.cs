@@ -99,6 +99,11 @@ namespace TowerDefensePrototype
             {
                 spriteBatch.Draw(SpriteStrip, DestinationRectangle, SourceRectangle, Color);
             }
-        }    
+        }
+
+        public AnimatedSprite ShallowCopy()
+        {
+            return (AnimatedSprite)this.MemberwiseClone();
+        }
     }
 }

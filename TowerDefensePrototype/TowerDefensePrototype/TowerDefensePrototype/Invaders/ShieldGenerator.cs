@@ -10,6 +10,8 @@ namespace TowerDefensePrototype
 {
     class ShieldGenerator : HeavyRangedInvader
     {
+        public override float OriginalSpeed { get { return 0.65f; } }
+
         //public Shield Shield;// = new Shield();
         public UIBar ShieldBar;
         public float ShieldRadius = 80f;
@@ -18,11 +20,8 @@ namespace TowerDefensePrototype
         public ShieldGenerator(Vector2 position, Vector2? yRange = null)
             : base(position, yRange)
         {
-            Speed = 0.65f;
-            Position = position;
             MaxHP = 20;
             ResourceMinMax = new Vector2(8, 20);
-            YRange = new Vector2(700, 900);
 
             InvaderType = InvaderType.ShieldGenerator;
 

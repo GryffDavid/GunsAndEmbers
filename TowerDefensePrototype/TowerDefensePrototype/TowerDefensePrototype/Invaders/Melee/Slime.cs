@@ -10,10 +10,11 @@ namespace TowerDefensePrototype
 {
     class Slime : Invader
     {
+        public override float OriginalSpeed { get { return 0.65f; } }
+
         public Slime(Vector2 position, Vector2? yRange = null)
             : base(position, yRange)
         {
-            CurrentHP = 100;
             MaxHP = 100;
             ResourceMinMax = new Vector2(1, 5);
             InvaderType = InvaderType.Slime;
