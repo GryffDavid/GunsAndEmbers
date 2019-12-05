@@ -16,8 +16,8 @@ namespace TowerDefensePrototype
             Solid = false;
             TrapType = TrapType.Spikes;
             MaxHP = 50;
-            DetonateDelay = 300;
-            DetonateLimit = -1;
+            DetonateDelay = 2000;
+            DetonateLimit = 8;
             Animated = false;
         }
     }

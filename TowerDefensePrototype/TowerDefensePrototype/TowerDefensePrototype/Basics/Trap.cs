@@ -12,23 +12,17 @@ namespace TowerDefensePrototype
     {
         public Texture2D Texture;
         public Rectangle DestinationRectangle, SourceRectangle;
-        public float MaxHP, CurrentHP;
-        public Vector2 Scale, FrameSize, Position;
-        public bool Active, Solid, CanTrigger, Animated;
         public BoundingBox BoundingBox;
         public TrapType TrapType;
         public List<Emitter> TrapEmitterList = new List<Emitter>();
-        public float DetonateDelay, CurrentDetonateDelay;
         public HorizontalBar TimingBar, HealthBar, DetonateBar;
-        public int DetonateLimit, CurrentDetonateLimit;
-        public bool Affected;
-        public float AffectedTime, CurrentAffectedTime;
-        public float DrawDepth, Bottom;
-        public int ElapsedTime, FrameTime, FrameCount, CurrentFrame;
-        public int ResourceCost;
-        public int Radius;
+        public Vector2 Scale, FrameSize, Position;
+        public Animation CurrentAnimation;
+        public bool Active, Solid, CanTrigger, Animated, Affected;
+        public float MaxHP, CurrentHP, DetonateDelay, CurrentDetonateDelay, AffectedTime, CurrentAffectedTime, DrawDepth, Bottom;        
+        public int ElapsedTime, FrameTime, FrameCount, CurrentFrame, ResourceCost, Radius, DetonateLimit, CurrentDetonateLimit;
 
-        public virtual void Initialize(ContentManager contentManager)
+        public virtual void Initialize()
         {
             Active = true;
 

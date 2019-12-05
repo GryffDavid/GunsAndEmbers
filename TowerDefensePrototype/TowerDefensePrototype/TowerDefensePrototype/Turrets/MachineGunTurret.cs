@@ -22,6 +22,10 @@ namespace TowerDefensePrototype
             Animated = false;
             Looping = false;
             ResourceCost = 200;
+            MaxHeat = 100;
+            ShotHeat = 10;            
+            MaxHeatTime = 4000;
+            CoolValue = 0.25f;
 
             CurrentAnimation = new Animation()
             {

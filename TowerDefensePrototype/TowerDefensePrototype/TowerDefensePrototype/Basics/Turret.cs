@@ -164,6 +164,9 @@ namespace TowerDefensePrototype
                 }
                 else
                 {
+                    if (double.IsNaN(Rotation) == true)
+                        Rotation = -20;
+
                     if (Overheated == false)
                         Rotation = MathHelper.Lerp(Rotation, MathHelper.ToRadians(-20), 0.1f);
                     else

@@ -13,9 +13,10 @@ namespace TowerDefensePrototype
 {
     public class Level
     {
-        public int Number;
+        public int Number, Resources;
         public string WorldType;
         public List<Wave> WaveList; 
+        
 
         //STORE WAVES HERE IN A LIST//
         //CALL WAVE BY IT'S INDEX IN THE LIST//

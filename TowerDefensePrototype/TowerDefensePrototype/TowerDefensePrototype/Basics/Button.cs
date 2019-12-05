@@ -20,7 +20,6 @@ namespace TowerDefensePrototype
 
         public Color Color, TextColor;
         public Texture2D ButtonStrip, IconTexture;       
-        Rectangle IconRectangle;
         SpriteFont Font;
         SpriteBatch SpriteBatch;
 

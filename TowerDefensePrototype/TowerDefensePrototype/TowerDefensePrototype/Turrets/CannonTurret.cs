@@ -17,13 +17,13 @@ namespace TowerDefensePrototype
             TurretType = TurretType.Cannon;
             Position = position;
             Selected = true;
-            FireDelay = 6000;
-            Damage = 30;
+            FireDelay = 8000;
+            Damage = 21;
             Animated = false;
             Looping = false;
             Health = 500;
             ResourceCost = 600;
-            BlastRadius = 200;
+            BlastRadius = 270;
             Health = 200;
 
             CurrentAnimation = new Animation()

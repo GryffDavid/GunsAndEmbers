@@ -38,7 +38,6 @@ Content\Particles\GlowBall.xnb
 Content\Buttons\Button.xnb
 Content\Projectiles\FelProjectile.xnb
 Content\Projectiles\FelProjectile2.xnb
-Content\Buttons\ButtonTemplate.xnb
 Content\HealthBar\Foreground.xnb
 Content\StatBlock.xnb
 Content\Icons\TurretIcons\MachineGunTurretIcon.xnb
@@ -87,6 +86,8 @@ Content\Icons\TrapIcons\TarTrapIcon.xnb
 Content\Icons\TrapIcons\TriggerTrapIcon.xnb
 Content\Buttons\TriggerSwitch.xnb
 Content\Terrain\Shrub.xnb
+Content\Traps\TarTrap.xnb
+Content\Traps\SpikeTrap.xnb
 Content\Fonts\DefaultFont.xnb
 Content\Fonts\ButtonFont.xnb
 Content\Fonts\TooltipFont.xnb
@@ -119,3 +120,4 @@ Content\Shaders\ShockWaveEffect.xnb
 Content\Shaders\ShieldBubbleEffect.xnb
 Content\Shaders\BackgroundEffect.xnb
 Content\Shaders\ButtonBlurEffect.xnb
+Content\Shaders\UISplitShader.xnb
