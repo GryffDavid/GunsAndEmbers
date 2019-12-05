@@ -144,10 +144,10 @@ namespace TowerDefensePrototype
 
             DistToTower = Position.X - Tower.DestinationRectangle.Right;
 
-            if (DistToTower <= MinTowerRange)
-            {
-                InTowerRange = true;
-            }
+            //if (DistToTower <= MinTowerRange)
+            //{
+            //    InTowerRange = true;
+            //}
 
             base.Update(gameTime, cursorPosition);
         }

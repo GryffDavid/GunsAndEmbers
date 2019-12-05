@@ -90,8 +90,6 @@ namespace TowerDefensePrototype
     }
     #endregion
     
-    
-
     public class Game1 : Game
     {
         #region Events
@@ -612,7 +610,7 @@ namespace TowerDefensePrototype
         Texture2D JetEngineSprite, ExplosionRingSprite, ShieldSprite;
         
         Effect ParticleEffect;
-        Effect DepthEffect, BlurEffect, CrepEffect, LightCombined, LightEffect;
+        Effect DepthEffect, BlurEffect, CrepEffect, LightCombined, LightEffect, NoBlackEffect;
         PartitionedBar PowerUnitsBar, MusicVolumeBar, SoundEffectsVolumeBar;
         CheckBox BloodEffectsToggle, FullscreenToggle;
 
@@ -2529,17 +2527,11 @@ namespace TowerDefensePrototype
                     numChange.Draw(spriteBatch);
                 }
                 #endregion
-
-
+                
                 foreach (ExplosionEffect effect in ExplosionEffectList)
                 {
                     effect.Draw(spriteBatch);
                 }
-
-                //foreach (BulletTrail trail in TrailList)
-                //{
-                //    trail.Draw(spriteBatch);
-                //}
 
                 foreach (Particle coin in CoinList)
                 {
@@ -2576,36 +2568,34 @@ namespace TowerDefensePrototype
                         (drawable as JetEngine).JetEmitter.Draw(GraphicsDevice, ParticleEffect);
                     }
 
-
-                    if (drawable.GetType() == typeof(Emitter) && drawable.Emissive == true)
+                    if (drawable.GetType() != typeof(Emitter) && drawable.Emissive == false)
                     {
-                        if (drawable.BlendState != BlendState.AlphaBlend)
-                        {
-                            GraphicsDevice.BlendState = drawable.BlendState;
-                            drawable.Draw(GraphicsDevice, ParticleEffect);
-                            GraphicsDevice.BlendState = BlendState.AlphaBlend;
-                        }
-                        else
-                        {
-                            drawable.Draw(GraphicsDevice, ParticleEffect);
-                        }
+                        drawable.DrawSpriteOcclusion(GraphicsDevice, BasicEffect);
                     }
-
-                    if (drawable.GetType().BaseType == typeof(HeavyProjectile) && drawable.Emissive == true)
+                    else
                     {
-                        drawable.Draw(GraphicsDevice, ProjectileBasicEffect, ShadowBlurEffect, ParticleEffect);
+                        if (drawable.GetType() == typeof(Emitter) && drawable.Emissive == true)
+                        {
+                            if (drawable.BlendState != BlendState.AlphaBlend)
+                            {
+                                GraphicsDevice.BlendState = drawable.BlendState;
+                                drawable.Draw(GraphicsDevice, ParticleEffect);
+                                //drawable.DrawSpriteDepth(GraphicsDevice, ColorDepth);
+                                GraphicsDevice.BlendState = BlendState.AlphaBlend;
+                            }
+                            else
+                            {
+                                drawable.Draw(GraphicsDevice, ParticleEffect);
+                            }
+                        }
 
-                        //foreach (Emitter emitter in (drawable as HeavyProjectile).EmitterList)
-                        //{
-                        //    if (emitter.Emissive == true)
-                        //    {
-                        //        emitter.Draw(GraphicsDevice, ParticleEffect);
-                        //    }
-                        //}
+                        if (drawable.GetType().BaseType == typeof(HeavyProjectile) && drawable.Emissive == true)
+                        {
+                            drawable.Draw(GraphicsDevice, ProjectileBasicEffect, ShadowBlurEffect, ParticleEffect);
+                        }
                     }
                 }
 
-                //spriteBatch.Draw(UIRenderTarget, UIRenderTarget.Bounds, Color.White);
                 spriteBatch.End();
                 #endregion
 
@@ -2840,7 +2830,7 @@ namespace TowerDefensePrototype
                 #region Draw to DepthMap
                 GraphicsDevice.SetRenderTarget(DepthMap);
                 GraphicsDevice.Clear(Color.Black);
-                spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.LinearClamp, null, null);
+                spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Opaque, SamplerState.LinearClamp, null, null);
                 foreach (Drawable drawable in DrawableList)
                 {
                     if (drawable.GetType() != typeof(Emitter))
@@ -3891,6 +3881,26 @@ namespace TowerDefensePrototype
 
                                 spriteBatch.End();
                             }
+                            else
+                                if (Keyboard.GetState().IsKeyDown(Keys.E))
+                                {
+                                    spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
+
+                                    spriteBatch.Draw(EmissiveMap, new Rectangle(0, 0, 1920, 1080), Color.White);
+                                    spriteBatch.DrawString(DefaultFont, "Emissive", new Vector2(0, 0), Color.White);
+
+                                    spriteBatch.End();
+                                }
+                                else
+                                    if (Keyboard.GetState().IsKeyDown(Keys.B))
+                                    {
+                                        spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
+
+                                        spriteBatch.Draw(BlurMap, new Rectangle(0, 0, 1920, 1080), Color.White);
+                                        spriteBatch.DrawString(DefaultFont, "Blur", new Vector2(0, 0), Color.White);
+
+                                        spriteBatch.End();
+                                    }
                 #endregion
                 else
                 {

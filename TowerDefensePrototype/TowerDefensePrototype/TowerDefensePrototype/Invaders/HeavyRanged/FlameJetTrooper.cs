@@ -72,7 +72,7 @@ namespace TowerDefensePrototype
                 HoverRange = new Vector2(Position.Y - 10, Position.Y + 10);
 
                 Velocity.Y = 0;
-                Velocity.X = -1.3f;
+                Velocity.X = -0.3f;
                 Airborne = true;
                 Gravity = 0.1f;
                 JumpManBehaviour = SpecificBehaviour.Hovering;

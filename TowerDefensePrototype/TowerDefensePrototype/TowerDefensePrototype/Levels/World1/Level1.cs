@@ -39,9 +39,9 @@ namespace TowerDefensePrototype
 
                 //new JumpMan(new Vector2(2050, 600), new Vector2(700, 850)),
 
-                //new FlameJetTrooper(new Vector2(2050, 600), new Vector2(700, 850)),
-                //new FlameJetTrooper(new Vector2(2050, 600), new Vector2(700, 850)),
-                new FlameJetTrooper(new Vector2(2050, 600), new Vector2(700, 850))
+                new FlameJetTrooper(new Vector2(2050, 600), new Vector2(700, 850)),
+                new FlameJetTrooper(new Vector2(2050, 600), new Vector2(700, 850)),
+                new FlameJetTrooper(new Vector2(2050, 600), new Vector2(700, 850)),
 
                 //new JumpMan(new Vector2(2050, 600), new Vector2(700, 850)),
                 //new JumpMan(new Vector2(2050, 600), new Vector2(700, 850)),
@@ -67,9 +67,9 @@ namespace TowerDefensePrototype
                 //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
                 //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
 
-                //new StationaryCannon(new Vector2(2050, 600), new Vector2(700, 850)),
-                //new StationaryCannon(new Vector2(2050, 600), new Vector2(700, 850)),
-                //new StationaryCannon(new Vector2(2050, 600), new Vector2(700, 850)),
+                new StationaryCannon(new Vector2(2050, 600), new Vector2(700, 850)),
+                new StationaryCannon(new Vector2(2050, 600), new Vector2(700, 850)),
+                new StationaryCannon(new Vector2(2050, 600), new Vector2(700, 850))
 
                 //new HarpoonCannon(new Vector2(2050, 600), new Vector2(700, 850)),
                 //new HarpoonCannon(new Vector2(2050, 600), new Vector2(700, 850)),
