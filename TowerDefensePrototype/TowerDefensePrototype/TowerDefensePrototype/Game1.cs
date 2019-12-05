@@ -271,26 +271,10 @@ namespace TowerDefensePrototype
         #region Icon sprites
         Texture2D LockIcon, HealthIcon, OverHeatIcon, CurrencyIcon, PowerUnitIcon, RightClickIcon;
 
-        //Turret icons
-        //NEW_TURRET E **turret icon declarations**
-
         Dictionary<string, Texture2D> TurretIconDictionary = new Dictionary<string, Texture2D>();
         Dictionary<string, Texture2D> TrapIconDictionary = new Dictionary<string, Texture2D>();
 
-        //public Texture2D BeamTurretIcon, BoomerangTurretIcon, CannonTurretIcon, ClusterTurretIcon, FelCannonTurretIcon, FlameThrowerTurretIcon,
-        //                 FreezeTurretIcon, GrenadeTurretIcon, GasGrenadeTurretIcon, LightningTurretIcon, MachineGunTurretIcon,
-        //                 PersistentBeamTurretIcon, ShotgunTurretIcon, HarpoonTurretIcon, StickyMineTurretIcon, GrappleTurretIcon;
-
-        //Trap Icons
-        //public Texture2D CatapultTrapIcon, IceTrapIcon, TarTrapIcon, WallTrapIcon, BarrelTrapIcon, FireTrapIcon, LineTrapIcon, SawBladeTrapIcon,
-        //                 SpikesTrapIcon, LandMineTrapIcon, TriggerTrapIcon, FlameThrowerTrapIcon, GlueTrapIcon;
-
-        //Emotion Icons
         public Texture2D FearEmotionIcon;
-
-        //Damage Icons
-        //public Texture2D ConcussiveDamageIcon, KineticDamageIcon, FireDamageIcon, ElectricDamageIcon, RadiationDamageIcon;
-
         #endregion
 
         #region Cursor sprites
@@ -310,20 +294,12 @@ namespace TowerDefensePrototype
 
         #region Trap sprites
         //NEW_TRAP B **trap animations list declarations here**
-
         Dictionary<string, List<TrapAnimation>> TrapAnimationsDictionary = new Dictionary<string, List<TrapAnimation>>();
 
-        //public List<TrapAnimation> WallTrapAnimations, BarrelTrapAnimations, CatapultTrapAnimations, IceTrapAnimations, TarTrapAnimations,
-        //                           LineTrapAnimations, SawBladeTrapAnimations, SpikeTrapAnimations, FireTrapAnimations, LandMineTrapAnimations,
-        //                           FlameThrowerTrapAnimations, GlueTrapAnimations;
-
-        public Texture2D WallAmbShadow;
         #endregion
 
         #region Turret sprites
-        //NEW_TURRET B **turret sprite declarations here**
         Texture2D TurretSelectBox;
-
         Dictionary<string, Texture2D> TurretSpriteDictionary = new Dictionary<string, Texture2D>();
 
         public Texture2D MachineGunTurretBarrelGib;
@@ -331,15 +307,8 @@ namespace TowerDefensePrototype
 
         #region Enemy sprites
         Texture2D IceBlock, Shadow, DropShipDoorTexture;
+        Dictionary<string, List<InvaderAnimation>> InvaderAnimationsDictionary = new Dictionary<string, List<InvaderAnimation>>();
 
-        //NEW_INVADER B **invader animation list declarations here**
-        public List<InvaderAnimation> SoldierAnimations, BatteringRamAnimations, AirshipAnimations, ArcherAnimations,
-                               TankAnimations, SpiderAnimations, SlimeAnimations, SuicideBomberAnimations,
-                               FireElementalAnimations, TestInvaderAnimations, StationaryCannonAnimations,
-                               HealDroneAnimations, JumpManAnimations, RifleManAnimations, ShieldGeneratorAnimations,
-                               HarpoonCannonAnimations, DropShipAnimations, GunShipAnimations, CrateAnimations;
-
-        //HEAVYRANGED_INVADER A **barrel animation declarations here**
         public InvaderAnimation StationaryCannonBarrelAnimation, HarpoonCannonBarrelAnimation;
         #endregion
 
@@ -1362,6 +1331,7 @@ namespace TowerDefensePrototype
 
                 TurretSpriteDictionary.Clear();
                 TrapAnimationsDictionary.Clear();
+                InvaderAnimationsDictionary.Clear();
                 LightList.Clear();
                 CrepLightList.Clear();
 
@@ -1409,437 +1379,437 @@ namespace TowerDefensePrototype
         {
             IceBlock = Content.Load<Texture2D>("IceBlock");
             Shadow = Content.Load<Texture2D>("Shadow");
-
             FearEmotionIcon = Content.Load<Texture2D>("Invaders/EmotionIcons/FearEmotionIcon");
-            
-            //NEW_INVADER C **invader animations loaded here**
-            #region Solider Animations
-            SoldierAnimations = new List<InvaderAnimation>()
+
+            foreach (InvaderType invaderType in Enum.GetValues(typeof(InvaderType)))
             {
-                new InvaderAnimation() 
-                { 
-                    CurrentInvaderState = AnimationState_Invader.Walk,
-                    Texture = Content.Load<Texture2D>("Invaders/Soldier/SoldierWalk"),
-                    AnimationType = AnimationType.Normal,
-                    Animated = true,
-                    CurrentFrame = 0,
-                    FrameDelay = 30,
-                    Looping = true,
-                    TotalFrames = 24
-                },
+                string entryName = invaderType.ToString() + "InvaderAnimations";
+                List<InvaderAnimation> AnimationsList = new List<InvaderAnimation>();
 
-                new InvaderAnimation() 
-                {
-                    CurrentInvaderState = AnimationState_Invader.Melee,
-                    Texture = Content.Load<Texture2D>("Invaders/Soldier/SoldierMelee"),
-                    AnimationType = AnimationType.Normal,
-                    Animated = true,
-                    CurrentFrame = 0,
-                    FrameDelay = 150,
-                    Looping = false,
-                    TotalFrames = 4
-                },
+                InvaderAnimationsDictionary.Add(entryName, null);
 
-                new InvaderAnimation() 
+                switch (invaderType)
                 {
-                    CurrentInvaderState = AnimationState_Invader.Stand,
-                    Texture = Content.Load<Texture2D>("Invaders/Soldier/SoldierStand"),
-                    AnimationType = AnimationType.Normal,
-                    Animated = true,
-                    CurrentFrame = 0,
-                    FrameDelay = 25,
-                    Looping = true,
-                    TotalFrames = 30                    
+                    #region Soldier
+                    case InvaderType.Soldier:
+                        {
+                            AnimationsList = new List<InvaderAnimation>()
+                            {
+                                new InvaderAnimation() 
+                                { 
+                                    CurrentInvaderState = AnimationState_Invader.Walk,
+                                    Texture = Content.Load<Texture2D>("Invaders/Soldier/SoldierWalk"),
+                                    AnimationType = AnimationType.Normal,
+                                    Animated = true,
+                                    CurrentFrame = 0,
+                                    FrameDelay = 30,
+                                    Looping = true,
+                                    TotalFrames = 24
+                                },
+
+                                new InvaderAnimation() 
+                                {
+                                    CurrentInvaderState = AnimationState_Invader.Melee,
+                                    Texture = Content.Load<Texture2D>("Invaders/Soldier/SoldierMelee"),
+                                    AnimationType = AnimationType.Normal,
+                                    Animated = true,
+                                    CurrentFrame = 0,
+                                    FrameDelay = 150,
+                                    Looping = false,
+                                    TotalFrames = 4
+                                },
+
+                                new InvaderAnimation() 
+                                {
+                                    CurrentInvaderState = AnimationState_Invader.Stand,
+                                    Texture = Content.Load<Texture2D>("Invaders/Soldier/SoldierStand"),
+                                    AnimationType = AnimationType.Normal,
+                                    Animated = true,
+                                    CurrentFrame = 0,
+                                    FrameDelay = 25,
+                                    Looping = true,
+                                    TotalFrames = 30                    
+                                }
+                            };
+                        }
+                        break;
+                    #endregion
+
+                    #region JumpMan
+                    case InvaderType.JumpMan:
+                        {
+                            AnimationsList = new List<InvaderAnimation>()
+                            {
+                                new InvaderAnimation() 
+                                { 
+                                    CurrentInvaderState = AnimationState_Invader.Walk,
+                                    Texture = Content.Load<Texture2D>("Invaders/Soldier/SoldierWalk"),
+                                    AnimationType = AnimationType.Normal,
+                                    Animated = true,
+                                    CurrentFrame = 0,
+                                    FrameDelay = 150,
+                                    Looping = true,
+                                    TotalFrames = 4
+                                },
+
+                                new InvaderAnimation() 
+                                {
+                                    CurrentInvaderState = AnimationState_Invader.Melee,
+                                    Texture = Content.Load<Texture2D>("Invaders/Soldier/SoldierMelee"),
+                                    AnimationType = AnimationType.Normal,
+                                    Animated = true,
+                                    CurrentFrame = 0,
+                                    FrameDelay = 150,
+                                    Looping = false,
+                                    TotalFrames = 4
+                                },
+
+                                new InvaderAnimation() 
+                                {
+                                    CurrentInvaderState = AnimationState_Invader.Stand,
+                                    Texture = Content.Load<Texture2D>("Invaders/Soldier/SoldierStand"),
+                                    AnimationType = AnimationType.Normal,
+                                    Animated = true,
+                                    CurrentFrame = 0,
+                                    FrameDelay = 150,
+                                    Looping = true,
+                                    TotalFrames = 2                    
+                                }
+                            };
+                        }
+                        break; 
+                    #endregion
+
+                    #region RifleMan
+                    case InvaderType.RifleMan:
+                        {
+                            AnimationsList = new List<InvaderAnimation>()
+                            {
+                                new InvaderAnimation() 
+                                { 
+                                    CurrentInvaderState = AnimationState_Invader.Walk,
+                                    Texture = Content.Load<Texture2D>("Invaders/RifleMan/RifleManWalk"),
+                                    AnimationType = AnimationType.Normal,
+                                    Animated = true,
+                                    CurrentFrame = 0,
+                                    FrameDelay = 150,
+                                    Looping = true,
+                                    TotalFrames = 4
+                                },
+
+                                new InvaderAnimation() 
+                                {
+                                    CurrentInvaderState = AnimationState_Invader.Shoot,
+                                    Texture = Content.Load<Texture2D>("Invaders/RifleMan/RifleManShoot"),
+                                    AnimationType = AnimationType.Normal,
+                                    Animated = true,
+                                    CurrentFrame = 0,
+                                    FrameDelay = 150,
+                                    Looping = false,
+                                    TotalFrames = 4
+                                },
+
+                                new InvaderAnimation() 
+                                {
+                                    CurrentInvaderState = AnimationState_Invader.Stand,
+                                    Texture = Content.Load<Texture2D>("Invaders/RifleMan/RifleManStand"),
+                                    AnimationType = AnimationType.Normal,
+                                    Animated = true,
+                                    CurrentFrame = 0,
+                                    FrameDelay = 150,
+                                    Looping = true,
+                                    TotalFrames = 2                    
+                                }
+                            };
+                        }
+                        break;
+                    #endregion
+
+                    #region StationaryCannon
+                    case InvaderType.StationaryCannon:
+                        {
+                            AnimationsList = new List<InvaderAnimation>()
+                            {
+                                new InvaderAnimation() 
+                                { 
+                                    CurrentInvaderState = AnimationState_Invader.Walk,
+                                    Texture = Content.Load<Texture2D>("Invaders/StationaryCannon/StationaryCannonBase"),
+                                    AnimationType = AnimationType.Regular,
+                                    Animated = true,
+                                    CurrentFrame = 0,
+                                    FrameDelay = 150,
+                                    Looping = true,
+                                    TotalFrames = 1
+                                },
+
+                                new InvaderAnimation() 
+                                { 
+                                    CurrentInvaderState = AnimationState_Invader.Stand,
+                                    Texture = Content.Load<Texture2D>("Invaders/StationaryCannon/StationaryCannonBase"),
+                                    AnimationType = AnimationType.Regular,
+                                    Animated = true,
+                                    CurrentFrame = 0,
+                                    FrameDelay = 150,
+                                    Looping = true,
+                                    TotalFrames = 1
+                                },
+                            };
+
+                            StationaryCannonBarrelAnimation = new InvaderAnimation()
+                            {
+                                Texture = Content.Load<Texture2D>("Invaders/StationaryCannon/StationaryCannonBarrel"),
+                                TotalFrames = 1,
+                                CurrentFrame = 0,
+                                AnimationType = AnimationType.Regular,
+                                Animated = true,
+                                Looping = false
+                            };
+
+                            StationaryCannonBarrelAnimation.GetFrameSize();
+                        }
+                        break;
+                    #endregion
+
+                    #region HarpoonCannon
+                    case InvaderType.HarpoonCannon:
+                        {
+                            AnimationsList = new List<InvaderAnimation>()
+                            {
+                                new InvaderAnimation() 
+                                { 
+                                    CurrentInvaderState = AnimationState_Invader.Walk,
+                                    Texture = Content.Load<Texture2D>("Invaders/HarpoonCannon/HarpoonCannonBase"),
+                                    AnimationType = AnimationType.Regular,
+                                    Animated = true,
+                                    CurrentFrame = 0,
+                                    FrameDelay = 150,
+                                    Looping = true,
+                                    TotalFrames = 1
+                                },
+
+                                new InvaderAnimation() 
+                                { 
+                                    CurrentInvaderState = AnimationState_Invader.Stand,
+                                    Texture = Content.Load<Texture2D>("Invaders/HarpoonCannon/HarpoonCannonBase"),
+                                    AnimationType = AnimationType.Regular,
+                                    Animated = true,
+                                    CurrentFrame = 0,
+                                    FrameDelay = 150,
+                                    Looping = true,
+                                    TotalFrames = 1
+                                },
+                            };
+
+                            HarpoonCannonBarrelAnimation = new InvaderAnimation()
+                            {
+                                Texture = Content.Load<Texture2D>("Invaders/HarpoonCannon/HarpoonCannonBarrel"),
+                                TotalFrames = 1,
+                                CurrentFrame = 0,
+                                AnimationType = AnimationType.Regular,
+                                Animated = true,
+                                Looping = false
+                            };
+
+                            HarpoonCannonBarrelAnimation.GetFrameSize();
+                        }
+                        break;
+                    #endregion
+
+                    #region HealDrone
+                    case InvaderType.HealDrone:
+                        {
+                            AnimationsList = new List<InvaderAnimation>()
+                            {
+                                new InvaderAnimation() 
+                                { 
+                                    CurrentInvaderState = AnimationState_Invader.Walk,
+                                    Texture = Content.Load<Texture2D>("Invaders/HealDrone/HealDrone"),
+                                    AnimationType = AnimationType.Regular,
+                                    Animated = true,
+                                    CurrentFrame = 0,
+                                    FrameDelay = 150,
+                                    Looping = true,
+                                    TotalFrames = 1                    
+                                },
+
+                                new InvaderAnimation() 
+                                { 
+                                    CurrentInvaderState = AnimationState_Invader.Stand,
+                                    Texture = Content.Load<Texture2D>("Invaders/HealDrone/HealDrone"),
+                                    AnimationType = AnimationType.Regular,
+                                    Animated = true,
+                                    CurrentFrame = 0,
+                                    FrameDelay = 150,
+                                    Looping = true,
+                                    TotalFrames = 1                    
+                                },
+                            };
+                        }
+                        break;
+                    #endregion
+
+                    #region ShieldGenerator
+                    case InvaderType.ShieldGenerator:
+                        {
+                            AnimationsList = new List<InvaderAnimation>()
+                            {
+                                new InvaderAnimation() 
+                                { 
+                                    CurrentInvaderState = AnimationState_Invader.Walk,
+                                    Texture = Content.Load<Texture2D>("Invaders/HealDrone/HealDrone"),
+                                    AnimationType = AnimationType.Regular,
+                                    Animated = true,
+                                    CurrentFrame = 0,
+                                    FrameDelay = 150,
+                                    Looping = true,
+                                    TotalFrames = 1                    
+                                },
+
+                                new InvaderAnimation() 
+                                { 
+                                    CurrentInvaderState = AnimationState_Invader.Stand,
+                                    Texture = Content.Load<Texture2D>("Invaders/HealDrone/HealDrone"),
+                                    AnimationType = AnimationType.Regular,
+                                    Animated = true,
+                                    CurrentFrame = 0,
+                                    FrameDelay = 150,
+                                    Looping = true,
+                                    TotalFrames = 1                    
+                                },
+                            };
+                        }
+                        break;
+                    #endregion
+
+                    #region BatteringRam
+                    case InvaderType.BatteringRam:
+                        {
+                            AnimationsList = new List<InvaderAnimation>()
+                            {
+                                new InvaderAnimation() 
+                                { 
+                                    CurrentInvaderState = AnimationState_Invader.Walk,
+                                    Texture = Content.Load<Texture2D>("Invaders/BatteringRam/BatteringRam"),
+                                    AnimationType = AnimationType.Regular,
+                                    Animated = false,
+                                    CurrentFrame = 0,
+                                    FrameDelay = 150,
+                                    Looping = false,
+                                    TotalFrames = 1                    
+                                },
+
+                                new InvaderAnimation() 
+                                { 
+                                    CurrentInvaderState = AnimationState_Invader.Stand,
+                                    Texture = Content.Load<Texture2D>("Invaders/BatteringRam/BatteringRam"),
+                                    AnimationType = AnimationType.Regular,
+                                    Animated = false,
+                                    CurrentFrame = 0,
+                                    FrameDelay = 150,
+                                    Looping = false,
+                                    TotalFrames = 1                    
+                                },
+                            };
+                        }
+                        break;
+                    #endregion
+
+                    #region DropShip
+                    case InvaderType.DropShip:
+                        {
+                            AnimationsList = new List<InvaderAnimation>()
+                            {
+                                new InvaderAnimation()
+                                {
+                                    CurrentInvaderState = AnimationState_Invader.Walk,
+                                    Texture = Content.Load<Texture2D>("Invaders/DropShip/DropShipTexture"),
+                                    Animated = false,
+                                    CurrentFrame = 0,
+                                    FrameDelay = 150,
+                                    Looping = false,
+                                    TotalFrames = 1
+                                },
+
+                                new InvaderAnimation()
+                                {
+                                    CurrentInvaderState = AnimationState_Invader.Stand,
+                                    Texture = Content.Load<Texture2D>("Invaders/DropShip/DropShipTexture"),
+                                    Animated = false,
+                                    CurrentFrame = 0,
+                                    FrameDelay = 150,
+                                    Looping = false,
+                                    TotalFrames = 1
+                                }
+                            };
+
+                            DropShipDoorTexture = Content.Load<Texture2D>("Invaders/Dropship/DropShipDoor");   
+                        }
+                        break;
+                    #endregion
+
+                    #region Crate
+                    case InvaderType.Crate:
+                        {
+                            AnimationsList = new List<InvaderAnimation>()
+                            {
+                                new InvaderAnimation()
+                                {
+                                    CurrentInvaderState = AnimationState_Invader.Stand,
+                                    Texture = WhiteBlock,
+                                    AnimationType = AnimationType.Regular,
+                                    Animated = false,
+                                    CurrentFrame = 0,
+                                    FrameDelay = 100,
+                                    Looping = false,
+                                    TotalFrames = 1
+                                }
+                            };
+                        }
+                        break;
+                    #endregion
+
+                    #region GunShip
+                    case InvaderType.GunShip:
+                        {
+                            AnimationsList = new List<InvaderAnimation>()
+                            {
+                                new InvaderAnimation()
+                                {
+                                    CurrentInvaderState = AnimationState_Invader.Walk,
+                                    Texture = Content.Load<Texture2D>("Invaders/GunShip/GunShipTexture"),
+                                    Animated = false,
+                                    CurrentFrame = 0,
+                                    FrameDelay = 150,
+                                    Looping = false,
+                                    TotalFrames = 1
+                                },
+
+                                new InvaderAnimation()
+                                {
+                                    CurrentInvaderState = AnimationState_Invader.Stand,
+                                    Texture = Content.Load<Texture2D>("Invaders/GunShip/GunShipTexture"),
+                                    Animated = false,
+                                    CurrentFrame = 0,
+                                    FrameDelay = 150,
+                                    Looping = false,
+                                    TotalFrames = 1
+                                }
+                            };
+                        }
+                        break;
+                    #endregion
                 }
-            };
 
-            foreach (InvaderAnimation animation in SoldierAnimations)
-            {
-                animation.GetFrameSize();
-            }
-            #endregion
+                InvaderAnimationsDictionary[entryName] = AnimationsList;
 
-            #region JumpMan Animations
-            JumpManAnimations = new List<InvaderAnimation>()
-            {
-                new InvaderAnimation() 
-                { 
-                    CurrentInvaderState = AnimationState_Invader.Walk,
-                    Texture = Content.Load<Texture2D>("Invaders/Soldier/SoldierWalk"),
-                    AnimationType = AnimationType.Normal,
-                    Animated = true,
-                    CurrentFrame = 0,
-                    FrameDelay = 150,
-                    Looping = true,
-                    TotalFrames = 4
-                },
-
-                new InvaderAnimation() 
+                if (InvaderAnimationsDictionary[entryName] != null)
                 {
-                    CurrentInvaderState = AnimationState_Invader.Melee,
-                    Texture = Content.Load<Texture2D>("Invaders/Soldier/SoldierMelee"),
-                    AnimationType = AnimationType.Normal,
-                    Animated = true,
-                    CurrentFrame = 0,
-                    FrameDelay = 150,
-                    Looping = false,
-                    TotalFrames = 4
-                },
-
-                new InvaderAnimation() 
-                {
-                    CurrentInvaderState = AnimationState_Invader.Stand,
-                    Texture = Content.Load<Texture2D>("Invaders/Soldier/SoldierStand"),
-                    AnimationType = AnimationType.Normal,
-                    Animated = true,
-                    CurrentFrame = 0,
-                    FrameDelay = 150,
-                    Looping = true,
-                    TotalFrames = 2                    
+                    foreach (InvaderAnimation invaderAnimation in InvaderAnimationsDictionary[entryName])
+                    {
+                        invaderAnimation.GetFrameSize();
+                    }
                 }
-            };
-
-            foreach (InvaderAnimation animation in JumpManAnimations)
-            {
-                animation.GetFrameSize();
             }
-            #endregion
-
-            #region RifleMan Animations
-            RifleManAnimations = new List<InvaderAnimation>()
-            {
-                new InvaderAnimation() 
-                { 
-                    CurrentInvaderState = AnimationState_Invader.Walk,
-                    Texture = Content.Load<Texture2D>("Invaders/RifleMan/RifleManWalk"),
-                    AnimationType = AnimationType.Normal,
-                    Animated = true,
-                    CurrentFrame = 0,
-                    FrameDelay = 150,
-                    Looping = true,
-                    TotalFrames = 4
-                },
-
-                new InvaderAnimation() 
-                {
-                    CurrentInvaderState = AnimationState_Invader.Shoot,
-                    Texture = Content.Load<Texture2D>("Invaders/RifleMan/RifleManShoot"),
-                    AnimationType = AnimationType.Normal,
-                    Animated = true,
-                    CurrentFrame = 0,
-                    FrameDelay = 150,
-                    Looping = false,
-                    TotalFrames = 4
-                },
-
-                new InvaderAnimation() 
-                {
-                    CurrentInvaderState = AnimationState_Invader.Stand,
-                    Texture = Content.Load<Texture2D>("Invaders/RifleMan/RifleManStand"),
-                    AnimationType = AnimationType.Normal,
-                    Animated = true,
-                    CurrentFrame = 0,
-                    FrameDelay = 150,
-                    Looping = true,
-                    TotalFrames = 2                    
-                }
-            };
-
-            foreach (InvaderAnimation animation in RifleManAnimations)
-            {
-                animation.GetFrameSize();
-            }
-            #endregion
-
-            #region Stationary Cannon Animations
-            StationaryCannonAnimations = new List<InvaderAnimation>()
-            {
-                new InvaderAnimation() 
-                { 
-                    CurrentInvaderState = AnimationState_Invader.Walk,
-                    Texture = Content.Load<Texture2D>("Invaders/StationaryCannon/StationaryCannonBase"),
-                    AnimationType = AnimationType.Regular,
-                    Animated = true,
-                    CurrentFrame = 0,
-                    FrameDelay = 150,
-                    Looping = true,
-                    TotalFrames = 1
-                },
-
-                new InvaderAnimation() 
-                { 
-                    CurrentInvaderState = AnimationState_Invader.Stand,
-                    Texture = Content.Load<Texture2D>("Invaders/StationaryCannon/StationaryCannonBase"),
-                    AnimationType = AnimationType.Regular,
-                    Animated = true,
-                    CurrentFrame = 0,
-                    FrameDelay = 150,
-                    Looping = true,
-                    TotalFrames = 1
-                },
-            };
-
-            StationaryCannonBarrelAnimation = new InvaderAnimation()
-            {
-                Texture = Content.Load<Texture2D>("Invaders/StationaryCannon/StationaryCannonBarrel"),
-                TotalFrames = 1,
-                CurrentFrame = 0,
-                AnimationType = AnimationType.Regular,
-                Animated = true,
-                Looping = false
-            };
-
-            StationaryCannonBarrelAnimation.GetFrameSize();
-
-            foreach (InvaderAnimation animation in StationaryCannonAnimations)
-            {
-                animation.GetFrameSize();
-            }
-            #endregion
-
-            #region Harpoon Cannon Animations
-            HarpoonCannonAnimations = new List<InvaderAnimation>()
-            {
-                new InvaderAnimation() 
-                { 
-                    CurrentInvaderState = AnimationState_Invader.Walk,
-                    Texture = Content.Load<Texture2D>("Invaders/HarpoonCannon/HarpoonCannonBase"),
-                    AnimationType = AnimationType.Regular,
-                    Animated = true,
-                    CurrentFrame = 0,
-                    FrameDelay = 150,
-                    Looping = true,
-                    TotalFrames = 1
-                },
-
-                new InvaderAnimation() 
-                { 
-                    CurrentInvaderState = AnimationState_Invader.Stand,
-                    Texture = Content.Load<Texture2D>("Invaders/HarpoonCannon/HarpoonCannonBase"),
-                    AnimationType = AnimationType.Regular,
-                    Animated = true,
-                    CurrentFrame = 0,
-                    FrameDelay = 150,
-                    Looping = true,
-                    TotalFrames = 1
-                },
-            };
-
-            HarpoonCannonBarrelAnimation = new InvaderAnimation()
-            {
-                Texture = Content.Load<Texture2D>("Invaders/HarpoonCannon/HarpoonCannonBarrel"),
-                TotalFrames = 1,
-                CurrentFrame = 0,
-                AnimationType = AnimationType.Regular,
-                Animated = true,
-                Looping = false
-            };
-
-            HarpoonCannonBarrelAnimation.GetFrameSize();
-
-            foreach (InvaderAnimation animation in HarpoonCannonAnimations)
-            {
-                animation.GetFrameSize();
-            }
-            #endregion
-
-            #region Heal Drone Animations
-            HealDroneAnimations = new List<InvaderAnimation>()
-            {
-                new InvaderAnimation() 
-                { 
-                    CurrentInvaderState = AnimationState_Invader.Walk,
-                    Texture = Content.Load<Texture2D>("Invaders/HealDrone/HealDrone"),
-                    AnimationType = AnimationType.Regular,
-                    Animated = true,
-                    CurrentFrame = 0,
-                    FrameDelay = 150,
-                    Looping = true,
-                    TotalFrames = 1                    
-                },
-
-                new InvaderAnimation() 
-                { 
-                    CurrentInvaderState = AnimationState_Invader.Stand,
-                    Texture = Content.Load<Texture2D>("Invaders/HealDrone/HealDrone"),
-                    AnimationType = AnimationType.Regular,
-                    Animated = true,
-                    CurrentFrame = 0,
-                    FrameDelay = 150,
-                    Looping = true,
-                    TotalFrames = 1                    
-                },
-            };
-
-            foreach (InvaderAnimation animation in HealDroneAnimations)
-            {
-                animation.GetFrameSize();
-            }
-            #endregion
-
-            #region Shield Generator Animations
-            ShieldGeneratorAnimations = new List<InvaderAnimation>()
-            {
-                new InvaderAnimation() 
-                { 
-                    CurrentInvaderState = AnimationState_Invader.Walk,
-                    Texture = Content.Load<Texture2D>("Invaders/HealDrone/HealDrone"),
-                    AnimationType = AnimationType.Regular,
-                    Animated = true,
-                    CurrentFrame = 0,
-                    FrameDelay = 150,
-                    Looping = true,
-                    TotalFrames = 1                    
-                },
-
-                new InvaderAnimation() 
-                { 
-                    CurrentInvaderState = AnimationState_Invader.Stand,
-                    Texture = Content.Load<Texture2D>("Invaders/HealDrone/HealDrone"),
-                    AnimationType = AnimationType.Regular,
-                    Animated = true,
-                    CurrentFrame = 0,
-                    FrameDelay = 150,
-                    Looping = true,
-                    TotalFrames = 1                    
-                },
-            };
-
-            foreach (InvaderAnimation animation in ShieldGeneratorAnimations)
-            {
-                animation.GetFrameSize();
-            }
-            #endregion
-
-            #region Battering Ram Animations
-            BatteringRamAnimations = new List<InvaderAnimation>()
-            {
-                new InvaderAnimation() 
-                { 
-                    CurrentInvaderState = AnimationState_Invader.Walk,
-                    Texture = Content.Load<Texture2D>("Invaders/BatteringRam/BatteringRam"),
-                    AnimationType = AnimationType.Regular,
-                    Animated = false,
-                    CurrentFrame = 0,
-                    FrameDelay = 150,
-                    Looping = false,
-                    TotalFrames = 1                    
-                },
-
-                new InvaderAnimation() 
-                { 
-                    CurrentInvaderState = AnimationState_Invader.Stand,
-                    Texture = Content.Load<Texture2D>("Invaders/BatteringRam/BatteringRam"),
-                    AnimationType = AnimationType.Regular,
-                    Animated = false,
-                    CurrentFrame = 0,
-                    FrameDelay = 150,
-                    Looping = false,
-                    TotalFrames = 1                    
-                },
-            };
-
-            foreach (InvaderAnimation animation in BatteringRamAnimations)
-            {
-                animation.GetFrameSize();
-            }
-            #endregion
-
-            #region Drop Ship Animations
-            DropShipAnimations = new List<InvaderAnimation>()
-            {
-                new InvaderAnimation()
-                {
-                    CurrentInvaderState = AnimationState_Invader.Walk,
-                    Texture = Content.Load<Texture2D>("Invaders/DropShip/DropShipTexture"),
-                    Animated = false,
-                    CurrentFrame = 0,
-                    FrameDelay = 150,
-                    Looping = false,
-                    TotalFrames = 1
-                },
-
-                new InvaderAnimation()
-                {
-                    CurrentInvaderState = AnimationState_Invader.Stand,
-                    Texture = Content.Load<Texture2D>("Invaders/DropShip/DropShipTexture"),
-                    Animated = false,
-                    CurrentFrame = 0,
-                    FrameDelay = 150,
-                    Looping = false,
-                    TotalFrames = 1
-                }
-            };
-
-            DropShipDoorTexture = Content.Load<Texture2D>("Invaders/Dropship/DropShipDoor");
-
-            foreach (InvaderAnimation animation in DropShipAnimations)
-            {
-                animation.GetFrameSize();
-            }
-
-            #endregion
-
-            #region Crate Animations
-            CrateAnimations = new List<InvaderAnimation>()
-            {
-                new InvaderAnimation()
-                {
-                    CurrentInvaderState = AnimationState_Invader.Stand,
-                    Texture = WhiteBlock,
-                    AnimationType = AnimationType.Regular,
-                    Animated = false,
-                    CurrentFrame = 0,
-                    FrameDelay = 100,
-                    Looping = false,
-                    TotalFrames = 1
-                }
-            };
-
-            foreach (InvaderAnimation animation in CrateAnimations)
-            {
-                animation.GetFrameSize();
-            }
-            #endregion
-
-
-            #region Gun Ship Animations
-            GunShipAnimations = new List<InvaderAnimation>()
-            {
-                new InvaderAnimation()
-                {
-                    CurrentInvaderState = AnimationState_Invader.Walk,
-                    Texture = Content.Load<Texture2D>("Invaders/GunShip/GunShipTexture"),
-                    Animated = false,
-                    CurrentFrame = 0,
-                    FrameDelay = 150,
-                    Looping = false,
-                    TotalFrames = 1
-                },
-
-                new InvaderAnimation()
-                {
-                    CurrentInvaderState = AnimationState_Invader.Stand,
-                    Texture = Content.Load<Texture2D>("Invaders/GunShip/GunShipTexture"),
-                    Animated = false,
-                    CurrentFrame = 0,
-                    FrameDelay = 150,
-                    Looping = false,
-                    TotalFrames = 1
-                }
-            };
-
-            foreach (InvaderAnimation animation in GunShipAnimations)
-            {
-                animation.GetFrameSize();
-            }
-
-            #endregion
-            //NEW_INVADER D **if invaders aren't showing up, make sure you added this**
-            //foreach (InvaderAnimation animation in INVADERANIMATIONLIST)
-            //{
-            //    animation.GetFrameSize();
-            //}
         }
 
         private void LoadTrapSprites()
@@ -1857,8 +1827,6 @@ namespace TowerDefensePrototype
                     #region Wall
                     case TrapType.Wall:
                         {
-                            WallAmbShadow = Content.Load<Texture2D>("Traps/Wall/WallShadow");
-
                             AnimationsList = new List<TrapAnimation>()
                             {
                                 new TrapAnimation()
@@ -2166,29 +2134,6 @@ namespace TowerDefensePrototype
 
         private void LoadIcons()
         {
-            //#region Turret Icons
-            ////NEW_TURRET F **Icons need to be added to corresponding folder**
-            //foreach (TurretType turretType in Enum.GetValues(typeof(TurretType)))
-            //{
-            //    string TurretIconName = "Icons/TurretIcons/" + turretType.ToString() + "TurretIcon";
-            //    string TurretTextureName = turretType.ToString() + "TurretIcon";
-
-            //    var thing = this.GetType().GetField(TurretTextureName);
-            //    thing.SetValue(this, SecondaryContent.Load<Texture2D>(TurretIconName));
-            //}
-            //#endregion
-
-            //#region Trap Icons
-            //foreach (TrapType trapType in Enum.GetValues(typeof(TrapType)))
-            //{
-            //    string TrapIconName = "Icons/TrapIcons/" + trapType.ToString() + "TrapIcon";
-            //    string TrapTextureName = trapType.ToString() + "TrapIcon";
-
-            //    var thing = this.GetType().GetField(TrapTextureName);
-            //    thing.SetValue(this, SecondaryContent.Load<Texture2D>(TrapIconName));
-            //}
-            //#endregion
-
             #region Turret Icons
             foreach (TurretType turretType in Enum.GetValues(typeof(TurretType)))
             {
@@ -2227,8 +2172,7 @@ namespace TowerDefensePrototype
                     TrapIconDictionary.Add(TrapIconTextureName, SecondaryContent.Load<Texture2D>("Icons/TrapIcons/FireTrapIcon"));
                 }
             }
-            #endregion
-     
+            #endregion     
 
             PowerUnitIcon = SecondaryContent.Load<Texture2D>("Icons/PowerUnitIcon");
             CurrencyIcon = SecondaryContent.Load<Texture2D>("Icons/CurrencyIcon");
@@ -5248,11 +5192,6 @@ namespace TowerDefensePrototype
                                                 default:
                                                     TurretSpriteDictionary.TryGetValue(newTurret.TurretType.ToString() + "TurretBase", out newTurret.TurretBase);
                                                     TurretSpriteDictionary.TryGetValue(newTurret.TurretType.ToString() + "TurretBarrel", out newTurret.TurretBarrel);
-
-                                                    //var TurretBase = this.GetType().GetField(newTurret.TurretType.ToString() + "TurretBase").GetValue(this);
-                                                    //var TurretBarrel = this.GetType().GetField(newTurret.TurretType.ToString() + "TurretBarrel").GetValue(this);
-                                                    //newTurret.TurretBase = (Texture2D)TurretBase;
-                                                    //newTurret.TurretBarrel = (Texture2D)TurretBarrel;
                                                     break;
                                             }
 
@@ -6150,7 +6089,8 @@ namespace TowerDefensePrototype
 
                         case InvaderType.HealDrone:
                             {
-                                ShellCasing turretBase = new ShellCasing(invader.Position, new Vector2(invader.Direction.X * 3, 0), HealDroneAnimations[0].Texture);
+                                Texture2D tex = InvaderAnimationsDictionary["HealDroneInvaderAnimations"][0].Texture;
+                                ShellCasing turretBase = new ShellCasing(invader.Position, new Vector2(invader.Direction.X * 3, 0), tex);
                                 VerletShells.Add(turretBase);
                                 
                                 AddDrawable(turretBase);
@@ -11042,15 +10982,23 @@ namespace TowerDefensePrototype
             {
                 nextInvader.Position = posOverride.Value;
             }
+            
+
+            string EntryName = nextInvader.InvaderType.ToString() + "InvaderAnimations";
 
             switch (nextInvader.InvaderType)
             {
                 default:
-                    string invaderName = nextInvader.InvaderType.ToString();
-                    var invaderAnimationList = (List<InvaderAnimation>)this.GetType().GetField(invaderName + "Animations").GetValue(this);
-
                     //Have to do it this way to make sure all the invaders aren't referencing the same animation
-                    nextInvader.AnimationList = new List<InvaderAnimation>(invaderAnimationList.Count);
+                    nextInvader.AnimationList = new List<InvaderAnimation>(InvaderAnimationsDictionary[EntryName].Count);
+
+                    for (int i = 0; i < InvaderAnimationsDictionary[EntryName].Count; i++)
+                    {
+                        InvaderAnimation animation = new InvaderAnimation();
+                        animation = InvaderAnimationsDictionary[EntryName][i].ShallowCopy();
+                        animation.FrameDelay /= Multiplier;
+                        nextInvader.AnimationList.Add(animation);
+                    }
 
                     HeavyRangedInvader heavyRangedInvader = nextInvader as HeavyRangedInvader;
                     LightRangedInvader lightRangedInvader = nextInvader as LightRangedInvader;
@@ -11141,15 +11089,6 @@ namespace TowerDefensePrototype
                         }
                     }
                     #endregion
-
-                    for (int i = 0; i < invaderAnimationList.Count; i++)
-                    {
-                        InvaderAnimation animation = new InvaderAnimation();
-                        animation = invaderAnimationList[i].ShallowCopy();
-                        animation.FrameDelay /= Multiplier;
-
-                        nextInvader.AnimationList.Add(animation);
-                    }
                     break;
             }
 
@@ -11698,10 +11637,10 @@ namespace TowerDefensePrototype
 
                 int Index = PlaceWeaponList.IndexOf(button);
                 Button PressedButton = PlaceWeaponList[Index];
-
-                //Change the icon of the placed weapon button when a weapon is placed into a slot - TURRETS
+                                
                 if (CurrentProfile.Buttons[Index] != null)
                 {
+                    //Change the icon of the placed weapon button when a weapon is placed into a slot - TURRETS
                     switch (CurrentProfile.Buttons[Index].CurrentTurret)
                     {
                         case null:
@@ -11711,19 +11650,11 @@ namespace TowerDefensePrototype
                         default:
                             {
                                 TurretIconDictionary.TryGetValue(CurrentProfile.Buttons[Index].CurrentTurret.ToString() + "TurretIcon", out PressedButton.IconTexture);
-
-                                //string WeaponName = CurrentProfile.Buttons[Index].CurrentTurret.ToString();
-                                //var icon = this.GetType().GetField(WeaponName + "TurretIcon").GetValue(this);
-                                //PressedButton.IconTexture = (Texture2D)icon;
                             }
                             break;
                     }
-                }
 
-
-                //Change the icon of the placed weapon button when a weapon is placed into a slot - TRAPS
-                if (CurrentProfile.Buttons[Index] != null)
-                {
+                    //Change the icon of the placed weapon button when a weapon is placed into a slot - TRAPS
                     switch (CurrentProfile.Buttons[Index].CurrentTrap)
                     {
                         case null:
@@ -11732,10 +11663,6 @@ namespace TowerDefensePrototype
 
                         default:
                             {
-                                //string WeaponName = CurrentProfile.Buttons[Index].CurrentTrap.ToString();
-                                //var icon = this.GetType().GetField(WeaponName + "TrapIcon").GetValue(this);
-                                //PressedButton.IconTexture = (Texture2D)icon;
-
                                 TrapIconDictionary.TryGetValue(CurrentProfile.Buttons[Index].CurrentTrap.ToString() + "TrapIcon", out PressedButton.IconTexture);
                             }
                             break;
