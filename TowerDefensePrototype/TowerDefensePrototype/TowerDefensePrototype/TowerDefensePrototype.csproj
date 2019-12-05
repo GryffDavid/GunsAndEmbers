@@ -121,7 +121,6 @@
     <Compile Include="Components\ResourceCounter.cs" />
     <Compile Include="Components\Shield.cs" />
     <Compile Include="Invaders\ShieldGenerator.cs" />
-    <Compile Include="Map.cs" />
     <Compile Include="ParticleSystem\Corpse.cs" />
     <Compile Include="ParticleSystem\ExplosionEffect.cs" />
     <Compile Include="ParticleSystem\JetEngine.cs" />

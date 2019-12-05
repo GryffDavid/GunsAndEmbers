@@ -36,7 +36,6 @@ namespace TowerDefensePrototype
         {
             if (Pathfinder != null)
             {
-                Pathfinder.Map.Update(gameTime);
                 Waypoints = Pathfinder.GetWaypoints();
             }
 
@@ -54,12 +53,15 @@ namespace TowerDefensePrototype
                 #region MovingForwards
                 case MicroBehaviour.MovingForwards:
                     {
-                        Direction.X = -1;
+                        if (Waypoints.Count == 0)
+                        {
+                            Direction.X = -1;
 
-                        if (Slow == true)
-                            Velocity.X = Direction.X * SlowSpeed;
-                        else
-                            Velocity.X = Direction.X * Speed;
+                            if (Slow == true)
+                                Velocity.X = Direction.X * SlowSpeed;
+                            else
+                                Velocity.X = Direction.X * Speed;
+                        }
                     }
                     break;
                 #endregion

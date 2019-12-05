@@ -21,7 +21,7 @@ namespace TowerDefensePrototype
 
         public Tile(Vector2 index)
         {
-            Size = new Vector2(16, 16);
+            Size = new Vector2(32, 32);
             Position = new Vector2(272 + (Size.X * index.X), 672 + (Size.Y * index.Y));
             DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, (int)Size.X, (int)Size.Y);
         }
@@ -32,7 +32,7 @@ namespace TowerDefensePrototype
             CircleTexture = content.Load<Texture2D>("Circle");
         }
 
-        public void Update(GameTime gameTime)
+        public void Update()
         {
             switch (TileState)
             {
@@ -51,6 +51,12 @@ namespace TowerDefensePrototype
                 case TileState.EndPos:
                     {
                         Color = Color.Green;
+                    }
+                    break;
+
+                case TileState.FinalPath:
+                    {
+                        Color = Color.Turquoise;
                     }
                     break;
             }

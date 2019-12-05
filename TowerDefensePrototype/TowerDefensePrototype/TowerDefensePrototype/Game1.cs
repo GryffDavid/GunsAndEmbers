@@ -1,4 +1,5 @@
 using System;
+using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
@@ -491,7 +492,8 @@ namespace TowerDefensePrototype
                      ProfileButtonList, ProfileDeleteList, PlaceWeaponList,
                      SpecialAbilitiesButtonList;
 
-        List<Trap> TrapList;
+        ObservableCollection<Trap> TrapList;
+        //List<Trap> TrapList;
         List<Turret> TurretList;
         List<Invader> InvaderList;
 
@@ -1090,7 +1092,8 @@ namespace TowerDefensePrototype
                 
                 #region List Creating Code
                 //This code just creates the lists for the buttons and traps with the right number of possible slots
-                TrapList = new List<Trap>();
+                //TrapList = new List<Trap>();
+                TrapList = new ObservableCollection<Trap>();
 
                 TurretList = new List<Turret>();
                 for (int i = 0; i < TowerButtons; i++)
@@ -1573,10 +1576,10 @@ namespace TowerDefensePrototype
                     CurrentInvaderState = AnimationState_Invader.Walk,
                     Texture = Content.Load<Texture2D>("Invaders/BatteringRam/BatteringRam"),
                     AnimationType = AnimationType.Regular,
-                    Animated = true,
+                    Animated = false,
                     CurrentFrame = 0,
                     FrameDelay = 150,
-                    Looping = true,
+                    Looping = false,
                     TotalFrames = 1                    
                 },
 
@@ -1585,10 +1588,10 @@ namespace TowerDefensePrototype
                     CurrentInvaderState = AnimationState_Invader.Stand,
                     Texture = Content.Load<Texture2D>("Invaders/BatteringRam/BatteringRam"),
                     AnimationType = AnimationType.Regular,
-                    Animated = true,
+                    Animated = false,
                     CurrentFrame = 0,
                     FrameDelay = 150,
-                    Looping = true,
+                    Looping = false,
                     TotalFrames = 1                    
                 },
             };
@@ -2113,10 +2116,10 @@ namespace TowerDefensePrototype
                 SkyBackground.Draw(spriteBatch);
                 Ground.Draw(spriteBatch);
 
-                foreach (Invader invader in InvaderList.Where(Invader => Invader.OperatingVehicle != null))
-                {
-                    invader.Pathfinder.Map.Draw(spriteBatch);
-                }
+                //foreach (Invader invader in InvaderList.Where(Invader => Invader.OperatingVehicle != null))
+                //{
+                //    invader.Pathfinder.Draw(spriteBatch);
+                //}
 
                 foreach (Decal decal in DecalList)
                 {
@@ -2176,6 +2179,11 @@ namespace TowerDefensePrototype
                         }
                         else
                         {
+                            if (drawable.GetType() == typeof(BatteringRam))
+                            {
+                                int p = 0;
+                            }
+
                             //drawable.Draw(GraphicsDevice, BasicEffect, ShadowBlurEffect, spriteBatch);
                             drawable.Draw(GraphicsDevice, BasicEffect, ShadowBlurEffect, LightList);
                         }
@@ -2918,6 +2926,8 @@ namespace TowerDefensePrototype
                     {
                         GameButtonsUpdate(gameTime);
 
+                        SortDrawables();
+
                         #region Show diagnostics
                         if (CurrentMouseState.LeftButton == ButtonState.Released &&
                            CurrentKeyboardState.IsKeyUp(Keys.F1) &&
@@ -3608,7 +3618,9 @@ namespace TowerDefensePrototype
             if (source.GetType().BaseType != typeof(Invader))
             {
                 List<Trap> WallList = new List<Trap>();
-                WallList = TrapList.FindAll(Trap => Trap.TrapType == TrapType.Wall);
+
+                WallList = TrapList.Where(Trap => Trap.TrapType == TrapType.Wall).ToList();
+                //WallList = TrapList.FindAll(Trap => Trap.TrapType == TrapType.Wall);
 
                 List<Invader> InRangeInvaders = InvaderList.FindAll(Invader => Vector2.Distance(Invader.Center, explosion.Position) < explosion.BlastRadius).ToList();
                 InRangeInvaders = InRangeInvaders.OrderBy(Invader => Vector2.Distance(Invader.Center, explosion.Position)).ToList();
@@ -5066,8 +5078,10 @@ namespace TowerDefensePrototype
                         #endregion
                     }
 
-                    //if (invader.OperatingVehicle != null)
-                    //    invader.OperatingVehicle.OperatorList.Remove(invader);
+                    if (invader.OperatingVehicle != null)
+                    {
+                        invader.OperatingVehicle.OperatorList.Remove(invader);
+                    }
 
                     //if (invader.OperatorList.Count > 0)
                     //{
@@ -5106,8 +5120,12 @@ namespace TowerDefensePrototype
                 if (invader.BoundingBox.Intersects(Tower.BoundingBox) ||
                     TrapList.Any(Trap => Trap.Solid == true && Trap.BoundingBox.Intersects(invader.BoundingBox)))
                 {
-                    Trap trap = TrapList.Find(Trap => Trap.Solid == true && Trap.BoundingBox.Intersects(invader.BoundingBox));
-                    invader.SetTargetTrap(ref trap);
+                    //Trap trap = TrapList.Where(Trap => Trap.Solid == true && Trap.BoundingBox.Intersects(invader.BoundingBox)).ToList().First();
+                    //invader.SetTargetTrap(ref trap);
+
+                    //Trap trap = TrapList.First(Trap => Trap.Solid == true && Trap.BoundingBox.Intersects(invader.BoundingBox));
+                    //invader.SetTargetTrap(ref trap);
+
 
                     if (invader.CurrentMicroBehaviour == MicroBehaviour.MovingForwards ||
                         invader.CurrentMicroBehaviour == MicroBehaviour.MovingBackwards)
@@ -5190,7 +5208,7 @@ namespace TowerDefensePrototype
                 if (TrapList.Any(Trap => Trap.BoundingBox.Intersects(invader.BoundingBox) && Trap.CanTrigger == true) &&
                     invader.VulnerableToTrap == true)
                 {
-                    Trap trap = TrapList.Find(Trap => Trap.BoundingBox.Intersects(invader.BoundingBox) && Trap.CanTrigger == true);
+                    Trap trap = TrapList.Where(Trap => Trap.BoundingBox.Intersects(invader.BoundingBox) && Trap.CanTrigger == true).ToList().First();
                     if (trap != null)
                     {
                         CreateCollision(trap, invader);
@@ -5262,13 +5280,13 @@ namespace TowerDefensePrototype
                                 break;
                             #endregion
 
-                            #region Battering Ram
-                            case InvaderType.BatteringRam:
-                                {
+                            //#region Battering Ram
+                            //case InvaderType.BatteringRam:
+                            //    {
 
-                                }
-                                break;
-                            #endregion
+                            //    }
+                            //    break;
+                            //#endregion
                         }
                     }
                 }
@@ -5367,6 +5385,16 @@ namespace TowerDefensePrototype
                             {
                                 soldier.Speed = 0f;
                             }
+
+                            if (soldier.Direction.X < 0)
+                            {
+                                soldier.Orientation = SpriteEffects.None;
+                            }
+                            else
+                            {
+                                soldier.Orientation = SpriteEffects.FlipHorizontally;
+                            }
+                            
                         }
                         break;
 
@@ -5374,17 +5402,27 @@ namespace TowerDefensePrototype
                     case InvaderType.BatteringRam:
                         {
                             BatteringRam batteringRam = invader as BatteringRam;
+                            int MissingOperators = batteringRam.NeededOperators - batteringRam.CurrentOperators;
 
                             if (batteringRam.CurrentOperators < batteringRam.NeededOperators)
                             {
                                 List<Invader> closeInvaders = InvaderList.OrderBy(Invader => Vector2.Distance(Invader.Position, batteringRam.Position)).ToList();
-                                closeInvaders.RemoveAll(Invader => Invader.InvaderType != InvaderType.Soldier || (Invader.OperatingVehicle != null && Invader.InvaderType != InvaderType.Soldier));
+                                closeInvaders.RemoveAll(Invader => Invader.InvaderType != InvaderType.Soldier || 
+                                    (Invader.InvaderType == InvaderType.Soldier && Invader.OperatingVehicle != null));
+                                //closeInvaders.RemoveAll(Invader => Invader.OperatingVehicle != null);
 
-                                if (closeInvaders.Count >= 2)
+                                if (closeInvaders.Count >= MissingOperators)
                                 {
                                     //batteringRam.OperatorList.AddRange(closeInvaders.GetRange(0, 2));
-                                    closeInvaders = closeInvaders.GetRange(0, 2).ToList();
-                                    batteringRam.SetOperators(ref closeInvaders);
+                                    closeInvaders = closeInvaders.GetRange(0, MissingOperators).ToList();
+
+                                    foreach (Invader closeInvader in closeInvaders)
+                                    {
+                                        invader.OperatingVehicle = batteringRam;
+                                    }
+
+                                    batteringRam.OperatorList.AddRange(closeInvaders);
+                                    //batteringRam.SetOperators(ref closeInvaders);
                                 }
 
                                 foreach (Invader pilot in batteringRam.OperatorList)
@@ -5392,11 +5430,14 @@ namespace TowerDefensePrototype
                                     //pilot.OperatingVehicle = batteringRam;
                                     pilot.SetOperatingVehicle(ref invader);
 
-                                    Map map = new Map(TrapList, InvaderList, new Vector2(pilot.Position.X, pilot.MaxY), new Vector2(batteringRam.Position.X + batteringRam.DestinationRectangle.Width, batteringRam.MaxY - (batteringRam.DestinationRectangle.Height * batteringRam.OperatorList.IndexOf(pilot))));
-                                    map.LoadContent(Content);
+                                    //Map map = new Map(TrapList, InvaderList, new Vector2(pilot.Position.X, pilot.MaxY), new Vector2(batteringRam.Position.X + batteringRam.DestinationRectangle.Width, batteringRam.MaxY - (batteringRam.DestinationRectangle.Height * batteringRam.OperatorList.IndexOf(pilot))));
+                                    //map.LoadContent(Content);
 
-                                    Pathfinder pathfinder = new Pathfinder(map);
-                                    
+                                    Pathfinder pathfinder = new Pathfinder(TrapList, InvaderList, 
+                                        new Vector2(pilot.Position.X, pilot.MaxY), 
+                                        new Vector2(batteringRam.Position.X + batteringRam.DestinationRectangle.Width/2, 
+                                                    batteringRam.MaxY - (batteringRam.DestinationRectangle.Height/2 * batteringRam.OperatorList.IndexOf(pilot))));
+                                    pathfinder.LoadContent(Content);                                    
 
                                     pilot.Pathfinder = pathfinder;
 
@@ -5640,7 +5681,7 @@ namespace TowerDefensePrototype
                     if (TrapList.Any(Trap => Trap.BoundingBox.Intersects(heavyProjectile.BoundingBox) &&
                         Trap.Solid == true))
                     {
-                        Trap trap = TrapList.Find(Trap => Trap.BoundingBox.Intersects(heavyProjectile.BoundingBox) && Trap.Solid == true);
+                        Trap trap = TrapList.Where(Trap => Trap.BoundingBox.Intersects(heavyProjectile.BoundingBox) && Trap.Solid == true).ToList().First();
                         CreateHeavyProjectileCollision(heavyProjectile, heavyProjectile.SourceObject, trap);
                         return;
                     }
@@ -7604,7 +7645,7 @@ namespace TowerDefensePrototype
                     {
                         #region Variables used for checking bullet collisions
                         //List of traps that intersect with the projectile ray AND are solid
-                        List<Trap> HitTraps = TrapList.FindAll(Trap => Trap.BoundingBox.Intersects(CurrentBeam.Ray) != null && Trap.Solid == true);
+                        List<Trap> HitTraps = TrapList.Where(Trap => Trap.BoundingBox.Intersects(CurrentBeam.Ray) != null && Trap.Solid == true).ToList();
 
                         //List of invaders that intersect with the projectile ray
                         List<Invader> HitInvaders = InvaderList.FindAll(Invader => Invader.BoundingBox.Intersects(CurrentBeam.Ray) != null);
@@ -9478,6 +9519,9 @@ namespace TowerDefensePrototype
                             }
 
                             nextInvader.Initialize();
+
+                            
+
                             nextInvader.Update(gameTime, CursorPosition);
                             nextInvader.InvaderOutline = new UIOutline(nextInvader.Position,
                                                             new Vector2(nextInvader.CurrentAnimation.GetFrameSize().X,
@@ -10095,6 +10139,11 @@ namespace TowerDefensePrototype
             //This means that the list is only sorted when it needs to be instead of every frame
         }
 
+        public void SortDrawables()
+        {
+            DrawableList.Sort((x, y) => x.DrawDepth.CompareTo(y.DrawDepth));
+        }
+
         public void CleanDrawableList()
         {
             //Remove all the inactive drawable items and corresponding items in InvaderList, TrapList etc.
@@ -10664,6 +10713,14 @@ namespace TowerDefensePrototype
         public Point VectorToPoint(Vector2 vector)
         {
             return new Point((int)vector.X, (int)vector.Y);
+        }
+
+        public Rectangle BoundingBoxToRect(BoundingBox boundingBox)
+        {
+            Rectangle rect = new Rectangle((int)boundingBox.Min.X, (int)boundingBox.Min.Y,
+                                           (int)(boundingBox.Min.X + (boundingBox.Max.X - boundingBox.Min.X)),
+                                           (int)(boundingBox.Min.Y + (boundingBox.Max.Y - boundingBox.Min.Y)));
+            return rect;
         }
 
         private bool RandomBool()

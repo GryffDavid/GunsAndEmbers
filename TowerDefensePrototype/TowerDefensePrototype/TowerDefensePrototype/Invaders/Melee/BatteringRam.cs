@@ -44,7 +44,7 @@ namespace TowerDefensePrototype
                         Direction.X = -1;
 
                         if (CurrentOperators == NeededOperators &&
-                            OperatorList.All(Invader => Vector2.Distance(Invader.Position, this.Position) < 48))
+                            OperatorList.All(Invader => Vector2.Distance(Invader.Position, this.Position) < 2))
                         {
                             if (Slow == true)
                                 Velocity.X = Direction.X * SlowSpeed;
