@@ -24,11 +24,12 @@ namespace TowerDefensePrototype
     {
         public Vector2 Position, PreviousPosition, AngleRange;
         public List<Particle> ParticleList;
+        public List<Texture2D> TextureList;
         public Texture2D Texture;
         public Vector2 ScaleRange, TimeRange, RotationIncrementRange, SpeedRange, StartingRotationRange, EmitterDirection, EmitterVelocity, YRange, Friction;
         public float Transparency, Gravity, ActiveSeconds, Interval, MaxY, EmitterSpeed,
                      EmitterAngle, EmitterGravity, FadeDelay, StartingInterval;
-        public Color StartColor, EndColor;
+        public Color StartColor, EndColor, ThirdColor;
         public bool Fade, CanBounce, AddMore, Shrink, StopBounce, HardBounce, BouncedOnGround,
                     RotateVelocity, FlipHor, FlipVer, ReduceDensity, SortParticles;
         public bool Grow;
@@ -39,6 +40,9 @@ namespace TowerDefensePrototype
         public SpriteEffects Orientation = SpriteEffects.None;
         public Invader Anchor;
         public object Tether;
+
+        //TODO Acceleration
+
 
         //Matrix ViewMatrix;
 
@@ -92,7 +96,7 @@ namespace TowerDefensePrototype
            Vector2 yrange, bool? shrink = null, float? drawDepth = null, bool? stopBounce = null, bool? hardBounce = null,
            Vector2? emitterSpeed = null, Vector2? emitterAngle = null, float? emitterGravity = null, bool? rotateVelocity = null,
             Vector2? friction = null, bool? flipHor = null, bool? flipVer = null, float? fadeDelay = null, bool? reduceDensity = null,
-            bool? sortParticles = null, bool? grow = false)
+            bool? sortParticles = null, bool? grow = false, Vector4? thirdColor = null)
         {
             Active = true;
             Texture = texture;
@@ -116,6 +120,136 @@ namespace TowerDefensePrototype
             Burst = burst;
             CanBounce = canBounce;
             Grow = grow.Value;
+
+            if (thirdColor != null)
+                ThirdColor = new Color(thirdColor.Value.X, thirdColor.Value.Y, thirdColor.Value.Z, thirdColor.Value.W);
+            else
+                ThirdColor = Color.Transparent;
+
+            if (shrink == null)
+                Shrink = false;
+            else
+                Shrink = shrink.Value;
+
+            if (drawDepth == null)
+                DrawDepth = 0;
+            else
+                DrawDepth = drawDepth.Value;
+
+            if (stopBounce == null)
+                StopBounce = false;
+            else
+                StopBounce = stopBounce.Value;
+
+            if (hardBounce == null)
+                HardBounce = false;
+            else
+                HardBounce = hardBounce.Value;
+
+            if (friction != null)
+                Friction = friction.Value;
+            else
+                Friction = new Vector2(0, 0);
+
+            if (fadeDelay != null)
+                FadeDelay = fadeDelay.Value;
+            else
+                FadeDelay = 0;
+
+            if (emitterSpeed != null)
+                EmitterSpeed = (float)DoubleRange(emitterSpeed.Value.X, emitterSpeed.Value.Y);
+            else
+                EmitterSpeed = 0;
+
+            if (emitterAngle != null)
+            {
+                EmitterAngle = -MathHelper.ToRadians((float)DoubleRange(emitterAngle.Value.X, emitterAngle.Value.Y));
+            }
+            else
+            {
+                EmitterAngle = 0;
+            }
+
+            if (emitterGravity != null)
+                EmitterGravity = emitterGravity.Value;
+            else
+                EmitterGravity = 0;
+
+            if (EmitterSpeed != 0)
+            {
+                EmitterDirection.X = (float)Math.Cos(EmitterAngle);
+                EmitterDirection.Y = (float)Math.Sin(EmitterAngle);
+                EmitterVelocity = EmitterDirection * EmitterSpeed;
+                AngleRange = new Vector2(
+                                -(MathHelper.ToDegrees((float)Math.Atan2(-EmitterVelocity.Y, -EmitterVelocity.X))) - 20,
+                                -(MathHelper.ToDegrees((float)Math.Atan2(-EmitterVelocity.Y, -EmitterVelocity.X))) + 20);
+            }
+
+            if (rotateVelocity != null)
+                RotateVelocity = rotateVelocity.Value;
+            else
+                RotateVelocity = false;
+
+            if (reduceDensity != null)
+                ReduceDensity = reduceDensity.Value;
+            else
+                ReduceDensity = false;
+
+            if (flipHor == null)
+                FlipHor = false;
+            else
+                FlipHor = flipHor.Value;
+
+            if (flipVer == null)
+                FlipVer = false;
+            else
+                FlipVer = flipVer.Value;
+
+            if (sortParticles == null)
+                SortParticles = false;
+            else
+                SortParticles = sortParticles.Value;
+
+            YRange = yrange;
+            MaxY = Random.Next((int)yrange.X, (int)yrange.Y);
+            AddMore = true;
+        }
+
+        public Emitter(List<Texture2D> textureList, Vector2 position, Vector2 angleRange, Vector2 speedRange, Vector2 timeRange,
+           float startingTransparency, bool fade, Vector2 startingRotationRange, Vector2 rotationIncrement, Vector2 scaleRange,
+           Color startColor, Color endColor, float gravity, float activeSeconds, float interval, int burst, bool canBounce,
+           Vector2 yrange, bool? shrink = null, float? drawDepth = null, bool? stopBounce = null, bool? hardBounce = null,
+           Vector2? emitterSpeed = null, Vector2? emitterAngle = null, float? emitterGravity = null, bool? rotateVelocity = null,
+            Vector2? friction = null, bool? flipHor = null, bool? flipVer = null, float? fadeDelay = null, bool? reduceDensity = null,
+            bool? sortParticles = null, bool? grow = false, Vector4? thirdColor = null)
+        {
+            Active = true;
+            TextureList = textureList;
+            SpeedRange = speedRange;
+            TimeRange = timeRange;
+            Transparency = startingTransparency;
+            Fade = fade;
+            StartingRotationRange = startingRotationRange;
+            RotationIncrementRange = rotationIncrement;
+            ScaleRange = scaleRange;
+            StartColor = startColor;
+            EndColor = endColor;
+            Position = position;
+            ParticleList = new List<Particle>();
+            AngleRange = angleRange;
+            Gravity = gravity;
+            ActiveSeconds = activeSeconds;
+            Interval = interval;
+            StartingInterval = interval;
+            IntervalTime = Interval;
+            Burst = burst;
+            CanBounce = canBounce;
+            Grow = grow.Value;
+
+            if (thirdColor != null)
+                ThirdColor = new Color(thirdColor.Value.X, thirdColor.Value.Y, thirdColor.Value.Z, thirdColor.Value.W);
+            else
+                ThirdColor = Color.Transparent;
 
             if (shrink == null)
                 Shrink = false;
@@ -330,13 +464,13 @@ namespace TowerDefensePrototype
                         speed = (float)DoubleRange(SpeedRange.X, SpeedRange.Y);
                         startingRotation = (float)DoubleRange(StartingRotationRange.X, StartingRotationRange.Y);
                         MaxY = Random.Next((int)YRange.X, (int)YRange.Y);
-
+                        
                         Particle NewParticle = new Particle(Texture, Position, angle, speed, hp, Transparency, Fade, startingRotation,
                                                             rotation, scale, StartColor, EndColor, Gravity, CanBounce, MaxY, Shrink,
                                                             DrawDepth, StopBounce, HardBounce, false, RotateVelocity, Friction, Orientation,
                                                             FadeDelay, SortParticles, Grow);
 
-
+                        //NewParticle.Texture = GetRandomTexture(TextureList[0], TextureList[1], TextureList[2]);
                         ParticleList.Add(NewParticle);
                     }
 
@@ -371,6 +505,7 @@ namespace TowerDefensePrototype
             {
                 particle.Draw(graphics, effect);
             }
+            
         }
 
         public double DoubleRange(double one, double two)
@@ -388,6 +523,12 @@ namespace TowerDefensePrototype
             //}
 
             return Orientations[Random.Next(0, Orientations.Length)];
+        }
+
+        public Texture2D GetRandomTexture(params Texture2D[] texture2D)
+        {
+            int next = Random.Next(0, texture2D.Length);
+            return texture2D[next];
         }
     }
 }

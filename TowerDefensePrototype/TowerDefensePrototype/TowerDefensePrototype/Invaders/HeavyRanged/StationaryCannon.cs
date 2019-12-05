@@ -40,7 +40,7 @@ namespace TowerDefensePrototype
             MaxHP = 200;
             ResourceMinMax = new Vector2(8, 20);
             YRange = new Vector2(700, 900);
-            IntelligenceRange = new Vector2(0.8f, 1.0f);
+            IntelligenceRange = new Vector2(0f, 1.0f);
 
             InvaderType = InvaderType.StationaryCannon;
 
@@ -83,7 +83,6 @@ namespace TowerDefensePrototype
                                         //It should affect the number of loop times
                                         //Chance to change behaviour 
                                         //and time to change
-
                                         #region Only adjust to AttackTraps if the invader is intelligent or stuck in a loop
                                         if (Random.NextDouble() > 0.1 || AttackTowerLoopCounter > 3)
                                         {

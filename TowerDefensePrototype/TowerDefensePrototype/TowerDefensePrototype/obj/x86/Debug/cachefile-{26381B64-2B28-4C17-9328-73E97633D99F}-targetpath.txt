@@ -163,6 +163,7 @@ Content\Traps\BarrelTrap.xnb
 Content\Projectiles\FlameProjectile.xnb
 Content\ShieldSprite.xnb
 Content\ShieldSphereMap.xnb
+Content\Particles\HitEffectParticle.xnb
 Content\Sounds\Menu\MenuClick.xnb
 Content\Sounds\FireTrapStart.xnb
 Content\Sounds\Menu\MenuAmbiance.xnb

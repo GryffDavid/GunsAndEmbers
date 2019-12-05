@@ -312,6 +312,13 @@ namespace TowerDefensePrototype
                     //CurrentTransparency = MaxTransparency * PercentageTime;
                     CurrentTransparency = MaxTransparency * (1.0f - ((1 / (MaxTime + FadeDelay)) * (CurrentTime + CurrentFadeDelay)));
                 }
+                else
+                {
+                    if (CurrentTime >= MaxTime)
+                    {
+                        Active = false;
+                    }
+                }
 
                 //if (Shrink == true)
                 //{
@@ -353,8 +360,8 @@ namespace TowerDefensePrototype
 
                 Color = CurrentColor * CurrentTransparency;
 
-                if (RotationIncrement != 0)
-                    RadRotation = MathHelper.ToRadians(CurrentRotation);
+                //if (RotationIncrement != 0)
+                RadRotation = MathHelper.ToRadians(CurrentRotation);
             }
         }
 
