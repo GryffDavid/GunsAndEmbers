@@ -66,7 +66,9 @@ namespace TowerDefensePrototype
         bool ReadyToPlace, IsLoading, Slow, BlastRadiusVisible, Victory;
         bool DialogVisible = false;
 
-        float MenuSFXVolume, MenuMusicVolume, VictoryTime, CameraTime, CameraTime2, CurrentInvaderTime, CurrentWaveTime;
+        float MenuSFXVolume, MenuMusicVolume, VictoryTime, CurrentInvaderTime, CurrentWaveTime;
+        float ShakeFrequency, ShakeLength;
+        float CurrentShakeFrequency, CurrentShakeLength;
         float GatlingSpeed = 0;
         float CannonSpeed = 0;
 
@@ -75,7 +77,7 @@ namespace TowerDefensePrototype
         //Sound effects
         SoundEffect MenuClick, FireTrapStart, LightningSound, CannonExplosion, CannonFire,
                     MachineShot1, GroundImpact, Ricochet1, Ricochet2, Ricochet3, MenuWoosh,
-                    PlaceTrap, Splat1, Splat2, MenuMusic;
+                    PlaceTrap, Splat1, Splat2, MenuMusic, Implosion;
 
         SoundEffectInstance MenuMusicInstance;
 
@@ -321,7 +323,6 @@ namespace TowerDefensePrototype
                         
             LoadingAnimation = new AnimatedSprite("LoadingAnimation", new Vector2(640 - 65, 320 - 65), new Vector2(131, 131), 17, 30, HalfWhite, Vector2.One, true);
             LoadingAnimation.LoadContent(SecondaryContent);
-            
             IsLoading = false;
 
             base.Initialize();
@@ -354,12 +355,12 @@ namespace TowerDefensePrototype
                 Seconds += gameTime.ElapsedGameTime.TotalMilliseconds;
 
                 #region Testing shake
-                CameraTime2 += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+                //CameraTime2 += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
 
-                if (CameraTime2 >= 100)
-                {
-                    Camera.Rotation = 0;
-                }
+                //if (CameraTime2 >= 100)
+                //{
+                //    Camera.Rotation = 0;
+                //}
                 #endregion
 
                 InvaderUpdate(gameTime);
@@ -496,15 +497,22 @@ namespace TowerDefensePrototype
                         LightProjectileList.RemoveAt(i);
                 }
 
+                //for (int i = 0; i < HeavyProjectileList.Count; i++)
+                //{
+                //    if (HeavyProjectileList[i].Active == false && HeavyProjectileList[i].Emitter.ParticleList.Count == 0)
+                //        HeavyProjectileList.RemoveAt(i);
+                //}
+
                 for (int i = 0; i < HeavyProjectileList.Count; i++)
                 {
-                    if (HeavyProjectileList[i].Active == false && HeavyProjectileList[i].Emitter.ParticleList.Count == 0)
+                    if (HeavyProjectileList[i].Active == false && HeavyProjectileList[i].EmitterList.All(Emitter => Emitter.ParticleList.Count == 0))
                         HeavyProjectileList.RemoveAt(i);
                 }
 
+
                 for (int i = 0; i < InvaderHeavyProjectileList.Count; i++)
                 {
-                    if (InvaderHeavyProjectileList[i].Active == false && InvaderHeavyProjectileList[i].Emitter.ParticleList.Count == 0)
+                    if (InvaderHeavyProjectileList[i].Active == false && InvaderHeavyProjectileList[i].EmitterList.All(Emitter => Emitter.ParticleList.Count == 0))
                         InvaderHeavyProjectileList.RemoveAt(i);
                 }
 
@@ -585,26 +593,38 @@ namespace TowerDefensePrototype
                 EnemyExplosionsUpdate(gameTime);
 
                 #region Shake camera
-                if (CameraTime2 <= 100)
-                {
-                    CameraTime += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+                CurrentShakeFrequency += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+                CurrentShakeLength += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
 
-                    if (CameraTime >= 20)
+                if (CurrentShakeLength < ShakeLength)
+                {
+                    if (CurrentShakeFrequency > ShakeFrequency)
                     {
                         if (Camera.Rotation != -0.01f)
                         {
-                            Camera.Rotation = MathHelper.Lerp(Camera.Rotation, -0.01f, 1f);
-                            CameraTime = 0;
+                            Camera.Rotation = -0.01f;
+                            CurrentShakeFrequency = 0;
+                            //Camera.Rotation = MathHelper.Lerp(Camera.Rotation, -0.01f, 0.5f);
                             return;
                         }
 
                         if (Camera.Rotation != 0.01f)
                         {
-                            Camera.Rotation = MathHelper.Lerp(Camera.Rotation, 0.01f, 1f);
-                            CameraTime = 0;
+                            Camera.Rotation = 0.01f;
+                            CurrentShakeFrequency = 0;
+                            //Camera.Rotation = MathHelper.Lerp(Camera.Rotation, 0.01f, 0.5f);
                             return;
                         }
                     }
+                }
+
+                if (CurrentShakeLength > ShakeLength)
+                {
+                    CurrentShakeLength = 0;
+                    ShakeLength = 0;
+                    ShakeFrequency = 0;
+                    CurrentShakeFrequency = 0;
+                    Camera.Rotation = 0;
                 }
                 #endregion
             }
@@ -906,36 +926,7 @@ namespace TowerDefensePrototype
 
                 spriteBatch.End();
             }
-            #endregion
-
-            #region Draw with additive blending - Makes stuff look glowy
-            if (GameState == GameState.Playing || GameState == GameState.Paused && IsLoading == false)
-            {
-                spriteBatch.Begin(SpriteSortMode.Texture, BlendState.Additive);
-                //Shield.Draw(spriteBatch);
-
-                foreach (LightningBolt lightningBolt in LightningList)
-                {
-                    lightningBolt.Draw(spriteBatch);
-                }
-
-                foreach (BulletTrail trail in TrailList)
-                {
-                    trail.Draw(spriteBatch);
-                }
-
-                foreach (Particle coin in CoinList)
-                {
-                    coin.Draw(spriteBatch);
-                }
-
-                foreach (Button towerSlot in TowerButtonList)
-                {
-                    towerSlot.Draw(spriteBatch);
-                }
-                spriteBatch.End();
-            }            
-            #endregion
+            #endregion            
 
             #region Draw stuff that SHOULD be shaken with ADDITIVE blending
             if (GameState == GameState.Playing || GameState == GameState.Paused && IsLoading == false)
@@ -1028,6 +1019,35 @@ namespace TowerDefensePrototype
             }            
 
             
+            #endregion
+
+            #region Draw with additive blending - Makes stuff look glowy
+            if (GameState == GameState.Playing || GameState == GameState.Paused && IsLoading == false)
+            {
+                spriteBatch.Begin(SpriteSortMode.Texture, BlendState.Additive);
+                //Shield.Draw(spriteBatch);
+
+                foreach (LightningBolt lightningBolt in LightningList)
+                {
+                    lightningBolt.Draw(spriteBatch);
+                }
+
+                foreach (BulletTrail trail in TrailList)
+                {
+                    trail.Draw(spriteBatch);
+                }
+
+                foreach (Particle coin in CoinList)
+                {
+                    coin.Draw(spriteBatch);
+                }
+
+                foreach (Button towerSlot in TowerButtonList)
+                {
+                    towerSlot.Draw(spriteBatch);
+                }
+                spriteBatch.End();
+            }
             #endregion
 
             #region Draw things that have to be drawn on top of everything else
@@ -1130,7 +1150,7 @@ namespace TowerDefensePrototype
             MenuMusic = SecondaryContent.Load<SoundEffect>("Sounds/MenuMusic1");
             MenuMusicInstance = MenuMusic.CreateInstance();
             MenuMusicInstance.IsLooped = true;
-            MenuMusicInstance.Play();
+            //MenuMusicInstance.Play();
 
             PauseMenuBackground = SecondaryContent.Load<Texture2D>("Backgrounds/PauseMenuBackground");
 
@@ -1152,7 +1172,7 @@ namespace TowerDefensePrototype
 
                 IsLoading = true;
 
-                CameraTime2 = 200;
+                //CameraTime2 = 200;
 
                 BarHealth = new ProgressBar(new Vector2(1280 / 2, 16), "HealthBar/Background", "HealthBar/Outline", "HealthBar/HealthBarForeground", Tower.MaxHP, Tower.CurrentHP);
                 BarHealth.LoadContent(Content);
@@ -1225,7 +1245,7 @@ namespace TowerDefensePrototype
 
                 for (int i = 0; i < 10; i++)
                 {
-                    Button button = new Button(SelectButtonAssetName, new Vector2(270 + (i * 73), 720 - HUDBarTexture.Height + 23), IconNameList[i], null, null, "", "", "Left", null, false);
+                    Button button = new Button("Buttons/ButtonTemplate", new Vector2(270 + (i * 80), 720 - HUDBarTexture.Height), IconNameList[i], null, null, "", "", "Left", null, false);
                     button.LoadContent(Content);
                     SelectButtonList.Add(button);
                 }
@@ -1295,7 +1315,8 @@ namespace TowerDefensePrototype
             Ricochet2 = Content.Load<SoundEffect>("Sounds/Ricochet2");
             Ricochet3 = Content.Load<SoundEffect>("Sounds/Ricochet3");
             Splat1 = Content.Load<SoundEffect>("Sounds/Splat1");
-            Splat2 = Content.Load<SoundEffect>("Sounds/Splat2");            
+            Splat2 = Content.Load<SoundEffect>("Sounds/Splat2");
+            Implosion = Content.Load<SoundEffect>("Sounds/Implosion2");
         }
         #endregion
 
@@ -2757,7 +2778,10 @@ namespace TowerDefensePrototype
                     }
 
                     #region Deactivate the enemy projectile
-                    heavyProjectile.Emitter.AddMore = false;
+                    foreach (Emitter emitter in heavyProjectile.EmitterList)
+                    {
+                        emitter.AddMore = false;
+                    }
                     heavyProjectile.Active = false;
                     heavyProjectile.Velocity = Vector2.Zero;
                     #endregion
@@ -2832,7 +2856,10 @@ namespace TowerDefensePrototype
 
                     #region Deactivate the enemy projectile
                     heavyProjectile.Active = false;
-                    heavyProjectile.Emitter.AddMore = false;
+                    foreach (Emitter emitter in heavyProjectile.EmitterList)
+                    {
+                        emitter.AddMore = false;
+                    }
                     heavyProjectile.Velocity = Vector2.Zero;
                     #endregion
                 }
@@ -3033,10 +3060,13 @@ namespace TowerDefensePrototype
                                     (float)RandomDouble(7, 9), turret.Rotation, 0.3f, 5, 
                                     new Vector2(MathHelper.Clamp(turret.Position.Y + 32, 520, 630), 630));
 
-                                HeavyProjectile.Emitter.AngleRange = new Vector2(
-                                    -(MathHelper.ToDegrees((float)Math.Atan2(-HeavyProjectile.Velocity.Y, -HeavyProjectile.Velocity.X))) - 20,
-                                    -(MathHelper.ToDegrees((float)Math.Atan2(-HeavyProjectile.Velocity.Y, -HeavyProjectile.Velocity.X))) + 20);
-
+                                foreach (Emitter emitter in HeavyProjectile.EmitterList)
+                                {
+                                    emitter.AngleRange = new Vector2(
+                                   -(MathHelper.ToDegrees((float)Math.Atan2(-HeavyProjectile.Velocity.Y, -HeavyProjectile.Velocity.X))) - 20,
+                                   -(MathHelper.ToDegrees((float)Math.Atan2(-HeavyProjectile.Velocity.Y, -HeavyProjectile.Velocity.X))) + 20);
+                                }
+                                
                                 HeavyProjectile.LoadContent(Content);
                                 HeavyProjectileList.Add(HeavyProjectile);
                             }
@@ -3123,12 +3153,33 @@ namespace TowerDefensePrototype
             foreach (HeavyProjectile heavyProjectile in HeavyProjectileList)
             {
                 heavyProjectile.Update(gameTime);
+                                
+                switch (heavyProjectile.HeavyProjectileType)
+                {
+                    default:
+                        //This makes sure that the trails from the projectiles appear correctly oriented while falling
+                        foreach (Emitter emitter in heavyProjectile.EmitterList)
+                        {
+                            emitter.AngleRange = new Vector2(
+                                -(MathHelper.ToDegrees((float)Math.Atan2(-heavyProjectile.Velocity.Y, -heavyProjectile.Velocity.X))) - 20,
+                                -(MathHelper.ToDegrees((float)Math.Atan2(-heavyProjectile.Velocity.Y, -heavyProjectile.Velocity.X))) + 20);
+                        }
+                        break;
 
-                //This makes sure that the trails from the projectiles appear correctly oriented while falling
-                if (heavyProjectile.Emitter != null)
-                    heavyProjectile.Emitter.AngleRange = new Vector2(
-                        -(MathHelper.ToDegrees((float)Math.Atan2(-heavyProjectile.Velocity.Y, -heavyProjectile.Velocity.X))) - 20,
-                        -(MathHelper.ToDegrees((float)Math.Atan2(-heavyProjectile.Velocity.Y, -heavyProjectile.Velocity.X))) + 20);
+                    case HeavyProjectileType.FelProjectile:
+                        for (int i = 0; i < 5; i++)
+                        {
+                            foreach (Emitter emitter in heavyProjectile.EmitterList)
+                            {
+                                emitter.AngleRange = new Vector2(0,360);
+                            }
+
+                            LightningBolt bolt = new LightningBolt(heavyProjectile.Position, new Vector2(heavyProjectile.Position.X + (float)RandomDouble(-30, 30f), heavyProjectile.Position.Y + (float)RandomDouble(-30f, 30f)), Color.LimeGreen, 0.25f);
+                            bolt.LoadContent(Content);
+                            LightningList.Add(bolt);
+                        }
+                        break;
+                }
 
                 #region This makes sure that particles are emitted from the wall in the correct position when a projectile hits it
                 if (TrapList.Any(Trap => Trap.DestinationRectangle.Intersects(heavyProjectile.CollisionRectangle) &&
@@ -3156,7 +3207,10 @@ namespace TowerDefensePrototype
 
                         heavyProjectile.Active = false;
 
-                        heavyProjectile.Emitter.AddMore = false;
+                        foreach (Emitter emitter in heavyProjectile.EmitterList)
+                        {
+                            emitter.AddMore = false;
+                        }
                     }
                 }
                 #endregion
@@ -3215,11 +3269,11 @@ namespace TowerDefensePrototype
 
                                 CannonExplosion.Play();
 
-                                if (CameraTime2 > 20)
-                                {
-                                    Camera.Origin = heavyProjectile.Position;
-                                    CameraTime2 = 0;
-                                }
+                                //if (CameraTime2 > 20)
+                                //{
+                                //    Camera.Origin = heavyProjectile.Position;
+                                //    CameraTime2 = 0;
+                                //}
                             }
                             break;
                         #endregion
@@ -3256,9 +3310,6 @@ namespace TowerDefensePrototype
                                 EmitterList2[EmitterList2.IndexOf(newEmitter2)].LoadContent(Content);
 
                                 ExplosionList.Add(new Explosion(heavyProjectile.Position, 300, heavyProjectile.Damage));
-
-                                if (CameraTime2 > 20)
-                                    CameraTime2 = 0;
                             }
                             break;
                         #endregion
@@ -3271,14 +3322,20 @@ namespace TowerDefensePrototype
                                     new Vector2(-20, 20), new Vector2(-4, 4), new Vector2(0.6f, 0.8f), FireColor, FireColor2, -0.2f, 0.5f, 3, 1, false, new Vector2(0, 720));
                                 EmitterList.Add(newEmitter);
                                 EmitterList[EmitterList.IndexOf(newEmitter)].LoadContent(Content);
-                                heavyProjectile.Emitter.AddMore = false;
+                                foreach (Emitter emitter in heavyProjectile.EmitterList)
+                                {
+                                    emitter.AddMore = false;
+                                }
                                 heavyProjectile.Active = false;
                             }
                             break;
 
                         case HeavyProjectileType.Arrow:
                             {
-                                heavyProjectile.Emitter.AddMore = false;
+                                foreach (Emitter emitter in heavyProjectile.EmitterList)
+                                {
+                                    emitter.AddMore = false;
+                                }
                                 heavyProjectile.Rotate = false;
                                 heavyProjectile.Velocity = Vector2.Zero;
                             }
@@ -3292,11 +3349,58 @@ namespace TowerDefensePrototype
                             }
                             break;
                         #endregion
+
+                        #region FelProjectile
+                        case HeavyProjectileType.FelProjectile:
+                                {
+                                    Color LightningColor;
+
+                                    Implosion.Play();
+                                    Emitter NewEmitter = new Emitter("Particles/FireParticle", heavyProjectile.Position,
+                                new Vector2(0, 360), new Vector2(0.5f, 0.75f), new Vector2(20, 40), 0.01f, true, new Vector2(-20, 20),
+                                new Vector2(-4, 4), new Vector2(1, 2f), Color.LimeGreen, Color.YellowGreen, 0.0f, 0.8f, 10, 1, false, new Vector2(0, 720),
+                                false, 0, false, false);
+                                    NewEmitter.LoadContent(Content);
+                                    AlphaEmitterList.Add(NewEmitter);
+
+                                    foreach (Invader invader in InvaderList)
+                                    {
+                                        //bool thing = RandomBool();
+                                        //if (thing == true)
+                                        //    LightningColor = Color.Purple;
+                                        //else
+                                            LightningColor = Color.LimeGreen;
+
+                                        //invader.Position = Vector2.Lerp(invader.Position, heavyProjectile.Position, 0.5f);
+                                        //invader.MaxY = MathHelper.Lerp(invader.Position.Y, heavyProjectile.Position.Y, 0.25f);
+                                        //ExplosionList.Add(new Explosion(heavyProjectile.Position, 400, 500));
+                                        if (Vector2.Distance(invader.Position, heavyProjectile.Position) < 300)
+                                        {
+                                            for (int i = 0; i < 5; i++)
+                                            {
+                                                LightningBolt test = new LightningBolt(heavyProjectile.Position, new Vector2(invader.DestinationRectangle.Center.X, invader.DestinationRectangle.Center.Y), LightningColor, 0.018f);
+                                                test.LoadContent(Content);
+                                                LightningList.Add(test);
+                                            }
+
+                                            invader.DamageOverTime(800, invader.CurrentHP / 12, 0.1f, LightningColor);
+                                            invader.Freeze(1000, LightningColor);
+
+                                            Shake(20, 800);
+                                        }
+                                    }
+                                }
+                                break;
+                        #endregion
                     }
                     #region Deactivate the Projectile
                     if (heavyProjectile.HeavyProjectileType != HeavyProjectileType.Arrow)
                     {
-                        heavyProjectile.Emitter.AddMore = false;
+                        foreach (Emitter emitter in heavyProjectile.EmitterList)
+                        {
+                            emitter.AddMore = false;
+                        }
+
                         heavyProjectile.Active = false;
                         heavyProjectile.Velocity = Vector2.Zero;
                     }
@@ -3316,7 +3420,11 @@ namespace TowerDefensePrototype
                         {
                             heavyProjectile.Velocity = Vector2.Zero;
                             heavyProjectile.Active = false;
-                            heavyProjectile.Emitter.AddMore = false;
+
+                            foreach (Emitter emitter in heavyProjectile.EmitterList)
+                            {
+                                emitter.AddMore = false;
+                            }
                         }
                     }
                     );
@@ -3505,7 +3613,11 @@ namespace TowerDefensePrototype
                     }
 
                     #region Deactivate the Projectile
-                    timedProjectile.Emitter.AddMore = false;
+                    foreach (Emitter emitter in timedProjectile.EmitterList)
+                    {
+                        emitter.AddMore = false;
+                    }
+                    
                     timedProjectile.Active = false;
                     timedProjectile.Velocity = Vector2.Zero;
                     #endregion
@@ -3617,7 +3729,7 @@ namespace TowerDefensePrototype
                                         case LightProjectileType.Lightning:
                                             for (int i = 0; i < 5; i++)
                                             {
-                                                LightningList.Add(new LightningBolt(turret.BarrelEnd, CollisionEnd, Color.MediumPurple));
+                                                LightningList.Add(new LightningBolt(turret.BarrelEnd, CollisionEnd, Color.MediumPurple, 0.02f));
                                                 LightningList[i].LoadContent(Content);
                                             }
                                             break;
@@ -3642,7 +3754,7 @@ namespace TowerDefensePrototype
                                         case LightProjectileType.Lightning:
                                             for (int i = 0; i < 5; i++)
                                             {
-                                                LightningList.Add(new LightningBolt(turret.BarrelEnd, CollisionEnd, Color.MediumPurple));
+                                                LightningList.Add(new LightningBolt(turret.BarrelEnd, CollisionEnd, Color.MediumPurple, 0.02f));
                                                 LightningList[i].LoadContent(Content);
                                             }
                                             break;
@@ -3685,7 +3797,7 @@ namespace TowerDefensePrototype
                                         case LightProjectileType.Lightning:
                                             for (int i = 0; i < 5; i++)
                                             {
-                                                LightningList.Add(new LightningBolt(turret.BarrelEnd, CollisionEnd, Color.MediumPurple));
+                                                LightningList.Add(new LightningBolt(turret.BarrelEnd, CollisionEnd, Color.MediumPurple, 0.02f));
                                                 LightningList[i].LoadContent(Content);
                                             }
                                             break;
@@ -3731,8 +3843,7 @@ namespace TowerDefensePrototype
                                     {
                                         for (int i = 0; i < 5; i++)
                                         {
-                                            LightningList.Add(new LightningBolt(turret.BarrelEnd, CollisionEnd,
-                                                                                Color.MediumPurple));
+                                            LightningList.Add(new LightningBolt(turret.BarrelEnd, CollisionEnd, Color.MediumPurple, 0.02f));
                                             LightningList[i].LoadContent(Content);
                                         }
                                     }
@@ -3762,8 +3873,7 @@ namespace TowerDefensePrototype
                                     {
                                         for (int i = 0; i < 5; i++)
                                         {
-                                            LightningList.Add(new LightningBolt(turret.BarrelEnd, CollisionEnd,
-                                                                                Color.MediumPurple));
+                                            LightningList.Add(new LightningBolt(turret.BarrelEnd, CollisionEnd, Color.MediumPurple, 0.02f));
                                             LightningList[i].LoadContent(Content);
                                         }
                                     }
@@ -3862,8 +3972,7 @@ namespace TowerDefensePrototype
                                 {
                                     for (int i = 0; i < 5; i++)
                                     {
-                                        LightningList.Add(new LightningBolt(turret.BarrelEnd, CollisionEnd,
-                                                                            Color.MediumPurple));
+                                        LightningList.Add(new LightningBolt(turret.BarrelEnd, CollisionEnd, Color.MediumPurple, 0.02f));
                                         LightningList[i].LoadContent(Content);
                                     }
                                 }
@@ -3885,8 +3994,7 @@ namespace TowerDefensePrototype
                                 {
                                     for (int i = 0; i < 5; i++)
                                     {
-                                        LightningList.Add(new LightningBolt(turret.BarrelEnd, CollisionEnd,
-                                                                            Color.MediumPurple));
+                                        LightningList.Add(new LightningBolt(turret.BarrelEnd, CollisionEnd, Color.MediumPurple, 0.02f));
                                         LightningList[i].LoadContent(Content);
                                     }
                                 }
@@ -3915,8 +4023,7 @@ namespace TowerDefensePrototype
                                     {
                                         for (int i = 0; i < 5; i++)
                                         {
-                                            LightningList.Add(new LightningBolt(turret.BarrelEnd, CollisionEnd,
-                                                                                Color.MediumPurple));
+                                            LightningList.Add(new LightningBolt(turret.BarrelEnd, CollisionEnd, Color.MediumPurple, 0.02f));
                                             LightningList[i].LoadContent(Content);
                                         }
                                     }
@@ -3956,8 +4063,7 @@ namespace TowerDefensePrototype
                         {
                             for (int i = 0; i < 5; i++)
                             {
-                                LightningList.Add(new LightningBolt(turret.BarrelEnd, CollisionEnd,
-                                                                    Color.MediumPurple));
+                                LightningList.Add(new LightningBolt(turret.BarrelEnd, CollisionEnd, Color.MediumPurple, 0.02f));
                                 LightningList[i].LoadContent(Content);
                             }
                         }
@@ -4071,8 +4177,7 @@ namespace TowerDefensePrototype
                                         {
                                             for (int i = 0; i < 5; i++)
                                             {
-                                                LightningList.Add(new LightningBolt(turret.BarrelEnd, CollisionEnd,
-                                                                                    Color.MediumPurple));
+                                                LightningList.Add(new LightningBolt(turret.BarrelEnd, CollisionEnd, Color.MediumPurple, 0.02f));
                                                 LightningList[i].LoadContent(Content);
                                             }
                                         }
@@ -4117,8 +4222,7 @@ namespace TowerDefensePrototype
                         {
                             for (int i = 0; i < 5; i++)
                             {
-                                LightningList.Add(new LightningBolt(turret.BarrelEnd, CollisionEnd,
-                                                                    Color.MediumPurple));
+                                LightningList.Add(new LightningBolt(turret.BarrelEnd, CollisionEnd, Color.MediumPurple, 0.02f));
                                 LightningList[i].LoadContent(Content);
                             }
                         }
@@ -4519,8 +4623,8 @@ namespace TowerDefensePrototype
                     {
                         if (CurrentProfile.Buttons[i] != null)
                         {
-                            PlaceWeaponList[i].IconName = "Icons/" + CurrentProfile.Buttons[i] + "Icon";
-                            PlaceWeaponList[i].LoadContent(SecondaryContent);
+                            //PlaceWeaponList[i].IconName = "Icons/" + CurrentProfile.Buttons[i] + "Icon";
+                            //PlaceWeaponList[i].LoadContent(SecondaryContent);
                         }
                     }
                 }
@@ -4551,6 +4655,7 @@ namespace TowerDefensePrototype
                 CurrentProfile.Buttons[0] = "MachineGunTurret";
                 CurrentProfile.Buttons[1] = "ClusterTurret";
                 CurrentProfile.Buttons[2] = "FelCannon";
+                CurrentProfile.Buttons[3] = "FireTrap";
 
                 foreach (Button button in PlaceWeaponList)
                 {
@@ -5256,5 +5361,22 @@ namespace TowerDefensePrototype
             ReadyToPlace = false;
         }
         #endregion
+
+        private bool RandomBool()
+        {     
+            if ((float)Random.NextDouble() > 0.5f)
+                return true;
+            else
+                return false;
+        }
+
+        private void Shake(float frequency, float length)
+        {
+            ShakeFrequency = frequency;
+            CurrentShakeFrequency = 0;
+
+            ShakeLength = length;
+            CurrentShakeLength = 0;
+        }
     }
 }

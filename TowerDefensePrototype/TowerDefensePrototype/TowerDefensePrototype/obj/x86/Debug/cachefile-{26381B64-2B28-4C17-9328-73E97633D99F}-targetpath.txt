@@ -114,3 +114,8 @@ Content\Sounds\Splat2.xnb
 Content\Sounds\MenuPing.xnb
 Content\Sounds\MenuWoosh.xnb
 Content\Sounds\MenuMusic1.xnb
+Content\Projectiles\FelProjectile.xnb
+Content\Sounds\Implosion.xnb
+Content\Projectiles\FelProjectile2.xnb
+Content\Sounds\Implosion2.xnb
+Content\Buttons\ButtonTemplate.xnb

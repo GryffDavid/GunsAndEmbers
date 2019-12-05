@@ -15,14 +15,20 @@ namespace TowerDefensePrototype
         public float Alpha, AlphaMultiplier, FadeOutRate;
         public Color Color;
         static Random Random = new Random();
+        public float Sway;
 
-        public LightningBolt(Vector2 source, Vector2 destination, Color color)
+        public LightningBolt(Vector2 source, Vector2 destination, Color color, float fadeRate, float? sway = null)
         {
+            if (sway == null)
+                Sway = 500f;
+            else
+                Sway = sway.Value;
+
             Segments = CreateBolt(source, destination, 2);
             Color = color;
             Alpha = 1f;
             AlphaMultiplier = 0.6f;
-            FadeOutRate = 0.02f;
+            FadeOutRate = fadeRate;
         }
 
         public void LoadContent(ContentManager contentManager)
@@ -62,8 +68,7 @@ namespace TowerDefensePrototype
 
             Positions.Sort();
 
-            const float Sway = 500;
-            const float Jaggedness = 1.15f / Sway;
+            float Jaggedness = 1.15f / Sway;
 
             Vector2 PreviousPoint = source;
             float PreviousDisplacement = 0;
@@ -72,7 +77,7 @@ namespace TowerDefensePrototype
             {
                 float Pos = Positions[i];
 
-                float Scale = (Length * Jaggedness) * (Pos - Positions[i - 1]);
+                float Scale = (Length * 0.0023f) * (Pos - Positions[i - 1]);
 
                 float Envelope;
 

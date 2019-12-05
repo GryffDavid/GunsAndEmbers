@@ -25,7 +25,7 @@ namespace TowerDefensePrototype
             Velocity.X = (float)(Math.Cos(angle) * speed);
             Velocity.Y = (float)(Math.Sin(angle) * speed);
 
-            Emitter = new Emitter("Particles/Smoke", new Vector2(Position.X, Position.Y),
+            EmitterList[0] = new Emitter("Particles/Smoke", new Vector2(Position.X, Position.Y),
                 new Vector2((float)Math.Atan2(Velocity.Y, Velocity.X), (float)Math.Atan2(Velocity.Y, Velocity.X)), new Vector2(1.5f, 2), new Vector2(50, 60), 0.2f, true, 
                 new Vector2(-20, 20), new Vector2(-4, 4), new Vector2(0.1f, 0.3f), Color.White, Color.WhiteSmoke, 0.0f, -1, 1, 10, false, new Vector2(0, 720), true);
 

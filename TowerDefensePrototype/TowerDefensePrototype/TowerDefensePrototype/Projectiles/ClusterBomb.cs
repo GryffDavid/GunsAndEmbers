@@ -21,6 +21,7 @@ namespace TowerDefensePrototype
             Speed = speed;
             Gravity = gravity;
             Position = position;
+            EmitterList = new List<Emitter>();
 
             if (yrange == null)
             {
@@ -37,9 +38,9 @@ namespace TowerDefensePrototype
             Color ParticleColor1 = Color.Gray;
             Color ParticleColor2 = Color.DarkGray;
 
-            Emitter = new Emitter("Particles/Smoke", new Vector2(Position.X + 16, Position.Y + 8), new Vector2(90, 180), 
+            EmitterList.Add(new Emitter("Particles/Smoke", new Vector2(Position.X + 16, Position.Y + 8), new Vector2(90, 180), 
                 new Vector2(1.5f, 2), new Vector2(15, 20), 0.2f, true, new Vector2(-20, 20), new Vector2(-4, 4), 
-                new Vector2(0.1f, 0.25f), ParticleColor1, ParticleColor2, 0.0f, -1, 1, 1, false, new Vector2(0, 720));
+                new Vector2(0.1f, 0.25f), ParticleColor1, ParticleColor2, 0.0f, -1, 1, 1, false, new Vector2(0, 720)));
 
             Damage = 20;
 

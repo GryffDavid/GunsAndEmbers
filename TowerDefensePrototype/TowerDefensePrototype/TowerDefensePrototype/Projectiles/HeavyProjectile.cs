@@ -10,9 +10,9 @@ namespace TowerDefensePrototype
 {
     public abstract class HeavyProjectile
     {
-        public Texture2D Texture;
+        public Texture2D Texture, Shadow;
         public string TextureName;
-        public Emitter Emitter;
+        public List<Emitter> EmitterList;
         public Vector2 Velocity, Position, YRange;
         public float Angle, Speed, Gravity, Rotation, CurrentTransparency, MaxY;
         public bool Active, Rotate, Fade;
@@ -23,11 +23,14 @@ namespace TowerDefensePrototype
         static Random Random = new Random();
 
         public void LoadContent(ContentManager contentManager)
-        {            
+        {
+            Shadow = contentManager.Load<Texture2D>("Shadow");
             Texture = contentManager.Load<Texture2D>(TextureName);
 
-            if (Emitter != null)
-            Emitter.LoadContent(contentManager);
+            foreach (Emitter emitter in EmitterList)
+            {
+                emitter.LoadContent(contentManager);
+            }            
 
             CurrentTransparency = 0;
 
@@ -35,21 +38,25 @@ namespace TowerDefensePrototype
         }
 
         public virtual void Update(GameTime gameTime)
-        {
+        {         
             if (Active == true)
             {
                 Position += Velocity;
                 Velocity.Y += Gravity;
 
-                if (Emitter != null)
-                Emitter.Position = new Vector2(Position.X, Position.Y);                                
+                foreach (Emitter emitter in EmitterList)
+                {
+                    emitter.Position = Position;
+                }
             }
 
             if (Rotate == true)
                 Rotation = (float)Math.Atan2(Velocity.Y, Velocity.X);
 
-            if (Emitter != null)
-            Emitter.Update(gameTime);
+            foreach (Emitter emitter in EmitterList)
+            {
+                emitter.Update(gameTime);
+            }
 
             if (Fade == true)
             {
@@ -61,15 +68,19 @@ namespace TowerDefensePrototype
         {           
             if (Active == true)
             {
+                spriteBatch.Draw(Shadow, new Rectangle((int)Position.X, (int)MaxY, Texture.Width, Texture.Height / 3), Color.Lerp(Color.White, Color.Transparent, 0.75f));
+
                 CurrentColor = Color.Lerp(Color.White, Color.Transparent, CurrentTransparency);
                 DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, Texture.Width, Texture.Height);
                 CollisionRectangle = new Rectangle(DestinationRectangle.X, DestinationRectangle.Y, DestinationRectangle.Width / 2, DestinationRectangle.Height / 2);
                 spriteBatch.Draw(Texture, DestinationRectangle, null, CurrentColor, Rotation,
                     new Vector2(Texture.Width / 2, Texture.Height / 2), SpriteEffects.None, MaxY / 720);
-            }
 
-            if (Emitter != null)
-            Emitter.Draw(spriteBatch);
+                foreach (Emitter emitter in EmitterList)
+                {
+                    emitter.Draw(spriteBatch);
+                }
+            }
         }
     }
 }
