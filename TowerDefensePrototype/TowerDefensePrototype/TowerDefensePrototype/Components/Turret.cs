@@ -43,7 +43,6 @@ namespace TowerDefensePrototype
         public DamageType DamageType;
         public UIBar TimingBar, HealthBar;
         public AmmoBelt AmmoBelt;
-        public BoundingBox BoundingBox;
 
         //Chance to Effect - i.e. fire, slow, freeze etc.
         public float ChanceToEffect;

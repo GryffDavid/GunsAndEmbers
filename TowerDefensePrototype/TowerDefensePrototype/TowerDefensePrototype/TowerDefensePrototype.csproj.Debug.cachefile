@@ -150,6 +150,7 @@ Content\Backgrounds\MenuBackground3.xnb
 Content\Invaders\RifleMan\RifleManShoot.xnb
 Content\Invaders\RifleMan\RifleManStand.xnb
 Content\Invaders\RifleMan\RifleManWalk.xnb
+Content\ShieldBoundingBox.xnb
 Content\Sounds\Menu\MenuClick.xnb
 Content\Sounds\FireTrapStart.xnb
 Content\Sounds\Menu\MenuAmbiance.xnb

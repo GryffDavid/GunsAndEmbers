@@ -11,34 +11,43 @@ namespace TowerDefensePrototype
 {
     public abstract class Invader : Drawable
     {
-        //public string AssetName;
-        public Texture2D Shadow, IceBlock;
-        public Rectangle DestinationRectangle;
-        public Vector2 ActualPosition, Direction, ResourceMinMax, Velocity, YRange, Center, ShadowPosition, CursorPosition;
-        public Vector2 Scale = new Vector2(1, 1);
-        public Color Color, BurnColor, FrozenColor, AcidColor, ShadowColor;
-        public BoundingBox BoundingBox;
-        public Double AttackDelay, CurrentAttackDelay;
-        public float MaxHP, CurrentHP, PreviousHP, MaxY, Gravity, Bottom, BurnDamage, Speed, SlowSpeed,
-                     TrapAttackPower, TowerAttackPower, TurretAttackPower, ShadowHeight, ShadowHeightMod;
-        public int ResourceValue, CurrentFrame;
-        public abstract void TrapDamage(Trap trap);
-        public static Random Random = new Random();
-        public double BurnDelay, CurrentBurnDelay,
-                      BurnInterval, CurrentBurnInterval,
-                      FreezeDelay, CurrentFreezeDelay,
-                      SlowDelay, CurrentSlowDelay,
-                      BeamDelay, CurrentBeamDelay,
-                      HealDelay, CurrentHealDelay;
-        public bool VulnerableToTurret, VulnerableToTrap, CanAttack,
-                    Burning, Frozen, Slow, Airborne, InAir, IsBeingHealed, IsTargeted;
+        #region Vertex declarations
+        public VertexPositionColorTexture[] shadowVertices = new VertexPositionColorTexture[4];
+        public int[] shadowIndices = new int[6];
+
+        public VertexPositionColorTexture[] invaderVertices = new VertexPositionColorTexture[4];
+        public int[] invaderIndices = new int[6];
+
+        public VertexPositionColorTexture[] normalVertices = new VertexPositionColorTexture[4];
+        public int[] normalIndices = new int[6];
+        #endregion
+
+        private InvaderState _InvaderState;
+        public InvaderState InvaderState
+        {
+            get { return _InvaderState; }
+            set
+            {
+                _InvaderState = value;
+
+                if (AnimationList != null)
+                {
+                    CurrentAnimation = AnimationList.Find(Animation => Animation.CurrentInvaderState == value);
+
+                    if (CurrentAnimation.CurrentInvaderState == InvaderState.Stand)
+                        CurrentAnimation.CurrentFrame = 1;// Random.Next(0, CurrentAnimation.TotalFrames);
+
+                    CurrentAnimation.CurrentFrameDelay = 0;
+                }
+            }
+        }
 
         private bool _HitByBeam;
-        public bool HitByBeam 
+        public bool HitByBeam
         {
             get { return _HitByBeam; }
-            set 
-            { 
+            set
+            {
                 _HitByBeam = value;
 
                 if (_HitByBeam == false)
@@ -57,77 +66,67 @@ namespace TowerDefensePrototype
         public UIBar HealthBar;
         public SoundEffectInstance MoveLoop;
         public SpriteEffects Orientation = SpriteEffects.None;
+
+        public Texture2D Shadow, IceBlock;
+        public Rectangle DestinationRectangle;
+        public Vector2 Position, ResourceMinMax, Velocity, YRange, Center, ShadowPosition, CursorPosition;
+        public Vector2 Direction = new Vector2(-1f, 0);
+        public Vector2 Scale = new Vector2(1, 1);
+        public Color Color, BurnColor, FrozenColor, AcidColor, ShadowColor;
+
+        public InvaderMeleeStruct MeleeDamageStruct;
+
+        public float MaxHP, CurrentHP, PreviousHP, 
+                     MaxY, Gravity, Bottom,
+                     Speed, SlowSpeed,
+                     ShadowHeight, ShadowHeightMod;
         public float Rotation = 0;
+        public int ResourceValue;
+        public static Random Random = new Random();
+        public double BeamDelay, CurrentBeamDelay,
+                      HealDelay, CurrentHealDelay;
 
-        private InvaderState _InvaderState;
-        public InvaderState InvaderState
-        {
-            get { return _InvaderState; }
-            set
-            {
-                _InvaderState = value;
+        public DamageOverTimeStruct CurrentDOT;
+        public SlowStruct CurrentSlow;
+        public FreezeStruct CurrentFreeze;
 
-                if (AnimationList != null)
-                {
-                    CurrentAnimation = AnimationList.Find(Animation => Animation.CurrentInvaderState == value);   
-                 
-                    if (CurrentAnimation.CurrentInvaderState == InvaderState.Stand)
-                        CurrentAnimation.CurrentFrame = 1;// Random.Next(0, CurrentAnimation.TotalFrames);
+        public bool VulnerableToTurret = true;
+        public bool VulnerableToTrap = true;
+        public bool IsBeingHealed = false;
+        public bool IsTargeted = false;
+        public new bool Active = true;
+        public bool Airborne = false;
 
-                    CurrentAnimation.CurrentFrameDelay = 0;
-                }
-            }
-        }
-
-        #region Vertex declarations
-        public VertexPositionColorTexture[] shadowVertices = new VertexPositionColorTexture[4];
-        public int[] shadowIndices = new int[6];
-
-        public VertexPositionColorTexture[] invaderVertices = new VertexPositionColorTexture[4];
-        public int[] invaderIndices = new int[6];
-
-        public VertexPositionColorTexture[] normalVertices = new VertexPositionColorTexture[4];
-        public int[] normalIndices = new int[6];
-        #endregion
-        
-        private InvaderBehaviour RandomOrientation(params InvaderBehaviour[] Orientations)
-        {
-            List<InvaderBehaviour> OrientationList = new List<InvaderBehaviour>();
-
-            foreach (InvaderBehaviour orientation in Orientations)
-            {
-                OrientationList.Add(orientation);
-            }
-
-            return OrientationList[Random.Next(0, OrientationList.Count)];
-        }
+        public bool CanAttack, Burning, Frozen, Slow, InAir;
 
         public void Initialize()
         {
-            Behaviour = RandomOrientation(InvaderBehaviour.AttackTower, InvaderBehaviour.AttackTraps);
-            VulnerableToTurret = true;
-            VulnerableToTrap = true;
+            Behaviour = RandomBehaviour(InvaderBehaviour.AttackTower, InvaderBehaviour.AttackTraps);            
             IsBeingHealed = false;
-            //InAir = false;
             Color = Color.White;
             MaxY = Random.Next((int)YRange.X, (int)YRange.Y);
             ResourceValue = Random.Next((int)ResourceMinMax.X, (int)ResourceMinMax.Y);
 
-            if (this.GetType().BaseType.Name == "HeavyRangedInvader")
+            switch (this.GetType().BaseType.Name)
             {
-                HeavyRangedInvader rangedInvader = this as HeavyRangedInvader;
-                rangedInvader.MinDistance = Random.Next((int)rangedInvader.DistanceRange.X, (int)rangedInvader.DistanceRange.Y);
-            }
+                case "HeavyRangedInvader":
+                    {
+                        HeavyRangedInvader rangedInvader = this as HeavyRangedInvader;
+                        rangedInvader.MinDistance = Random.Next((int)rangedInvader.RangedDamageStruct.DistanceRange.X, (int)rangedInvader.RangedDamageStruct.DistanceRange.Y);
+                    }
+                    break;
 
-            if (this.GetType().BaseType.Name == "LightRangedInvader")
-            {
-                LightRangedInvader rangedInvader = this as LightRangedInvader;
-                rangedInvader.MinDistance = Random.Next((int)rangedInvader.DistanceRange.X, (int)rangedInvader.DistanceRange.Y);
+                case "LightRangedInvader":
+                    {
+                        LightRangedInvader rangedInvader = this as LightRangedInvader;
+                        rangedInvader.MinDistance = Random.Next((int)rangedInvader.RangedDamageStruct.DistanceRange.X, (int)rangedInvader.RangedDamageStruct.DistanceRange.Y);
+                    }
+                    break;
             }
 
             if (Airborne == true)
             {
-                ActualPosition.Y = MaxY;
+                Position.Y = MaxY;
             }
 
             Velocity = Direction * Speed;
@@ -151,17 +150,32 @@ namespace TowerDefensePrototype
 
                 CursorPosition = cursorPosition;
 
-                ActualPosition += Velocity * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
+                Position += Velocity * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
                 Velocity.Y += Gravity * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
 
-                CurrentAttackDelay += gameTime.ElapsedGameTime.TotalMilliseconds;                
+                //CurrentAttackDelay += gameTime.ElapsedGameTime.TotalMilliseconds;
+                if (MeleeDamageStruct != null)
+                {
+                    MeleeDamageStruct.CurrentAttackDelay += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+
+                    if (MeleeDamageStruct.CurrentAttackDelay >= MeleeDamageStruct.MaxAttackDelay)
+                    {
+                        CanAttack = true;
+                        MeleeDamageStruct.CurrentAttackDelay = 0;
+                    }
+                    else
+                    {
+                        CanAttack = false;
+                    }
+                }
+
                 VulnerableToTurret = true;
 
                 if (CurrentHP <= 0)
                     Active = false;
 
                 if (CurrentAnimation != null)
-                HealthBar.Update(MaxHP, CurrentHP, gameTime, new Vector2(ActualPosition.X + (CurrentAnimation.FrameSize.X - HealthBar.MaxSize.X) / 2 + Velocity.X, ActualPosition.Y - 8));
+                HealthBar.Update(MaxHP, CurrentHP, gameTime, new Vector2(Position.X + (CurrentAnimation.FrameSize.X - HealthBar.MaxSize.X) / 2 + Velocity.X, Position.Y - 8));
 
                 if (Velocity.X != 0 && InvaderState != InvaderState.Walk)
                 {
@@ -174,7 +188,7 @@ namespace TowerDefensePrototype
                 }
                 
                 #region This makes sure that the invader can't take damage if it's off screen (i.e. before it's visible to the player)
-                if (ActualPosition.X > 1920)
+                if (Position.X > 1920)
                 {
                     VulnerableToTurret = false;
                     VulnerableToTrap = false;
@@ -187,80 +201,84 @@ namespace TowerDefensePrototype
                 #endregion
 
                 #region This makes sure that the invader only attacks when every 1.5 seconds (Or other delay) - Set in the specific class
-                if (CurrentAttackDelay >= AttackDelay)
-                {
-                    CanAttack = true;
-                    CurrentAttackDelay = 0;
-                }
-                else
-                {
-                    CanAttack = false;
-                }
+                
                 #endregion
 
+
                 #region This controls how the invader takes damage when it's burning
-                if (Burning == true)
+                if (CurrentDOT != null)
                 {
-                    CurrentBurnDelay += gameTime.ElapsedGameTime.TotalMilliseconds;
-                    CurrentBurnInterval += gameTime.ElapsedGameTime.TotalMilliseconds;
-                }
+                    if (Burning == true)
+                    {
+                        CurrentDOT.CurrentDelay += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+                        CurrentDOT.CurrentInterval += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+                    }
 
-                if (CurrentBurnInterval > BurnInterval)
-                {
-                    CurrentHP -= (int)BurnDamage;
-                    CurrentBurnInterval = 0;
-                }
+                    if (CurrentDOT.CurrentInterval > CurrentDOT.MaxInterval)
+                    {
+                        CurrentHP -= (int)CurrentDOT.Damage;
+                        CurrentDOT.CurrentInterval = 0;
+                    }
 
-                if (Burning == true && CurrentBurnDelay > BurnDelay)
-                {
-                    Burning = false;
-                    CurrentBurnInterval = 0;
-                    CurrentBurnDelay = 0;
-                }
+                    if (Burning == true && CurrentDOT.CurrentDelay > CurrentDOT.MaxDelay)
+                    {
+                        Burning = false;
+                        CurrentDOT.CurrentInterval = 0;
+                        CurrentDOT.CurrentDelay = 0;
+                        CurrentDOT = null;
+                    }
 
-                if (Burning == true)
-                {
-                    Color = BurnColor;
+                    if (Burning == true)
+                    {
+                        Color = BurnColor;
+                    }
                 }
                 #endregion
 
                 #region This controls how the invader behaves when it's frozen
-                if (Frozen == true)
+                if (CurrentFreeze != null)
                 {
-                    CanAttack = false;
-                    CurrentFreezeDelay += gameTime.ElapsedGameTime.TotalMilliseconds;
-                    Color = FrozenColor;
-                    Velocity.X = 0;
-                }
+                    if (Frozen == true)
+                    {
+                        CanAttack = false;
+                        CurrentFreeze.CurrentDelay += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+                        Color = FrozenColor;
+                        Velocity.X = 0;
+                    }
 
-                if (Frozen == true && CurrentFreezeDelay > FreezeDelay)
-                {
-                    Frozen = false;
-                    CanAttack = true;
-                    Velocity.X = Direction.X * Speed;
-                    CurrentFreezeDelay = 0;
-                }
-
-                if (Frozen == false && Burning == false && HitByBeam == false)
-                {
-                    Color = Color.White;
+                    if (Frozen == true && CurrentFreeze.CurrentDelay > CurrentFreeze.MaxDelay)
+                    {
+                        Frozen = false;
+                        CanAttack = true;
+                        Velocity.X = Direction.X * Speed;
+                        CurrentFreeze = null;
+                    }
                 }
                 #endregion
 
                 #region This controls how the invader behaves when it's slow
-                if (Slow == true)
+                if (CurrentSlow != null)
                 {
-                    CurrentSlowDelay += gameTime.ElapsedGameTime.TotalMilliseconds;
-                    Velocity.X = Direction.X * SlowSpeed;
-                }
+                    if (Slow == true)
+                    {
+                        CurrentSlow.CurrentDelay += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+                        Velocity.X = Direction.X * SlowSpeed;
+                    }
 
-                if (Slow == true && CurrentSlowDelay > SlowDelay)
-                {
-                    Slow = false;
-                    Velocity.X = Direction.X * Speed;
-                    CurrentSlowDelay = 0;
+                    if (Slow == true && CurrentSlow.CurrentDelay > CurrentSlow.MaxDelay)
+                    {
+                        Slow = false;
+                        Velocity.X = Direction.X * Speed;
+                        CurrentSlow = null;
+                    }
                 }
                 #endregion
+                
+                if (Frozen == false && Burning == false && HitByBeam == false)
+                {
+                    Color = Color.White;
+                }
+
 
                 #region This animates the invader, but only if it's not frozen
                 if (Frozen == false)
@@ -272,7 +290,7 @@ namespace TowerDefensePrototype
                 #region Handle the invader selection outline
                 if (InvaderOutline != null)
                 {
-                    InvaderOutline.Position = ActualPosition;
+                    InvaderOutline.Position = Position;
 
                     if (DestinationRectangle.Contains(new Point((int)cursorPosition.X, (int)cursorPosition.Y)))
                     {
@@ -287,20 +305,13 @@ namespace TowerDefensePrototype
 
                 if (CurrentAnimation != null)
                 {
-                    //THESE WERE HERE WHEN TESTING FOR A RAY-TESTING BUG
-                    //BoundingBox = new BoundingBox(
-                    //    new Vector3(Position.X, Position.Y, 0), 
-                    //    new Vector3(Position.X + CurrentAnimation.FrameSize.X, Position.Y + CurrentAnimation.FrameSize.Y, 0));
-
-                    //DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, (int)(BoundingBox.Max - BoundingBox.Min).X, (int)(BoundingBox.Max - BoundingBox.Min).Y);
-
-                    DestinationRectangle = new Rectangle((int)ActualPosition.X, (int)ActualPosition.Y,
+                    DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y,
                                                          (int)(CurrentAnimation.FrameSize.X * Scale.X),
                                                          (int)(CurrentAnimation.FrameSize.Y * Scale.Y));
 
-                    BoundingBox = new BoundingBox(new Vector3(ActualPosition.X + 6, ActualPosition.Y + 6, 0),
-                                                  new Vector3(ActualPosition.X + 6 + ((CurrentAnimation.FrameSize.X - 6) * Scale.X),
-                                                              ActualPosition.Y + 6 + ((CurrentAnimation.FrameSize.Y - 6) * Scale.Y), 0));
+                    BoundingBox = new BoundingBox(new Vector3(Position.X + 6, Position.Y + 6, 0),
+                                                  new Vector3(Position.X + ((CurrentAnimation.FrameSize.X - 6) * Scale.X),
+                                                              Position.Y + 6 + ((CurrentAnimation.FrameSize.Y - 6) * Scale.Y), 0));
 
                     Center = new Vector2(DestinationRectangle.Center.X, DestinationRectangle.Center.Y + 6);
                 }
@@ -320,15 +331,10 @@ namespace TowerDefensePrototype
                     CurrentHealDelay += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
                 }
 
-                ShadowPosition = new Vector2(ActualPosition.X, ActualPosition.Y + CurrentAnimation.FrameSize.Y - 2);
+                ShadowPosition = new Vector2(Position.X, Position.Y + CurrentAnimation.FrameSize.Y - 2);
 
                 Bottom = DestinationRectangle.Bottom;
                 DrawDepth = Bottom / 1080.0f;
-
-                //if (IsBeingHealed == true)
-                //{
-                //    Color = Color.Black;
-                //}
             }
         }
 
@@ -619,6 +625,28 @@ namespace TowerDefensePrototype
             }
         }
 
+
+        public virtual void TrapDamage(Trap trap)
+        {
+            if (VulnerableToTrap == true)
+            {
+                switch (trap.TrapType)
+                {
+                    default:
+                        CurrentHP -= trap.NormalDamage;
+
+                        if (trap.InvaderDOT != null)
+                            DamageOverTime(trap.InvaderDOT, trap.InvaderDOT.Color);
+
+                        if (trap.InvaderFreeze != null)
+                            Freeze(trap.InvaderFreeze, trap.InvaderDOT.Color);
+
+                        if (trap.InvaderSlow != null)
+                            MakeSlow(trap.InvaderSlow);
+                        break;
+                }
+            }
+        }
         
         public void TurretDamage(int change)
         {
@@ -637,27 +665,35 @@ namespace TowerDefensePrototype
             }
         }
 
+
         public void DamageOverTime(DamageOverTimeStruct dotStruct, Color color)
         {
             if (Burning == false)
             {
                 Burning = true;
                 CurrentHP -= dotStruct.InitialDamage;
-                BurnDelay = dotStruct.Milliseconds;
-                BurnDamage = dotStruct.Damage;
-                BurnInterval = dotStruct.Interval;
+                CurrentDOT = dotStruct;
                 BurnColor = color;
             }
-        }
-        
+        }        
 
         public void MakeSlow(SlowStruct slowStruct)
         {
             Slow = true;
-            SlowDelay = slowStruct.Milliseconds;
+            CurrentSlow = slowStruct;
             SlowSpeed = slowStruct.SpeedPercentage;
-        }
+        }        
 
+        public void Freeze(FreezeStruct freeze, Color frozenColor)
+        {
+            if (Frozen == false)
+            {
+                FrozenColor = frozenColor;
+                Frozen = true;
+                CurrentFreeze = freeze;
+            }
+        }
+        
         public void Trajectory(Vector2 velocity)
         {
             if (velocity.Y < 0)
@@ -666,20 +702,17 @@ namespace TowerDefensePrototype
             Velocity = velocity;
         }
 
-        public void Freeze(FreezeStruct freeze, Color frozenColor)
+
+        private InvaderBehaviour RandomBehaviour(params InvaderBehaviour[] Orientations)
         {
-            if (Frozen == false)
+            List<InvaderBehaviour> OrientationList = new List<InvaderBehaviour>();
+
+            foreach (InvaderBehaviour orientation in Orientations)
             {
-                FrozenColor = frozenColor;
-                Frozen = true;
-                FreezeDelay = freeze.Milliseconds;
+                OrientationList.Add(orientation);
             }
+
+            return OrientationList[Random.Next(0, OrientationList.Count)];
         }
-
-        public void Stun()
-        {
-
-        }
-
     }
 }

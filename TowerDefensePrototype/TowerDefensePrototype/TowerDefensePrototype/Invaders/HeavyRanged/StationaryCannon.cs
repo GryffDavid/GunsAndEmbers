@@ -14,26 +14,13 @@ namespace TowerDefensePrototype
 
         public StationaryCannon(Vector2 position)
         {
-            Active = true;
-            Direction = new Vector2(-1f, 0);
             Speed = 1.5f;
-            ActualPosition = position;
+            Position = position;
             CurrentHP = 600;
             MaxHP = 600;
             ResourceMinMax = new Vector2(8, 20);
-            CurrentAttackDelay = 0;
-            AttackDelay = 3500;
-            TowerAttackPower = 24;
-            TrapAttackPower = 6;
-            CurrentFrame = 0;
-            InvaderType = InvaderType.StationaryCannon;
             YRange = new Vector2(700, 900);
-            DistanceRange = new Vector2(800, 950);
-            CurrentAngle = 0;
-            NextAngle = 0;
-            FinalAngle = 45;
-            Airborne = false;
-
+            InvaderType = InvaderType.StationaryCannon;            
             InvaderState = InvaderState.Stand;
         }
 
@@ -43,7 +30,10 @@ namespace TowerDefensePrototype
             //after it's stopped moving forward towards the tower
             //This gives the player time to anticipate what it's about to do and counteract it, if possible.
 
-
+            //THIS INVADER SHOULD BE ABLE TO TELL WHERE THE PROJECTILE LANDS. IF IT HITS A TRAP THEN IT SHOULD ADJUST THE ANGLE
+            //IT SHOULD ALSO BE ABLE TO ADAPT TO A WALL BEING PLACED DIRECTLY IN FRONT OF IT. IT SHOULD THEN START TO BACK UP 
+            //GIVING ITSELF MORE ROOM TO FIRE AGAIN
+            //IT SHOULD NEVER GET WEDGED UP AGAINST A WALL AND FIRE INTO THE WALL DIRECTLY IN FRONT OF IT
 
 
             //If the invader gets into range, start moving the weapon to it's next position
@@ -56,28 +46,6 @@ namespace TowerDefensePrototype
             //CurrentAngle = MathHelper.SmoothStep(CurrentAngle, NextAngle, 0.1f * (float)(gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
 
             base.Update(gameTime, cursorPosition);
-        }
-
-        public override void TrapDamage(Trap trap)
-        {
-            if (VulnerableToTrap == true)
-            {
-                switch (trap.TrapType)
-                {
-                    default:
-                        CurrentHP -= trap.NormalDamage;
-
-                        if (trap.InvaderDOT != null)
-                            DamageOverTime(trap.InvaderDOT, trap.InvaderDOT.Color);
-
-                        if (trap.InvaderFreeze != null)
-                            Freeze(trap.InvaderFreeze, trap.InvaderDOT.Color);
-
-                        if (trap.InvaderSlow != null)
-                            MakeSlow(trap.InvaderSlow);
-                        break;
-                }
-            }
         }
 
         public override void Draw(SpriteBatch spriteBatch)

@@ -20,6 +20,7 @@ namespace TowerDefensePrototype
         public double CurrentShieldTime, ShieldTime;
         public Color Color;
         public BoundingBox BoundingBox;
+        public BoundingSphere ShieldBoundingSphere;
         
         public Tower(string assetName, Vector2 position, int totalHitpoints, int maxShield, int slots, float shieldTime, int powerUnits)
         {
@@ -43,6 +44,8 @@ namespace TowerDefensePrototype
             DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, Texture.Width, Texture.Height);
             BoundingBox = new BoundingBox(new Vector3(DestinationRectangle.Left, DestinationRectangle.Top, 0),
                                           new Vector3(DestinationRectangle.Right, DestinationRectangle.Bottom, 0));
+
+            ShieldBoundingSphere = new BoundingSphere(new Vector3(DestinationRectangle.Center.X, DestinationRectangle.Center.Y, 0), 300);
         }
 
         public void Update(GameTime gameTime)

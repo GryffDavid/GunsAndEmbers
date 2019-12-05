@@ -29,23 +29,15 @@ namespace TowerDefensePrototype
         {
             CurrentHeight = position.Y;
             Active = true;
-            Direction = new Vector2(-1, 0);
             Speed = 1.5f;
-            ActualPosition = position;            
+            Position = position;            
             MaxHP = 300;
             CurrentHP = MaxHP;
-            //MoveDelay = 20;
             ResourceMinMax = new Vector2(1, 5);
-            CurrentAttackDelay = 0;
-            AttackDelay = 1500;
-            TowerAttackPower = 4;
             InvaderType = InvaderType.HealDrone;
-            CurrentFrame = 0;
             YRange = new Vector2(100, 350);
-            RangedAttackPower = 20;
             Airborne = true;
             InAir = true;
-
             InvaderState = InvaderState.Walk;
         }
 
@@ -72,28 +64,6 @@ namespace TowerDefensePrototype
             //    Jet.Draw(spriteBatch);
 
             base.Draw(spriteBatch);
-        }
-
-        public override void TrapDamage(Trap trap)
-        {
-            if (VulnerableToTrap == true)
-            {
-                switch (trap.TrapType)
-                {
-                    default:
-                        CurrentHP -= trap.NormalDamage;
-
-                        if (trap.InvaderDOT != null)
-                            DamageOverTime(trap.InvaderDOT, trap.InvaderDOT.Color);
-
-                        if (trap.InvaderFreeze != null)
-                            Freeze(trap.InvaderFreeze, trap.InvaderDOT.Color);
-
-                        if (trap.InvaderSlow != null)
-                            MakeSlow(trap.InvaderSlow);
-                        break;
-                }
-            }
         }
     }
 }

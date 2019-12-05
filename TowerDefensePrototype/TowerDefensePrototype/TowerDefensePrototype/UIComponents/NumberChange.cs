@@ -18,7 +18,7 @@ namespace TowerDefensePrototype
         static Random Random = new Random();
         float CurrentTime, MaxTime, Angle;
 
-        public NumberChange(SpriteFont spriteFont, Vector2 position, Vector2 change, int number)
+        public NumberChange(SpriteFont spriteFont, Vector2 position, Vector2 change, int number, Color? color = null)
         {
             Active = true;
             SpriteFont = spriteFont;
@@ -28,13 +28,20 @@ namespace TowerDefensePrototype
             MaxTime = 500;
             Angle = (float)RandomDouble(-120, -60);
 
-            if (number < 0)
+            if (color == null)
             {
-                OriginalColor = new Color(255, 0, 0, 255);
+                if (number < 0)
+                {
+                    OriginalColor = new Color(255, 0, 0, 255);
+                }
+                else
+                {
+                    OriginalColor = new Color(255, 255, 255, 255);
+                }
             }
             else
             {
-                OriginalColor = new Color(255, 255, 255, 255);
+                OriginalColor = color.Value;
             }
 
             Change = 5 * new Vector2((float)Math.Cos(MathHelper.ToRadians(Angle)), (float)Math.Sin(MathHelper.ToRadians(Angle)));
@@ -54,6 +61,7 @@ namespace TowerDefensePrototype
                 CurrentTime = 0;
                 Active = false;
             }
+
             double colorPercent = (100.0 / MaxTime * CurrentTime) / 100.0;
             Color = Color.Lerp(OriginalColor, Color.Transparent, (float)colorPercent);
         }

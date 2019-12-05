@@ -117,13 +117,13 @@
     <Compile Include="Animations\Animation.cs" />
     <Compile Include="Animations\InvaderAnimation.cs" />
     <Compile Include="Basics\Ballistics.cs" />
-    <Compile Include="CheckBox.cs" />
+    <Compile Include="UIComponents\CheckBox.cs" />
     <Compile Include="Components\BulletTrail.cs" />
     <Compile Include="Components\Gibs.cs" />
     <Compile Include="Basics\Powerup.cs" />
     <Compile Include="Basics\ParallaxBackground.cs" />
     <Compile Include="Invaders\LighRanged\RifleMan.cs" />
-    <Compile Include="TutorialBox.cs" />
+    <Compile Include="UIComponents\TutorialBox.cs" />
     <Compile Include="UIComponents\PartitionedBar.cs" />
     <Compile Include="Projectiles\BeamProjectile.cs" />
     <Compile Include="UIComponents\StoryDialogueBox.cs" />

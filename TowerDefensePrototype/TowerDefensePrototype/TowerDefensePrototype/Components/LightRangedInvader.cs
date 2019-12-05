@@ -10,30 +10,45 @@ namespace TowerDefensePrototype
 {
     abstract class LightRangedInvader : Invader
     {
-        //public InvaderFireType InvaderFireType;
-        public int RangedAttackPower, MaxBurst, CurrentBurst;
-        public Vector2 AngleRange, DistanceRange;
-        public float MaxBurstDelay, CurrentBurstDelay, MinDistance;
         public bool InRange = false;
+        public InvaderRangedStruct RangedDamageStruct;
+        public float MinDistance; //The distance the invader has decided it wants to get to before firing - created from Distance Range in the RangedDamageStruct
 
-        public override void TrapDamage(Trap trap)
-        {
-            throw new NotImplementedException();
-        }
-
+        //public int CurrentBurst;
+        //public float CurrentBurstDelay, MinDistance;
+        //public int RangedAttackPower, MaxBurst;
+        //public Vector2 AngleRange, DistanceRange;
+        //public InvaderFireType InvaderFireType;
+        //public float MaxBurstDelay;
+        
         public override void Update(GameTime gameTime, Vector2 cursorPosition)
         {
-            if (CurrentBurst >= MaxBurst &&
-                CurrentBurstDelay < MaxBurstDelay)
+            if (RangedDamageStruct != null)
             {
-                CurrentBurstDelay += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+                RangedDamageStruct.CurrentFireDelay += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+
+                if (RangedDamageStruct.CurrentFireDelay >= RangedDamageStruct.MaxFireDelay)
+                {
+                    CanAttack = true;
+                    RangedDamageStruct.CurrentFireDelay = 0;
+                }
+                else
+                {
+                    CanAttack = false;
+                }
             }
 
-            if (CurrentBurstDelay >= MaxBurstDelay)
-            {
-                CurrentBurstDelay = 0;
-                CurrentBurst = 0;
-            }
+            //if (CurrentBurst >= MaxBurst &&
+            //    CurrentBurstDelay < MaxBurstDelay)
+            //{
+            //    CurrentBurstDelay += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+            //}
+
+            //if (CurrentBurstDelay >= MaxBurstDelay)
+            //{
+            //    CurrentBurstDelay = 0;
+            //    CurrentBurst = 0;
+            //}
 
             base.Update(gameTime, cursorPosition);
         }

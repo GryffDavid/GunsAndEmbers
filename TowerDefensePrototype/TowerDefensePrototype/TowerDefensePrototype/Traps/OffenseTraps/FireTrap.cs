@@ -29,8 +29,8 @@ namespace TowerDefensePrototype
             {
                 InitialDamage = 10,
                 Damage = 1,
-                Milliseconds = 3600,
-                Interval = 300,
+                MaxDelay = 3600,
+                MaxInterval = 300,
                 Color = Color.Orange
             };
 

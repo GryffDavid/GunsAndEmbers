@@ -13,7 +13,6 @@ namespace TowerDefensePrototype
         //public Texture2D CurrentTexture;
         
         public Rectangle DestinationRectangle, SourceRectangle;
-        public BoundingBox BoundingBox;
         public TrapType TrapType;
         //public List<Emitter> TrapEmitterList = new List<Emitter>();
         public Vector2 Position, ShadowPosition, Center;
