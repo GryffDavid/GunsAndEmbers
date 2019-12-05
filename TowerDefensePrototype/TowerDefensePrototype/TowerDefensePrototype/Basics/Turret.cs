@@ -17,12 +17,12 @@ namespace TowerDefensePrototype
         public Rectangle BaseRectangle, BarrelRectangle;
         MouseState CurrentMouseState, PreviousMouseState;
         public float Rotation;
-        public bool Selected, Active, JustClicked;//, CanShoot;
+        public bool Selected, Active, JustClicked, CanShoot;
         public Color Color;
         //public MuzzleFlash Flash;
         public double FireDelay;
 
-        //double ElapsedTime = 0;
+        double ElapsedTime = 0;
 
         public void LoadContent(ContentManager contentManager)
         {
@@ -41,13 +41,13 @@ namespace TowerDefensePrototype
 
         public void Update(GameTime gameTime)
         {
-            //ElapsedTime += gameTime.ElapsedGameTime.TotalSeconds;
+            ElapsedTime += gameTime.ElapsedGameTime.TotalSeconds;
 
-            //if (ElapsedTime >= FireDelay)
-            //{
-            //    CanShoot = true;
-            //    ElapsedTime = 0;
-            //}
+            if (ElapsedTime >= FireDelay)
+            {
+                CanShoot = true;
+                ElapsedTime = 0;
+            }
 
             CurrentMouseState = Mouse.GetState();
 

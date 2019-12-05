@@ -159,7 +159,7 @@ namespace TowerDefensePrototype
                 }
             }
 
-            TurretShoot();
+            //TurretShoot();
         }
 
         public void Draw(SpriteBatch spriteBatch)
@@ -214,7 +214,7 @@ namespace TowerDefensePrototype
             //This is here to make sure that the invader movement doesn't look jumpy
                      
             InvaderUpdate();
-            TurretShoot();
+            //TurretShoot();
         }
 
         
@@ -414,6 +414,7 @@ namespace TowerDefensePrototype
 
         private void TurretUpdate()
         {
+            ProjectileList.Clear();
             //This piece of code makes sure that two turrets cannot be selected at any one time
             foreach (Turret turret in TurretList)
             {
@@ -428,6 +429,12 @@ namespace TowerDefensePrototype
                             turret2.Selected = false;
                         }
                     }                    
+                }
+
+                if (turret.Selected == true && CurrentMouseState.LeftButton == ButtonState.Pressed && turret.CanShoot == true)
+                {
+                    TurretShoot();
+                    turret.CanShoot = false;
                 }
             }         
         }
@@ -502,24 +509,24 @@ namespace TowerDefensePrototype
 
             foreach (Turret turret in TurretList)
             {
-                if (turret.Selected == true && CurrentMouseState.LeftButton == ButtonState.Pressed)
+                if (turret.Selected == true)
                 {
                     ProjectileList.Add(new Projectile(new Vector2(turret.BarrelRectangle.X, turret.BarrelRectangle.Y), new Vector2(turret.Direction.X, turret.Direction.Y)));
                 }
-            //}
+
                 foreach (Invader invader in InvaderList)
-                 {
-                for (int i = 0; i < ProjectileList.Count; i++)
                 {
-                    if (ProjectileList[i].Ray.Intersects(invader.BoundingBox) != null && ProjectileList[i].Active == true)
+                    for (int i = 0; i < ProjectileList.Count; i++)
                     {
-                        ProjectileList[i].Active = false;
-                        ProjectileList.Clear();
-                        invader.Active = false;                        
+                        if (ProjectileList[i].Ray.Intersects(invader.BoundingBox) != null && ProjectileList[i].Active == true)
+                        {
+                            invader.ChangeHP(-10);
+                            ProjectileList[i].Active = false;
+                            ProjectileList.Clear();                                                    
+                        }
                     }
                 }
             }
-        }
         }
 
         
