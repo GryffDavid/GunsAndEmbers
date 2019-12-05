@@ -48,7 +48,7 @@ namespace TowerDefensePrototype
 
             if (Active == true)
             {
-                spriteBatch.Draw(Texture, new Rectangle((int)Position.X, (int)Position.Y, Texture.Width, Texture.Height), Color.White);
+                spriteBatch.Draw(Texture, new Rectangle((int)Position.X - Texture.Width / 2, (int)Position.Y - Texture.Height/2, Texture.Width, Texture.Height), Color.White);
             }
 
             Emitter.Draw(spriteBatch);

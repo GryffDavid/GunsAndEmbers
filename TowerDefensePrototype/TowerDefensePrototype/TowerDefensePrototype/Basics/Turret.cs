@@ -15,7 +15,7 @@ namespace TowerDefensePrototype
         public Texture2D TurretBase, TurretBarrel, Line;
         public Vector2 Direction, Position, MousePosition;
         public Vector2 BarrelPivot, BasePivot;
-        public Rectangle BaseRectangle, BarrelRectangle;
+        public Rectangle BaseRectangle, BarrelRectangle, SelectBox;
         MouseState CurrentMouseState, PreviousMouseState;
         public float Rotation;
         public bool Selected, Active, JustClicked, CanShoot;
@@ -26,12 +26,14 @@ namespace TowerDefensePrototype
         public Vector2 FireDirection;
         public float FireRotation;
         public TurretType TurretType;
-
+        public HorizontalBar TimingBar;
         public double ElapsedTime = 0;
 
         public void LoadContent(ContentManager contentManager)
         {
             CanShoot = false;
+
+            TimingBar = new HorizontalBar(contentManager, new Vector2(32, 4), (int)FireDelay, (int)ElapsedTime, Color.Green, Color.DarkRed);
 
             Color = Color.White;
             BaseRectangle = new Rectangle();
@@ -43,6 +45,8 @@ namespace TowerDefensePrototype
                 TurretBarrel = contentManager.Load<Texture2D>(TurretAsset);
             }
             //Line = contentManager.Load<Texture2D>("Projectile");
+
+            SelectBox = new Rectangle((int)Position.X, (int)Position.Y-24, 64, 64);
         }
 
         public void Update(GameTime gameTime)
@@ -59,6 +63,8 @@ namespace TowerDefensePrototype
             }
 
             CurrentMouseState = Mouse.GetState();
+
+            TimingBar.Update(new Vector2(Position.X, Position.Y + 40), (int)ElapsedTime);
 
             if (Active == true)
             {
@@ -81,7 +87,7 @@ namespace TowerDefensePrototype
             }
 
             #region Handle selection
-                if (BaseRectangle.Contains(new Point(CurrentMouseState.X, CurrentMouseState.Y)) && CurrentMouseState.LeftButton == ButtonState.Released && PreviousMouseState.LeftButton == ButtonState.Pressed)            
+                if (SelectBox.Contains(new Point(CurrentMouseState.X, CurrentMouseState.Y)) && CurrentMouseState.LeftButton == ButtonState.Released && PreviousMouseState.LeftButton == ButtonState.Pressed)            
                 {
                     JustClicked = true;
                 }
@@ -127,7 +133,7 @@ namespace TowerDefensePrototype
 
         public virtual void Draw(SpriteBatch spriteBatch)
         {
-
+            
         }
     }
 }

@@ -18,6 +18,7 @@
     <XnaOutputType>Game</XnaOutputType>
     <ApplicationIcon>aOtherStuff\Game.ico</ApplicationIcon>
     <Thumbnail>aOtherStuff\GameThumbnail.png</Thumbnail>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -30,7 +31,6 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -58,6 +58,9 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <PlatformTarget>x86</PlatformTarget>
     <XnaCompressContent>true</XnaCompressContent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
@@ -113,6 +116,7 @@
     <Compile Include="Basics\Invader.cs" />
     <Compile Include="Basics\HorizontalBar.cs" />
     <Compile Include="Invaders\Airship.cs" />
+    <Compile Include="Profile.cs" />
     <Compile Include="Projectiles\CannonBall.cs" />
     <Compile Include="Projectiles\FlameProjectile.cs" />
     <Compile Include="Projectiles\HeavyProjectile.cs" />
@@ -137,6 +141,7 @@
     <Compile Include="Basics\VerticalBar.cs" />
     <Compile Include="Turrets\CannonTurret.cs" />
     <Compile Include="Turrets\FlameThrowerTurret.cs" />
+    <Compile Include="Basics\Wave.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="aOtherStuff\Game.ico" />

@@ -18,12 +18,17 @@ namespace TowerDefensePrototype
         public bool Active, Solid, CanTrigger;
         public BoundingBox BoundingBox;
         public TrapType TrapType;
-        public Emitter TrapEmitter;
+        public List<Emitter> TrapEmitterList;
         public float DetonateDelay, CurrentDetonateDelay;
+        public HorizontalBar TimingBar;
 
         public virtual void LoadContent(ContentManager contentManager)
         {
-            Active = true;
+            Active = true;            
+            
+            TimingBar = new HorizontalBar(contentManager, new Vector2(32, 4), (int)DetonateDelay, (int)CurrentDetonateDelay, Color.Green, Color.DarkRed);
+
+            TrapEmitterList = new List<Emitter>();
             Texture = contentManager.Load<Texture2D>(AssetName);
             BoundingBox = new BoundingBox(new Vector3((int)Position.X, (int)Position.Y, 0), new Vector3((int)Position.X + Texture.Width, (int)Position.Y - Texture.Height, 0));
             DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y - Texture.Height, (int)(Texture.Width), (int)(Texture.Height));
@@ -42,6 +47,16 @@ namespace TowerDefensePrototype
             {
                 CanTrigger = false;
             }
+
+            TimingBar.Update(new Vector2(DestinationRectangle.X, DestinationRectangle.Bottom + 16), (int)CurrentDetonateDelay);
+
+            if (TrapEmitterList.Count > 0)
+            {
+                foreach (Emitter emitter in TrapEmitterList)
+                {
+                    emitter.Update(gameTime);
+                }
+            }
         }
 
         public virtual void Draw(SpriteBatch spriteBatch)
@@ -51,6 +66,14 @@ namespace TowerDefensePrototype
 
             if (Active == true)
                 spriteBatch.Draw(Texture, DestinationRectangle, Color.White);
+
+            if (TrapEmitterList.Count > 0)
+            {
+                foreach (Emitter emitter in TrapEmitterList)
+                {
+                    emitter.Draw(spriteBatch);
+                }
+            }            
         }
     }
 }

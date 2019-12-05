@@ -39,3 +39,7 @@ Content\Cloud4.xnb
 Content\Cloud5.xnb
 Content\Cloud6.xnb
 Content\Background3.xnb
+Content\MenuButtonStrip.xnb
+Content\LoadingScreen.xnb
+Content\PauseMenuBackground.xnb
+Content\MenuFont.xnb

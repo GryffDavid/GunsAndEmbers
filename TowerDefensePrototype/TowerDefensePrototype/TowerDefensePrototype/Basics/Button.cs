@@ -14,13 +14,14 @@ namespace TowerDefensePrototype
 
     class Button
     {
-        string AssetName, IconName;
+        string AssetName, IconName, Text, FontName;
         public Vector2 FrameSize, Scale, Position, CursorPosition;
         Vector2 IconPosition;
-        Color Color;
+        Color Color, TextColor;
         Texture2D ButtonStrip, IconTexture;
         public Rectangle DestinationRectangle, SourceRectangle;
         Rectangle IconRectangle;
+        SpriteFont Font;        
 
         MouseState CurrentMouseState, PreviousMouseState;
         MousePosition CurrentMousePosition, PreviousMousePosition;
@@ -30,7 +31,8 @@ namespace TowerDefensePrototype
         public bool Active, JustClicked;
         public bool ButtonActive;
 
-        public Button(string assetName, Vector2 position, string iconName = null, Vector2? scale = null, Color? color = null)
+        public Button(string assetName, Vector2 position, string iconName = null, Vector2? scale = null, 
+            Color? color = null, string text = "", string fontName = "", Color? textColor = null)
         {
             ButtonActive = true;
 
@@ -47,7 +49,16 @@ namespace TowerDefensePrototype
             if (color == null)
                 Color = Color.White;
             else
-                Color = color.Value;               
+                Color = color.Value;
+
+            Text = text;
+
+            FontName = fontName;
+
+            if (textColor == null)
+                TextColor = Color.White;
+            else
+                TextColor = textColor.Value;
 
             CurrentButtonState = ButtonSpriteState.Released;
         }
@@ -66,7 +77,12 @@ namespace TowerDefensePrototype
                     IconTexture = contentManager.Load<Texture2D>(IconName);
                     IconPosition = new Vector2(Position.X + (DestinationRectangle.Width - IconTexture.Width) / 2, Position.Y + (DestinationRectangle.Height - IconTexture.Height) / 2);
                     IconRectangle = new Rectangle((int)IconPosition.X, (int)IconPosition.Y, IconTexture.Width, IconTexture.Height);
-                }                
+                }
+
+                if (FontName != "")
+                {
+                    Font = contentManager.Load<SpriteFont>(FontName);
+                }
             }
         }
 
@@ -160,12 +176,28 @@ namespace TowerDefensePrototype
         {
             if (ButtonActive == true)
             {
-
                 spriteBatch.Draw(ButtonStrip, DestinationRectangle, SourceRectangle, Color);
                 if (IconName != null)
                 {
-                    spriteBatch.Draw(IconTexture, IconRectangle, Color.White);
+                    if (CurrentButtonState != ButtonSpriteState.Pressed)                    
+                        spriteBatch.Draw(IconTexture, IconRectangle, Color.White);
+                    else
+                        spriteBatch.Draw(IconTexture, new Rectangle(IconRectangle.X+2, IconRectangle.Y+2, IconRectangle.Width, IconRectangle.Height), Color.White);                    
                 }
+
+                if (Text != "")
+                {
+                    if (CurrentButtonState != ButtonSpriteState.Pressed)
+                    {
+                        Vector2 TextSize = Font.MeasureString(Text);
+                        spriteBatch.DrawString(Font, Text, new Vector2(DestinationRectangle.Center.X - (TextSize.X / 2), DestinationRectangle.Center.Y - (TextSize.Y / 2)), TextColor);
+                    }
+                    else
+                    {
+                        Vector2 TextSize = Font.MeasureString(Text);
+                        spriteBatch.DrawString(Font, Text, new Vector2(DestinationRectangle.Center.X - (TextSize.X / 2)+2, DestinationRectangle.Center.Y - (TextSize.Y / 2)+2), TextColor);
+                    }
+                }                
             }
         }
     }
