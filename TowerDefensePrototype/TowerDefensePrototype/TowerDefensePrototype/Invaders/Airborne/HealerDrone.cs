@@ -45,8 +45,16 @@ namespace TowerDefensePrototype
 
             AngleRange = new Vector2(170, 190);
             RangedDamage = 10;
-            MaxFireDelay = 250;
-            CurrentFireDelay = 0;
+
+            RangedAttackTiming = new RangedAttackTiming()
+            {
+                MaxFireDelay = 250,
+                CurrentFireDelay = 0
+            };
+
+
+            //MaxFireDelay = 250;
+            //CurrentFireDelay = 0;
             TowerDistanceRange = new Vector2(600, 800);
         }
 

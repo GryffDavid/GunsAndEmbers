@@ -14,14 +14,14 @@ namespace TowerDefensePrototype
         Texture2D ParticleTexture;
 
         public DropMissile(object source, Texture2D texture, Texture2D particleTexture, Vector2 position,
-                           float speed, float angle, float gravity, float damage, float blastRadius, Vector2? yRange = null)
+                           float speed, float angle, float gravity, float damage, float blastRadius, float startRotation, float dropTime, Vector2? yRange = null)
             : base(source, texture, position, speed, angle, gravity, damage, yRange, blastRadius)
         {
             ParticleTexture = particleTexture;
             HeavyProjectileType = HeavyProjectileType.DropMissile;
             Rotate = false;
-            CurrentRotation = MathHelper.ToRadians(150f); ;
-            MaxDropTime = 600f;            
+            CurrentRotation = MathHelper.ToRadians(startRotation);
+            MaxDropTime = dropTime;       
         }
 
         public override void Update(GameTime gameTime)

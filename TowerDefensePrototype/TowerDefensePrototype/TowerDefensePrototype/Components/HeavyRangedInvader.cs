@@ -101,7 +101,7 @@ namespace TowerDefensePrototype
 
         public float RangedDamage; //How much damage the projectile does
         //public float LaunchVelocity; //How fast the heavy projectile is travelling when launched
-        public float CurrentFireDelay, MaxFireDelay; //How many milliseconds between shots
+        //public float CurrentFireDelay, MaxFireDelay; //How many milliseconds between shots
         //public int CurrentBurstShots, MaxBurstShots; //How many shots are fired in a row before a longer recharge is needed
 
         public float CurrentAngle = 0;
@@ -116,6 +116,9 @@ namespace TowerDefensePrototype
         public int HitTrap = 0;
         public int HitScreen = 0;
         #endregion        
+
+        public InvaderFireType FireType = InvaderFireType.Single;
+        public RangedAttackTiming RangedAttackTiming;
 
         public override void Initialize()
         {
@@ -210,18 +213,76 @@ namespace TowerDefensePrototype
             //This should only be called if the invader is actually ALLOWED to fire
             //i.e. They can't fire when moving, can't fire when facing the wrong way etc.
 
-            if (CurrentFireDelay < MaxFireDelay)
-                CurrentFireDelay += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+            switch (FireType)
+            {
+                case InvaderFireType.Burst:
+                    {
+                        if (RangedAttackTiming.CurrentBurstNum < RangedAttackTiming.MaxBurstNum)
+                        {
+                            //Fire projectile
+                            if (RangedAttackTiming.CurrentFireDelay < RangedAttackTiming.MaxFireDelay)
+                            {
+                                RangedAttackTiming.CurrentFireDelay += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+                            }
 
-            if (CurrentFireDelay >= MaxFireDelay)
-            {
-                CanAttack = true;
-                CurrentFireDelay = 0;
+                            if (RangedAttackTiming.CurrentFireDelay >= RangedAttackTiming.MaxFireDelay)
+                            {
+                                RangedAttackTiming.CurrentBurstNum++;
+                                CanAttack = true;
+                                RangedAttackTiming.CurrentFireDelay = 0;
+                            }
+                            else
+                            {
+                                CanAttack = false;
+                            }    
+                        }
+                        else
+                        {
+                            CanAttack = false;
+
+                            //Update burst timing
+                            if (RangedAttackTiming.CurrentBurstTime < RangedAttackTiming.MaxBurstTime)
+                            {
+                                RangedAttackTiming.CurrentBurstTime += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+                            }
+
+                            if (RangedAttackTiming.CurrentBurstTime >= RangedAttackTiming.MaxBurstTime)
+                            {
+                                RangedAttackTiming.CurrentBurstNum = 0;
+                                RangedAttackTiming.CurrentFireDelay = 0;
+                                RangedAttackTiming.CurrentBurstTime = 0;
+                            }
+                        }
+                    }
+                    break;
+
+                case InvaderFireType.Single:
+                    {
+                        if (RangedAttackTiming.CurrentFireDelay < RangedAttackTiming.MaxFireDelay)
+                        {
+                            RangedAttackTiming.CurrentFireDelay += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+                        }
+
+                        if (RangedAttackTiming.CurrentFireDelay >= RangedAttackTiming.MaxFireDelay)
+                        {
+                            CanAttack = true;
+                            RangedAttackTiming.CurrentFireDelay = 0;
+                        }
+                        else
+                        {
+                            CanAttack = false;
+                        }      
+                    }
+                    break;
+
+                case InvaderFireType.Beam:
+                    {
+
+                    }
+                    break;
             }
-            else
-            {
-                CanAttack = false;
-            }            
+
+                  
         }
 
         public void ResetCollisions()

@@ -118,9 +118,11 @@
     <Compile Include="Animations\InvaderAnimation.cs" />
     <Compile Include="Basics\Ballistics.cs" />
     <Compile Include="Basics\VectorSprite.cs" />
+    <Compile Include="Components\Crate.cs" />
     <Compile Include="Components\Pathfinder.cs" />
     <Compile Include="Components\ResourceCounter.cs" />
     <Compile Include="Components\Shield.cs" />
+    <Compile Include="Crates\ResourceCrate.cs" />
     <Compile Include="Invaders\Airborne\DropShip.cs" />
     <Compile Include="Invaders\DropShipDoor.cs" />
     <Compile Include="Invaders\DropShipSkids.cs" />
@@ -133,7 +135,7 @@
     <Compile Include="ParticleSystem\Rope.cs" />
     <Compile Include="ParticleSystem\SmokeTrail.cs" />
     <Compile Include="ParticleSystem\ToonLightning.cs" />
-    <Compile Include="Projectiles\DropMissile.cs" />
+    <Compile Include="Projectiles\Heavy\DropMissile.cs" />
     <Compile Include="Projectiles\Grenades\StickyMineProjectile.cs" />
     <Compile Include="Projectiles\Heavy\HarpoonProjectile.cs" />
     <Compile Include="Projectiles\StickyMine.cs" />

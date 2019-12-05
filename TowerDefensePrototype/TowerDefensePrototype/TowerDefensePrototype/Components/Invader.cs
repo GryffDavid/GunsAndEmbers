@@ -13,7 +13,14 @@ namespace TowerDefensePrototype
     #region Invader Enums
     public enum AnimationState_Invader { Walk, Stand, Melee, Shoot };
 
-    public enum InvaderFireType { Burst };
+    public enum InvaderFireType { Single, Burst, Beam };
+
+    public struct RangedAttackTiming
+    {
+        public float CurrentFireDelay, MaxFireDelay;
+        public int CurrentBurstNum, MaxBurstNum;
+        public float CurrentBurstTime, MaxBurstTime;
+    }
 
     public enum InvaderBuildType { Mechanical, Organic }; //Whether the invader is affected by things like gas.
 

@@ -25,13 +25,23 @@ namespace TowerDefensePrototype
             CurrentMicroBehaviour = MicroBehaviour.MovingForwards;
 
             TowerDistanceRange = new Vector2(450, 580);
-            MaxFireDelay = 1500;
-            CurrentFireDelay = 0;
+
+            //MaxFireDelay = 1500;
+            //CurrentFireDelay = 0;
             RangedDamage = 80f;
 
             ZDepth = 64;
 
-            
+            FireType = InvaderFireType.Burst;
+            RangedAttackTiming = new RangedAttackTiming()
+            {
+                CurrentBurstNum = 0,
+                CurrentBurstTime = 0,
+                MaxBurstNum = 5,
+                MaxBurstTime = 2000,
+                MaxFireDelay = 300,
+                CurrentFireDelay = 0
+            };
 
             YRange = new Vector2(60, 150);
         }

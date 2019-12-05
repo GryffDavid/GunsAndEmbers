@@ -66,7 +66,6 @@ Content\Particles\Smoke.xnb
 Content\Decals\ExplosionDecal1.xnb
 Content\SelectBox.xnb
 Content\Backgrounds\Sky.xnb
-Content\Backgrounds\Ground.xnb
 Content\Invaders\Soldier\SoldierWalk.xnb
 Content\lightmask.xnb
 Content\Icons\TurretIcons\ShotgunTurretIcon.xnb
@@ -217,6 +216,9 @@ Content\Projectiles\FireGrenadeProjectile.xnb
 Content\Projectiles\StickyMineProjectile.xnb
 Content\Invaders\DropShip\DropShipTexture.xnb
 Content\Invaders\DropShip\DropShipDoor.xnb
+Content\Backgrounds\Ground.xnb
+Content\Projectiles\DropMissileProjectile.xnb
+Content\Invaders\GunShip\GunShipTexture.xnb
 Content\Sounds\Menu\MenuClick.xnb
 Content\Sounds\FireTrapStart.xnb
 Content\Sounds\Menu\MenuAmbiance.xnb
@@ -240,10 +242,7 @@ Content\Sounds\Implosion.xnb
 Content\Sounds\Implosion2.xnb
 Content\Sounds\TurretOverheat.xnb
 Content\Sounds\Menu\MenuMusic1.xnb
-Content\StoryDialogue\StoryDialogue1.xnb
 Content\Fonts\SpriteFont1.xnb
 Content\ParticleEffect.xnb
 Content\ShadowBlur.xnb
 Content\Shaders\HealthBarEffect.xnb
-Content\Projectiles\DropMissileProjectile.xnb
-Content\Invaders\GunShip\GunShipTexture.xnb

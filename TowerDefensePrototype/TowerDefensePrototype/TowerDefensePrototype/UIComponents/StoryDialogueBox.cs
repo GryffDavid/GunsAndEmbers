@@ -29,14 +29,14 @@ namespace TowerDefensePrototype
         public string Text, Name;
 
         KeyboardState CurrentKeyboardState, PreviousKeyboardState;
-        public StoryDialogue CurrentDialogue;
+        //public StoryDialogue CurrentDialogue;
 
-        public StoryDialogueBox(Vector2 currentPosition, Vector2 nextPosition, Vector2 size, Texture2D headIcon, SpriteFont font, StoryDialogue dialogue, string profileName)
+        public StoryDialogueBox(Vector2 currentPosition, Vector2 nextPosition, Vector2 size, Texture2D headIcon, SpriteFont font, string profileName)
         {
             Active = true;
             Name = profileName;
             DialogueIndex = 0;
-            CurrentDialogue = dialogue;
+            //CurrentDialogue = dialogue;
             CurrentPosition = currentPosition;
             NextPosition = nextPosition;
             Size = size;
@@ -76,13 +76,13 @@ namespace TowerDefensePrototype
             BoxIndices[4] = 3;
             BoxIndices[5] = 0;
 
-            if (CurrentDialogue != null)
-            {
-                Text = CurrentDialogue.Lines[DialogueIndex];
+            //if (CurrentDialogue != null)
+            //{
+            //    Text = CurrentDialogue.Lines[DialogueIndex];
 
-                ReplaceName(Name);
-                WrapText();
-            }
+            //    ReplaceName(Name);
+            //    WrapText();
+            //}
         }
 
         public void WrapText()
@@ -108,21 +108,21 @@ namespace TowerDefensePrototype
             CurrentKeyboardState = Keyboard.GetState();
 
             //Advance the dialogue with the spacebar and deactivate the box when there is no more dialogue
-            if (CurrentKeyboardState.IsKeyUp(Keys.Space) &&
-                PreviousKeyboardState.IsKeyDown(Keys.Space))
-            {
-                if (DialogueIndex < CurrentDialogue.Lines.Count-1)
-                {
-                    DialogueIndex++;
-                    Text = CurrentDialogue.Lines[DialogueIndex];
-                    ReplaceName(Name);
-                    WrapText();
-                }
-                else
-                {
-                    NextPosition = new Vector2(-Size.X, CurrentPosition.Y); 
-                }
-            }
+            //if (CurrentKeyboardState.IsKeyUp(Keys.Space) &&
+            //    PreviousKeyboardState.IsKeyDown(Keys.Space))
+            //{
+            //    if (DialogueIndex < CurrentDialogue.Lines.Count-1)
+            //    {
+            //        DialogueIndex++;
+            //        Text = CurrentDialogue.Lines[DialogueIndex];
+            //        ReplaceName(Name);
+            //        WrapText();
+            //    }
+            //    else
+            //    {
+            //        NextPosition = new Vector2(-Size.X, CurrentPosition.Y); 
+            //    }
+            //}
 
             //(Size.Y - HeadIcon.Height) / 2;
             Vector2 textSize = Font.MeasureString(Text);
@@ -155,17 +155,17 @@ namespace TowerDefensePrototype
 
         public void Draw(SpriteBatch spriteBatch, GraphicsDevice graphics, BasicEffect basicEffect)
         {
-            if (Active == true && CurrentDialogue != null)
-            {
-                foreach (EffectPass pass in basicEffect.CurrentTechnique.Passes)
-                {
-                    pass.Apply();
-                    graphics.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, BoxVertices, 0, BoxVertices.Count(), BoxIndices, 0, BoxIndices.Count() / 3);
-                }
+            //if (Active == true && CurrentDialogue != null)
+            //{
+            //    foreach (EffectPass pass in basicEffect.CurrentTechnique.Passes)
+            //    {
+            //        pass.Apply();
+            //        graphics.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, BoxVertices, 0, BoxVertices.Count(), BoxIndices, 0, BoxIndices.Count() / 3);
+            //    }
                 
-                spriteBatch.Draw(HeadIcon, new Rectangle((int)(CurrentPosition.X + SizeOffset), (int)(CurrentPosition.Y + SizeOffset), HeadIcon.Width, HeadIcon.Height), Color.White);
-                spriteBatch.DrawString(Font, Text, TextPosition, Color.White);
-            }
+            //    spriteBatch.Draw(HeadIcon, new Rectangle((int)(CurrentPosition.X + SizeOffset), (int)(CurrentPosition.Y + SizeOffset), HeadIcon.Width, HeadIcon.Height), Color.White);
+            //    spriteBatch.DrawString(Font, Text, TextPosition, Color.White);
+            //}
         }
     }
 }

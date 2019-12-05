@@ -601,8 +601,6 @@ namespace TowerDefensePrototype
         Nullable<Weather> CurrentWeather;
 
         PowerupDelivery PowerupDelivery;
-        StoryDialogueBox StoryDialogueBox;
-        StoryDialogue StoryDialogue;
 
         public static List<Drawable> DrawableList = new List<Drawable>();
 
@@ -634,7 +632,6 @@ namespace TowerDefensePrototype
         List<ToonLightning> ToonLightningList = new List<ToonLightning>();
         List<StickyMine> StickyMineList = new List<StickyMine>();
 
-        SmokeTrail SmokeTrail = new SmokeTrail(new Vector2(200, 200));
         Vector2 GroundRange = new Vector2(672, 896);
         //List<SmokeTrail> SmokeTrailList = new List<SmokeTrail>();
 
@@ -1175,7 +1172,6 @@ namespace TowerDefensePrototype
                 RopeTexture1 = Content.Load<Texture2D>("RopeTexture");
 
                 MysteryEmployerTexture = Content.Load<Texture2D>("MysteryEmployer");
-                StoryDialogueBox = new StoryDialogueBox(new Vector2(-400, 64), new Vector2(0, 64), new Vector2(500, 180), MysteryEmployerTexture, RobotoRegular20_0, StoryDialogue, CurrentProfile.Name);
 
                 MaxWaves = CurrentLevel.WaveList.Count;
                 CurrentWaveIndex = 0;
@@ -2785,10 +2781,7 @@ namespace TowerDefensePrototype
                         uiWeaponInfo.Draw(spriteBatch, GraphicsDevice, QuadEffect);
                 }
                 #endregion
-
-                if (GameState != GameState.Paused)
-                    StoryDialogueBox.Draw(spriteBatch, GraphicsDevice, QuadEffect);
-                
+                                
                 #region Draw the debug bounding boxes
                 if (BoundingBoxes == true)
                 {
@@ -3471,10 +3464,7 @@ namespace TowerDefensePrototype
 
                         //if (WaveCountDown != null && WaveCountDown.CurrentSeconds > -1)
                         //    WaveCountDown.Update(gameTime);
-
-                        if (StoryDialogueBox != null && StoryDialogueBox.CurrentDialogue != null)
-                            StoryDialogueBox.Update(gameTime);
-
+                        
                         if (CurrentMouseState.LeftButton == ButtonState.Released &&
                             PreviousMouseState.LeftButton == ButtonState.Pressed)
                         {
@@ -5614,7 +5604,7 @@ namespace TowerDefensePrototype
                             {
                                 HeavyProjectile heavyProjectile = new DropMissile(heavyRangedInvader, CannonBallProjectileSprite,
                                     BallParticle, new Vector2(heavyRangedInvader.Center.X, heavyRangedInvader.BoundingBox.Max.Y - 80),
-                                    0, 0, 0.52f, 80, 100, new Vector2(690, 930));
+                                    0, 0, 0.52f, 80, 100, 180f, 600f, new Vector2(690, 930));
                                 heavyProjectile.Update(gameTime);
                                 HeavyProjectileList.Add(heavyProjectile);
 
@@ -9744,15 +9734,15 @@ namespace TowerDefensePrototype
             Type t = assembly.GetType("TowerDefensePrototype.Level" + number);
             CurrentLevel = (Level)Activator.CreateInstance(t);
 
-            //Load the story dialogue used for this level here
-            try
-            {
-                StoryDialogue = Content.Load<StoryDialogue>("StoryDialogue/StoryDialogue" + number);
-            }
-            catch (ContentLoadException)
-            {                
-                //throw;
-            }
+            ////Load the story dialogue used for this level here
+            //try
+            //{
+            //    StoryDialogue = Content.Load<StoryDialogue>("StoryDialogue/StoryDialogue" + number);
+            //}
+            //catch (ContentLoadException)
+            //{                
+            //    //throw;
+            //}
 
             PowerUnitsBar = new PartitionedBar(2, 20, new Vector2(850, 10), new Vector2(540, 958)); 
             PowerUnitsBar.Texture = WhiteBlock;
