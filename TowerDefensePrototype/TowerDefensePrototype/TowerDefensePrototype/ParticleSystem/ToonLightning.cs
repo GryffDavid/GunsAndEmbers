@@ -21,7 +21,7 @@ namespace TowerDefensePrototype
             public float Angle, Width;
         }
 
-        Color Color = Color.White * 0.9f;
+        new Color Color = Color.White * 0.9f;
 
         public Vector2 LengthRange;
 
@@ -29,7 +29,7 @@ namespace TowerDefensePrototype
 
         float fadeTime = 0;
 
-        VertexPositionColor[] vertices;// = new VertexPositionColor[200];
+        new VertexPositionColor[] vertices;// = new VertexPositionColor[200];
         VertexPositionColor[] vertices2;// = new VertexPositionColor[200];
 
         public List<Node> NodeList = new List<Node>();

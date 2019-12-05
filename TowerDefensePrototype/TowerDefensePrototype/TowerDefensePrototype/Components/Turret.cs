@@ -55,9 +55,9 @@ namespace TowerDefensePrototype
 
         public bool InOut, PrevInOut;
         public Texture2D TurretBase, TurretBarrel;
-        public Vector2 Direction, Position, MousePosition, BarrelPivot, BasePivot, 
+        public Vector2 Direction, MousePosition, BarrelPivot, BasePivot, 
                        FrameSize, BarrelEnd, BarrelCenter, FireDirection;
-        public Rectangle BaseRectangle, BarrelRectangle, SelectBox, SourceRectangle;
+        public Rectangle BaseRectangle, BarrelRectangle, SelectBox;
         MouseState CurrentMouseState, PreviousMouseState;
         public float Rotation, MaxHealth, CurrentHealth, FireRotation, CurrentHeat, MaxHeat,
                      CurrentHeatTime, MaxHeatTime, CoolValue, ShotHeat, BlastRadius, AngleOffset,
@@ -69,7 +69,7 @@ namespace TowerDefensePrototype
         //public static int ResourceCost;        
         static Random Random = new Random();
         public TurretType TurretType;
-        public Color Color;
+        //public Color Color;
         public TurretAnimation CurrentAnimation;
         public List<Emitter> EmitterList = new List<Emitter>();
         public UIBar TimingBar, HealthBar;

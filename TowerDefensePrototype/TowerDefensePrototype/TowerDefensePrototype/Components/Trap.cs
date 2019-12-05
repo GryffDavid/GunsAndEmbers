@@ -29,10 +29,10 @@ namespace TowerDefensePrototype
     {
         //public Texture2D CurrentTexture;
         public Texture2D AmbientShadowTexture;
-        public Rectangle DestinationRectangle, SourceRectangle;
+        //public Rectangle SourceRectangle;
         public TrapType TrapType;
         //public List<Emitter> TrapEmitterList = new List<Emitter>();
-        public Vector2 Position, ShadowPosition, Center;
+        public Vector2 ShadowPosition, Center;
         public Vector2 Scale = new Vector2(1, 1);
         public bool Solid, CanTrigger;
         public bool OnGround = false; //Whether the trap is drawn on the ground layer on if it's sorted by depth as usual
@@ -84,21 +84,21 @@ namespace TowerDefensePrototype
         public VertexPositionColorTexture[] shadowVertices = new VertexPositionColorTexture[4];
         public int[] shadowIndices = new int[6];
 
-        public VertexPositionColorTexture[] trapVertices = new VertexPositionColorTexture[4];
-        public int[] trapIndices = new int[6];
+        //public VertexPositionColorTexture[] vertices = new VertexPositionColorTexture[4];
+        //public int[] indices = new int[6];
 
         public VertexPositionColorTexture[] normalVertices = new VertexPositionColorTexture[4];
         public int[] normalIndices = new int[6];
         #endregion
 
-        public Color Color = Color.White;
+        //public Color Color = Color.White;
 
         public Trap(Vector2 position)
         {
             Position = position;
         }
 
-        public virtual void Initialize()
+        public override void Initialize()
         {
             Active = true;
 
@@ -113,6 +113,14 @@ namespace TowerDefensePrototype
 
             TimingBar = new UIBar(new Vector2(Center.X, Position.Y + CurrentAnimation.FrameSize.Y + 4), new Vector2(32, 4), Color.DodgerBlue, false, true);
             HealthBar = new UIBar(new Vector2(Center.X, Position.Y + CurrentAnimation.FrameSize.Y + 8), new Vector2(32, 4), Color.White, false, true);
+
+            #region Sprite Vertices
+            base.Initialize();
+            vertices[0].TextureCoordinate = CurrentAnimation.dTopLeftTexCooord;
+            vertices[1].TextureCoordinate = CurrentAnimation.dTopRightTexCoord;
+            vertices[2].TextureCoordinate = CurrentAnimation.dBottomRightTexCoord;
+            vertices[3].TextureCoordinate = CurrentAnimation.dBottomLeftTexCoord;
+            #endregion
 
             if (OnGround == false)
             {
@@ -197,14 +205,7 @@ namespace TowerDefensePrototype
                 DrawDepth = 0f;
             }
 
-
-            //if (TrapEmitterList.Count > 0)
-            //{
-            //    foreach (Emitter emitter in TrapEmitterList)
-            //    {
-            //        emitter.Update(gameTime);
-            //    }
-            //}
+            Texture = CurrentAnimation.Texture;
         }
 
 
@@ -213,9 +214,7 @@ namespace TowerDefensePrototype
             //Draw the colour map using a basic effect
             if (Active == true)
             {
-                effect.TextureEnabled = true;
-                effect.VertexColorEnabled = true;
-                effect.Texture = CurrentAnimation.Texture;
+                base.Draw(graphics, effect, shadowEffect);
 
                 #region Draw trap shadows
                 //foreach (Light light in lightList)
@@ -379,50 +378,7 @@ namespace TowerDefensePrototype
                 //    }
                 //    #endregion
                 //}
-                #endregion
-
-                #region Draw trap sprite
-                trapVertices[0] = new VertexPositionColorTexture()
-                {
-                    Position = new Vector3(DestinationRectangle.Left, DestinationRectangle.Top, 0),
-                    TextureCoordinate = CurrentAnimation.dTopLeftTexCooord,
-                    Color = Color
-                };
-
-                trapVertices[1] = new VertexPositionColorTexture()
-                {
-                    Position = new Vector3(DestinationRectangle.Left + DestinationRectangle.Width, DestinationRectangle.Top, 0),
-                    TextureCoordinate = CurrentAnimation.dTopRightTexCoord,
-                    Color = Color
-                };
-
-                trapVertices[2] = new VertexPositionColorTexture()
-                {
-                    Position = new Vector3(DestinationRectangle.Left + DestinationRectangle.Width, DestinationRectangle.Top + DestinationRectangle.Height, 0),
-                    TextureCoordinate = CurrentAnimation.dBottomRightTexCoord,
-                    Color = Color
-                };
-
-                trapVertices[3] = new VertexPositionColorTexture()
-                {
-                    Position = new Vector3(DestinationRectangle.Left, DestinationRectangle.Top + DestinationRectangle.Height, 0),
-                    TextureCoordinate = CurrentAnimation.dBottomLeftTexCoord,
-                    Color = Color
-                };
-
-                trapIndices[0] = 0;
-                trapIndices[1] = 1;
-                trapIndices[2] = 2;
-                trapIndices[3] = 2;
-                trapIndices[4] = 3;
-                trapIndices[5] = 0;
-
-                foreach (EffectPass pass in effect.CurrentTechnique.Passes)
-                {
-                    pass.Apply();
-                    graphics.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, trapVertices, 0, 4, trapIndices, 0, 2, VertexPositionColorTexture.VertexDeclaration);                    
-                }
-                #endregion
+                #endregion  
             }
         }
 
@@ -437,7 +393,7 @@ namespace TowerDefensePrototype
                 foreach (EffectPass pass in effect.CurrentTechnique.Passes)
                 {
                     pass.Apply();
-                    graphics.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, trapVertices, 0, 4, trapIndices, 0, 2, VertexPositionColorTexture.VertexDeclaration);
+                    graphics.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, vertices, 0, 4, indices, 0, 2, VertexPositionColorTexture.VertexDeclaration);
                 }
             }
         }

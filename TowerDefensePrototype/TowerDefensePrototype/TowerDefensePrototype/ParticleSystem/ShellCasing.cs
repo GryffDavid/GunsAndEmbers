@@ -9,10 +9,9 @@ namespace TowerDefensePrototype
 {
     class ShellCasing : VerletObject
     {
-        public VertexPositionColorTexture[] shellVertices = new VertexPositionColorTexture[4];
-        public int[] shellIndices = new int[6];
+        //public VertexPositionColorTexture[] shellVertices = new VertexPositionColorTexture[4];
+        //public int[] shellIndices = new int[6];
 
-        public Vector2 Scale;
         public Texture2D ShellTexture;
         static Random Random = new Random();
 
@@ -20,10 +19,10 @@ namespace TowerDefensePrototype
         float MaxDelayTime = 4000f;
 
         float CurrentTime;
-        public Color Color = Color.White;
+        //public Color Color = Color.White;
 
         int sourceHeight;
-        Rectangle SourceRectangle;
+        //Rectangle SourceRectangle;
                 
         public ShellCasing(Vector2 position, Vector2 velocity, Texture2D shellTexture, Vector2? yRange = null)
         {
@@ -175,28 +174,28 @@ namespace TowerDefensePrototype
 
                     if (Sticks[0].Rotation < MathHelper.ToRadians(90))
                     {
-                        shellVertices[0] = new VertexPositionColorTexture()
+                        vertices[0] = new VertexPositionColorTexture()
                         {
                             Position = new Vector3(stick.DestinationRectangle.Left, stick.DestinationRectangle.Top, 0),
                             TextureCoordinate = new Vector2(0, ((float)SourceRectangle.Y / (float)ShellTexture.Height)),
                             Color = Color.White
                         };
 
-                        shellVertices[1] = new VertexPositionColorTexture()
+                        vertices[1] = new VertexPositionColorTexture()
                         {
                             Position = new Vector3(stick.DestinationRectangle.Left + stick.DestinationRectangle.Width, stick.DestinationRectangle.Top, 0),
                             TextureCoordinate = new Vector2(1, ((float)SourceRectangle.Y / (float)ShellTexture.Height)),
                             Color = Color.White
                         };
 
-                        shellVertices[2] = new VertexPositionColorTexture()
+                        vertices[2] = new VertexPositionColorTexture()
                         {
                             Position = new Vector3(stick.DestinationRectangle.Left + stick.DestinationRectangle.Width, stick.DestinationRectangle.Top + stick.DestinationRectangle.Height, 0),
                             TextureCoordinate = new Vector2(1, ((float)SourceRectangle.Height / (float)ShellTexture.Height)),
                             Color = Color.White
                         };
 
-                        shellVertices[3] = new VertexPositionColorTexture()
+                        vertices[3] = new VertexPositionColorTexture()
                         {
                             Position = new Vector3(stick.DestinationRectangle.Left, stick.DestinationRectangle.Top + stick.DestinationRectangle.Height, 0),
                             TextureCoordinate = new Vector2(0, ((float)SourceRectangle.Height / (float)ShellTexture.Height)),
@@ -205,28 +204,28 @@ namespace TowerDefensePrototype
                     }
                     else
                     {
-                        shellVertices[0] = new VertexPositionColorTexture()
+                        vertices[0] = new VertexPositionColorTexture()
                         {
                             Position = new Vector3(stick.DestinationRectangle.Left, stick.DestinationRectangle.Top, 0),
                             TextureCoordinate = new Vector2(0, ((float)SourceRectangle.Y / (float)ShellTexture.Height)),
                             Color = Color.White
                         };
 
-                        shellVertices[1] = new VertexPositionColorTexture()
+                        vertices[1] = new VertexPositionColorTexture()
                         {
                             Position = new Vector3(stick.DestinationRectangle.Left + stick.DestinationRectangle.Width, stick.DestinationRectangle.Top, 0),
                             TextureCoordinate = new Vector2(1, ((float)SourceRectangle.Y / (float)ShellTexture.Height)),
                             Color = Color.White
                         };
 
-                        shellVertices[2] = new VertexPositionColorTexture()
+                        vertices[2] = new VertexPositionColorTexture()
                         {
                             Position = new Vector3(stick.DestinationRectangle.Left + stick.DestinationRectangle.Width, stick.DestinationRectangle.Top + stick.DestinationRectangle.Height, 0),
                             TextureCoordinate = new Vector2(1, 1),
                             Color = Color.White
                         };
 
-                        shellVertices[3] = new VertexPositionColorTexture()
+                        vertices[3] = new VertexPositionColorTexture()
                         {
                             Position = new Vector3(stick.DestinationRectangle.Left, stick.DestinationRectangle.Top + stick.DestinationRectangle.Height, 0),
                             TextureCoordinate = new Vector2(0, 1),
@@ -234,17 +233,17 @@ namespace TowerDefensePrototype
                         };
                     }
 
-                    shellIndices[0] = 0;
-                    shellIndices[1] = 1;
-                    shellIndices[2] = 2;
-                    shellIndices[3] = 2;
-                    shellIndices[4] = 3;
-                    shellIndices[5] = 0;
+                    indices[0] = 0;
+                    indices[1] = 1;
+                    indices[2] = 2;
+                    indices[3] = 2;
+                    indices[4] = 3;
+                    indices[5] = 0;
 
                     foreach (EffectPass pass in effect.CurrentTechnique.Passes)
                     {
                         pass.Apply();
-                        graphics.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, shellVertices, 0, 4, shellIndices, 0, 2, VertexPositionColorTexture.VertexDeclaration);
+                        graphics.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, vertices, 0, 4, indices, 0, 2, VertexPositionColorTexture.VertexDeclaration);
                     }
                 }
                 #endregion

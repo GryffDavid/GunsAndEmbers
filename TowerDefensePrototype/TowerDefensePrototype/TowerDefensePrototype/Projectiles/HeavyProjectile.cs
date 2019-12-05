@@ -64,13 +64,13 @@ namespace TowerDefensePrototype
 
         #endregion
 
-        public Texture2D Texture;
+        //public Texture2D Texture;
         
         //NO PREMATURE OPTIMISATION
         public List<Emitter> EmitterList = new List<Emitter>();
         //LEAVE IT ALONE FOR NOW
 
-        public Vector2 Velocity, Position, YRange, Origin, Center, BasePosition, TipPosition;
+        public Vector2 Velocity, YRange, Origin, Center, BasePosition, TipPosition;
         public Vector2 Scale = Vector2.One;
 
         public float Angle, Speed, CurrentRotation, Damage, BlastRadius, Gravity, ShadowLength;
@@ -89,7 +89,7 @@ namespace TowerDefensePrototype
 
         public Color CurrentColor;
         public HeavyProjectileType HeavyProjectileType;
-        public Rectangle DestinationRectangle, CollisionRectangle, Constraints;
+        public Rectangle CollisionRectangle, Constraints;
         static Random Random = new Random();
 
         public Node Node1 = new Node();

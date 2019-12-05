@@ -215,6 +215,7 @@ Content\Projectiles\BoomerangProjectile.xnb
 Content\Projectiles\GasGrenadeProjectile.xnb
 Content\Projectiles\FireGrenadeProjectile.xnb
 Content\Projectiles\StickyMineProjectile.xnb
+Content\Invaders\DropShip\DropShipTexture.xnb
 Content\Sounds\Menu\MenuClick.xnb
 Content\Sounds\FireTrapStart.xnb
 Content\Sounds\Menu\MenuAmbiance.xnb
@@ -243,3 +244,4 @@ Content\Fonts\SpriteFont1.xnb
 Content\ParticleEffect.xnb
 Content\ShadowBlur.xnb
 Content\Shaders\HealthBarEffect.xnb
+Content\Invaders\DropShip\DropShipDoor.xnb

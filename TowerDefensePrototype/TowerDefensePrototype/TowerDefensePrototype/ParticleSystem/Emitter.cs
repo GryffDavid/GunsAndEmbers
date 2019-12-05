@@ -25,10 +25,10 @@ namespace TowerDefensePrototype
     [Serializable]
     public class Emitter : Drawable
     {
-        public Vector2 Position, PreviousPosition, AngleRange;
+        public Vector2 PreviousPosition, AngleRange;
         public List<Particle> ParticleList;
         public List<Texture2D> TextureList;
-        public Texture2D Texture;
+        //public Texture2D Texture;
         public Vector2 ScaleRange, TimeRange, RotationIncrementRange, SpeedRange, StartingRotationRange, EmitterDirection, EmitterVelocity, YRange, Friction;
         public float Transparency, Gravity, ActiveSeconds, Interval, EmitterSpeed,
                      EmitterAngle, EmitterGravity, FadeDelay, StartingInterval;
@@ -511,7 +511,7 @@ namespace TowerDefensePrototype
 
         public override void Draw(GraphicsDevice graphics, Effect effect)
         {
-            effect.Parameters["Texture"].SetValue(Texture);
+            //effect.Parameters["Texture"].SetValue(Texture);
 
             foreach (Particle particle in ParticleList)
             {

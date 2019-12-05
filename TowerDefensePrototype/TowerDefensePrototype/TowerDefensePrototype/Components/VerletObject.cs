@@ -43,7 +43,7 @@ namespace TowerDefensePrototype
             BounceY = (float)Game1.RandomDouble(870, 870 + 80);
         }
 
-        public virtual void Initialize()
+        public override void Initialize()
         {
             //YRange = new Vector2(870, 870 + 80);
             BounceY = (float)Game1.RandomDouble(YRange.X, YRange.Y);

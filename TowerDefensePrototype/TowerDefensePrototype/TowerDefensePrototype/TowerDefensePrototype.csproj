@@ -123,8 +123,10 @@
     <Compile Include="Components\Shield.cs" />
     <Compile Include="Invaders\Airborne\DropShip.cs" />
     <Compile Include="Invaders\DropShipDoor.cs" />
+    <Compile Include="Invaders\DropShipSkids.cs" />
     <Compile Include="Invaders\HeavyRanged\HarpoonCannon.cs" />
     <Compile Include="Invaders\ShieldGenerator.cs" />
+    <Compile Include="ParticleSystem\PropEngine.cs" />
     <Compile Include="ParticleSystem\Corpse.cs" />
     <Compile Include="ParticleSystem\ExplosionEffect.cs" />
     <Compile Include="ParticleSystem\JetEngine.cs" />

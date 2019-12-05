@@ -9,9 +9,8 @@ namespace TowerDefensePrototype
 {
     public class Particle : Drawable
     {
-        public Texture2D Texture;
+        //public Texture2D Texture;
         public Vector2 CurrentPosition, Direction, Velocity, YRange, Origin, StartingPosition, Friction;
-        public Rectangle DestinationRectangle;
         public float Angle, Speed,
                      RotationIncrement, CurrentRotation,
                      Gravity,
@@ -28,16 +27,16 @@ namespace TowerDefensePrototype
         public SpriteEffects Orientation;
 
         private Color _Color;
-        public Color Color
+        new public Color Color
         {
             get { return _Color; }
             set
             {
                 _Color = value;
-                ParticleVertices[0].Color = value;
-                ParticleVertices[1].Color = value;
-                ParticleVertices[2].Color = value;
-                ParticleVertices[3].Color = value;
+                vertices[0].Color = value;
+                vertices[1].Color = value;
+                vertices[2].Color = value;
+                vertices[3].Color = value;
             }
         }
 
@@ -49,8 +48,8 @@ namespace TowerDefensePrototype
         //THIS IS SO THAT SPARKS CAN BOUNCE OFF OF SOLID TRAPS
         //List<Trap> TrapList;
 
-        VertexPositionColorTexture[] ParticleVertices = new VertexPositionColorTexture[4];
-        int[] ParticleIndices = new int[6];
+        //VertexPositionColorTexture[] vertices = new VertexPositionColorTexture[4];
+        //int[] indices = new int[6];
         public Vector2[] texCoords = new Vector2[4];
 
         public Particle(Texture2D texture, Vector2 position, float angle, float speed, float maxTime,
@@ -129,40 +128,40 @@ namespace TowerDefensePrototype
 
             RadRotation = MathHelper.ToRadians(CurrentRotation);
 
-            ParticleVertices[0] = new VertexPositionColorTexture()
+            vertices[0] = new VertexPositionColorTexture()
             {
                 Color = Color,
                 Position = new Vector3(CurrentPosition.X - (Texture.Width * CurrentScale) / 2, CurrentPosition.Y - (Texture.Height * CurrentScale) / 2, 0),
                 TextureCoordinate = texCoords[0]
             };
 
-            ParticleVertices[1] = new VertexPositionColorTexture()
+            vertices[1] = new VertexPositionColorTexture()
             {
                 Color = Color,
                 Position = new Vector3(CurrentPosition.X + (Texture.Width * CurrentScale) / 2, CurrentPosition.Y - (Texture.Height * CurrentScale) / 2, 0),
                 TextureCoordinate = texCoords[1]
             };
 
-            ParticleVertices[2] = new VertexPositionColorTexture()
+            vertices[2] = new VertexPositionColorTexture()
             {
                 Color = Color,
                 Position = new Vector3(CurrentPosition.X + (Texture.Width * CurrentScale) / 2, CurrentPosition.Y + (Texture.Height * CurrentScale) / 2, 0),
                 TextureCoordinate = texCoords[2]
             };
 
-            ParticleVertices[3] = new VertexPositionColorTexture()
+            vertices[3] = new VertexPositionColorTexture()
             {
                 Color = Color,
                 Position = new Vector3(CurrentPosition.X - (Texture.Width * CurrentScale) / 2, CurrentPosition.Y + (Texture.Height * CurrentScale) / 2, 0),
                 TextureCoordinate = texCoords[3]
             };
 
-            ParticleIndices[0] = 0;
-            ParticleIndices[1] = 1;
-            ParticleIndices[2] = 2;
-            ParticleIndices[3] = 2;
-            ParticleIndices[4] = 3;
-            ParticleIndices[5] = 0;
+            indices[0] = 0;
+            indices[1] = 1;
+            indices[2] = 2;
+            indices[3] = 2;
+            indices[4] = 3;
+            indices[5] = 0;
         }
 
         public void Update(GameTime gameTime)
@@ -232,10 +231,10 @@ namespace TowerDefensePrototype
                 {
                     CurrentPosition += Velocity * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
 
-                    ParticleVertices[0].Position = new Vector3(CurrentPosition.X - (Texture.Width * CurrentScale) / 2, CurrentPosition.Y - (Texture.Height * CurrentScale) / 2, 0);
-                    ParticleVertices[1].Position = new Vector3(CurrentPosition.X + (Texture.Width * CurrentScale) / 2, CurrentPosition.Y - (Texture.Height * CurrentScale) / 2, 0);
-                    ParticleVertices[2].Position = new Vector3(CurrentPosition.X + (Texture.Width * CurrentScale) / 2, CurrentPosition.Y + (Texture.Height * CurrentScale) / 2, 0);
-                    ParticleVertices[3].Position = new Vector3(CurrentPosition.X - (Texture.Width * CurrentScale) / 2, CurrentPosition.Y + (Texture.Height * CurrentScale) / 2, 0);
+                    vertices[0].Position = new Vector3(CurrentPosition.X - (Texture.Width * CurrentScale) / 2, CurrentPosition.Y - (Texture.Height * CurrentScale) / 2, 0);
+                    vertices[1].Position = new Vector3(CurrentPosition.X + (Texture.Width * CurrentScale) / 2, CurrentPosition.Y - (Texture.Height * CurrentScale) / 2, 0);
+                    vertices[2].Position = new Vector3(CurrentPosition.X + (Texture.Width * CurrentScale) / 2, CurrentPosition.Y + (Texture.Height * CurrentScale) / 2, 0);
+                    vertices[3].Position = new Vector3(CurrentPosition.X - (Texture.Width * CurrentScale) / 2, CurrentPosition.Y + (Texture.Height * CurrentScale) / 2, 0);
                 }
 
                 Velocity.Y += Gravity * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
@@ -382,14 +381,17 @@ namespace TowerDefensePrototype
             effect.Parameters["World"].SetValue(Matrix.CreateTranslation(new Vector3(-CurrentPosition.X, -CurrentPosition.Y, 0)) *
                                                 Matrix.CreateRotationZ(RadRotation) *
                                                 Matrix.CreateTranslation(new Vector3(CurrentPosition.X, CurrentPosition.Y, 0)));
-
+            
             effect.Parameters["Color"].SetValue(new Vector4(Color.R / 255f, Color.G / 255f, Color.B / 255f, Color.A / 255f));
 
-            foreach (EffectPass pass in effect.CurrentTechnique.Passes)
-            {
-                pass.Apply();
-                graphics.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, ParticleVertices, 0, 4, ParticleIndices, 0, 2, VertexPositionColorTexture.VertexDeclaration);
-            }
+            base.Draw(graphics, effect);
+            //effect.Parameters["Color"].SetValue(new Vector4(Color.R / 255f, Color.G / 255f, Color.B / 255f, Color.A / 255f));
+
+            //foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+            //{
+            //    pass.Apply();
+            //    graphics.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, vertices, 0, 4, indices, 0, 2, VertexPositionColorTexture.VertexDeclaration);
+            //}
 
         }
 

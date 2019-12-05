@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace TowerDefensePrototype
 {
-    class JetEngine : Drawable
+    class PropEngine : Drawable
     {
         public Texture2D JetSprite;
         public object Tether;
@@ -22,7 +22,7 @@ namespace TowerDefensePrototype
 
         Matrix Transform;
 
-        public JetEngine(Texture2D sprite)
+        public PropEngine(Texture2D sprite)
         {
             JetSprite = sprite;
             DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, JetSprite.Width, JetSprite.Height);

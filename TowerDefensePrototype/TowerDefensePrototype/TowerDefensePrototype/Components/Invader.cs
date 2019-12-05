@@ -125,7 +125,6 @@ namespace TowerDefensePrototype
         VectorSprite EmotionSprite;
 
         private InvaderEmotion _CurrentEmotion;
-
         public InvaderEmotion CurrentEmotion
         {
             get 
@@ -161,13 +160,15 @@ namespace TowerDefensePrototype
         public static ObservableCollection<Trap> TrapList;
         public static List<Invader> InvaderList;
         public static Tower Tower;
+        public static List<Emitter> EmitterList;
+        public static List<Drawable> DrawableList;
 
         #region Vertex declarations
         public VertexPositionColorTexture[] shadowVertices = new VertexPositionColorTexture[4];
         public int[] shadowIndices = new int[6];
 
-        public VertexPositionColorTexture[] invaderVertices = new VertexPositionColorTexture[4];
-        public int[] invaderIndices = new int[6];
+        //public VertexPositionColorTexture[] vertices = new VertexPositionColorTexture[4];
+        //public int[] invaderIndices = new int[6];
 
         public VertexPositionColorTexture[] normalVertices = new VertexPositionColorTexture[4];
         public int[] normalIndices = new int[6];
@@ -178,7 +179,7 @@ namespace TowerDefensePrototype
         public FreezeStruct CurrentFreeze;
         public float Speed, SlowSpeed;
         public Vector2 Direction = new Vector2(-1f, 0);
-        public Vector2 Position, Velocity;
+        public Vector2 Velocity;
 
         //public SpriteEffects Orientation = SpriteEffects.None;
 
@@ -221,16 +222,16 @@ namespace TowerDefensePrototype
 
         #region Color
         private Color _Color;
-        public Color Color
+        new public Color Color
         {
             get { return _Color; }
             set
             {
                 _Color = value;
 
-                for (int i = 0; i < invaderVertices.Length; i++)
+                for (int i = 0; i < vertices.Length; i++)
                 {
-                    invaderVertices[i].Color = value;
+                    vertices[i].Color = value;
                 }
             }
         }
@@ -327,7 +328,6 @@ namespace TowerDefensePrototype
         public SoundEffectInstance MoveLoop;
 
         public Texture2D Shadow, IceBlock;
-        public Rectangle DestinationRectangle;
         public Vector2 YRange, Center, ShadowPosition;
         public Vector2 ResourceMinMax;
 
@@ -380,7 +380,7 @@ namespace TowerDefensePrototype
 
         }
 
-        public virtual void Initialize()
+        public override void Initialize()
         {
             base.Active = true;            
 
@@ -422,40 +422,12 @@ namespace TowerDefensePrototype
 
             #region Set up Vertices
             #region Sprite Vertices
-            invaderVertices[0] = new VertexPositionColorTexture()
-            {
-                Position = new Vector3(DestinationRectangle.Left, DestinationRectangle.Top, 0),
-                TextureCoordinate = CurrentAnimation.dTopLeftTexCooord,
-                Color = Color
-            };
 
-            invaderVertices[1] = new VertexPositionColorTexture()
-            {
-                Position = new Vector3(DestinationRectangle.Left + DestinationRectangle.Width, DestinationRectangle.Top, 0),
-                TextureCoordinate = CurrentAnimation.dTopRightTexCoord,
-                Color = Color
-            };
-
-            invaderVertices[2] = new VertexPositionColorTexture()
-            {
-                Position = new Vector3(DestinationRectangle.Left + DestinationRectangle.Width, DestinationRectangle.Top + DestinationRectangle.Height, 0),
-                TextureCoordinate = CurrentAnimation.dBottomRightTexCoord,
-                Color = Color
-            };
-
-            invaderVertices[3] = new VertexPositionColorTexture()
-            {
-                Position = new Vector3(DestinationRectangle.Left, DestinationRectangle.Top + DestinationRectangle.Height, 0),
-                TextureCoordinate = CurrentAnimation.dBottomLeftTexCoord,
-                Color = Color
-            };
-
-            invaderIndices[0] = 0;
-            invaderIndices[1] = 1;
-            invaderIndices[2] = 2;
-            invaderIndices[3] = 2;
-            invaderIndices[4] = 3;
-            invaderIndices[5] = 0;
+            base.Initialize();
+            vertices[0].TextureCoordinate = CurrentAnimation.dTopLeftTexCooord;
+            vertices[1].TextureCoordinate = CurrentAnimation.dTopRightTexCoord;
+            vertices[2].TextureCoordinate = CurrentAnimation.dBottomRightTexCoord;
+            vertices[3].TextureCoordinate = CurrentAnimation.dBottomLeftTexCoord;
             #endregion
 
             #region Normal Vertices
@@ -587,15 +559,15 @@ namespace TowerDefensePrototype
                 {
                     Position += Velocity * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
 
-                    invaderVertices[0].Position = new Vector3(DestinationRectangle.Left, DestinationRectangle.Top, 0);
-                    invaderVertices[1].Position = new Vector3(DestinationRectangle.Left + DestinationRectangle.Width, DestinationRectangle.Top, 0);
-                    invaderVertices[2].Position = new Vector3(DestinationRectangle.Left + DestinationRectangle.Width, DestinationRectangle.Top + DestinationRectangle.Height, 0);
-                    invaderVertices[3].Position = new Vector3(DestinationRectangle.Left, DestinationRectangle.Top + DestinationRectangle.Height, 0);
+                    vertices[0].Position = new Vector3(DestinationRectangle.Left, DestinationRectangle.Top, 0);
+                    vertices[1].Position = new Vector3(DestinationRectangle.Left + DestinationRectangle.Width, DestinationRectangle.Top, 0);
+                    vertices[2].Position = new Vector3(DestinationRectangle.Left + DestinationRectangle.Width, DestinationRectangle.Top + DestinationRectangle.Height, 0);
+                    vertices[3].Position = new Vector3(DestinationRectangle.Left, DestinationRectangle.Top + DestinationRectangle.Height, 0);
 
-                    normalVertices[0].Position = invaderVertices[0].Position;
-                    normalVertices[1].Position = invaderVertices[1].Position;
-                    normalVertices[2].Position = invaderVertices[2].Position;
-                    normalVertices[3].Position = invaderVertices[3].Position;
+                    normalVertices[0].Position = vertices[0].Position;
+                    normalVertices[1].Position = vertices[1].Position;
+                    normalVertices[2].Position = vertices[2].Position;
+                    normalVertices[3].Position = vertices[3].Position;
                 }
                 #endregion
 
@@ -695,10 +667,10 @@ namespace TowerDefensePrototype
                     {
                         case SpriteEffects.None:
                             {
-                                invaderVertices[0].TextureCoordinate = CurrentAnimation.dTopLeftTexCooord;
-                                invaderVertices[1].TextureCoordinate = CurrentAnimation.dTopRightTexCoord;
-                                invaderVertices[2].TextureCoordinate = CurrentAnimation.dBottomRightTexCoord;
-                                invaderVertices[3].TextureCoordinate = CurrentAnimation.dBottomLeftTexCoord;
+                                vertices[0].TextureCoordinate = CurrentAnimation.dTopLeftTexCooord;
+                                vertices[1].TextureCoordinate = CurrentAnimation.dTopRightTexCoord;
+                                vertices[2].TextureCoordinate = CurrentAnimation.dBottomRightTexCoord;
+                                vertices[3].TextureCoordinate = CurrentAnimation.dBottomLeftTexCoord;
 
                                 normalVertices[0].TextureCoordinate = CurrentAnimation.nTopLeftTexCooord;
                                 normalVertices[1].TextureCoordinate = CurrentAnimation.nTopRightTexCoord;
@@ -709,10 +681,10 @@ namespace TowerDefensePrototype
 
                         case SpriteEffects.FlipHorizontally:
                             {
-                                invaderVertices[0].TextureCoordinate = CurrentAnimation.dTopRightTexCoord;
-                                invaderVertices[1].TextureCoordinate = CurrentAnimation.dTopLeftTexCooord;
-                                invaderVertices[2].TextureCoordinate = CurrentAnimation.dBottomLeftTexCoord;
-                                invaderVertices[3].TextureCoordinate = CurrentAnimation.dBottomRightTexCoord;
+                                vertices[0].TextureCoordinate = CurrentAnimation.dTopRightTexCoord;
+                                vertices[1].TextureCoordinate = CurrentAnimation.dTopLeftTexCooord;
+                                vertices[2].TextureCoordinate = CurrentAnimation.dBottomLeftTexCoord;
+                                vertices[3].TextureCoordinate = CurrentAnimation.dBottomRightTexCoord;
                                                                 
                                 normalVertices[0].TextureCoordinate = CurrentAnimation.nTopRightTexCoord;
                                 normalVertices[1].TextureCoordinate = CurrentAnimation.nTopLeftTexCooord;
@@ -784,6 +756,8 @@ namespace TowerDefensePrototype
                 }
 
                 ShadowPosition = new Vector2(Position.X, Position.Y + CurrentAnimation.FrameSize.Y - 2);
+
+                Texture = CurrentAnimation.Texture;
             }
         }
 
@@ -795,13 +769,13 @@ namespace TowerDefensePrototype
                 if (EmotionSprite != null)
                     EmotionSprite.Draw(graphics, effect);
 
-                effect.TextureEnabled = true;
-                effect.VertexColorEnabled = true;
-                effect.Texture = CurrentAnimation.Texture;
+                //effect.TextureEnabled = true;
+                //effect.VertexColorEnabled = true;
+                //effect.Texture = CurrentAnimation.Texture;
 
                 if (InAir == false)
                 {
-                    //#region Draw invader shadows
+                    #region Draw invader shadows
                     //foreach (Light light in lightList)
                     //{
                     //    double dist = Math.Sqrt(Math.Pow(0.45f * (DestinationRectangle.Center.X - light.Position.X), 2) + Math.Pow(DestinationRectangle.Bottom - light.Position.Y, 2));
@@ -884,21 +858,24 @@ namespace TowerDefensePrototype
                     //        }
                     //    }
                     //}
-                    //#endregion
+                    #endregion
                 }
 
                 #region Draw invader sprite
-                foreach (EffectPass pass in effect.CurrentTechnique.Passes)
-                {
-                    pass.Apply();
-                    graphics.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, invaderVertices, 0, 4, invaderIndices, 0, 2, VertexPositionColorTexture.VertexDeclaration);
-                }
+                //foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+                //{
+                //    pass.Apply();
+                //    graphics.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, vertices, 0, 4, indices, 0, 2, VertexPositionColorTexture.VertexDeclaration);
+                //}
+                base.Draw(graphics, effect, shadowEffect);
+
                 #endregion
 
                 #region Draw ice block around the invader
 
                 #endregion
             }
+
         }
 
         public override void DrawSpriteDepth(GraphicsDevice graphics, Effect effect)
@@ -911,7 +888,7 @@ namespace TowerDefensePrototype
                 foreach (EffectPass pass in effect.CurrentTechnique.Passes)
                 {
                     pass.Apply();
-                    graphics.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, invaderVertices, 0, 4, invaderIndices, 0, 2, VertexPositionColorTexture.VertexDeclaration);
+                    graphics.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, vertices, 0, 4, indices, 0, 2, VertexPositionColorTexture.VertexDeclaration);
                 }
             }
         }

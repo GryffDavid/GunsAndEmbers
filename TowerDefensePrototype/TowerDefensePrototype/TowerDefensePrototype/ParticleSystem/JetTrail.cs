@@ -10,7 +10,7 @@ namespace TowerDefensePrototype
 {
     public class JetTrail : Drawable
     {
-        public Vector2 Position, EndPosition;
+        public Vector2 EndPosition;
         public float MaxWidth, MinLength, Rotation;
 
         VertexPositionColor[] trailVertices = new VertexPositionColor[3];

@@ -11,17 +11,15 @@ namespace TowerDefensePrototype
     public class Shield : Drawable
     {
         public Texture2D ShieldTexture, ShieldSphereMap;
-        public Rectangle DestinationRectangle;
 
-        VertexPositionColorTexture[] vertices = new VertexPositionColorTexture[4];
-        int[] indices = new int[6];
+        //VertexPositionColorTexture[] vertices = new VertexPositionColorTexture[4];
+        //int[] indices = new int[6];
 
         public bool ShieldOn;
         public float MaxShield, CurrentShield, RechargeRate;
         public double CurrentShieldTime, ShieldTime;
         public float CurrentRadius, MaxRadius;
 
-        public Vector2 Position;
         //public BoundingSphere BoundingSphere;
         public object Tether;
         

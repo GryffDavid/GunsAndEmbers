@@ -27,6 +27,9 @@ namespace TowerDefensePrototype
         //The healing beam can be interrupted by a damage threshold - i.e. taking more than 10 damage in a single burst interrupts the heal
         //and it then needs to charge back up again
         //A red sine-wave shaped beam would be pretty cool. Just saying.
+
+        //When shot down, this and other airborne invaders should have an explosion followed by smoke and then
+        //falling to the ground, but maintaining the same X velocity
         public HealDrone(Vector2 position, Vector2? yRange = null)
             : base(position, yRange)
         {
@@ -93,6 +96,7 @@ namespace TowerDefensePrototype
                     IsHealing = true;
                     TargettingInvader = true;
                     CurrentHeight = TargetInvader.BoundingBox.Min.Y - 150;
+                    DrawDepth = TargetInvader.DrawDepth;
                 }
                 #endregion
                 else
@@ -214,6 +218,41 @@ namespace TowerDefensePrototype
 
             BoltList.RemoveAll(Bolt => Bolt.Alpha <= 0);
             base.Update(gameTime, cursorPosition);
+        }
+
+        public override void Draw(GraphicsDevice graphics, BasicEffect effect, Effect shadowEffect)
+        {
+            Matrix world = effect.World;
+            //float rot = 0;
+
+            //if (Velocity.X > 0)
+            //{
+            //    rot = (float)Math.Atan2(-Velocity.Y / 4, Velocity.X);
+            //    rot = MathHelper.Clamp(rot, 0, 45);
+            //    float thing = MathHelper.ToDegrees(rot);
+            //}
+
+            //if (Velocity.X < 0)
+            //{
+            //    rot = (float)Math.Atan2(-Velocity.Y / 4, -Velocity.X);
+            //    rot = MathHelper.Clamp(rot, -45, 0);
+            //    //float thing = MathHelper.ToDegrees(rot);
+            //}
+
+            //if (Velocity.X == 0)
+            //{
+            //    rot = 0;
+            //}
+
+
+
+            //effect.World =
+            //    Matrix.CreateTranslation(new Vector3(-Position.X - 37, -Position.Y - 27, 0)) *
+            //    Matrix.CreateRotationZ(rot) *
+            //    Matrix.CreateTranslation(new Vector3(Position.X + 37, Position.Y + 27, 0));
+
+            base.Draw(graphics, effect);
+            effect.World = world;
         }
     }
 }

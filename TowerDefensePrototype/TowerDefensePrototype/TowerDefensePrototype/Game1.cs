@@ -326,14 +326,14 @@ namespace TowerDefensePrototype
         #endregion
 
         #region Enemy sprites
-        Texture2D IceBlock, Shadow;
+        Texture2D IceBlock, Shadow, DropShipDoorTexture;
 
         //NEW_INVADER B **invader animation list declarations here**
         public List<InvaderAnimation> SoldierAnimations, BatteringRamAnimations, AirshipAnimations, ArcherAnimations,
                                TankAnimations, SpiderAnimations, SlimeAnimations, SuicideBomberAnimations,
                                FireElementalAnimations, TestInvaderAnimations, StationaryCannonAnimations,
                                HealDroneAnimations, JumpManAnimations, RifleManAnimations, ShieldGeneratorAnimations,
-                               HarpoonCannonAnimations;
+                               HarpoonCannonAnimations, DropShipAnimations;
 
         //HEAVYRANGED_INVADER A **barrel animation declarations here**
         public InvaderAnimation StationaryCannonBarrelAnimation, HarpoonCannonBarrelAnimation;
@@ -596,7 +596,7 @@ namespace TowerDefensePrototype
 
         SpecialAbility CurrentSpecialAbility;
 
-        float CurrentWeatherTime;
+        //float CurrentWeatherTime;
         Nullable<Weather> CurrentWeather;
 
         PowerupDelivery PowerupDelivery;
@@ -1069,8 +1069,7 @@ namespace TowerDefensePrototype
 
                 InvaderList = new List<Invader>();
 
-                Invader.TrapList = TrapList;
-                Invader.InvaderList = InvaderList;
+     
 
                 HeavyProjectileList = new List<HeavyProjectile>();
                 LightningList = new List<LightningBolt>();
@@ -1082,6 +1081,11 @@ namespace TowerDefensePrototype
                 CoinList = new List<Particle>();
                 TerrainSpriteList = new List<StaticSprite>();
                 WeatherSpriteList = new List<StaticSprite>();
+
+                Invader.TrapList = TrapList;
+                Invader.InvaderList = InvaderList;
+                Invader.EmitterList = YSortedEmitterList;
+                Invader.DrawableList = DrawableList;
                 #endregion
 
 
@@ -1604,6 +1608,41 @@ namespace TowerDefensePrototype
             {
                 animation.GetFrameSize();
             }
+            #endregion
+
+            #region Drop Ship Animations
+            DropShipAnimations = new List<InvaderAnimation>()
+            {
+                new InvaderAnimation()
+                {
+                    CurrentInvaderState = AnimationState_Invader.Walk,
+                    Texture = Content.Load<Texture2D>("Invaders/DropShip/DropShipTexture"),
+                    Animated = false,
+                    CurrentFrame = 0,
+                    FrameDelay = 150,
+                    Looping = false,
+                    TotalFrames = 1
+                },
+
+                new InvaderAnimation()
+                {
+                    CurrentInvaderState = AnimationState_Invader.Stand,
+                    Texture = Content.Load<Texture2D>("Invaders/DropShip/DropShipTexture"),
+                    Animated = false,
+                    CurrentFrame = 0,
+                    FrameDelay = 150,
+                    Looping = false,
+                    TotalFrames = 1
+                }
+            };
+
+            DropShipDoorTexture = Content.Load<Texture2D>("Invaders/Dropship/DropShipDoor");
+
+            foreach (InvaderAnimation animation in DropShipAnimations)
+            {
+                animation.GetFrameSize();
+            }
+
             #endregion
 
             //NEW_INVADER D **if invaders aren't showing up, make sure you added this**
@@ -2257,6 +2296,11 @@ namespace TowerDefensePrototype
                     if (drawable.GetType() == typeof(ToonLightning))
                     {
                         drawable.Draw(GraphicsDevice, BasicEffect2);
+                    }
+
+                    if (drawable.GetType() == typeof(StickyMine))
+                    {
+                        drawable.Draw(GraphicsDevice, BasicEffect);
                     }
 
                     if (drawable.GetType().BaseType == typeof(Invader) ||
@@ -2990,28 +3034,28 @@ namespace TowerDefensePrototype
                         Vertices[0] = new VertexPositionColorTexture()
                         {
                             Color = drawableColor,
-                            Position = inv.invaderVertices[0].Position,
+                            Position = inv.vertices[0].Position,
                             TextureCoordinate = new Vector2(0, 0)
                         };
 
                         Vertices[1] = new VertexPositionColorTexture()
                         {
                             Color = drawableColor,
-                            Position = inv.invaderVertices[1].Position,
+                            Position = inv.vertices[1].Position,
                             TextureCoordinate = new Vector2(1, 0)
                         };
 
                         Vertices[2] = new VertexPositionColorTexture()
                         {
                             Color = drawableColor,
-                            Position = inv.invaderVertices[2].Position,
+                            Position = inv.vertices[2].Position,
                             TextureCoordinate = new Vector2(1, 1)
                         };
 
                         Vertices[3] = new VertexPositionColorTexture()
                         {
                             Color = drawableColor,
-                            Position = inv.invaderVertices[3].Position,
+                            Position = inv.vertices[3].Position,
                             TextureCoordinate = new Vector2(0, 1)
                         };
 
@@ -6249,8 +6293,11 @@ namespace TowerDefensePrototype
                         #region Sticky Mine
                         case HeavyProjectileType.StickyMine:
                             {
-                                StickyMine newMine = new StickyMine();
+                                StickyMine newMine = new StickyMine(GrenadeProjectileSprite, heavyProjectile.Position, StickyMineList.Count);
                                 StickyMineList.Add(newMine);
+                                newMine.Initialize();
+                                newMine.DrawDepth = heavyProjectile.Position.Y / 1080f;
+                                AddDrawable(newMine);
                             }
                             break; 
                         #endregion
@@ -9413,6 +9460,16 @@ namespace TowerDefensePrototype
                                                 ShieldList.Add(shield);
                                                 AddDrawable(shield);
                                                 //ShieldList.Add((ShieldGenerator)nextInvader.Shi
+                                            }
+                                            break; 
+                                        #endregion
+
+                                        #region DropShip
+                                        case InvaderType.DropShip:
+                                            {
+                                                (nextInvader as DropShip).DoorTexture = DropShipDoorTexture;
+                                                (nextInvader as DropShip).VapourTexture = ToonSmoke3;
+
                                             }
                                             break; 
                                         #endregion
