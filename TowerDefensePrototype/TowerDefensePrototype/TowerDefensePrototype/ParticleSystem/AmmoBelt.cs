@@ -11,10 +11,13 @@ namespace TowerDefensePrototype
     public class AmmoBelt : VerletObject
     {
         public Texture2D ShellTexture;
+        public float CurrentTime, MaxTime, Transparency;
 
         public AmmoBelt(Vector2 anchorPosition, Texture2D shellTexture)
         {
+            Active = true;
             ShellTexture = shellTexture;
+            Transparency = 1.0f;
 
             Nodes.Add(new Node()
             {
@@ -79,13 +82,21 @@ namespace TowerDefensePrototype
                     Length = ShellTexture.Width / 2
                 });
             }
-
-
-
         }
 
         public override void Update(GameTime gameTime)
         {
+            if (MaxTime > 0)
+            {
+                CurrentTime += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+
+                Transparency = 1.0f - (((100 / MaxTime) * CurrentTime) / 100);
+
+                if (CurrentTime > MaxTime)
+                {
+                    Active = false;
+                }
+            }
             base.Update(gameTime);
         }
 
@@ -99,9 +110,15 @@ namespace TowerDefensePrototype
                     float rot = (float)Math.Atan2(dir.Y, dir.X);
 
                     if (stick.Length == ShellTexture.Width / 2)
-                        spriteBatch.Draw(ShellTexture, new Rectangle((int)stick.Point1.CurrentPosition.X, (int)stick.Point1.CurrentPosition.Y, ShellTexture.Width / 2, ShellTexture.Height / 2), null, Color.White, rot + (float)Math.PI, new Vector2(ShellTexture.Width / 2, ShellTexture.Height / 2), SpriteEffects.None, 1);
+                        spriteBatch.Draw(ShellTexture, 
+                            new Rectangle(
+                                (int)stick.Point1.CurrentPosition.X, 
+                                (int)stick.Point1.CurrentPosition.Y, 
+                                ShellTexture.Width / 2, ShellTexture.Height / 2),
+                            null, Color.White * Transparency, rot + (float)Math.PI, new Vector2(ShellTexture.Width / 2, ShellTexture.Height / 2), SpriteEffects.None, 1);
                 }
             }
+
             base.Draw(spriteBatch);
         }
     }

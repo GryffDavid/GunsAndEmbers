@@ -45,10 +45,10 @@ namespace TowerDefensePrototype
         
         public Texture2D Texture;
         public List<Emitter> EmitterList = new List<Emitter>();
-        public Vector2 Velocity, Position, YRange, Origin, Center;
+        public Vector2 Velocity, Position, YRange, Origin, Center, BasePosition, TipPosition;
         public Vector2 Scale = Vector2.One;
 
-        public float Angle, Speed, CurrentRotation, MaxY, Damage, BlastRadius, Gravity;
+        public float Angle, Speed, CurrentRotation, MaxY, Damage, BlastRadius, Gravity, ShadowLength;
         float Bounce = 0.7f;        
         float Friction = 1.0f;
 
@@ -187,12 +187,15 @@ namespace TowerDefensePrototype
                     Position += Velocity * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
                     Velocity.Y += Gravity * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
 
+                    BasePosition = new Vector2(Position.X - (float)Math.Cos(CurrentRotation) * (Texture.Width / 2),
+                                               Position.Y - (float)Math.Sin(CurrentRotation) * (Texture.Width / 2));
+
+                    TipPosition = new Vector2(Position.X + (float)Math.Cos(CurrentRotation) * (Texture.Width / 2),
+                                              Position.Y + (float)Math.Sin(CurrentRotation) * (Texture.Width / 2));
+
                     foreach (Emitter emitter in EmitterList)
                     {
-                        Vector2 projectileRear = new Vector2(Position.X - (float)Math.Cos(CurrentRotation) * (Texture.Width / 2),
-                                                             Position.Y - (float)Math.Sin(CurrentRotation) * (Texture.Width / 2));
-
-                        emitter.Position = projectileRear;
+                        emitter.Position = BasePosition;
                     }
 
                     DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y,
@@ -231,7 +234,13 @@ namespace TowerDefensePrototype
                     spriteBatch.Draw(Texture, DestinationRectangle, null, Color.White, CurrentRotation,
                                      new Vector2(Origin.X, Origin.Y), SpriteEffects.None, DrawDepth);
                 }
+
+                #region Draw Shadow
+                ShadowLength = Math.Abs(TipPosition.X - BasePosition.X);
+                spriteBatch.Draw(Texture, new Rectangle((int)Position.X, (int)MaxY, (int)ShadowLength, (int)(Texture.Height*0.8f)), Color.Black * 0.25f);
+                #endregion
             }
+
 
             foreach (Emitter emitter in EmitterList)
             {
@@ -239,6 +248,25 @@ namespace TowerDefensePrototype
             }
         }
 
+        public override void Draw(GraphicsDevice graphics, BasicEffect effect, Effect shadowEffect)
+        {
+            if (Active == true)
+            {
+                effect.TextureEnabled = true;
+                effect.VertexColorEnabled = true;
+                effect.Texture = Texture;
+
+                #region Draw projectile shadow
+
+                #endregion
+
+                #region Draw projectile sprite
+
+                #endregion
+            }
+
+            base.Draw(graphics, effect, shadowEffect);
+        }
 
         public void UpdateNodes()
         {

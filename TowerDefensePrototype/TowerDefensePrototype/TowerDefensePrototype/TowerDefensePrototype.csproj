@@ -120,6 +120,7 @@
     <Compile Include="Components\JetEngine.cs" />
     <Compile Include="Components\ResourceCounter.cs" />
     <Compile Include="Components\Shield.cs" />
+    <Compile Include="ParticleSystem\Corpse.cs" />
     <Compile Include="Turrets\Light\SniperTurret.cs" />
     <Compile Include="UIComponents\CheckBox.cs" />
     <Compile Include="Components\BulletTrail.cs" />
@@ -166,7 +167,6 @@
     <Compile Include="UIComponents\UISlopedBar.cs" />
     <Compile Include="UIComponents\UIOutline.cs" />
     <Compile Include="UIComponents\UITrapQuickInfo.cs" />
-    <Compile Include="UIComponents\UITurretInfo.cs" />
     <Compile Include="UIComponents\UIWeaponInfoTip.cs" />
     <Compile Include="UIComponents\WaveCountDown.cs" />
     <Compile Include="UIComponents\NumberChange.cs" />

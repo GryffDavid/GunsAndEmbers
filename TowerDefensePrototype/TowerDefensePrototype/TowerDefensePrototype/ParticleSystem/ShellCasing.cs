@@ -9,6 +9,7 @@ namespace TowerDefensePrototype
 {
     class ShellCasing : VerletObject
     {
+        public Vector2 Scale;
         public Texture2D ShellTexture;
         static Random Random = new Random();
 
@@ -17,7 +18,7 @@ namespace TowerDefensePrototype
 
         public Color Color = Color.White;
                 
-        public ShellCasing(Vector2 position, Vector2 velocity, Texture2D shellTexture)
+        public ShellCasing(Vector2 position, Vector2 velocity, Texture2D shellTexture, Vector2? scale = null)
         {
             Active = true;
 
@@ -48,6 +49,12 @@ namespace TowerDefensePrototype
                 Point1 = Nodes[0], 
                 Point2 = Nodes[1]
             });
+
+            if (scale == null)            
+                Scale = new Vector2(1, 1);
+            else            
+                Scale = scale.Value;
+            
         }
 
         public override void Update(GameTime gameTime)
@@ -70,7 +77,7 @@ namespace TowerDefensePrototype
 
                 stick.DestinationRectangle = new Rectangle(
                         (int)stick.Point1.CurrentPosition.X, (int)stick.Point1.CurrentPosition.Y,
-                        ShellTexture.Width / 2, ShellTexture.Height / 2);
+                        (int)(ShellTexture.Width * Scale.X), (int)(ShellTexture.Height * Scale.Y));
             }
 
             Color = Color.Lerp(Color.White, Color.Transparent, Transparency);            
