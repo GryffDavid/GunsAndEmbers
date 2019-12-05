@@ -16,7 +16,6 @@ namespace TowerDefensePrototype
             HeavyProjectileType = HeavyProjectileType.Torpedo;
 
             Rotate = true;
-            Fade = false;
 
             EmitterList[0] = new Emitter(particleTexture, Position,
                 new Vector2((float)Math.Atan2(Velocity.Y, Velocity.X),(float)Math.Atan2(Velocity.Y, Velocity.X)),

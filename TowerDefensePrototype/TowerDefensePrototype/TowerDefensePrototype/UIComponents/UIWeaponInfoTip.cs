@@ -293,13 +293,6 @@ namespace TowerDefensePrototype
             }
         }
 
-        //public void Update(GameTime gameTime)
-        //{
-        //    Position = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
-        //    UpdateQuads();
-        //    SetUpBars();
-        //}
-
         public void Draw(SpriteBatch spriteBatch, GraphicsDevice graphics, BasicEffect basicEffect)
         {
             if (Visible == true)

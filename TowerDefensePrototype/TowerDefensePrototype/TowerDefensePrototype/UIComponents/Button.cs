@@ -28,15 +28,14 @@ namespace TowerDefensePrototype
 
         public Color Color, TextColor;
         public Texture2D ButtonStrip, IconTexture;
-        SpriteFont Font;
+        public SpriteFont Font;
         SpriteBatch SpriteBatch;
 
         MouseState CurrentMouseState, PreviousMouseState;
         public ButtonSpriteState CurrentButtonState;
 
         int CurrentFrame;
-        public bool Active;
-        public bool ButtonActive;
+        public bool Active, ButtonActive, CanBeRightClicked;
         public Color CurrentIconColor;
 
         //This was used to playe the hover sound when necessary - should be replace with something neater
@@ -109,8 +108,8 @@ namespace TowerDefensePrototype
         }
 
         public Button(Texture2D buttonStrip, Vector2 position, Texture2D icon = null, Vector2? scale = null, 
-                      Color? color = null, string text = "", SpriteFont font = null, string alignment = "Left", 
-                      Color? textColor = null)
+                      Color? color = null, string text = "", SpriteFont font = null, string alignment = "Left",
+                      Color? textColor = null, bool? canBeRightClicked = false)
         {
             ButtonActive = true;
 
@@ -137,6 +136,8 @@ namespace TowerDefensePrototype
                 TextColor = Color.White;
             else
                 TextColor = textColor.Value;
+
+            CanBeRightClicked = canBeRightClicked.Value;
 
             DrawDepth = 0.99f;
 

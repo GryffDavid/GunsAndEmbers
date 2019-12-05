@@ -14,12 +14,11 @@ namespace TowerDefensePrototype
 
         public CannonBall(Texture2D texture, Texture2D particleTexture, Vector2 position, 
                           float speed, float angle, float gravity, float damage, float blastRadius, Vector2? yrange = null) 
-            : base(texture, position, speed, angle, gravity, damage, yrange, blastRadius)
+            : base(texture, position, speed, angle, gravity, damage, yrange, blastRadius, false)
         {
             HeavyProjectileType = HeavyProjectileType.CannonBall;
 
             Rotate = true;
-            Fade = false;
             
             startingPosition = position;
 

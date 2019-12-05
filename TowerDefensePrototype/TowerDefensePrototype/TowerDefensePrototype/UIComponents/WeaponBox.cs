@@ -22,8 +22,9 @@ namespace TowerDefensePrototype
                 ButtonClickHappened(this, new ButtonClickEventArgs() { ClickedButton = button });
         }
 
-        MouseState CurrentMouseState, PreviousMouseState; 
+        MouseState CurrentMouseState, PreviousMouseState;
         Vector2 CursorPosition;
+        public Vector2 Velocity, NextPosition;
 
         public ButtonSpriteState CurrentBoxState;
         public Rectangle DestinationRectangle;
@@ -60,13 +61,23 @@ namespace TowerDefensePrototype
 
         public WeaponBox(Vector2 position, Turret turret, Trap trap) : base(position, turret, trap)
         {
-            
+            NextPosition = position;
         }
 
         public void Update(GameTime gameTime, Vector2 cursorPosition)
         {
             CurrentMouseState = Mouse.GetState();
-            CursorPosition = cursorPosition;            
+            CursorPosition = cursorPosition;
+
+            //Position = Vector2.Lerp(Position, NextPosition, 0.2f * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
+            //Position += Velocity;
+
+
+            if (new Vector2((int)Position.X, (int)Position.Y) == new Vector2((int)NextPosition.X, (int)NextPosition.Y))
+            {
+                Velocity = new Vector2(0, 0);
+                NextPosition = Position;
+            }
 
             if (CurrentMouseState.LeftButton != PreviousMouseState.LeftButton)
                 LeftButtonState = Mouse.GetState().LeftButton;
@@ -92,6 +103,7 @@ namespace TowerDefensePrototype
             PreviousMouseState = CurrentMouseState;
 
             UpdateQuads();
+            SetUpBars();
         }
     }
 }

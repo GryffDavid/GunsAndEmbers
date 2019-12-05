@@ -72,6 +72,8 @@ namespace TowerDefensePrototype
 
         public void Draw(SpriteBatch spriteBatch)
         {
+            //DRAW SHADOW HERE
+
             spriteBatch.Draw(Texture, DestinationRectangle, null, Color, 0, Vector2.Zero, SpriteEffects.None, 1);
         }
 

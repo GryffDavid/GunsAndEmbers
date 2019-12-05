@@ -17,7 +17,6 @@ namespace TowerDefensePrototype
             HeavyProjectileType = HeavyProjectileType.FelProjectile;
 
             Rotate = true;
-            Fade = false;
 
             EmitterList = new List<Emitter>();
 

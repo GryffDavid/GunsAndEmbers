@@ -18,7 +18,6 @@ namespace TowerDefensePrototype
 
             Active = true;
             Rotate = true;
-            Fade = false;
 
             Color FireColor = Color.Orange;
             FireColor.A = 100;

@@ -14,7 +14,6 @@ namespace TowerDefensePrototype
             base(texture, position, speed, angle, gravity, damage, yrange)
         {
             Rotate = true;
-            Fade = false;
             HeavyProjectileType = HeavyProjectileType.Acid;
 
             EmitterList = new List<Emitter>();

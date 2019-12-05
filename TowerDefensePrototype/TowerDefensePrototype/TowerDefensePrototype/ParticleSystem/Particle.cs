@@ -21,6 +21,9 @@ namespace TowerDefensePrototype
         Color Color = Color.White;
         float RadRotation;
 
+        List<Invader> InvaderList;
+        List<Trap> TrapList;
+
         VertexPositionColorTexture[] ParticleVertices = new VertexPositionColorTexture[4];
         int[] ParticleIndices = new int[6];
         public Vector2[] texCoords = new Vector2[4];
@@ -98,6 +101,28 @@ namespace TowerDefensePrototype
 
         public void Update(GameTime gameTime)
         {
+            //Bouncing particles off of invaders/traps is meant specifically for Sparks only. 
+            //Those that aren't sorted by depth but are drawn additively.
+
+            //Bounce off invader bounding boxes
+            //Where from emitter to invader < max possible distance (MaxLife * MaxSpeed)
+            if (InvaderList != null)
+            foreach (Invader invader in InvaderList)
+            {
+
+            }
+
+            //Bounce off trap bounding boxes
+            //Where from emitter to trap < max possible distance (MaxLife * MaxSpeed)
+            if (TrapList != null)
+            foreach (Trap trap in TrapList)
+            {
+
+            }
+
+            //Third colour fade
+            //If ThirdColour != null change colour life to 1/3 instead of 1/2
+
             if (FadeDelay == 0)
             {
                 CurrentHP -= (float)(1 * gameTime.ElapsedGameTime.TotalSeconds * 60.0f);

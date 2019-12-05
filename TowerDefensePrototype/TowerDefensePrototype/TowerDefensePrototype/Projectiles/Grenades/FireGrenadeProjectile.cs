@@ -12,13 +12,12 @@ namespace TowerDefensePrototype
     class FireGrenadeProjectile : TimerHeavyProjectile
     {
         public FireGrenadeProjectile(float maxTime, Texture2D texture, Texture2D particleTexture, Vector2 position, 
-                                 float speed, float angle, float gravity, float damage, Vector2? yrange = null) 
-            : base(maxTime, texture, position, speed, angle, gravity, damage, yrange)
+                                 float speed, float angle, float gravity, float damage, float blastRadius, Vector2? yrange = null, bool? verlet = false) 
+            : base(maxTime, texture, position, speed, angle, gravity, damage, blastRadius, yrange, verlet)
         {
             HeavyProjectileType = HeavyProjectileType.FireGrenade;
 
             Rotate = true;
-            Fade = false;
 
             //CanBounce = true;
             //HardBounce = true;

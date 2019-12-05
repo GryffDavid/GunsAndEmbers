@@ -10,6 +10,7 @@ namespace TowerDefensePrototype
 {
     abstract class LightRangedInvader : Invader
     {
+        //public InvaderFireType InvaderFireType;
         public int RangedAttackPower, MaxBurst, CurrentBurst;
         public Vector2 AngleRange, DistanceRange;
         public float MaxBurstDelay, CurrentBurstDelay, MinDistance;

@@ -25,6 +25,8 @@ namespace TowerDefensePrototype
         VertexPositionColor[] DividerVertices1 = new VertexPositionColor[4];
         VertexPositionColor[] DividerVertices2 = new VertexPositionColor[4];
 
+        public PartitionedBar Detontations;
+
         UIBar HealthBar, TimingBar;
 
         int[] BoxIndices = new int[6];
@@ -54,10 +56,11 @@ namespace TowerDefensePrototype
             BoxSize = new Vector2(250, 150);
             NameBoxSize = new Vector2(250, 40);
 
+            Detontations = new PartitionedBar(2, 5, new Vector2(BoxSize.X - 10, 12), new Vector2(Position.X + 5, Position.Y - 45));
 
             HealthBar = new UIBar(new Vector2(Position.X, Position.Y - BoxSize.Y + 5), new Vector2(BoxSize.X, 12), Color.White);
             TimingBar = new UIBar(new Vector2(Position.X, Position.Y - BoxSize.Y + 5 + 12 + 5), new Vector2(BoxSize.X, 12), Color.Red);
-
+            
 
             #region Setting up the name box
             NameBoxVertices[0] =
@@ -224,6 +227,7 @@ namespace TowerDefensePrototype
                 Visible = true;
             }
 
+            Detontations.Update(Trap.CurrentDetonateLimit, Trap.DetonateLimit);
             HealthBar.Update(Trap.MaxHP, Trap.MaxHP);
             TimingBar.Update(Trap.DetonateDelay, Trap.CurrentDetonateDelay);
         }
@@ -236,6 +240,8 @@ namespace TowerDefensePrototype
                     Trap.CurrentHP > 0 &&
                     Trap.CurrentDetonateLimit > 0)
                 {
+                    Detontations.Draw(spriteBatch);
+
                     spriteBatch.DrawString(BoldFont, Trap.TrapType.ToString(),
                         new Vector2(Position.X + 4, Position.Y - BoxSize.Y - NameBoxSize.Y + 2), Color.White,
                         0, new Vector2(0, 0), 0.5f, SpriteEffects.None, 0);
@@ -243,8 +249,10 @@ namespace TowerDefensePrototype
                     spriteBatch.DrawString(Font, "Middle-click to remove this trap", new Vector2(Position.X + 5, Position.Y - 23),
                             RemoveTrapTextColor, 0, new Vector2(0, 0), 0.7f, SpriteEffects.None, 0);
 
-                    spriteBatch.DrawString(Font, Trap.CurrentDetonateLimit + "/" + Trap.DetonateLimit + " detonations remaining",
-                        new Vector2(Position.X + 5, Position.Y - 50), Color.White, 0, new Vector2(0, 0), 0.7f, SpriteEffects.None, 0);
+                    //DRAW BARS HERE INSTEAD OF TEXT - Detontations.Draw(spriteBatch);
+
+                    //spriteBatch.DrawString(Font, Trap.CurrentDetonateLimit + "/" + Trap.DetonateLimit + " detonations remaining",
+                    //    new Vector2(Position.X + 5, Position.Y - 50), Color.White, 0, new Vector2(0, 0), 0.7f, SpriteEffects.None, 0);
 
                     foreach (EffectPass pass in basicEffect.CurrentTechnique.Passes)
                     {

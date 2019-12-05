@@ -14,8 +14,8 @@ namespace TowerDefensePrototype
         public bool Detonated = false;
 
         public TimerHeavyProjectile(float maxTime, Texture2D texture, Vector2 position, 
-                                    float speed, float angle, float gravity, float damage, Vector2? yrange = null)
-            : base(texture, position, speed, angle, gravity, damage, yrange)
+                                    float speed, float angle, float gravity, float damage, float blastRadius, Vector2? yrange = null, bool? verlet = false)
+            : base(texture, position, speed, angle, gravity, damage, yrange, blastRadius, verlet)
         {
             MaxTime = maxTime;
         }
