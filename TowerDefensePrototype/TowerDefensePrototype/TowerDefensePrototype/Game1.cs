@@ -333,7 +333,7 @@ namespace TowerDefensePrototype
                                TankAnimations, SpiderAnimations, SlimeAnimations, SuicideBomberAnimations,
                                FireElementalAnimations, TestInvaderAnimations, StationaryCannonAnimations,
                                HealDroneAnimations, JumpManAnimations, RifleManAnimations, ShieldGeneratorAnimations,
-                               HarpoonCannonAnimations, DropShipAnimations, GunShipAnimations;
+                               HarpoonCannonAnimations, DropShipAnimations, GunShipAnimations, CrateAnimations;
 
         //HEAVYRANGED_INVADER A **barrel animation declarations here**
         public InvaderAnimation StationaryCannonBarrelAnimation, HarpoonCannonBarrelAnimation;
@@ -515,10 +515,10 @@ namespace TowerDefensePrototype
                      ProfileButtonList, ProfileDeleteList, PlaceWeaponList,
                      SpecialAbilitiesButtonList;
 
-        ObservableCollection<Trap> TrapList;
+        public ObservableCollection<Trap> TrapList;
         //List<Trap> TrapList;
-        List<Turret> TurretList;
-        List<Invader> InvaderList;
+        public List<Turret> TurretList;
+        public List<Invader> InvaderList;
 
         List<HeavyProjectile> HeavyProjectileList;
 
@@ -568,7 +568,7 @@ namespace TowerDefensePrototype
         LightProjectile CurrentProjectile;
         ProfileManagementState ProfileManagementState;
         Thread LoadingThread;
-        Profile CurrentProfile;
+        public Profile CurrentProfile;
         StorageDevice Device;
         Stream OpenFile;
         Settings CurrentSettings, DefaultSettings;
@@ -642,6 +642,8 @@ namespace TowerDefensePrototype
 
         List<Rope> RopeList = new List<Rope>();
         List<JetEngine> JetEngineList = new List<JetEngine>();
+        
+        //StoryDialogueItems Level1Dialogue;
 
         #endregion
 
@@ -1097,14 +1099,14 @@ namespace TowerDefensePrototype
                     TowerButtonList[i].Initialize(OnButtonClick);
                 }
 
-                CooldownButtonList.Clear();
 
                 //Not clearing these lists causes a Disposed Object error to show up for some reason
                 //Don't forget to clear the lists between levels or even when moving from menu back to game
-                UIWeaponInfoList.Clear();
                 ClearTurretSelect();
                 ClearSelected();
                 VerletShells.Clear();
+                UIWeaponInfoList.Clear();
+                CooldownButtonList.Clear();
 
                 for (int i = 0; i < 8; i++)
                 {
@@ -1147,15 +1149,6 @@ namespace TowerDefensePrototype
 
                     CooldownButtonList.Add(button);
                 }
-
-                //if (Tutorial == true)
-                //{
-                //    SelectButtonList[0].IconTexture = MachineGunTurretIcon;
-                //    SelectButtonList[0].LoadContent();
-
-                //    SelectButtonList[1].IconTexture = FireTrapIcon;
-                //    SelectButtonList[1].LoadContent();
-                //}
 
                 SpecialAbilitiesButtonList.Add(new Button(DiamondButtonSprite, new Vector2(1450, 1080 - 120)));
                 SpecialAbilitiesButtonList.Add(new Button(DiamondButtonSprite, new Vector2(1450 + 64 + 4, 1080 - 120)));
@@ -1642,6 +1635,28 @@ namespace TowerDefensePrototype
                 animation.GetFrameSize();
             }
 
+            #endregion
+
+            #region Crate Animations
+            CrateAnimations = new List<InvaderAnimation>()
+            {
+                new InvaderAnimation()
+                {
+                    CurrentInvaderState = AnimationState_Invader.Stand,
+                    Texture = WhiteBlock,
+                    AnimationType = AnimationType.Regular,
+                    Animated = false,
+                    CurrentFrame = 0,
+                    FrameDelay = 100,
+                    Looping = false,
+                    TotalFrames = 1
+                }
+            };
+
+            foreach (InvaderAnimation animation in CrateAnimations)
+            {
+                animation.GetFrameSize();
+            }
             #endregion
 
 
@@ -2304,18 +2319,13 @@ namespace TowerDefensePrototype
                     {
                         drawable.Draw(GraphicsDevice, ProjectileBasicEffect, ShadowBlurEffect, spriteBatch);
                     }
-
+                    
                     if (drawable.GetType() == typeof(JetEngine))
                     {
                         drawable.Draw(GraphicsDevice, BasicEffect);
                         (drawable as JetEngine).JetEmitter.Draw(GraphicsDevice, ParticleEffect);
                     }
-
-                    //if (drawable.GetType() == typeof(JetEngine))
-                    //{
-                    //    drawable.Draw(GraphicsDevice, JetBasicEffect, ShadowBlurEffect, spriteBatch);
-                    //}
-                    
+                                        
                     if (drawable.GetType() == typeof(Shield))
                     {
                         drawable.Draw(GraphicsDevice, BasicEffect);
@@ -2457,7 +2467,7 @@ namespace TowerDefensePrototype
 
                 spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
 
-                //spriteBatch.DrawString(DefaultFont, CurrentLevel.LevelDialogue.CurrentText, new Vector2(100, 100), Color.Black);
+                spriteBatch.DrawString(DefaultFont, CurrentLevel.LevelDialogue.CurrentText, new Vector2(100, 100), Color.Black);
 
                 #region Draw diagnostics
                 if (Diagnostics == true)
@@ -3287,6 +3297,16 @@ namespace TowerDefensePrototype
                 stop++;
             }
 
+            if (CurrentKeyboardState.IsKeyDown(Keys.LeftControl) &&
+                CurrentKeyboardState.IsKeyDown(Keys.G) &&
+                PreviousKeyboardState.IsKeyUp(Keys.G))
+            {
+                Crate crate = new Crate(new Vector2(1000, 100), new Vector2(1000, 100));
+                AddInvader(crate, gameTime);
+                crate.Position = new Vector2(1000, 100);
+            }
+
+
             #region Show diagnostics
             if (CurrentMouseState.LeftButton == ButtonState.Released &&
                CurrentKeyboardState.IsKeyUp(Keys.F1) &&
@@ -3338,7 +3358,7 @@ namespace TowerDefensePrototype
                     {
                         GameButtonsUpdate(gameTime);
 
-                        //CurrentLevel.LevelDialogue.Update(gameTime);
+                        CurrentLevel.LevelDialogue.Update(gameTime);
 
 
                         #region TEST - Create powerup delivery
@@ -3395,7 +3415,7 @@ namespace TowerDefensePrototype
                                 DrawableList.Remove(rope);
                             }
                         }
-
+                        
                         foreach (JetEngine engine in JetEngineList)
                         {
                             engine.Update(gameTime);
@@ -4642,22 +4662,7 @@ namespace TowerDefensePrototype
                                 #region Start Wave Button
                                 if (button == StartWaveButton && button != null)
                                 {
-                                    StartWave = true;
-                                    CurrentWaveTime = 0;
-                                    CurrentInvaderIndex = 0;
-                                    CurrentInvaderTime = 0;
-
-                                    if (CurrentWaveIndex > 0)
-                                        CurrentWaveIndex++;
-
-                                    //WaveCountDown = new WaveCountDown(10)
-                                    //{
-                                    //    Font = RobotoBold40_2,
-                                    //    Color = Color.White,
-                                    //    Origin = new Vector2(1920 / 2, 100)
-                                    //};
-
-                                    StartWaveButton = null;
+                                    StartWaves();
                                     return;
                                 }
                                 #endregion
@@ -4813,7 +4818,7 @@ namespace TowerDefensePrototype
 
                                     if (CurrentProfile != null)
                                     {
-                                        if (CurrentProfile.Buttons.All(Weapon => Weapon == null))
+                                        if (CurrentProfile.Buttons.All(Weapon => Weapon == null) && CurrentProfile.LevelNumber > 1)
                                         {
                                             NoWeaponsDialog = new DialogBox(DialogBox, ShortButtonLeftSprite, ShortButtonRightSprite, RobotoRegular20_0, new Vector2(1920 / 2, 1080 / 2), "OK", "You have no weapons to use!", "");
                                             NoWeaponsDialog.Initialize(OnButtonClick);
@@ -7293,6 +7298,7 @@ namespace TowerDefensePrototype
             };
             #endregion
 
+    
 
             #region Check what the projectile actually hit - trap, invader, ground, nothing etc.
             Action<object> CheckCollision = (object projectileSource) =>
@@ -7465,6 +7471,7 @@ namespace TowerDefensePrototype
 
                     CollisionEnd = new Vector2(sourcePosition.X + (CurrentProjectile.Ray.Direction.X * (float)minDist),
                                                sourcePosition.Y + (CurrentProjectile.Ray.Direction.Y * (float)minDist));
+                    
 
                     #region TRAP was hit
                     if (HitTrap != null)
@@ -8186,6 +8193,8 @@ namespace TowerDefensePrototype
             turret.ChangeFireDirection();
             Direction = turret.FireDirection;
             Direction.Normalize();
+
+            turret.ShotsFired++;
 
             //NEW_TURRET D **turret behaviour here**
             switch (turret.TurretType)
@@ -9427,7 +9436,158 @@ namespace TowerDefensePrototype
             }
         }
         #endregion
-        
+
+        public void AddInvader(Invader nextInvader, GameTime gameTime)
+        {
+            float Multiplier = (float)RandomDouble(0.75f, 1.5f);
+
+            switch (nextInvader.InvaderType)
+            {
+                default:
+                    string invaderName = nextInvader.InvaderType.ToString();
+                    var invaderAnimationList = (List<InvaderAnimation>)this.GetType().GetField(invaderName + "Animations").GetValue(this);
+
+                    //Have to do it this way to make sure all the invaders aren't referencing the same animation
+                    nextInvader.AnimationList = new List<InvaderAnimation>(invaderAnimationList.Count);
+
+                    HeavyRangedInvader heavyRangedInvader = nextInvader as HeavyRangedInvader;
+                    LightRangedInvader lightRangedInvader = nextInvader as LightRangedInvader;
+
+                    switch (nextInvader.InvaderType)
+                    {
+                        #region HealDrone
+                        case InvaderType.HealDrone:
+                            {
+                                Emitter jetEmitter = new Emitter(BallParticle, nextInvader.Position, new Vector2(90f, 90f),
+                                    new Vector2(6.8f, 6.8f), new Vector2(150, 150), 1f, true,
+                                    new Vector2(0f, 360f), new Vector2(-2f, 2f), new Vector2(1f, 1f),
+                                    new Color(255, 128, 0, 63), new Color(0, 0, 255, 255), 0f, 0f, 16f,
+                                    1, false, new Vector2(0f, 720f), true, 0, false, false,
+                                    new Vector2(0f, 0f), new Vector2(0f, 0f), 0f, false, new Vector2(0.045f, 0.045f),
+                                    false, false, 0f, false, false, false, null);
+
+                                JetEngine newEngine = new JetEngine(new Vector2(100, 100), new Vector2(JetEngineSprite.Width, JetEngineSprite.Height), JetEngineSprite, Color.White)
+                                {
+                                    JetEmitter = jetEmitter,
+                                    Tether = nextInvader,
+                                    TetherOffset = new Vector2(42, 30),
+                                    Origin = new Vector2(JetEngineSprite.Width / 2, 0)
+                                };
+
+                                JetEngineList.Add(newEngine);
+                                AddDrawable(newEngine);
+
+                                //JetEngine newEngine = new JetEngine(JetEngineSprite)
+                                //{
+                                //    Tether = nextInvader
+                                //};
+
+                                //JetEngineList.Add(newEngine);
+                                //AddDrawable(newEngine);
+                            }
+                            break;
+                        #endregion
+
+                        #region ShieldGenerator
+                        case InvaderType.ShieldGenerator:
+                            {
+                                Shield shield = nextInvader.Shield;
+                                shield.ShieldTexture = ShieldSprite;
+                                shield.Tether = nextInvader;
+                                shield.MaxRadius = (nextInvader as ShieldGenerator).ShieldRadius;
+                                shield.Active = false;
+                                ShieldList.Add(shield);
+                                AddDrawable(shield);
+                                //ShieldList.Add((ShieldGenerator)nextInvader.Shi
+                            }
+                            break;
+                        #endregion
+
+                        #region DropShip
+                        case InvaderType.DropShip:
+                            {
+                                (nextInvader as DropShip).DoorTexture = DropShipDoorTexture;
+                                (nextInvader as DropShip).VapourTexture = ToonSmoke3;
+                                (nextInvader as DropShip).RopeTexture = RopeTexture1;
+
+                            }
+                            break;
+                        #endregion
+                    }
+
+                    #region Load the barrel sprites for the heavy ranged invaders
+                    if (heavyRangedInvader != null)
+                    {
+                        //HEAVYRANGED_INVADER B **if the invader has a barrel animation that needs to be loaded**
+                        switch (heavyRangedInvader.InvaderType)
+                        {
+                            #region StationaryCannon
+                            case InvaderType.StationaryCannon:
+                                {
+                                    heavyRangedInvader.BarrelAnimation = StationaryCannonBarrelAnimation;
+                                }
+                                break;
+                            #endregion
+
+                            #region HarpoonCannon
+                            case InvaderType.HarpoonCannon:
+                                {
+                                    heavyRangedInvader.BarrelAnimation = HarpoonCannonBarrelAnimation;
+                                }
+                                break;
+                            #endregion
+                        }
+                    }
+                    #endregion
+
+                    for (int i = 0; i < invaderAnimationList.Count; i++)
+                    {
+                        InvaderAnimation animation = new InvaderAnimation();
+                        animation = invaderAnimationList[i].ShallowCopy();
+                        animation.FrameDelay /= Multiplier;
+
+                        nextInvader.AnimationList.Add(animation);
+                    }
+                    break;
+            }
+
+            //This makes sure that the property change triggers
+            nextInvader.InvaderAnimationState = nextInvader.InvaderAnimationState;
+
+            nextInvader.IceBlock = IceBlock;
+            nextInvader.Shadow = Shadow;
+            nextInvader.FearEmotionIcon = FearEmotionIcon;
+            nextInvader.ThinkingAnimation = ThinkingAnimation.ShallowCopy();
+
+            //This gives the invaders a speed variation
+            //nextInvader.Direction.X *= Multiplier;
+            nextInvader.Speed = nextInvader.OriginalSpeed * Multiplier;
+
+            if (InvaderList.Find(Invader => Invader.MaxY == nextInvader.MaxY) != null)
+            {
+                nextInvader.MaxY += 2;
+            }
+
+            nextInvader.MaxY = Random.Next((int)nextInvader.YRange.X, (int)nextInvader.YRange.Y);
+
+            if (nextInvader.Airborne == false)
+                nextInvader.Position.Y = nextInvader.MaxY - nextInvader.CurrentAnimation.FrameSize.Y;
+
+            nextInvader.Velocity = Vector2.Zero;
+            nextInvader.Initialize();
+
+            nextInvader.Update(gameTime, CursorPosition);
+
+            nextInvader.InvaderOutline = new UIOutline(nextInvader.Position,
+                                            new Vector2(nextInvader.CurrentAnimation.GetFrameSize().X,
+                                                        nextInvader.CurrentAnimation.GetFrameSize().Y),
+                                                       null, null, nextInvader);
+            nextInvader.InvaderOutline.OutlineTexture = TurretSelectBox;
+
+            InvaderList.Add(nextInvader);
+            AddDrawable(nextInvader);
+        }
+
         public void HandleWaves(GameTime gameTime)
         {
             //------------------------------
@@ -9479,167 +9639,9 @@ namespace TowerDefensePrototype
                         if (CurrentWave.InvaderList[CurrentInvaderIndex] is Invader)
                         {
                             Invader nextInvader = (Invader)CurrentWave.InvaderList[CurrentInvaderIndex];
-                            float Multiplier = (float)RandomDouble(0.75f, 1.5f);
 
-                            switch (nextInvader.InvaderType)
-                            {
-                                default:
-                                    string invaderName = nextInvader.InvaderType.ToString();
-                                    var invaderAnimationList = (List<InvaderAnimation>)this.GetType().GetField(invaderName + "Animations").GetValue(this);
-
-                                    //Have to do it this way to make sure all the invaders aren't referencing the same animation
-                                    nextInvader.AnimationList = new List<InvaderAnimation>(invaderAnimationList.Count);
-
-                                    HeavyRangedInvader heavyRangedInvader = nextInvader as HeavyRangedInvader;
-                                    LightRangedInvader lightRangedInvader = nextInvader as LightRangedInvader;
-
-                                    switch (nextInvader.InvaderType)
-                                    {
-                                        #region HealDrone
-                                        case InvaderType.HealDrone:
-                                            {
-                                                Emitter jetEmitter = new Emitter(BallParticle, nextInvader.Position, new Vector2(90f, 90f), 
-                                                    new Vector2(6.8f, 6.8f), new Vector2(150, 150), 1f, true, 
-                                                    new Vector2(0f, 360f), new Vector2(-2f, 2f), new Vector2(1f, 1f), 
-                                                    new Color(255, 128, 0, 63), new Color(0, 0, 255, 255), 0f, 0f, 16f, 
-                                                    1, false, new Vector2(0f, 720f), true, 0, false, false, 
-                                                    new Vector2(0f, 0f), new Vector2(0f, 0f), 0f, false, new Vector2(0.045f, 0.045f), 
-                                                    false, false, 0f, false, false, false, null);
-
-                                                JetEngine newEngine = new JetEngine(new Vector2(100, 100), new Vector2(JetEngineSprite.Width, JetEngineSprite.Height), JetEngineSprite, Color.White) 
-                                                {
-                                                    JetEmitter = jetEmitter,
-                                                    Tether = nextInvader,
-                                                    TetherOffset = new Vector2(42, 30),
-                                                    Origin = new Vector2(JetEngineSprite.Width/2, 0)
-                                                };
-
-                                                JetEngineList.Add(newEngine);
-                                                AddDrawable(newEngine);
-
-                                                //JetEngine newEngine = new JetEngine(JetEngineSprite)
-                                                //{
-                                                //    Tether = nextInvader
-                                                //};
-
-                                                //JetEngineList.Add(newEngine);
-                                                //AddDrawable(newEngine);
-                                            }
-                                            break; 
-                                        #endregion
-
-                                        #region ShieldGenerator
-                                        case InvaderType.ShieldGenerator:
-                                            {
-                                                Shield shield = nextInvader.Shield;
-                                                shield.ShieldTexture = ShieldSprite;
-                                                shield.Tether = nextInvader;
-                                                shield.MaxRadius = (nextInvader as ShieldGenerator).ShieldRadius;
-                                                shield.Active = false;
-                                                ShieldList.Add(shield);
-                                                AddDrawable(shield);
-                                                //ShieldList.Add((ShieldGenerator)nextInvader.Shi
-                                            }
-                                            break; 
-                                        #endregion
-
-                                        #region DropShip
-                                        case InvaderType.DropShip:
-                                            {
-                                                (nextInvader as DropShip).DoorTexture = DropShipDoorTexture;
-                                                (nextInvader as DropShip).VapourTexture = ToonSmoke3;
-                                                (nextInvader as DropShip).RopeTexture = RopeTexture1;
-
-                                            }
-                                            break; 
-                                        #endregion
-                                    }
-
-                                    #region Load the barrel sprites for the heavy ranged invaders
-                                    if (heavyRangedInvader != null)
-                                    {
-                                        //HEAVYRANGED_INVADER B **if the invader has a barrel animation that needs to be loaded**
-                                        switch (heavyRangedInvader.InvaderType)
-                                        {
-                                            #region StationaryCannon
-                                            case InvaderType.StationaryCannon:
-                                                {
-                                                    heavyRangedInvader.BarrelAnimation = StationaryCannonBarrelAnimation;
-                                                }
-                                                break;
-                                            #endregion
-
-                                            #region HarpoonCannon
-                                            case InvaderType.HarpoonCannon:
-                                                {
-                                                    heavyRangedInvader.BarrelAnimation = HarpoonCannonBarrelAnimation;
-                                                }
-                                                break;
-                                            #endregion
-                                        }
-                                    }
-                                    #endregion                                 
-
-                                    for (int i = 0; i < invaderAnimationList.Count; i++)
-                                    {
-                                        InvaderAnimation animation = new InvaderAnimation();
-                                        animation = invaderAnimationList[i].ShallowCopy();
-                                        animation.FrameDelay /= Multiplier;
-
-                                        nextInvader.AnimationList.Add(animation);
-                                        
-                                        //nextInvader.AnimationList.Add(new InvaderAnimation()
-                                        //{
-                                        //    Texture = invaderAnimationList[i].Texture,
-                                        //    Animated = invaderAnimationList[i].Animated,
-                                        //    Looping = invaderAnimationList[i].Looping,
-                                        //    FrameDelay = invaderAnimationList[i].FrameDelay / Multiplier,
-                                        //    TotalFrames = invaderAnimationList[i].TotalFrames,
-                                        //    FrameSize = invaderAnimationList[i].FrameSize,
-                                        //    NormalizedFrameSize = invaderAnimationList[i].NormalizedFrameSize,
-                                        //    CurrentInvaderState = invaderAnimationList[i].CurrentInvaderState,
-                                        //    AnimationType = invaderAnimationList[i].AnimationType,
-                                        //    CurrentFrameDelay = 0
-                                        //});
-                                    }
-                                    break;
-                            }
-
-                            //This makes sure that the property change triggers
-                            nextInvader.InvaderAnimationState = nextInvader.InvaderAnimationState;
-
-                            nextInvader.IceBlock = IceBlock;
-                            nextInvader.Shadow = Shadow;
-                            nextInvader.FearEmotionIcon = FearEmotionIcon;
-                            nextInvader.ThinkingAnimation = ThinkingAnimation.ShallowCopy();
-
-                            //This gives the invaders a speed variation
-                            //nextInvader.Direction.X *= Multiplier;
-                            nextInvader.Speed = nextInvader.OriginalSpeed * Multiplier;
-
-                            if (InvaderList.Find(Invader => Invader.MaxY == nextInvader.MaxY) != null)
-                            {
-                                nextInvader.MaxY += 2;
-                            }
-
-                            nextInvader.MaxY = Random.Next((int)nextInvader.YRange.X, (int)nextInvader.YRange.Y);
-
-                            if (nextInvader.Airborne == false)
-                                nextInvader.Position.Y = nextInvader.MaxY - nextInvader.CurrentAnimation.FrameSize.Y;
-
-                            nextInvader.Velocity = Vector2.Zero;
-                            nextInvader.Initialize();
-
-                            nextInvader.Update(gameTime, CursorPosition);
-
-                            nextInvader.InvaderOutline = new UIOutline(nextInvader.Position,
-                                                            new Vector2(nextInvader.CurrentAnimation.GetFrameSize().X,
-                                                                        nextInvader.CurrentAnimation.GetFrameSize().Y),
-                                                                       null, null, nextInvader);
-                            nextInvader.InvaderOutline.OutlineTexture = TurretSelectBox;
-
-                            InvaderList.Add(nextInvader);
-                            AddDrawable(nextInvader);
+                            AddInvader(nextInvader, gameTime);
+                                                        
                             CurrentInvaderTime = 0;
                             CurrentWave.InvaderList[CurrentInvaderIndex] = null;
                             CurrentInvaderIndex++;
@@ -9728,6 +9730,25 @@ namespace TowerDefensePrototype
             //}
         }
 
+        public void StartWaves()
+        {
+            StartWave = true;
+            CurrentWaveTime = 0;
+            CurrentInvaderIndex = 0;
+            CurrentInvaderTime = 0;
+
+            if (CurrentWaveIndex > 0)
+                CurrentWaveIndex++;
+
+            //WaveCountDown = new WaveCountDown(10)
+            //{
+            //    Font = RobotoBold40_2,
+            //    Color = Color.White,
+            //    Origin = new Vector2(1920 / 2, 100)
+            //};
+
+            StartWaveButton = null;
+        }
          
         public void LoadLevel(int number)
         {
@@ -9736,7 +9757,7 @@ namespace TowerDefensePrototype
 
             Assembly assembly = Assembly.Load("TowerDefensePrototype");
             Type t = assembly.GetType("TowerDefensePrototype.Level" + number);
-            CurrentLevel = (Level)Activator.CreateInstance(t);
+            CurrentLevel = (Level)Activator.CreateInstance(t, this);
             
             ////Load the story dialogue used for this level here
             //try
@@ -9789,7 +9810,99 @@ namespace TowerDefensePrototype
 
             Resources = CurrentLevel.Resources;
         }
-         
+
+
+        public void DynamicAddWeapon(int slot, TurretType? turret, TrapType? trap)
+        {
+            Texture2D Icon = null;
+
+            if (turret != null)
+            {
+                CurrentProfile.Buttons[slot] = new Weapon(turret, null);
+
+                switch (turret)
+                {
+                    case null:
+
+                        break;
+
+                    default:
+                        {
+                            string WeaponName = turret.ToString();
+                            var icon = this.GetType().GetField(WeaponName + "TurretIcon").GetValue(this);
+                            Icon = (Texture2D)icon;
+                        }
+                        break;
+                }
+            }
+
+            if (trap != null)
+            {
+                CurrentProfile.Buttons[slot] = new Weapon(null, trap);
+
+                switch (trap)
+                {
+                    case null:
+
+                        break;
+
+                    default:
+                        {
+                            string WeaponName = trap.ToString();
+                            var icon = this.GetType().GetField(WeaponName + "TrapIcon").GetValue(this);
+                            Icon = (Texture2D)icon;
+                        }
+                        break;
+                }
+            }
+
+            //UIWeaponInfoList.Clear();
+            //CooldownButtonList.Clear();
+
+            int i = slot;
+
+            //for (int i = 0; i < 8; i++)
+            //{
+                CooldownButton button = new CooldownButton(new Vector2(565 + (i * 100), 1080 - 80), new Vector2(90, 65), 1, Icon);
+                button.ButtonClickHappened += OnButtonClick;
+
+                if (CurrentProfile.Buttons[i] != null)
+                {
+                    UIWeaponInfoTip uiWeaponInfo = new UIWeaponInfoTip(Vector2.Zero, null, null);
+
+                    if (CurrentProfile.Buttons[i].CurrentTurret != null)
+                    {
+                        uiWeaponInfo = new UIWeaponInfoTip(new Vector2(button.CurrentPosition.X, button.CurrentPosition.Y - 32),
+                                                        GetNewTurret((TurretType)CurrentProfile.Buttons[i].CurrentTurret, 0), null);
+                        button.ResourceCost = TurretCost(CurrentProfile.Buttons[i].CurrentTurret.Value);
+                    }
+
+                    if (CurrentProfile.Buttons[i].CurrentTrap != null)
+                    {
+                        uiWeaponInfo = new UIWeaponInfoTip(new Vector2(button.CurrentPosition.X, button.CurrentPosition.Y - 32),
+                                                          null, GetNewTrap((TrapType)CurrentProfile.Buttons[i].CurrentTrap, Vector2.Zero));
+                        button.ResourceCost = TrapCost(CurrentProfile.Buttons[i].CurrentTrap.Value);
+                    }
+
+
+                    uiWeaponInfo.CurrencyIcon = CurrencyIcon;
+                    uiWeaponInfo.PowerUnitIcon = PowerUnitIcon;
+                    uiWeaponInfo.RobotoBold40_2 = RobotoBold40_2;
+                    uiWeaponInfo.RobotoRegular20_0 = RobotoRegular20_0;
+                    uiWeaponInfo.RobotoRegular20_2 = RobotoRegular20_2;
+                    uiWeaponInfo.RobotoItalic20_0 = RobotoItalic20_0;
+
+                    //uiWeaponInfo.LoadContent(Content);
+                    UIWeaponInfoList[i] = uiWeaponInfo;
+                }
+                //else
+                //{
+                //    UIWeaponInfoList.Add(null);
+                //}
+
+                CooldownButtonList.Add(button);
+            //}
+        }
 
         private void CursorDraw(SpriteBatch spriteBatch)
         {
@@ -10329,7 +10442,6 @@ namespace TowerDefensePrototype
                                                 CurrentSettings.ResWidth, CurrentSettings.ResHeight);
             #endregion
         }
-
 
         #region PROFILE handling
         public void HandleProfile(IAsyncResult result)

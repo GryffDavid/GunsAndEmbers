@@ -9,6 +9,8 @@ namespace TowerDefensePrototype
 {
     public abstract class Drawable
     {
+        public static Random Random = new Random();
+
         public bool Active;
         public float DrawDepth;
         public float PreviousMaxY;

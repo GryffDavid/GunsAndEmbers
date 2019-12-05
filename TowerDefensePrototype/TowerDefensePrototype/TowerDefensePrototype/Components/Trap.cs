@@ -42,7 +42,6 @@ namespace TowerDefensePrototype
         public double CurrentFrameDelay;
         public double CurrentRemovalTime;
         public double MaxRemovalTime = 1000;
-        public static Random Random = new Random();
         public UIBar TimingBar, HealthBar;
 
         public float ChanceToFear = 0;

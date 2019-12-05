@@ -45,7 +45,8 @@ namespace TowerDefensePrototype
         RifleMan,
         ShieldGenerator,
         HarpoonCannon,
-        DropShip
+        DropShip,
+        Crate
     };
     #endregion
 
@@ -344,7 +345,6 @@ namespace TowerDefensePrototype
 
         public float MaxHP, CurrentHP, PreviousHP, Gravity, ShadowHeight, ShadowHeightMod;
         public int ResourceValue;
-        public static Random Random = new Random();
 
         //Could be handled by structs - like damage, slow, freeze etc.
         public double BeamDelay, CurrentBeamDelay,

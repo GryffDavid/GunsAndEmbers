@@ -12,15 +12,16 @@ using GameDataTypes;
 namespace TowerDefensePrototype
 {
     public class Level1 : Level
-    {
-        public Level1()
+    {        
+        public Level1(Game1 game)
         {
-            //LevelDialogue = new Level1Dialogue();
+            //DialogueItems = new StoryDialogueItems();
+            LevelDialogue = new Level1Dialogue(game);
             Number = 1;
             WaveList = new List<Wave>();
             WorldType = WorldType.Snowy;
             StartWeather = Weather.Snow;
-            Resources = 1300;
+            Resources = 200;
                         
             //A float in the middle of the list changes the delay between invaders
             //An int in the middle of the list creates a pause without changing the timing
@@ -34,22 +35,22 @@ namespace TowerDefensePrototype
                 //new RifleMan(new Vector2(2050, 600), new Vector2(700, 850)),
                 ////new RifleMan(new Vector2(2050, 600), new Vector2(700, 850)),
                 ////3500,
-                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
 
                     //new HarpoonCannon(new Vector2(2050, 600), new Vector2(700, 850)),
                 //new HarpoonCannon(new Vector2(2050, 600), new Vector2(700, 850)),
@@ -68,7 +69,7 @@ namespace TowerDefensePrototype
                 //new HealDrone(new Vector2(2050, 600), new Vector2(700, 850)),
                 //new HealDrone(new Vector2(2050, 600), new Vector2(700, 850))//,
 
-                    new GunShip(new Vector2(2050, 600), new Vector2(700, 850))
+                new GunShip(new Vector2(2050, 600), new Vector2(700, 850))
                 //new DropShip(new Vector2(2050, 600), new Vector2(700, 850))
                  );            
             #endregion
@@ -78,6 +79,10 @@ namespace TowerDefensePrototype
 
         public override void LoadContent(ContentManager contentManager)
         {
+            StoryDialogueItems DialogueItems = contentManager.Load<StoryDialogueItems>("StoryDialogue/Level1Dialogue");
+            LevelDialogue.ItemsList = DialogueItems.DialogueItems;
+
+            //DialogueItems = contentManager.Load<StoryDialogueItems>("StoryDialogue/Level1Dialogue");
             //LevelDialogue = contentManager.Load<LevelDialogue>("StoryDialogue/StoryDialogue1");            
             GroundTexture = contentManager.Load<Texture2D>("Backgrounds/Ground");
             ForegroundTexture = contentManager.Load<Texture2D>("Backgrounds/Foreground");

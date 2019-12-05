@@ -102,6 +102,8 @@ namespace TowerDefensePrototype
         //Like the Deathstar building up power before blowing up Alderaan
         public float ChargeTime;
 
+        public int ShotsFired = 0;
+
         private ButtonState _LeftButtonState;
         public ButtonState LeftButtonState
         {
