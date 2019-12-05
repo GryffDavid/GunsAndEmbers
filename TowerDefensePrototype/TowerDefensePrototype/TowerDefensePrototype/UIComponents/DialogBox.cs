@@ -33,15 +33,15 @@ namespace TowerDefensePrototype
                 RightText = null;
         }
 
-        public void LoadContent()
+        public void Initialize(ButtonClickHappenedEventHandler thing)
         {
         //    Box = contentManager.Load<Texture2D>("DialogBox");
 
             LeftButton = new Button(LeftButtonSprite, new Vector2(-300,
             Position.Y + 128 - (Box.Height / 2)), null, new Vector2(2, 1), null, LeftText, TextFont, "Left", Color.White);
             LeftButton.NextPosition.X = Position.X - (Box.Width / 2);
-            LeftButton.Scale = new Vector2(2,1);            
-            LeftButton.LoadContent();
+            LeftButton.Scale = new Vector2(2,1);
+            LeftButton.Initialize(thing);
             LeftButton.NextScale = new Vector2(1, 1);
 
             if (RightText != null)
@@ -49,8 +49,8 @@ namespace TowerDefensePrototype
                 RightButton = new Button(RightButtonSprite, new Vector2(1280+300,
                     Position.Y + 128 - (Box.Height / 2)), null, new Vector2(2, 1), null, RightText, TextFont, "Right", Color.White);
                 RightButton.NextPosition.X = Position.X + 252 - (Box.Width / 2);
-                RightButton.Scale = new Vector2(2, 1);                
-                RightButton.LoadContent();
+                RightButton.Scale = new Vector2(2, 1);
+                RightButton.Initialize(thing);
                 RightButton.NextScale = new Vector2(1, 1);
             }
 

@@ -9,8 +9,22 @@ using Microsoft.Xna.Framework.Input;
 
 namespace TowerDefensePrototype
 {
+    //Using a non-generic delegate so that I can pass it to all the buttons when they're initialised
+    public delegate void ButtonClickHappenedEventHandler(object source, EventArgs e);
+
     public class Button
     {
+        public event ButtonClickHappenedEventHandler ButtonClickHappened;
+        public void CreateButtonClick()
+        {
+            OnButtonClickHappened();
+        }
+        protected virtual void OnButtonClickHappened()
+        {
+            if (ButtonClickHappened != null)
+                ButtonClickHappened(this, null);
+        }
+
         public string Text;
         public Vector2 FrameSize, Scale, CurrentPosition, CursorPosition, IconPosition, NextPosition, IconNextPosition, NextScale;
         public Rectangle DestinationRectangle, SourceRectangle;
@@ -21,17 +35,50 @@ namespace TowerDefensePrototype
         SpriteBatch SpriteBatch;
 
         MouseState CurrentMouseState, PreviousMouseState;
-        MousePosition CurrentMousePosition, PreviousMousePosition;
         public ButtonSpriteState CurrentButtonState;
 
         int CurrentFrame;
         public bool Active, CanBeRightClicked, JustClicked, JustRightClicked;
         public bool ButtonActive;
         public Color CurrentIconColor;
-        public bool PlayHover;
+
+        //This was used to playe the hover sound when necessary - should be replace with something neater
+        //public bool PlayHover;
+
         float DrawDepth;
         string Alignment;
 
+        //The position of the mouse cursor - true = in, false = out
+        bool InOut, PrevInOut;
+
+        private ButtonState _LeftButtonState;
+        public ButtonState LeftButtonState
+        {
+            get { return _LeftButtonState; }
+            set
+            {
+                _LeftButtonState = value;
+                PrevInOut = InOut;
+                if (DestinationRectangle.Contains(new Point((int)CursorPosition.X, (int)CursorPosition.Y)) == true &&
+                    GetColor() != Color.Transparent)
+                {
+                    //In                    
+                    InOut = true;
+                }
+                else
+                {
+                    //Out
+                    InOut = false;
+                }
+
+                if (PrevInOut == true && InOut == true &&
+                    CurrentMouseState.LeftButton == ButtonState.Released &&
+                    PreviousMouseState.LeftButton == ButtonState.Pressed)
+                {
+                    CreateButtonClick();
+                }
+            }
+        }
 
         public Button(Texture2D buttonStrip, Vector2 position, Texture2D icon = null, Vector2? scale = null, 
                       Color? color = null, string text = "", SpriteFont font = null, string alignment = "Left", 
@@ -83,25 +130,14 @@ namespace TowerDefensePrototype
             NextScale = Vector2.One;
         }
 
-        public void LoadContent()
+        public void Initialize(ButtonClickHappenedEventHandler thing)
         {
+            ButtonClickHappened += thing;
+
             if (ButtonActive == true)
             {
                 FrameSize = new Vector2((int)(ButtonStrip.Width / 3f), ButtonStrip.Height);
                 DestinationRectangle = new Rectangle((int)CurrentPosition.X, (int)CurrentPosition.Y, (int)(FrameSize.X * Scale.X), (int)(FrameSize.Y * Scale.Y));
-
-                //if (IconName != null)
-                //{
-                //    IconTexture = contentManager.Load<Texture2D>(IconName);
-                //    IconPosition = new Vector2(CurrentPosition.X + (DestinationRectangle.Width - IconTexture.Width) / 2, CurrentPosition.Y + (DestinationRectangle.Height - IconTexture.Height) / 2);
-                //    IconNextPosition = IconPosition;
-                //    IconRectangle = new Rectangle((int)IconPosition.X, (int)IconPosition.Y, IconTexture.Width, IconTexture.Height);
-                //}
-
-                //if (FontName != "")
-                //{
-                //    Font = contentManager.Load<SpriteFont>(FontName);
-                //}
             }
         }
 
@@ -110,6 +146,10 @@ namespace TowerDefensePrototype
             CurrentMouseState = Mouse.GetState();
             CursorPosition = cursorPosition;
 
+            if (CurrentMouseState.LeftButton != PreviousMouseState.LeftButton)
+                LeftButtonState = Mouse.GetState().LeftButton;
+
+            #region Reposition the icon with the button
             if (IconNextPosition != IconPosition)
             {
                 IconPosition = Vector2.Lerp(IconPosition, IconNextPosition, 0.15f * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
@@ -119,7 +159,9 @@ namespace TowerDefensePrototype
                     IconPosition.X = IconNextPosition.X;
                 }
             }
+            #endregion
 
+            #region Move and scale the button
             if (NextPosition != CurrentPosition)
             {
                 CurrentPosition = Vector2.Lerp(CurrentPosition, NextPosition, 0.15f * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f));
@@ -132,12 +174,27 @@ namespace TowerDefensePrototype
 
             if (Scale != NextScale)
                 Scale = Vector2.Lerp(Scale, NextScale, 0.15f);
-                                   
+            #endregion
+
             DestinationRectangle = new Rectangle((int)CurrentPosition.X, (int)CurrentPosition.Y, (int)(FrameSize.X * Scale.X), (int)(FrameSize.Y * Scale.Y));
 
-            //if (IconName != null)
-            //IconRectangle = new Rectangle((int)IconPosition.X, (int)IconPosition.Y, IconTexture.Width, IconTexture.Height);
+            if (DestinationRectangle.Contains(new Point((int)CursorPosition.X, (int)CursorPosition.Y)) && GetColor() != Color.Transparent)
+            {
+                if (CurrentMouseState.LeftButton == ButtonState.Pressed && InOut == true)
+                {
+                    CurrentButtonState = ButtonSpriteState.Pressed;
+                }
+                else
+                {
+                    CurrentButtonState = ButtonSpriteState.Hover;
+                }
+            }
+            else
+            {
+                CurrentButtonState = ButtonSpriteState.Released;
+            }
 
+            #region Change the frame based on the button state
             switch (CurrentButtonState)
             {
                 case ButtonSpriteState.Released:
@@ -152,156 +209,10 @@ namespace TowerDefensePrototype
                     CurrentFrame = 2;
                     break;
             }
-
-            SourceRectangle = new Rectangle(CurrentFrame * (int)FrameSize.X, 0, (int)FrameSize.X, (int)FrameSize.Y);
-
-            if (DestinationRectangle.Contains(new Point((int)CursorPosition.X, (int)CursorPosition.Y)))
-            {
-                CurrentMousePosition = MousePosition.Inside;
-            }
-
-            if (!DestinationRectangle.Contains(new Point((int)CursorPosition.X, (int)CursorPosition.Y)))
-            {
-                CurrentMousePosition = MousePosition.Outside;
-            }
-
-            if (DestinationRectangle.Contains(new Point((int)CursorPosition.X, (int)CursorPosition.Y)) &&
-                GetColor() == Color.Transparent)
-            {
-                CurrentMousePosition = MousePosition.Outside;
-            }
-
-            if (PreviousMousePosition == MousePosition.Outside &&
-                CurrentMousePosition == MousePosition.Inside)
-            {
-                if (CurrentMouseState.LeftButton == ButtonState.Pressed &&
-                    PreviousMouseState.LeftButton == ButtonState.Pressed)
-                {
-                    Active = false;
-                }
-
-                if (CurrentMouseState.RightButton == ButtonState.Pressed &&
-                    PreviousMouseState.RightButton == ButtonState.Pressed && CanBeRightClicked == true)
-                {                    
-                    Active = false;
-                }
-            }
-
-            if (PreviousMousePosition == MousePosition.Inside &&
-                CurrentMousePosition == MousePosition.Inside)
-            {
-                if (CurrentMouseState.LeftButton == ButtonState.Pressed &&
-                    PreviousMouseState.LeftButton == ButtonState.Released)
-                {
-                    Active = true;
-                }
-
-                if (CurrentMouseState.RightButton == ButtonState.Pressed &&
-                    PreviousMouseState.RightButton == ButtonState.Released && CanBeRightClicked == true)
-                {
-                    Active = true;
-                }
-            }
-
-            if (PreviousMousePosition == MousePosition.Inside && 
-                CurrentMousePosition == MousePosition.Outside)
-            {
-                Active = false;
-            }
-
-            if (PreviousMousePosition == MousePosition.Outside &&
-                CurrentMousePosition == MousePosition.Inside && 
-                PlayHover == false &&
-                GetColor() != Color.Transparent)
-            {
-                PlayHover = true;
-            }
-            else
-            {
-                PlayHover = false;
-            }            
-
-            if (Active == true)
-            {
-                if (DestinationRectangle.Contains(new Point((int)CursorPosition.X, (int)CursorPosition.Y)) &&
-                    CurrentMouseState.LeftButton == ButtonState.Released &&
-                    PreviousMouseState.LeftButton == ButtonState.Pressed
-                    )
-                {
-                    if (ButtonActive == true && GetColor() != Color.Transparent)
-                    {
-                        JustClicked = true;                        
-                    }
-                }
-            }
-
-            if (PreviousMouseState.LeftButton == ButtonState.Released && CurrentMouseState.LeftButton == ButtonState.Released)
-            {
-                JustClicked = false;
-            }
-
-            if (DestinationRectangle.Contains(new Point((int)CursorPosition.X, (int)CursorPosition.Y)))
-            {
-                if (GetColor() != Color.Transparent)
-                {
-                    if (CurrentMouseState.LeftButton == ButtonState.Pressed)
-                    {
-                        if (PreviousMouseState.LeftButton == ButtonState.Released)
-                            CurrentButtonState = ButtonSpriteState.Pressed;
-                    }
-
-                    if (CurrentMouseState.LeftButton == ButtonState.Released)
-                    {
-                        if (CanBeRightClicked == true)
-                        {
-                            if (CurrentMouseState.RightButton == ButtonState.Released)
-                                CurrentButtonState = ButtonSpriteState.Hover;
-                        }
-                        else
-                        {
-                            CurrentButtonState = ButtonSpriteState.Hover;
-                        }
-                    }
-
-                    if (CanBeRightClicked == true)
-                        if (CurrentMouseState.RightButton == ButtonState.Pressed)
-                        {
-                            if (PreviousMouseState.RightButton == ButtonState.Released)
-                                CurrentButtonState = ButtonSpriteState.Pressed;
-                        }
-                }
-                else
-                {
-                    CurrentButtonState = ButtonSpriteState.Released;
-                }
-            }
-            else
-            {
-                CurrentButtonState = ButtonSpriteState.Released;
-            }
-
-            #region Right Click
-            if (Active == true && CanBeRightClicked == true)
-            {
-                if (DestinationRectangle.Contains(new Point((int)CursorPosition.X, (int)CursorPosition.Y)) &&
-                    CurrentMouseState.RightButton == ButtonState.Released &&
-                    PreviousMouseState.RightButton == ButtonState.Pressed
-                    )
-                {
-                    if (ButtonActive == true && GetColor() != Color.Transparent)
-                        JustRightClicked = true;
-                }
-            }
-
-            if (PreviousMouseState.RightButton == ButtonState.Released
-                && CurrentMouseState.RightButton == ButtonState.Released
-                && CanBeRightClicked == true)
-            {
-                JustRightClicked = false;
-            }
             #endregion
 
-            PreviousMousePosition = CurrentMousePosition;
+            SourceRectangle = new Rectangle(CurrentFrame * (int)FrameSize.X, 0, (int)FrameSize.X, (int)FrameSize.Y);
+            
             PreviousMouseState = CurrentMouseState;
         }
 
@@ -406,16 +317,16 @@ namespace TowerDefensePrototype
         {
             Color[] retrievedColor = new Color[1];
             Rectangle Rect;
-            Rect =  new Rectangle((int)((1 / Scale.X) * ((int)CursorPosition.X - CurrentPosition.X)), (int)((1 / Scale.Y) * ((int)CursorPosition.Y - CurrentPosition.Y)), 1, 1);
+            Rect = new Rectangle((int)((1 / Scale.X) * ((int)CursorPosition.X - CurrentPosition.X)), (int)((1 / Scale.Y) * ((int)CursorPosition.Y - CurrentPosition.Y)), 1, 1);
 
-            if (CurrentMousePosition == MousePosition.Inside && 
+            if (DestinationRectangle.Contains(new Point((int)CursorPosition.X, (int)CursorPosition.Y)) &&
                 new Rectangle(0, 0, 1920, 1080).Contains(new Point((int)CursorPosition.X, (int)CursorPosition.Y)))
             {
                 if (DestinationRectangle.Contains(new Point((int)CursorPosition.X, (int)CursorPosition.Y)) && Rect != null && Rect.Width == 1 && Rect.Height == 1)
                 {
                     //Vector2 pos = new Vector2((1 / Scale.X) * ((int)CursorPosition.X - Position.X), (1 / Scale.Y) * ((int)CursorPosition.Y - Position.Y));
                     //Rectangle testRect = new Rectangle((int)((1 / Scale.X) * ((int)CursorPosition.X - Position.X)), (int)((1 / Scale.Y) * ((int)CursorPosition.Y - Position.Y)), 1, 1);
-                    if (Rect != new Rectangle(Math.Abs((int)((1 / Scale.X) * ((int)CursorPosition.X - CurrentPosition.X))), 
+                    if (Rect != new Rectangle(Math.Abs((int)((1 / Scale.X) * ((int)CursorPosition.X - CurrentPosition.X))),
                         Math.Abs((int)((1 / Scale.Y) * ((int)CursorPosition.Y - CurrentPosition.Y))), 1, 1))
                         return Color.White;
                     else
@@ -430,7 +341,7 @@ namespace TowerDefensePrototype
         {
             CurrentFrame = 0;
             CurrentButtonState = ButtonSpriteState.Released;
-            CurrentMousePosition = MousePosition.Outside;
+            //CurrentMousePosition = MousePosition.Outside;
             SourceRectangle = new Rectangle(CurrentFrame * (int)FrameSize.X, 0, (int)FrameSize.X, (int)FrameSize.Y);
         }
     }

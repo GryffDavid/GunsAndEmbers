@@ -306,24 +306,12 @@ namespace TowerDefensePrototype
                 CoolingDown = false;
             }
 
-            #region Check if the mouse is inside the button
-            if (MouseRectangle.Contains(new Point((int)cursorPosition.X, (int)cursorPosition.Y)))
-            {
-                CurrentButtonState = ButtonSpriteState.Hover;
-                InteriorColor = Color.Lerp(Color.White, Color.Transparent, 0.5f);
-            }
-            else
-            {
-                CurrentButtonState = ButtonSpriteState.Released;
-                InteriorColor = Color.Lerp(Color.Black, Color.Transparent, 0.75f);
-            }
-            #endregion
-
             for (int i = 0; i < InteriorVertices.Length; i++)
             {
                 InteriorVertices[i].Color = InteriorColor;
             }
-
+                        
+                        
             #region Change the outline color based on the button state
             if (CurrentButtonState == ButtonSpriteState.Hover)
             {
@@ -347,7 +335,20 @@ namespace TowerDefensePrototype
             #endregion
 
 
-            #region As the mouse is clicked down store it's state
+            #region Check if the mouse is inside the button
+            if (MouseRectangle.Contains(new Point((int)cursorPosition.X, (int)cursorPosition.Y)))
+            {
+                CurrentButtonState = ButtonSpriteState.Hover;
+                InteriorColor = Color.Lerp(Color.White, Color.Transparent, 0.5f);
+            }
+            else
+            {
+                CurrentButtonState = ButtonSpriteState.Released;
+                InteriorColor = Color.Lerp(Color.Black, Color.Transparent, 0.75f);
+            }
+            #endregion
+
+            #region As the mouse is clicked down store its state
             if (CurrentMouseState.LeftButton == ButtonState.Pressed &&
                 PreviousMouseState.LeftButton == ButtonState.Released)
             {
@@ -362,8 +363,7 @@ namespace TowerDefensePrototype
                 }
             }
             #endregion
-
-
+            
             #region As the mouse is released check it's state against the stored state
             if (CurrentMouseState.LeftButton == ButtonState.Released &&
                 PreviousMouseState.LeftButton == ButtonState.Pressed)

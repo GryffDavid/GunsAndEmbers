@@ -1454,6 +1454,660 @@ namespace TowerDefensePrototype
                 }
             }
         }
+
+        public void OnTurretClick(object source, EventArgs e)
+        {
+            Turret turret = source as Turret;
+
+            ClearSelected();
+            turret.Selected = true;
+            CurrentTurret = turret;
+
+            //Makes sure two turrets cannot be selected at the same time
+            foreach (Turret turret2 in TurretList.Where(Turret => Turret != null && Turret != turret))
+            {
+                turret2.Selected = false;
+            }
+        }
+
+        public void OnButtonClick(object source, EventArgs e)
+        {
+            if (this.IsActive == true)
+            {
+                int Index;
+                Button button = source as Button;
+
+                switch (GameState)
+                {
+                    case GameState.Playing:
+                        #region Tower Buttons
+                        if (TowerButtonList.Contains(button))
+                        {
+                            Index = TowerButtonList.IndexOf(button);
+
+                            #region Create an effect under the turret as it's placed
+                            if (SelectedTurret != null)
+                            {
+                                Emitter Sparks = new Emitter(BallParticle, button.CurrentPosition,
+                                    new Vector2(0, 360), new Vector2(1, 3), new Vector2(5, 15), 1f, true, new Vector2(0, 360),
+                                    new Vector2(2, 5), new Vector2(0.25f, 0.25f), Color.Blue, Color.DeepSkyBlue, 0.0f, 0.05f, 1, 10,
+                                    false, new Vector2(0, 1080), false, null, false, false);
+
+                                Emitter Smoke = new Emitter(SmokeParticle, button.CurrentPosition,
+                                    new Vector2(0, 360), new Vector2(1, 3), new Vector2(5, 15), 1f, true, new Vector2(0, 360),
+                                    new Vector2(2, 5), new Vector2(1f, 1f), Color.Blue, Color.DeepSkyBlue, 0.0f, 0.05f, 1, 10,
+                                    false, new Vector2(0, 1080), false, null, false, false);
+
+                                AlphaEmitterList.Add(Sparks);
+                                AlphaEmitterList.Add(Smoke);
+                            }
+                            #endregion
+
+                            if (SelectedTurret != null)
+                            {
+                                if (Resources >= TurretCost(SelectedTurret.Value))
+                                {
+                                    TowerButtonList[Index].ButtonActive = false;
+                                    Turret newTurret = ApplyTurretUpgrades(SelectedTurret.Value, Index);
+
+                                    switch (newTurret.TurretType)
+                                    {
+                                        default:
+                                            var TurretBase = this.GetType().GetField(newTurret.TurretType.ToString() + "TurretBase").GetValue(this);
+                                            var TurretBarrel = this.GetType().GetField(newTurret.TurretType.ToString() + "TurretBarrel").GetValue(this);
+                                            newTurret.TurretBase = (Texture2D)TurretBase;
+                                            newTurret.TurretBarrel = (Texture2D)TurretBarrel;
+                                            break;
+                                    }
+
+                                    switch (newTurret.TurretType)
+                                    {
+                                        case TurretType.MachineGun:
+                                            newTurret.AmmoBelt = new AmmoBelt(newTurret.Position, MachineBullet);
+                                            break;
+                                    }
+
+                                    newTurret.Initialize(Content);
+                                    newTurret.TurretClickHappened += OnTurretClick;
+                                    TurretList[Index] = newTurret;
+                                    AddDrawable(newTurret);
+
+                                    Resources -= TurretCost(SelectedTurret.Value);
+
+                                    CurrentTurret = newTurret;
+                                    SelectedTurret = null;
+                                    TurretList[Index].Selected = true;
+                                }
+                            }
+                        }
+                        #endregion
+
+                        break;
+
+                    #region Main Menu
+                    case GameState.Menu:
+                        Index = MainMenuButtonList.IndexOf(button);
+
+                        switch (Index)
+                        {
+                            #region Play
+                            case 0:
+                                button.ResetState();
+                                ProfileBackButton.CurrentPosition.X = 1920 + 300;
+                                MenuColor = Color.White;
+                                GameState = GameState.ProfileSelect;
+                                SetProfileNames();
+                                break;
+                            #endregion
+
+                            #region Tutorial
+                            case 1:
+                                Tutorial = true;
+                                UnloadGameContent();
+                                Tower.CurrentHP = 100;
+                                Tower.MaxHP = 100;
+                                Tower.CurrentShield = 20;
+                                MenuColor = Color.White;
+                                SelectedTrap = null;
+                                SelectedTurret = null;
+                                Assembly assembly = Assembly.Load("TowerDefensePrototype");
+                                Type t = assembly.GetType("TowerDefensePrototype.TutorialLevel");
+                                CurrentLevel = (Level)Activator.CreateInstance(t);
+
+                                CurrentWaveIndex = 0;
+                                CurrentInvaderIndex = 0;
+                                CurrentWave = CurrentLevel.WaveList[0];
+
+                                List<Weapon> TutorialWeaponList = new List<Weapon>();
+                                for (int i = 0; i < 10; i++)
+                                {
+                                    TutorialWeaponList.Add(new Weapon(null, null));
+                                }
+                                TutorialWeaponList[0].CurrentTurret = TurretType.MachineGun;
+                                TutorialWeaponList[1].CurrentTrap = TrapType.Fire;
+
+                                CurrentProfile = new Profile()
+                                {
+                                    Name = "Tutorial",
+                                    LevelNumber = 0,
+
+                                    Points = 0,
+
+                                    Fire = true,
+                                    MachineGun = true,
+
+                                    Credits = 0,
+
+                                    ShotsFired = 0,
+
+                                    Buttons = TutorialWeaponList
+                                };
+
+                                GameState = GameState.Loading;
+                                LoadingThread = new Thread(LoadGameContent);
+                                LoadingThread.Name = "Loading Content Thread";
+                                Debug.WriteLine(" ");
+                                //Debug.WriteLine("Loading Started At:" + GameTime.TotalGameTime.TotalSeconds.ToString());
+                                LoadingThread.IsBackground = true;
+                                LoadingThread.Start();
+                                IsLoading = false;
+
+
+
+                                //GameState = GameState.Loading;
+                                //LoadingThread = new Thread(LoadGameContent);
+                                //LoadingThread.Name = "Loading Content Thread";
+                                //Debug.WriteLine("Loading Started At:" + gameTime.TotalGameTime.TotalSeconds.ToString());
+
+                                //LoadingThread.Start();
+                                //IsLoading = false;
+                                break;
+                            #endregion
+
+                            #region Options
+                            case 2:
+                                button.ResetState();
+                                MenuColor = Color.White;
+                                GameState = GameState.Options;
+                                MenuSFXVolume = CurrentSettings.SFXVolume * 10;
+                                MenuMusicVolume = CurrentSettings.MusicVolume * 10;
+                                break;
+                            #endregion
+
+                            #region Credits
+                            case 3:
+
+                                break;
+                            #endregion
+
+                            #region Exit
+                            case 4:
+                                button.ResetState();
+                                ExitDialog = new DialogBox(DialogBox, ShortButtonLeftSprite, ShortButtonRightSprite, RobotoRegular20_0, new Vector2(1920 / 2, 1080 / 2), "exit", "Do you want to exit?", "cancel");
+                                ExitDialog.Initialize(OnButtonClick);
+                                CurrentDialogBox = ExitDialog;
+                                DialogVisible = true;
+                                break;
+                            #endregion
+                        }
+                        break;
+                    #endregion
+
+                    #region Pause Menu
+                    case GameState.Paused:
+                        Index = PauseButtonList.IndexOf(button);
+
+                        switch (Index)
+                        {
+                            case 0:
+                                button.ResetState();
+                                GameState = GameState.Playing;
+                                break;
+
+                            case 1:
+
+                                break;
+
+                            case 2:
+                                button.ResetState();
+                                MainMenuDialog = new DialogBox(DialogBox, ShortButtonLeftSprite, ShortButtonRightSprite, RobotoRegular20_0, new Vector2(1920 / 2, 1080 / 2), "yes", "Are you sure you want to return to the main menu? All progress will be lost.", "no");
+                                MainMenuDialog.Initialize(OnButtonClick);
+                                CurrentDialogBox = MainMenuDialog;
+                                DialogVisible = true;
+                                break;
+
+                            case 3:
+                                button.ResetState();
+                                ProfileMenuDialog = new DialogBox(DialogBox, ShortButtonLeftSprite, ShortButtonRightSprite, RobotoRegular20_0, new Vector2(1920 / 2, 1080 / 2), "yes", "Are you sure you want to return to your profile menu? All progress will be lost.", "no");
+                                ProfileMenuDialog.Initialize(OnButtonClick);
+                                CurrentDialogBox = ProfileMenuDialog;
+                                DialogVisible = true;
+                                break;
+
+                            case 4:
+                                button.ResetState();
+                                ExitDialog = new DialogBox(DialogBox, ShortButtonLeftSprite, ShortButtonRightSprite, RobotoRegular20_0, new Vector2(1920 / 2, 1080 / 2), "exit", "Do you want to exit? All progress will be lost.", "cancel");
+                                ExitDialog.Initialize(OnButtonClick);
+                                CurrentDialogBox = ExitDialog;
+                                DialogVisible = true;
+                                break;
+                        }
+                        break;
+                    #endregion
+
+                    #region Profile Management
+                    case GameState.ProfileManagement:
+                        #region Play button
+                        if (button == ProfileManagementPlay)
+                        {
+                            ProfileManagementPlay.ResetState();
+                            MenuClick.Play();
+
+                            if (CurrentProfile != null)
+                            {
+                                if (CurrentProfile.Buttons.All(Weapon => Weapon == null))
+                                {
+                                    NoWeaponsDialog = new DialogBox(DialogBox, ShortButtonLeftSprite, ShortButtonRightSprite, RobotoRegular20_0, new Vector2(1920 / 2, 1080 / 2), "OK", "You have no weapons to use!", "");
+                                    NoWeaponsDialog.Initialize(OnButtonClick);
+                                    CurrentDialogBox = NoWeaponsDialog;
+                                    DialogVisible = true;
+                                }
+                                else
+                                {
+                                    UnloadGameContent();
+                                    Tower.CurrentHP = Tower.MaxHP;
+                                    Tower.CurrentShield = Tower.MaxShield;
+                                    MenuColor = Color.White;
+                                    LevelNumber = CurrentProfile.LevelNumber;
+                                    LoadLevel(LevelNumber);
+                                    //LoadUpgrades();
+                                    StorageDevice.BeginShowSelector(this.SaveProfile, null);
+                                    GameState = GameState.Loading;
+                                    LoadingThread = new Thread(LoadGameContent);
+                                    LoadingThread.Name = "Loading Content Thread";
+                                    Debug.WriteLine(" ");
+                                    //Debug.WriteLine("Loading Started At:" + gameTime.TotalGameTime.TotalSeconds.ToString());
+
+                                    //Changed this to run in background now. Keep an eye on it.
+                                    //Did that in an attempt to stop the loading screen giving an "Unexpected Error"
+                                    LoadingThread.IsBackground = true;
+                                    LoadingThread.Start();
+                                    IsLoading = false;
+                                }
+                            }
+                        }
+                        #endregion
+
+                        #region Back Button
+                        if (button == ProfileManagementBack)
+                        {
+                            MenuClick.Play();
+                            ProfileBackButton.CurrentPosition.X = 1920 - 150;
+                            MenuColor = Color.White;
+                            SetProfileNames();
+                            SelectedTrap = null;
+                            SelectedTurret = null;
+                            StorageDevice.BeginShowSelector(this.SaveProfile, null);
+                            GameState = GameState.ProfileSelect;
+                            ProfileManagementBack.ResetState();
+                        }
+                        #endregion
+                                            
+                        switch (ProfileManagementState)
+                        {
+                            case ProfileManagementState.Loadout:
+                                #region Place Weapon Buttons
+                                if (PlaceWeaponList.Contains(button))
+                                {
+                                    Index = PlaceWeaponList.IndexOf(button);
+
+                                    if (SelectedTrap == null && 
+                                        SelectedTurret == null && 
+                                        CurrentProfile.Buttons[PlaceWeaponList.IndexOf(button)] != null)
+                                    {
+                                        SelectedTurret = CurrentProfile.Buttons[PlaceWeaponList.IndexOf(button)].CurrentTurret;
+                                        SelectedTrap = CurrentProfile.Buttons[PlaceWeaponList.IndexOf(button)].CurrentTrap;
+                                        CurrentProfile.Buttons[PlaceWeaponList.IndexOf(button)] = null;
+                                        button.IconTexture = null;
+                                        HandlePlacedIcons();
+                                        return;
+                                    }
+
+                                    if (SelectedTurret != null)
+                                        switch (SelectedTurret)
+                                        {
+                                            default:
+                                                CurrentProfile.Buttons[PlaceWeaponList.IndexOf(button)] = new Weapon(SelectedTurret, null);
+                                                SelectedTurret = null;
+                                                SelectedTrap = null;
+                                                break;
+                                        }
+
+                                    if (SelectedTrap != null)
+                                        switch (SelectedTrap)
+                                        {
+                                            default:
+                                                CurrentProfile.Buttons[PlaceWeaponList.IndexOf(button)] = new Weapon(null, SelectedTrap);
+                                                SelectedTurret = null;
+                                                SelectedTrap = null;
+                                                break;
+                                        }
+
+                                    HandlePlacedIcons();
+                                }
+                                #endregion
+                                break;
+                        }
+                        break;
+                    #endregion
+
+                    #region Profile Select
+                    case GameState.ProfileSelect:
+                        #region Select buttons
+                        if (ProfileButtonList.Contains(button))
+                        {
+                            Index = ProfileButtonList.IndexOf(button);
+
+                            switch (Index)
+                            {
+                                #region The profiles the player can select
+                                case 0:
+                                    ProfileNumber = 1;
+                                    FileName = "Profile1.sav";
+                                    StorageDevice.BeginShowSelector(this.HandleProfile, null);
+                                    break;
+
+                                case 1:
+                                    ProfileNumber = 2;
+                                    FileName = "Profile2.sav";
+                                    StorageDevice.BeginShowSelector(this.HandleProfile, null);
+                                    break;
+
+                                case 2:
+                                    ProfileNumber = 3;
+                                    FileName = "Profile3.sav";
+                                    StorageDevice.BeginShowSelector(this.HandleProfile, null);
+                                    break;
+
+                                case 3:
+                                    ProfileNumber = 4;
+                                    FileName = "Profile4.sav";
+                                    StorageDevice.BeginShowSelector(this.HandleProfile, null);
+                                    break;
+                                #endregion
+                            }
+                        }
+                        #endregion
+
+                        #region Delete buttons
+                        if (ProfileDeleteList.Contains(button))
+                        {
+                            Index = ProfileDeleteList.IndexOf(button);
+
+                            switch (Index)
+                            {
+                                case 0:
+                                    FileName = "Profile1.sav";
+                                    StorageDevice.BeginShowSelector(this.CheckFileDelete, null);
+                                    break;
+
+                                case 1:
+                                    FileName = "Profile2.sav";
+                                    StorageDevice.BeginShowSelector(this.CheckFileDelete, null);
+                                    break;
+
+                                case 2:
+                                    FileName = "Profile3.sav";
+                                    StorageDevice.BeginShowSelector(this.CheckFileDelete, null);
+                                    break;
+
+                                case 3:
+                                    FileName = "Profile4.sav";
+                                    StorageDevice.BeginShowSelector(this.CheckFileDelete, null);
+                                    break;
+                            }
+                        }
+                        #endregion
+
+                        #region Back Button
+                        if (button == ProfileBackButton)
+                        {
+                            ProfileBackButton.ResetState();
+
+                            foreach (Button mainMenuButton in MainMenuButtonList)
+                            {
+                                mainMenuButton.NextPosition.X = 0;
+                                mainMenuButton.CurrentPosition.X = -300;
+                            }
+
+                            MenuClick.Play();
+                            MenuColor = Color.White;
+                            GameState = GameState.Menu;
+                        }
+                        break;
+                        #endregion
+                    #endregion
+
+                    #region Options Menu
+                    case GameState.Options:
+                        #region Back
+                        if (button == OptionsBack)
+                        {
+                            OptionsBack.ResetState();
+                            MenuClick.Play();
+                            MenuColor = Color.White;
+                            SaveSettings();
+                            GameState = GameState.Menu;
+                        }
+                        #endregion
+
+                        #region Sound Effects Up
+                        if (button == OptionsSFXUp)
+                        {
+                            if (MenuSFXVolume < 10)
+                            {
+                                MenuSFXVolume++;
+                                CurrentSettings.SFXVolume = MenuSFXVolume / 10;
+                                SoundEffect.MasterVolume = CurrentSettings.SFXVolume;
+                                MenuClick.Play();
+                            }
+                        }
+                        #endregion
+
+                        #region Sound Effects Down
+                        if (button == OptionsSFXDown)
+                        {
+                            if (MenuSFXVolume > 0)
+                            {
+                                MenuSFXVolume--;
+                                CurrentSettings.SFXVolume = MenuSFXVolume / 10;
+                                SoundEffect.MasterVolume = CurrentSettings.SFXVolume;
+                                MenuClick.Play();
+                            }
+                        }
+                        #endregion
+
+                        #region Music Up
+                        if (button == OptionsMusicUp)
+                        {
+                            if (MenuMusicVolume < 10)
+                            {
+                                MenuMusicVolume++;
+                                CurrentSettings.MusicVolume = MenuMusicVolume / 10;
+                                MediaPlayer.Volume = CurrentSettings.MusicVolume;
+                                MenuClick.Play();
+                            }
+                        }
+                        #endregion
+
+                        #region Music Down
+                        if (button == OptionsMusicDown)
+                        {
+                            if (MenuMusicVolume > 0)
+                            {
+                                MenuMusicVolume--;
+                                CurrentSettings.MusicVolume = MenuMusicVolume / 10;
+                                MediaPlayer.Volume = CurrentSettings.MusicVolume;
+                                MenuClick.Play();
+                            }
+                        }
+                        #endregion
+                        break;
+                    #endregion
+
+                    #region Get Name
+                    case GameState.GettingName:
+                        #region Back Button
+                        if (button == GetNameBack)
+                        {
+                            ProfileBackButton.CurrentPosition.X = 1920 - 150;
+                            GetNameBack.ResetState();
+                            MenuColor = Color.White;
+                            MenuClick.Play();
+                            NameInput.TypePosition = 0;
+                            NameInput.RealString = "";
+                            GameState = GameState.ProfileSelect;
+                        }
+                        #endregion
+
+                        #region OK Button
+                        if (button == GetNameOK)
+                        {
+                            GetNameOK.ResetState();
+
+                            if (NameInput.RealString.Length < 3)
+                            {
+                                NameLengthDialog = new DialogBox(DialogBox, ShortButtonLeftSprite, ShortButtonRightSprite, RobotoRegular20_0, new Vector2(1920 / 2, 1080 / 2), "OK", "Your name is too short.", "");
+                                NameLengthDialog.Initialize(OnButtonClick);
+                                DialogVisible = true;
+                            }
+
+                            if (NameInput.RealString.All(Char => Char == ' '))
+                            {
+                                NameLengthDialog = new DialogBox(DialogBox, ShortButtonLeftSprite, ShortButtonRightSprite, RobotoRegular20_0, new Vector2(1920 / 2, 1080 / 2), "OK", "Your name cannot be blank.", "");
+                                NameLengthDialog.Initialize(OnButtonClick);
+                                DialogVisible = true;
+                            }
+
+                            if (NameInput.RealString.Length >= 3 && !NameInput.RealString.All(Char => Char == ' '))
+                            {
+                                GetNameOK.ResetState();
+                                MenuColor = Color.White;
+                                MenuClick.Play();
+                                AddNewProfile();
+                            }
+                        }
+                        #endregion
+                        break;
+                    #endregion
+                }
+
+                #region Dialog Boxes
+                if (DialogVisible == true && CurrentDialogBox != null)
+                {
+                    if (button == CurrentDialogBox.LeftButton)
+                    {
+                        if (CurrentDialogBox == ExitDialog)
+                        {
+                            if (GameState == GameState.Paused)
+                                StorageDevice.BeginShowSelector(this.SaveProfile, null);
+
+                            this.Exit();
+                        }
+
+                        if (CurrentDialogBox == DeleteProfileDialog)
+                        {
+                            MenuClick.Play();
+                            StorageDevice.BeginShowSelector(this.DeleteProfile, null);
+                            SetProfileNames();
+                            DialogVisible = false;
+                            DeleteProfileDialog = null;
+                            return;
+                        }
+
+                        if (CurrentDialogBox == ProfileMenuDialog)
+                        {
+                            MenuClick.Play();
+                            StorageDevice.BeginShowSelector(this.SaveProfile, null);
+                            DialogVisible = false;
+                            ProfileMenuDialog = null;
+                            ResetUpgrades();
+                            //DrawableList.Clear();
+                            UnloadGameContent();
+                            GameState = GameState.ProfileManagement;
+                            return;
+                        }
+
+                        if (CurrentDialogBox == MainMenuDialog)
+                        {
+                            MenuClick.Play();
+                            StorageDevice.BeginShowSelector(this.SaveProfile, null);
+                            CurrentProfile = null;
+                            ResetUpgrades();
+                            //DrawableList.Clear();
+                            UnloadGameContent();
+                            DialogVisible = false;
+                            MainMenuDialog = null;
+                            GameState = GameState.Menu;
+                            return;
+                        }
+
+                        if (CurrentDialogBox == NoWeaponsDialog)
+                        {
+                            MenuClick.Play();
+                            DialogVisible = false;
+                            NoWeaponsDialog = null;
+                        }
+
+                        if (CurrentDialogBox == NameLengthDialog)
+                        {
+                            MenuClick.Play();
+                            DialogVisible = false;
+                            NameLengthDialog = null;
+                        }
+                    }
+
+                    if (button == CurrentDialogBox.RightButton)
+                    {
+                        if (CurrentDialogBox == ExitDialog)
+                        {
+                            MenuClick.Play();
+                            DialogVisible = false;
+                            ExitDialog = null;
+                        }
+
+                        if (CurrentDialogBox == DeleteProfileDialog)
+                        {
+                            MenuClick.Play();
+                            DialogVisible = false;
+                            DeleteProfileDialog = null;
+                        }
+
+                        if (CurrentDialogBox == ProfileMenuDialog)
+                        {
+                            MenuClick.Play();
+                            DialogVisible = false;
+                            ProfileMenuDialog = null;
+                        }
+
+                        if (CurrentDialogBox == MainMenuDialog)
+                        {
+                            MenuClick.Play();
+                            DialogVisible = false;
+                            MainMenuDialog = null;
+                        }
+                    }
+                }
+                #endregion
+            }
+        }
+
+        protected override void OnExiting(object sender, EventArgs args)
+        {
+            Content.Unload();
+            SecondaryContent.Unload();
+            base.OnExiting(sender, args);
+        }
         #endregion
 
 
@@ -1480,6 +2134,17 @@ namespace TowerDefensePrototype
             }
         }
 
+        private DialogBox _CurrentDialogBox;
+        public DialogBox CurrentDialogBox
+        {
+            get { return _CurrentDialogBox; }
+            set
+            {
+                _CurrentDialogBox = value;
+                DialogBox dBox = value as DialogBox;
+            }
+        }
+        
         #region XNA Declarations
         static Random Random = new Random();
         BinaryFormatter formatter = new BinaryFormatter();
@@ -1946,7 +2611,7 @@ namespace TowerDefensePrototype
 
             foreach (Button button in MainMenuButtonList)
             {
-                button.LoadContent();
+                button.Initialize(OnButtonClick);
             }
             #endregion
 
@@ -1962,29 +2627,29 @@ namespace TowerDefensePrototype
             for (int i = 0; i < 4; i++)
             {
                 PauseButtonList.Add(new Button(ButtonLeftSprite, new Vector2(0, 130 + ((64 + 50) * i)), null, null, null, PauseMenuNameList[i], RobotoRegular20_2, "Left", Color.White));
-                PauseButtonList[i].LoadContent();
+                PauseButtonList[i].Initialize(OnButtonClick);
             }
 
             PauseButtonList.Add(new Button(ButtonLeftSprite, new Vector2(0, 1080 - 50 - 32), null, null, null, PauseMenuNameList[4], RobotoRegular20_2, "Left", Color.White));
-            PauseButtonList[4].LoadContent();
+            PauseButtonList[4].Initialize(OnButtonClick);
             #endregion
 
             #region Initialise Options Menu
 
             OptionsSFXUp = new Button(RightArrowSprite, new Vector2(640 + 32, 316));
-            OptionsSFXUp.LoadContent();
+            OptionsSFXUp.Initialize(OnButtonClick);
 
             OptionsSFXDown = new Button(LeftArrowSprite, new Vector2(640 - 50 - 32, 316));
-            OptionsSFXDown.LoadContent();
+            OptionsSFXDown.Initialize(OnButtonClick);
 
             OptionsMusicUp = new Button(RightArrowSprite, new Vector2(640 + 32, 380));
-            OptionsMusicUp.LoadContent();
+            OptionsMusicUp.Initialize(OnButtonClick);
 
             OptionsMusicDown = new Button(LeftArrowSprite, new Vector2(640 - 50 - 32, 380));
-            OptionsMusicDown.LoadContent();
+            OptionsMusicDown.Initialize(OnButtonClick);
 
             OptionsBack = new Button(ButtonLeftSprite, new Vector2(0, 1080 - 32 - 50), null, null, null, "back", RobotoRegular20_2, "Left", Color.White);
-            OptionsBack.LoadContent();
+            OptionsBack.Initialize(OnButtonClick);
 
             #endregion
 
@@ -1994,18 +2659,18 @@ namespace TowerDefensePrototype
             for (int i = 0; i < 4; i++)
             {
                 ProfileButtonList.Add(new Button(ButtonLeftSprite, new Vector2(50, 130 + (i * 114)), null, null, null, "empty", RobotoRegular20_2, "Centre", Color.White));
-                ProfileButtonList[i].LoadContent();
+                ProfileButtonList[i].Initialize(OnButtonClick);
             }
 
             ProfileDeleteList = new List<Button>();
             for (int i = 0; i < 4; i++)
             {
                 ProfileDeleteList.Add(new Button(SmallButtonSprite, new Vector2(0, 130 + (i * 114)), null, null, null, "X", RobotoRegular20_2, "Left", Color.White));
-                ProfileDeleteList[i].LoadContent();
+                ProfileDeleteList[i].Initialize(OnButtonClick);
             }
 
             ProfileBackButton = new Button(ButtonRightSprite, new Vector2(1920 + 300, 1080 - 32 - 50), null, null, null, "back     ", RobotoRegular20_2, "Right", Color.White);
-            ProfileBackButton.LoadContent();
+            ProfileBackButton.Initialize(OnButtonClick);
 
             #endregion
 
@@ -2013,10 +2678,10 @@ namespace TowerDefensePrototype
             ProfileManagementTabs = new Tabs(new Vector2(0,0), WhiteBlock, RobotoRegular20_2, null, "loadout", "upgrades", "stats");
 
             ProfileManagementPlay = new Button(ButtonRightSprite, new Vector2(1920 - 450 + 300, 1080 - 32 - 50), null, null, null, "play     ", RobotoRegular20_2, "Right", Color.White);
-            ProfileManagementPlay.LoadContent();
+            ProfileManagementPlay.Initialize(OnButtonClick);
 
             ProfileManagementBack = new Button(ButtonLeftSprite, new Vector2(-300, 1080 - 32 - 50), null, null, null, "     back", RobotoRegular20_2, "Left", Color.White);
-            ProfileManagementBack.LoadContent();
+            ProfileManagementBack.Initialize(OnButtonClick);
 
             //ProfileManagementHeader = new StaticSprite("Buttons/ProfileManagementHeader", new Vector2(0, 0));
             //ProfileManagementHeader.LoadContent(SecondaryContent);
@@ -2027,23 +2692,24 @@ namespace TowerDefensePrototype
             //ProfileManagementUpgrades.LoadContent();
 
             MoveTurretsRight = new Button(RightArrowSprite, new Vector2(1681, 258));
-            MoveTurretsRight.LoadContent();
+            MoveTurretsRight.Initialize(OnButtonClick);
+
 
             MoveTurretsLeft = new Button(LeftArrowSprite, new Vector2(189, 258));
-            MoveTurretsLeft.LoadContent();
+            MoveTurretsLeft.Initialize(OnButtonClick);
 
             MoveTrapsRight = new Button(RightArrowSprite, new Vector2(1681, 660));
-            MoveTrapsRight.LoadContent();
+            MoveTrapsRight.Initialize(OnButtonClick);
 
             MoveTrapsLeft = new Button(LeftArrowSprite, new Vector2(189, 660));
-            MoveTrapsLeft.LoadContent();
+            MoveTrapsLeft.Initialize(OnButtonClick);
 
             PlaceWeaponList = new List<Button>();
             for (int i = 0; i < 8; i++)
             {
                 PlaceWeaponList.Add(new Button(SelectButtonSprite, new Vector2(565 + (i * 100), 900), null, new Vector2(1f, 1f), null, "", null, "Left", null, true));
                 //PlaceWeaponList[i].NextScale = new Vector2(0.35f, 0.35f);
-                PlaceWeaponList[i].LoadContent();
+                PlaceWeaponList[i].Initialize(OnButtonClick);
             }
 
             MenuTower = new StaticSprite("Tower", new Vector2(1920 - 300, 150));
@@ -2053,18 +2719,16 @@ namespace TowerDefensePrototype
 
             #region Initialise Get Name Menu
             NameInput = new TextInput(new Vector2(1920 / 2 - 215, 1080 / 2 - 40), 350, RobotoRegular20_2, Color.White);
-            //NameInput.LoadContent(SecondaryContent);
 
             GetNameBack = new Button(ButtonLeftSprite, new Vector2(0, 1080 - 32 - 50), null, null, null, "     back", RobotoRegular20_2, "Left", Color.White);
             GetNameBack.CurrentPosition.X = -300;
-            GetNameBack.LoadContent();
+            GetNameBack.Initialize(OnButtonClick);
 
             GetNameOK = new Button(ButtonRightSprite, new Vector2(1920 - 450, 1080 - 32 - 50), null, null, null, "create     ", RobotoRegular20_2, "Right", Color.White);
-            GetNameOK.LoadContent();
+            GetNameOK.Initialize(OnButtonClick);
 
             TextBox = new StaticSprite("Buttons/TextBox", new Vector2((1920 / 2) - 225, (1080 / 2) - 50));
             TextBox.LoadContent(SecondaryContent);
-
             #endregion
 
             #region Initialise Upgrades Menu
@@ -2086,6 +2750,7 @@ namespace TowerDefensePrototype
             LightProjectileFiredEvent += OnLightProjectileFired;
             TurretShootEvent += OnTurretShoot;
             RightClickEvent += OnRightClick;
+            
             
             LoadingAnimation = new AnimatedSprite("LoadingAnimation", new Vector2(1920 / 2 - 65, 1080 / 2 - 65), new Vector2(131, 131), 17, 30, HalfWhite, Vector2.One, true);
             LoadingAnimation.LoadContent(SecondaryContent);
@@ -2435,7 +3100,7 @@ namespace TowerDefensePrototype
                 for (int i = 0; i < TowerButtons; i++)
                 {
                     TowerButtonList.Add(new Button(TurretSlotButtonSprite, new Vector2(40 + Tower.DestinationRectangle.Width - 32, 500 + ((38 + 90) * i) - 32)));
-                    TowerButtonList[i].LoadContent();
+                    TowerButtonList[i].Initialize(OnButtonClick);
                 }
 
                 CooldownButtonList.Clear();
@@ -2507,7 +3172,7 @@ namespace TowerDefensePrototype
 
                 foreach (Button button in SpecialAbilitiesButtonList)
                 {
-                    button.LoadContent();
+                    button.Initialize(OnButtonClick);
                 }
 
                 #endregion
@@ -2526,7 +3191,7 @@ namespace TowerDefensePrototype
                 #region Loading UI
                 Debug.WriteLine("Loading UI");
                 StartWaveButton = new Button(ButtonRightSprite, new Vector2(1920 - (ButtonRightSprite.Width / 3), 200), null, null, null, "start waves", RobotoRegular20_2, "Right");
-                StartWaveButton.LoadContent();
+                StartWaveButton.Initialize(OnButtonClick);
 
                 UITurretInfo = new UITurretInfo();
                 UITurretInfo.Texture = WhiteBlock;
@@ -4285,68 +4950,11 @@ namespace TowerDefensePrototype
         private void TowerButtonUpdate(GameTime gameTime)
         {
             //This places the selected turret type into the right slot on the tower when the tower slot has been clicked
-            int Index;
-
             foreach (Button towerButton in TowerButtonList)
             {
                 if (this.IsActive == true)
                 {
                     towerButton.Update(CursorPosition, gameTime);
-
-                    if (towerButton.JustClicked == true && SelectedTurret != null)
-                    {
-                        #region Create an effect under the turret as it's placed
-                        if (SelectedTurret != null)
-                        {
-                            Emitter Sparks = new Emitter(BallParticle, towerButton.CurrentPosition,
-                                new Vector2(0, 360), new Vector2(1, 3), new Vector2(5, 15), 1f, true, new Vector2(0, 360),
-                                new Vector2(2, 5), new Vector2(0.25f, 0.25f), Color.Blue, Color.DeepSkyBlue, 0.0f, 0.05f, 1, 10,
-                                false, new Vector2(0, 1080), false, null, false, false);
-
-                            Emitter Smoke = new Emitter(SmokeParticle, towerButton.CurrentPosition,
-                                new Vector2(0, 360), new Vector2(1, 3), new Vector2(5, 15), 1f, true, new Vector2(0, 360),
-                                new Vector2(2, 5), new Vector2(1f, 1f), Color.Blue, Color.DeepSkyBlue, 0.0f, 0.05f, 1, 10,
-                                false, new Vector2(0, 1080), false, null, false, false);
-                            
-                            AlphaEmitterList.Add(Sparks);
-                            AlphaEmitterList.Add(Smoke);                          
-                        }
-                        #endregion
-
-                        Index = TowerButtonList.IndexOf(towerButton);
-                        if (Resources >= TurretCost(SelectedTurret.Value))
-                        {
-                            TowerButtonList[Index].ButtonActive = false;
-                            Turret newTurret = ApplyTurretUpgrades(SelectedTurret.Value, Index);
-
-                            switch (newTurret.TurretType)
-                            {
-                                default:
-                                    var TurretBase = this.GetType().GetField(newTurret.TurretType.ToString() + "TurretBase").GetValue(this);
-                                    var TurretBarrel = this.GetType().GetField(newTurret.TurretType.ToString() + "TurretBarrel").GetValue(this);
-                                    newTurret.TurretBase = (Texture2D)TurretBase;
-                                    newTurret.TurretBarrel = (Texture2D)TurretBarrel;
-                                    break;
-                            }
-
-                            switch (newTurret.TurretType)
-                            {
-                                case TurretType.MachineGun:
-                                    newTurret.AmmoBelt = new AmmoBelt(newTurret.Position, MachineBullet);
-                                    break;
-                            }
-
-                            newTurret.Initialize(Content);
-                            TurretList[Index] = newTurret;
-                            AddDrawable(newTurret);
-
-                            Resources -= TurretCost(SelectedTurret.Value);
-
-                            CurrentTurret = newTurret;
-                            SelectedTurret = null;
-                            TurretList[Index].Selected = true;
-                        }
-                    }
                 }
             }
         }
@@ -4456,976 +5064,353 @@ namespace TowerDefensePrototype
 
         private void MenuButtonsUpdate(GameTime gameTime)
         {
-            if (this.IsActive == true)
+            if (MenuColor != Color.Transparent && GameState != GameState.Playing)
             {
-                if (MenuColor != Color.Transparent && GameState != GameState.Playing)
+                MenuColor = Color.Lerp(MenuColor, Color.Transparent, 0.05f);
+            }
+
+            if (DialogVisible == false)
+            {
+                switch (GameState)
                 {
-                    MenuColor = Color.Lerp(MenuColor, Color.Transparent, 0.05f);
-                }
-
-                #region Handling Main Menu Button Presses
-                if (GameState == GameState.Menu && DialogVisible == false)
-                {
-                    int Index;
-
-                    foreach (Button button in MainMenuButtonList)
-                    {
-                        button.Update(CursorPosition, gameTime);
-
-                        if (button.PlayHover == true)
-                        {
-                            MenuWoosh.Play();
-                        }
-
-                        if (button.CurrentButtonState == ButtonSpriteState.Hover)
-                        {
-                            button.NextPosition.X = 0;
-                        }
-
-                        if (button.CurrentButtonState == ButtonSpriteState.Released)
-                        {
-                            button.NextPosition.X = -50;
-                        }
-
-                        if (button.JustClicked == true)
-                        {
-                            Index = MainMenuButtonList.IndexOf(button);
-                            MenuClick.Play();
-
-                            switch (Index)
-                            {
-                                case 0:
-                                    button.ResetState();
-                                    ProfileBackButton.CurrentPosition.X = 1920 + 300;
-                                    MenuColor = Color.White;
-                                    GameState = GameState.ProfileSelect;
-                                    SetProfileNames();
-                                    break;
-
-                                case 1:
-                                    Tutorial = true;
-                                    UnloadGameContent();
-                                    Tower.CurrentHP = 100;
-                                    Tower.MaxHP = 100;
-                                    Tower.CurrentShield = 20;
-                                    MenuColor = Color.White;
-                                    SelectedTrap = null;
-                                    SelectedTurret = null;                                    
-                                    Assembly assembly = Assembly.Load("TowerDefensePrototype");
-                                    Type t = assembly.GetType("TowerDefensePrototype.TutorialLevel");
-                                    CurrentLevel = (Level)Activator.CreateInstance(t);
-
-                                    CurrentWaveIndex = 0;
-                                    CurrentInvaderIndex = 0;
-                                    CurrentWave = CurrentLevel.WaveList[0];
-
-                                    List<Weapon> TutorialWeaponList = new List<Weapon>();
-                                    for (int i = 0; i < 10; i++)
-                                    {
-                                        TutorialWeaponList.Add(new Weapon(null, null));
-                                    }
-                                    TutorialWeaponList[0].CurrentTurret = TurretType.MachineGun;
-                                    TutorialWeaponList[1].CurrentTrap = TrapType.Fire;
-
-                                    CurrentProfile = new Profile()
-                                    {
-                                        Name = "Tutorial",
-                                        LevelNumber = 0,
-
-                                        Points = 0,
-
-                                        Fire = true,
-                                        MachineGun = true,
-
-                                        Credits = 0,
-
-                                        ShotsFired = 0,
-
-                                        Buttons = TutorialWeaponList
-                                    };
-
-                                    GameState = GameState.Loading;
-                                    LoadingThread = new Thread(LoadGameContent);
-                                    LoadingThread.Name = "Loading Content Thread";
-                                    Debug.WriteLine(" ");
-                                    Debug.WriteLine("Loading Started At:" + gameTime.TotalGameTime.TotalSeconds.ToString());
-                                    LoadingThread.IsBackground = true;
-                                    LoadingThread.Start();
-                                    IsLoading = false;
-
-                                    
-
-                                    //GameState = GameState.Loading;
-                                    //LoadingThread = new Thread(LoadGameContent);
-                                    //LoadingThread.Name = "Loading Content Thread";
-                                    //Debug.WriteLine("Loading Started At:" + gameTime.TotalGameTime.TotalSeconds.ToString());
-                                    
-                                    //LoadingThread.Start();
-                                    //IsLoading = false;
-                                    break;
-
-                                case 2:
-                                    button.ResetState();
-                                    MenuColor = Color.White;
-                                    GameState = GameState.Options;
-                                    MenuSFXVolume = CurrentSettings.SFXVolume * 10;
-                                    MenuMusicVolume = CurrentSettings.MusicVolume * 10;
-                                    break;
-
-                                case 3:
-
-                                    break;
-
-                                case 4:
-                                    button.ResetState();
-                                    ExitDialog = new DialogBox(DialogBox, ShortButtonLeftSprite, ShortButtonRightSprite, RobotoRegular20_0, new Vector2(1920 / 2, 1080 / 2), "exit", "Do you want to exit?", "cancel");
-                                    ExitDialog.LoadContent();
-                                    DialogVisible = true;
-                                    break;
-                            }
-                        }
-                    }
-                }
-                #endregion
-
-                #region Handling Pause Menu Button Presses
-                if (GameState == GameState.Paused && DialogVisible == false)
-                {
-                    int Index;
-
-                    foreach (Button button in PauseButtonList)
-                    {
-                        button.Update(CursorPosition, gameTime);
-
-                        if (button.JustClicked == true)
-                        {
-                            MenuClick.Play();
-
-                            Index = PauseButtonList.IndexOf(button);
-
-                            switch (Index)
-                            {
-                                case 0:
-                                    button.ResetState();
-                                    GameState = GameState.Playing;
-                                    break;
-
-                                case 1:
-
-                                    break;
-
-                                case 2:
-                                    button.ResetState();
-                                    MainMenuDialog = new DialogBox(DialogBox, ShortButtonLeftSprite, ShortButtonRightSprite, RobotoRegular20_0, new Vector2(1920 / 2, 1080 / 2), "yes", "Are you sure you want to return to the main menu? All progress will be lost.", "no");
-                                    MainMenuDialog.LoadContent();
-                                    DialogVisible = true;
-                                    break;
-
-                                case 3:
-                                    button.ResetState();
-                                    ProfileMenuDialog = new DialogBox(DialogBox, ShortButtonLeftSprite, ShortButtonRightSprite, RobotoRegular20_0, new Vector2(1920 / 2, 1080 / 2), "yes", "Are you sure you want to return to your profile menu? All progress will be lost.", "no");
-                                    ProfileMenuDialog.LoadContent();
-                                    DialogVisible = true;
-                                    break;
-
-                                case 4:
-                                    button.ResetState();
-                                    ExitDialog = new DialogBox(DialogBox, ShortButtonLeftSprite, ShortButtonRightSprite, RobotoRegular20_0, new Vector2(1920 / 2, 1080 / 2), "exit", "Do you want to exit? All progress will be lost.", "cancel");
-                                    ExitDialog.LoadContent();
-                                    DialogVisible = true;
-                                    break;
-                            }
-                        }
-                    }
-                }
-                #endregion
-
-                #region Handling Profile Management Button Presses
-                if (GameState == GameState.ProfileManagement && DialogVisible == false)
-                {
-                    //Match the state of the tabs with the ProfileManagementState
-                    ProfileManagementTabs.Update(gameTime);
-                    ProfileManagementState = (ProfileManagementState)(ProfileManagementTabs.SelectedIndex);
-
-                    ProfileManagementPlay.Update(CursorPosition, gameTime);
-                    ProfileManagementBack.Update(CursorPosition, gameTime);
-
-                    switch (ProfileManagementState)
-                    {
-                        #region Loadout screen
-                        case ProfileManagementState.Loadout:
-
-                            #region Move turrets right
-                            MoveTurretsRight.Update(CursorPosition, gameTime);
-                            if (MoveTurretsRight.JustClicked == true && 
-                                SelectTurretList[0].DestinationRectangle.Left < MoveTurretsLeft.DestinationRectangle.Right)
-                            {
-                                foreach (WeaponBox turretBox in SelectTurretList)
-                                {
-                                    turretBox.Position += new Vector2(282, 0);
-                                    turretBox.UpdateQuads();
-                                    turretBox.SetUpBars();
-                                }
-                            }
-                            #endregion
-
-                            #region Move turrets left
-                            MoveTurretsLeft.Update(CursorPosition, gameTime);
-                            if (MoveTurretsLeft.JustClicked == true &&
-                                SelectTurretList[SelectTurretList.Count - 1].DestinationRectangle.Right > MoveTurretsRight.DestinationRectangle.Left)
-                            {
-                                foreach (WeaponBox turretBox in SelectTurretList)
-                                {
-                                    turretBox.Position -= new Vector2(282, 0);
-                                    turretBox.UpdateQuads();
-                                    turretBox.SetUpBars();
-                                }
-                            }
-                            #endregion
-
-                            #region Move traps right
-                            MoveTrapsRight.Update(CursorPosition, gameTime);
-                            if (MoveTrapsRight.JustClicked == true && 
-                                SelectTrapList[0].DestinationRectangle.Left < MoveTrapsLeft.DestinationRectangle.Right)
-                            {
-                                foreach (WeaponBox trapBox in SelectTrapList)
-                                {
-                                    trapBox.Position += new Vector2(282, 0);
-                                    trapBox.UpdateQuads();
-                                    trapBox.SetUpBars();
-                                }
-                            }
-                            #endregion
-
-                            #region Move traps left
-                            MoveTrapsLeft.Update(CursorPosition, gameTime);
-                            if (MoveTrapsLeft.JustClicked == true &&
-                               SelectTrapList[SelectTrapList.Count - 1].DestinationRectangle.Right > MoveTrapsRight.DestinationRectangle.Left)
-                            {
-                                foreach (WeaponBox trapBox in SelectTrapList)
-                                {
-                                    trapBox.Position -= new Vector2(282, 0);
-                                    trapBox.UpdateQuads();
-                                    trapBox.SetUpBars();
-                                }
-                            }
-                            #endregion
-
-
-                            #region Select turret boxes
-                            foreach (WeaponBox turretBox in SelectTurretList)
-                            {
-                                turretBox.Update(gameTime);
-
-                                if (turretBox.DestinationRectangle.Left > MoveTurretsLeft.DestinationRectangle.Right &&
-                                    turretBox.DestinationRectangle.Right < MoveTurretsRight.DestinationRectangle.Left)
-                                {
-                                    turretBox.Visible = true;
-                                }
-                                else
-                                {
-                                    turretBox.Visible = false;
-                                }
-
-                                if (turretBox.JustClicked == true && turretBox.Visible == true)
-                                {
-                                    string WeaponName = turretBox.ContainsTurret.ToString();
-                                    var Available = CurrentProfile.GetType().GetField(WeaponName).GetValue(CurrentProfile);
-
-                                    if ((bool)Available == true)
-                                        SelectedTurret = turretBox.ContainsTurret;
-                                }
-                            }
-                            #endregion
-
-                            #region Select trap boxes
-                            foreach (WeaponBox trapBox in SelectTrapList)
-                            {
-                                trapBox.Update(gameTime);
-
-                                if (trapBox.DestinationRectangle.Left > MoveTrapsLeft.DestinationRectangle.Right &&
-                                    trapBox.DestinationRectangle.Right < MoveTrapsRight.DestinationRectangle.Left)
-                                {
-                                    trapBox.Visible = true;
-                                }
-                                else
-                                {
-                                    trapBox.Visible = false;
-                                }
-
-                                if (trapBox.JustClicked == true && trapBox.Visible == true)
-                                {
-                                    string WeaponName = trapBox.ContainsTrap.ToString();
-                                    var Available = CurrentProfile.GetType().GetField(WeaponName).GetValue(CurrentProfile);
-
-                                    if ((bool)Available == true)
-                                        SelectedTrap = trapBox.ContainsTrap;
-                                }
-                            }
-                            #endregion
-
-
-                            #region Place Weapon Buttons
-                            foreach (Button button in PlaceWeaponList)
-                            {
-                                button.Update(CursorPosition, gameTime);
-
-                                if (button.JustClicked == true)
-                                {
-                                    int Index = PlaceWeaponList.IndexOf(button);
-                                    Button test = PlaceWeaponList[Index];
-
-                                    if (SelectedTrap == null && SelectedTurret == null && CurrentProfile.Buttons[PlaceWeaponList.IndexOf(button)] != null)
-                                    {
-                                        SelectedTurret = CurrentProfile.Buttons[PlaceWeaponList.IndexOf(button)].CurrentTurret;
-                                        SelectedTrap = CurrentProfile.Buttons[PlaceWeaponList.IndexOf(button)].CurrentTrap;
-                                        CurrentProfile.Buttons[PlaceWeaponList.IndexOf(button)] = null;
-                                        button.IconTexture = null;
-                                        HandlePlacedIcons();
-                                        return;
-                                    }
-
-                                    if (SelectedTurret != null)
-                                        switch (SelectedTurret)
-                                        {
-                                            default:
-                                                CurrentProfile.Buttons[PlaceWeaponList.IndexOf(button)] = new Weapon(SelectedTurret, null);
-                                                SelectedTurret = null;
-                                                SelectedTrap = null;
-                                                break;
-                                        }
-
-                                    if (SelectedTrap != null)
-                                        switch (SelectedTrap)
-                                        {
-                                            default:
-                                                CurrentProfile.Buttons[PlaceWeaponList.IndexOf(button)] = new Weapon(null, SelectedTrap);
-                                                SelectedTurret = null;
-                                                SelectedTrap = null;
-                                                break;
-                                        }
-
-                                    HandlePlacedIcons();
-                                }
-
-                                if (button.JustRightClicked == true)
-                                {
-                                    CurrentProfile.Buttons[PlaceWeaponList.IndexOf(button)] = null;
-                                    button.IconTexture = null;
-                                    button.LoadContent();
-                                }
-                            }
-                            #endregion
-
-                            break;
-                        #endregion
-
-                        case ProfileManagementState.Stats:
-
-                            break;
-
-                        case ProfileManagementState.Upgrades:
-
-                            break;
-                    }
-
-                    //RightClickClearSelected();
-
-                    #region Play Button
-                    if (ProfileManagementPlay.CurrentButtonState == ButtonSpriteState.Released)
-                    {
-                        ProfileManagementPlay.NextPosition.X = 1920 - 400;
-                    }
-
-                    if (ProfileManagementPlay.CurrentButtonState == ButtonSpriteState.Hover)
-                    {
-                        ProfileManagementPlay.NextPosition.X = 1920 - 450;
-                    }
-
-                    if (ProfileManagementPlay.PlayHover == true)
-                    {
-                        MenuWoosh.Play();
-                    }
-
-                    if (ProfileManagementPlay.JustClicked == true)
-                    {
-                        ProfileManagementPlay.ResetState();
-                        MenuClick.Play();
-
-                        if (CurrentProfile != null)
-                        {
-                            if (CurrentProfile.Buttons.All(Weapon => Weapon == null))
-                            {
-                                NoWeaponsDialog = new DialogBox(DialogBox, ShortButtonLeftSprite, ShortButtonRightSprite, RobotoRegular20_0, new Vector2(1920 / 2, 1080 / 2), "OK", "You have no weapons to use!", "");
-                                NoWeaponsDialog.LoadContent();
-                                DialogVisible = true;
-                            }
-                            else
-                            {
-                                UnloadGameContent();
-                                Tower.CurrentHP = Tower.MaxHP;
-                                Tower.CurrentShield = Tower.MaxShield;
-                                MenuColor = Color.White;                                
-                                LevelNumber = CurrentProfile.LevelNumber;                                
-                                LoadLevel(LevelNumber);
-                                //LoadUpgrades();
-                                StorageDevice.BeginShowSelector(this.SaveProfile, null);
-                                GameState = GameState.Loading;
-                                LoadingThread = new Thread(LoadGameContent);
-                                LoadingThread.Name = "Loading Content Thread";
-                                Debug.WriteLine(" ");
-                                Debug.WriteLine("Loading Started At:" + gameTime.TotalGameTime.TotalSeconds.ToString());
-
-                                //Changed this to run in background now. Keep an eye on it.
-                                //Did that in an attempt to stop the loading screen giving an "Unexpected Error"
-                                LoadingThread.IsBackground = true;
-                                LoadingThread.Start();
-                                IsLoading = false;
-                            }
-                        }
-                    }
-                    #endregion
-
-                    #region Back Button
-                    if (ProfileManagementBack.CurrentButtonState == ButtonSpriteState.Released)
-                    {
-                        ProfileManagementBack.NextPosition.X = -50;
-                    }
-
-                    if (ProfileManagementBack.CurrentButtonState == ButtonSpriteState.Hover)
-                    {
-                        ProfileManagementBack.NextPosition.X = 0;
-                    }
-
-                    if (ProfileManagementBack.PlayHover == true)
-                    {
-                        MenuWoosh.Play();
-                    }
-
-                    if (ProfileManagementBack.JustClicked == true)
-                    {
-                        MenuClick.Play();
-                        ProfileBackButton.CurrentPosition.X = 1920 - 150;
-                        MenuColor = Color.White;
-                        SetProfileNames();
-                        SelectedTrap = null;
-                        SelectedTurret = null;
-                        StorageDevice.BeginShowSelector(this.SaveProfile, null);
-                        GameState = GameState.ProfileSelect;
-                        ProfileManagementBack.ResetState();
-                    }
-                    #endregion
-                }
-                #endregion
-
-                #region Handling Profile Select Menu Button Presses
-                if (GameState == GameState.ProfileSelect && DialogVisible == false)
-                {
-                    int Index;
-
-                    foreach (Button button in ProfileButtonList)
-                    {
-                        button.Update(CursorPosition, gameTime);
-
-                        if (button.PlayHover == true)
-                        {
-                            MenuWoosh.Play();
-                        }
-
-                        if (button.JustClicked == true)
-                        {
-                            button.ResetState();
-                            MenuColor = Color.White;
-                            MenuClick.Play();
-                            ProfileManagementBack.CurrentPosition.X = -300;
-                            ProfileManagementPlay.CurrentPosition.X = 1920 - 150;
-                            Index = ProfileButtonList.IndexOf(button);
-
-                            switch (Index)
-                            {
-                                case 0:
-                                    ProfileNumber = 1;
-                                    FileName = "Profile1.sav";
-                                    StorageDevice.BeginShowSelector(this.HandleProfile, null);
-                                    break;
-
-                                case 1:
-                                    ProfileNumber = 2;
-                                    FileName = "Profile2.sav";
-                                    StorageDevice.BeginShowSelector(this.HandleProfile, null);
-                                    break;
-
-                                case 2:
-                                    ProfileNumber = 3;
-                                    FileName = "Profile3.sav";
-                                    StorageDevice.BeginShowSelector(this.HandleProfile, null);
-                                    break;
-
-                                case 3:
-                                    ProfileNumber = 4;
-                                    FileName = "Profile4.sav";
-                                    StorageDevice.BeginShowSelector(this.HandleProfile, null);
-                                    break;
-                            }
-                        }
-                    }
-
-                    foreach (Button button in ProfileDeleteList)
-                    {
-                        button.Update(CursorPosition, gameTime);
-
-                        if (button.JustClicked == true)
-                        {
-                            button.ResetState();
-                            Index = ProfileDeleteList.IndexOf(button);
-
-                            switch (Index)
-                            {
-                                case 0:
-                                    FileName = "Profile1.sav";
-                                    StorageDevice.BeginShowSelector(this.CheckFileDelete, null);
-                                    break;
-
-                                case 1:
-                                    FileName = "Profile2.sav";
-                                    StorageDevice.BeginShowSelector(this.CheckFileDelete, null);
-                                    break;
-
-                                case 2:
-                                    FileName = "Profile3.sav";
-                                    StorageDevice.BeginShowSelector(this.CheckFileDelete, null);
-                                    break;
-
-                                case 3:
-                                    FileName = "Profile4.sav";
-                                    StorageDevice.BeginShowSelector(this.CheckFileDelete, null);
-                                    break;
-                            }
-                        }
-                    }
-
-                    ProfileBackButton.Update(CursorPosition, gameTime);
-
-                    if (ProfileBackButton.JustClicked == true)
-                    {
-                        ProfileBackButton.ResetState();
+                    #region Main Menu
+                    case GameState.Menu:
                         foreach (Button button in MainMenuButtonList)
                         {
-                            button.NextPosition.X = 0;
-                            button.CurrentPosition.X = -300;
-                        }
-                        MenuClick.Play();
-                        MenuColor = Color.White;
-                        GameState = GameState.Menu;
-                    }
+                            button.Update(CursorPosition, gameTime);
 
-                    if (ProfileBackButton.CurrentButtonState == ButtonSpriteState.Hover)
-                    {
-                        ProfileBackButton.NextPosition.X = 1920 - 450;
-                    }
-
-                    if (ProfileBackButton.CurrentButtonState == ButtonSpriteState.Released)
-                    {
-                        ProfileBackButton.NextPosition.X = 1920 - 400;
-                    }
-
-                    if (ProfileBackButton.PlayHover == true)
-                    {
-                        MenuWoosh.Play();
-                    }
-                }
-                #endregion
-
-                #region Handling Options Button Presses
-                if (GameState == GameState.Options)
-                {
-                    OptionsBack.Update(CursorPosition, gameTime);
-
-                    OptionsSFXUp.Update(CursorPosition, gameTime);
-                    OptionsSFXDown.Update(CursorPosition, gameTime);
-
-                    OptionsMusicUp.Update(CursorPosition, gameTime);
-                    OptionsMusicDown.Update(CursorPosition, gameTime);
-
-                    if (OptionsBack.PlayHover == true)
-                    {
-                        MenuWoosh.Play();
-                    }
-
-                    if (OptionsBack.JustClicked == true)
-                    {
-                        OptionsBack.ResetState();
-                        MenuClick.Play();
-                        MenuColor = Color.White;
-                        SaveSettings();
-                        GameState = GameState.Menu;
-                    }
-
-                    #region SFX Volume change
-                    if (OptionsSFXUp.JustClicked == true)
-                    {
-                        if (MenuSFXVolume < 10)
-                        {
-                            MenuSFXVolume++;
-                            CurrentSettings.SFXVolume = MenuSFXVolume / 10;
-                            SoundEffect.MasterVolume = CurrentSettings.SFXVolume;
-                            MenuClick.Play();
-                        }
-                    }
-
-                    if (OptionsSFXDown.JustClicked == true)
-                    {
-                        if (MenuSFXVolume > 0)
-                        {
-                            MenuSFXVolume--;
-                            CurrentSettings.SFXVolume = MenuSFXVolume / 10;
-                            SoundEffect.MasterVolume = CurrentSettings.SFXVolume;
-                            MenuClick.Play();
-                        }
-                    }
-                    #endregion
-
-                    #region Music volume change
-                    if (OptionsMusicUp.JustClicked == true)
-                    {
-                        if (MenuMusicVolume < 10)
-                        {
-                            MenuMusicVolume++;
-                            CurrentSettings.MusicVolume = MenuMusicVolume / 10;
-                            MediaPlayer.Volume = CurrentSettings.MusicVolume;
-                            MenuClick.Play();
-                        }
-                    }
-
-                    if (OptionsMusicDown.JustClicked == true)
-                    {
-                        if (MenuMusicVolume > 0)
-                        {
-                            MenuMusicVolume--;
-                            CurrentSettings.MusicVolume = MenuMusicVolume / 10;
-                            MediaPlayer.Volume = CurrentSettings.MusicVolume;
-                            MenuClick.Play();
-                        }
-                    }
-                    #endregion
-
-
-                    #region Control volumes with scroll wheel
-                    #region SFX Volume
-                    if (OptionsSFXUp.CurrentButtonState == ButtonSpriteState.Hover ||
-                        OptionsSFXDown.CurrentButtonState == ButtonSpriteState.Hover)
-                    {
-                        if (CurrentMouseState.ScrollWheelValue > PreviousMouseState.ScrollWheelValue)
-                        {
-                            if (MenuSFXVolume < 10)
+                            if (button.CurrentButtonState == ButtonSpriteState.Hover)
                             {
-                                MenuSFXVolume++;
-                                CurrentSettings.SFXVolume = MenuSFXVolume / 10;
-                                SoundEffect.MasterVolume = CurrentSettings.SFXVolume;
-                                MenuClick.Play();
+                                button.NextPosition.X = 0;
+                            }
+
+                            if (button.CurrentButtonState == ButtonSpriteState.Released)
+                            {
+                                button.NextPosition.X = -50;
                             }
                         }
-                    }
-
-                    if (OptionsSFXUp.CurrentButtonState == ButtonSpriteState.Hover ||
-                        OptionsSFXDown.CurrentButtonState == ButtonSpriteState.Hover)
-                    {
-                        if (CurrentMouseState.ScrollWheelValue < PreviousMouseState.ScrollWheelValue)
-                        {
-                            if (MenuSFXVolume > 0)
-                            {
-                                MenuSFXVolume--;
-                                CurrentSettings.SFXVolume = MenuSFXVolume / 10;
-                                SoundEffect.MasterVolume = CurrentSettings.SFXVolume;
-                                MenuClick.Play();
-                            }
-                        }
-                    }
+                        break;
                     #endregion
 
-                    #region Music Volume
-                    if (OptionsMusicUp.CurrentButtonState == ButtonSpriteState.Hover ||
-                        OptionsMusicDown.CurrentButtonState == ButtonSpriteState.Hover)
-                    {
-                        if (CurrentMouseState.ScrollWheelValue > PreviousMouseState.ScrollWheelValue)
+                    #region Pause Menu
+                    case GameState.Paused:
+                        foreach (Button button in PauseButtonList)
                         {
-                            if (MenuMusicVolume < 10)
+                            button.Update(CursorPosition, gameTime);
+                        }
+                        break;
+                    #endregion
+
+                    #region Profile Management
+                    case GameState.ProfileManagement:
+
+                        //Match the state of the tabs with the ProfileManagementState
+                        ProfileManagementTabs.Update(gameTime);
+                        ProfileManagementState = (ProfileManagementState)(ProfileManagementTabs.SelectedIndex);
+
+                        ProfileManagementPlay.Update(CursorPosition, gameTime);
+                        ProfileManagementBack.Update(CursorPosition, gameTime);
+
+                        switch (ProfileManagementState)
+                        {
+                            #region Loadout screen
+                            case ProfileManagementState.Loadout:
+
+                                #region Move turrets right
+                                MoveTurretsRight.Update(CursorPosition, gameTime);
+                                if (MoveTurretsRight.JustClicked == true &&
+                                    SelectTurretList[0].DestinationRectangle.Left < MoveTurretsLeft.DestinationRectangle.Right)
+                                {
+                                    foreach (WeaponBox turretBox in SelectTurretList)
+                                    {
+                                        turretBox.Position += new Vector2(282, 0);
+                                        turretBox.UpdateQuads();
+                                        turretBox.SetUpBars();
+                                    }
+                                }
+                                #endregion
+
+                                #region Move turrets left
+                                MoveTurretsLeft.Update(CursorPosition, gameTime);
+                                if (MoveTurretsLeft.JustClicked == true &&
+                                    SelectTurretList[SelectTurretList.Count - 1].DestinationRectangle.Right > MoveTurretsRight.DestinationRectangle.Left)
+                                {
+                                    foreach (WeaponBox turretBox in SelectTurretList)
+                                    {
+                                        turretBox.Position -= new Vector2(282, 0);
+                                        turretBox.UpdateQuads();
+                                        turretBox.SetUpBars();
+                                    }
+                                }
+                                #endregion
+
+                                #region Move traps right
+                                MoveTrapsRight.Update(CursorPosition, gameTime);
+                                if (MoveTrapsRight.JustClicked == true &&
+                                    SelectTrapList[0].DestinationRectangle.Left < MoveTrapsLeft.DestinationRectangle.Right)
+                                {
+                                    foreach (WeaponBox trapBox in SelectTrapList)
+                                    {
+                                        trapBox.Position += new Vector2(282, 0);
+                                        trapBox.UpdateQuads();
+                                        trapBox.SetUpBars();
+                                    }
+                                }
+                                #endregion
+
+                                #region Move traps left
+                                MoveTrapsLeft.Update(CursorPosition, gameTime);
+                                if (MoveTrapsLeft.JustClicked == true &&
+                                   SelectTrapList[SelectTrapList.Count - 1].DestinationRectangle.Right > MoveTrapsRight.DestinationRectangle.Left)
+                                {
+                                    foreach (WeaponBox trapBox in SelectTrapList)
+                                    {
+                                        trapBox.Position -= new Vector2(282, 0);
+                                        trapBox.UpdateQuads();
+                                        trapBox.SetUpBars();
+                                    }
+                                }
+                                #endregion
+
+
+                                #region Select turret boxes
+                                foreach (WeaponBox turretBox in SelectTurretList)
+                                {
+                                    turretBox.Update(gameTime);
+
+                                    if (turretBox.DestinationRectangle.Left > MoveTurretsLeft.DestinationRectangle.Right &&
+                                        turretBox.DestinationRectangle.Right < MoveTurretsRight.DestinationRectangle.Left)
+                                    {
+                                        turretBox.Visible = true;
+                                    }
+                                    else
+                                    {
+                                        turretBox.Visible = false;
+                                    }
+
+                                    if (turretBox.JustClicked == true && turretBox.Visible == true)
+                                    {
+                                        string WeaponName = turretBox.ContainsTurret.ToString();
+                                        var Available = CurrentProfile.GetType().GetField(WeaponName).GetValue(CurrentProfile);
+
+                                        if ((bool)Available == true)
+                                            SelectedTurret = turretBox.ContainsTurret;
+                                    }
+                                }
+                                #endregion
+
+                                #region Select trap boxes
+                                foreach (WeaponBox trapBox in SelectTrapList)
+                                {
+                                    trapBox.Update(gameTime);
+
+                                    if (trapBox.DestinationRectangle.Left > MoveTrapsLeft.DestinationRectangle.Right &&
+                                        trapBox.DestinationRectangle.Right < MoveTrapsRight.DestinationRectangle.Left)
+                                    {
+                                        trapBox.Visible = true;
+                                    }
+                                    else
+                                    {
+                                        trapBox.Visible = false;
+                                    }
+
+                                    if (trapBox.JustClicked == true && trapBox.Visible == true)
+                                    {
+                                        string WeaponName = trapBox.ContainsTrap.ToString();
+                                        var Available = CurrentProfile.GetType().GetField(WeaponName).GetValue(CurrentProfile);
+
+                                        if ((bool)Available == true)
+                                            SelectedTrap = trapBox.ContainsTrap;
+                                    }
+                                }
+                                #endregion
+
+
+                                #region Place Weapon Buttons
+                                foreach (Button button in PlaceWeaponList)
+                                {
+                                    button.Update(CursorPosition, gameTime);
+                                    
+                                    if (button.JustRightClicked == true)
+                                    {
+                                        CurrentProfile.Buttons[PlaceWeaponList.IndexOf(button)] = null;
+                                        button.IconTexture = null;
+                                        button.Initialize(OnButtonClick);
+                                    }
+                                }
+                                #endregion
+                                break;
+                            #endregion
+
+                            case ProfileManagementState.Stats:
+
+                                break;
+
+                            case ProfileManagementState.Upgrades:
+
+                                break;
+                        }
+                        break;
+                    #endregion
+
+                    #region Profile Select
+                    case GameState.ProfileSelect:
+                        foreach (Button button in ProfileButtonList)
+                        {
+                            button.Update(CursorPosition, gameTime);
+                        }
+
+                        foreach (Button button in ProfileDeleteList)
+                        {
+                            button.Update(CursorPosition, gameTime);
+                        }
+
+                        ProfileBackButton.Update(CursorPosition, gameTime);
+
+                        if (ProfileBackButton.CurrentButtonState == ButtonSpriteState.Hover)
+                        {
+                            ProfileBackButton.NextPosition.X = 1920 - 450;
+                        }
+
+                        if (ProfileBackButton.CurrentButtonState == ButtonSpriteState.Released)
+                        {
+                            ProfileBackButton.NextPosition.X = 1920 - 400;
+                        }
+                        break;
+                    #endregion
+
+                    #region Options Menu
+                    case GameState.Options:
+                        OptionsBack.Update(CursorPosition, gameTime);
+
+                        OptionsSFXUp.Update(CursorPosition, gameTime);
+                        OptionsSFXDown.Update(CursorPosition, gameTime);
+
+                        OptionsMusicUp.Update(CursorPosition, gameTime);
+                        OptionsMusicDown.Update(CursorPosition, gameTime);
+                        
+                        #region Control volumes with scroll wheel
+                        #region SFX Volume
+                        if (OptionsSFXUp.CurrentButtonState == ButtonSpriteState.Hover ||
+                            OptionsSFXDown.CurrentButtonState == ButtonSpriteState.Hover)
+                        {
+                            if (CurrentMouseState.ScrollWheelValue > PreviousMouseState.ScrollWheelValue)
                             {
-                                MenuMusicVolume++;
-                                CurrentSettings.MusicVolume = MenuMusicVolume / 10;
-                                SoundEffect.MasterVolume = CurrentSettings.MusicVolume;
-                                MenuClick.Play();
+                                if (MenuSFXVolume < 10)
+                                {
+                                    MenuSFXVolume++;
+                                    CurrentSettings.SFXVolume = MenuSFXVolume / 10;
+                                    SoundEffect.MasterVolume = CurrentSettings.SFXVolume;
+                                    MenuClick.Play();
+                                }
                             }
                         }
-                    }
 
-                    if (OptionsMusicUp.CurrentButtonState == ButtonSpriteState.Hover ||
-                        OptionsMusicDown.CurrentButtonState == ButtonSpriteState.Hover)
-                    {
-                        if (CurrentMouseState.ScrollWheelValue < PreviousMouseState.ScrollWheelValue)
+                        if (OptionsSFXUp.CurrentButtonState == ButtonSpriteState.Hover ||
+                            OptionsSFXDown.CurrentButtonState == ButtonSpriteState.Hover)
                         {
-                            if (MenuMusicVolume > 0)
+                            if (CurrentMouseState.ScrollWheelValue < PreviousMouseState.ScrollWheelValue)
                             {
-                                MenuMusicVolume--;
-                                CurrentSettings.MusicVolume = MenuMusicVolume / 10;
-                                SoundEffect.MasterVolume = CurrentSettings.MusicVolume;
-                                MenuClick.Play();
+                                if (MenuSFXVolume > 0)
+                                {
+                                    MenuSFXVolume--;
+                                    CurrentSettings.SFXVolume = MenuSFXVolume / 10;
+                                    SoundEffect.MasterVolume = CurrentSettings.SFXVolume;
+                                    MenuClick.Play();
+                                }
                             }
                         }
-                    }
+                        #endregion
+
+                        #region Music Volume
+                        if (OptionsMusicUp.CurrentButtonState == ButtonSpriteState.Hover ||
+                            OptionsMusicDown.CurrentButtonState == ButtonSpriteState.Hover)
+                        {
+                            if (CurrentMouseState.ScrollWheelValue > PreviousMouseState.ScrollWheelValue)
+                            {
+                                if (MenuMusicVolume < 10)
+                                {
+                                    MenuMusicVolume++;
+                                    CurrentSettings.MusicVolume = MenuMusicVolume / 10;
+                                    SoundEffect.MasterVolume = CurrentSettings.MusicVolume;
+                                    MenuClick.Play();
+                                }
+                            }
+                        }
+
+                        if (OptionsMusicUp.CurrentButtonState == ButtonSpriteState.Hover ||
+                            OptionsMusicDown.CurrentButtonState == ButtonSpriteState.Hover)
+                        {
+                            if (CurrentMouseState.ScrollWheelValue < PreviousMouseState.ScrollWheelValue)
+                            {
+                                if (MenuMusicVolume > 0)
+                                {
+                                    MenuMusicVolume--;
+                                    CurrentSettings.MusicVolume = MenuMusicVolume / 10;
+                                    SoundEffect.MasterVolume = CurrentSettings.MusicVolume;
+                                    MenuClick.Play();
+                                }
+                            }
+                        }
+                        #endregion
+                        #endregion
+                        break;
                     #endregion
+
+                    #region Get Name
+                    case GameState.GettingName:
+                        GetNameBack.Update(CursorPosition, gameTime);
+                        GetNameOK.Update(CursorPosition, gameTime);
+                        NameInput.Update();
+                        NameInput.Active = true;
+
+                        if (GetNameBack.CurrentButtonState == ButtonSpriteState.Hover)
+                        {
+                            GetNameBack.NextPosition.X = 0;
+                        }
+
+                        if (GetNameBack.CurrentButtonState == ButtonSpriteState.Released)
+                        {
+                            GetNameBack.NextPosition.X = -50;
+                        }
+
+                        if (GetNameOK.CurrentButtonState == ButtonSpriteState.Hover)
+                        {
+                            GetNameOK.NextPosition.X = 1920 - 450;
+                        }
+
+                        if (GetNameOK.CurrentButtonState == ButtonSpriteState.Released)
+                        {
+                            GetNameOK.NextPosition.X = 1920 - 400;
+                        }
+
+                        if (CurrentKeyboardState.IsKeyUp(Keys.Enter) && PreviousKeyboardState.IsKeyDown(Keys.Enter))
+                        {
+                            GetNameOK.CreateButtonClick();
+                        }
+                        break;
                     #endregion
-                }
-                #endregion
 
-                #region Handling GetName Button Presses
-                if (GameState == GameState.GettingName && DialogVisible == false)
-                {
-                    GetNameBack.Update(CursorPosition, gameTime);
-                    GetNameOK.Update(CursorPosition, gameTime);
-                    NameInput.Update();
-                    NameInput.Active = true;
+                    #region Upgrades Menu
+                    
+                    #endregion
 
-                    if (GetNameBack.CurrentButtonState == ButtonSpriteState.Hover)
-                    {
-                        GetNameBack.NextPosition.X = 0;
-                    }
+                    #region Victory Screen
+                    case GameState.Victory:
+                        if (Victory == true)
+                            VictoryContinue.Update(CursorPosition, gameTime);
+                        else
+                            VictoryRetry.Update(CursorPosition, gameTime);
 
-                    if (GetNameBack.CurrentButtonState == ButtonSpriteState.Released)
-                    {
-                        GetNameBack.NextPosition.X = -50;
-                    }
-
-                    if (GetNameOK.CurrentButtonState == ButtonSpriteState.Hover)
-                    {
-                        GetNameOK.NextPosition.X = 1920 - 450;
-                    }
-
-                    if (GetNameOK.CurrentButtonState == ButtonSpriteState.Released)
-                    {
-                        GetNameOK.NextPosition.X = 1920 - 400;
-                    }
-
-                    if (GetNameOK.PlayHover == true)
-                    {
-                        MenuWoosh.Play();
-                    }
-
-                    if (GetNameBack.PlayHover == true)
-                    {
-                        MenuWoosh.Play();
-                    }
-
-                    if (GetNameBack.JustClicked == true)
-                    {
-                        ProfileBackButton.CurrentPosition.X = 1920 - 150;
-                        GetNameBack.ResetState();
-                        MenuColor = Color.White;
-                        MenuClick.Play();
-                        NameInput.TypePosition = 0;
-                        NameInput.RealString = "";
-                        GameState = GameState.ProfileSelect;
-                    }
-
-                    if ((GetNameOK.JustClicked == true) ||
-                        (CurrentKeyboardState.IsKeyUp(Keys.Enter) && PreviousKeyboardState.IsKeyDown(Keys.Enter)))
-                    {
-                        GetNameOK.ResetState();
-
-                        if (NameInput.RealString.Length < 3)
+                        if (VictoryContinue.JustClicked == true)
                         {
-                            NameLengthDialog = new DialogBox(DialogBox, ShortButtonLeftSprite, ShortButtonRightSprite, RobotoRegular20_0, new Vector2(1920 / 2, 1080 / 2), "OK", "Your name is too short.", "");
-                            NameLengthDialog.LoadContent();
-                            DialogVisible = true;
-                        }
-
-                        if (NameInput.RealString.All(Char => Char == ' '))
-                        {
-                            NameLengthDialog = new DialogBox(DialogBox, ShortButtonLeftSprite, ShortButtonRightSprite, RobotoRegular20_0, new Vector2(1920 / 2, 1080 / 2), "OK", "Your name cannot be blank.", "");
-                            NameLengthDialog.LoadContent();
-                            DialogVisible = true;
-                        }
-
-                        if (NameInput.RealString.Length >= 3 && !NameInput.RealString.All(Char => Char == ' '))
-                        {
-                            GetNameOK.ResetState();
-                            MenuColor = Color.White;
-                            MenuClick.Play();
-                            AddNewProfile();
-                        }
-                    }
-                }
-                #endregion                
-
-                #region Handling Upgrades Menu Button Presses
-                //if (GameState == GameState.Upgrades && DialogVisible == false)
-                //{
-                //    UpgradesBack.Update(CursorPosition, gameTime);
-
-                //    foreach (Button button in UpgradeButtonList)
-                //    {
-                //        button.Update(CursorPosition, gameTime);
-
-                //        int index = UpgradeButtonList.IndexOf(button);
-
-                //        if (button.JustClicked == true)
-                //        {
-                //            switch (index)
-                //            {
-                //                case 0:
-                //                    CurrentProfile.UpgradesList.Add(new Upgrade2());
-                //                    break;
-                //            }
-                //        }
-                //    }
-
-                //    if (UpgradesBack.JustClicked == true)
-                //    {
-                //        GameState = GameState.ProfileManagement;
-                //    }
-                //}
-                #endregion                               
-
-                #region Handling Victory Screen Button Presses
-                if (GameState == GameState.Victory)
-                {
-                    if (Victory == true)
-                        VictoryContinue.Update(CursorPosition, gameTime);
-                    else
-                        VictoryRetry.Update(CursorPosition, gameTime);
-
-                    if (VictoryContinue.JustClicked == true)
-                    {
-                        CurrentProfile.LevelNumber++;
-                        StorageDevice.BeginShowSelector(this.SaveProfile, null);
-                        GameState = GameState.ProfileManagement;
-                    }
-                }
-                #endregion
-
-                #region Handling DialogBox Button Presses
-                if (ExitDialog != null)
-                {
-                    ExitDialog.Update(CursorPosition, gameTime);
-
-                    if (ExitDialog.LeftButton.JustClicked == true)
-                    {
-                        MenuClick.Play();
-
-                        if (GameState == GameState.Paused)
+                            CurrentProfile.LevelNumber++;
                             StorageDevice.BeginShowSelector(this.SaveProfile, null);
-
-                        Content.Unload();
-                        SecondaryContent.Unload();
-
-                        this.Exit();
-                    }
-
-                    if (ExitDialog.RightButton.JustClicked == true)
-                    {
-                        MenuClick.Play();
-                        DialogVisible = false;
-                        ExitDialog = null;
-                    }
+                            GameState = GameState.ProfileManagement;
+                        }
+                        break;
+                    #endregion
                 }
-
-                if (DeleteProfileDialog != null)
-                {
-                    DeleteProfileDialog.Update(CursorPosition, gameTime);
-
-                    if (DeleteProfileDialog.LeftButton.JustClicked == true)
-                    {
-                        MenuClick.Play();
-                        StorageDevice.BeginShowSelector(this.DeleteProfile, null);
-                        SetProfileNames();
-                        DialogVisible = false;
-                        DeleteProfileDialog = null;
-                        return;
-                    }
-
-                    if (DeleteProfileDialog.RightButton.JustClicked == true)
-                    {
-                        MenuClick.Play();
-                        DialogVisible = false;
-                        DeleteProfileDialog = null;
-                    }
-                }
-
-                if (ProfileMenuDialog != null)
-                {
-                    ProfileMenuDialog.Update(CursorPosition, gameTime);
-
-                    if (ProfileMenuDialog.LeftButton.JustClicked == true)
-                    {
-                        MenuClick.Play();
-                        StorageDevice.BeginShowSelector(this.SaveProfile, null);
-                        DialogVisible = false;
-                        ProfileMenuDialog = null;
-                        ResetUpgrades();
-                        //DrawableList.Clear();
-                        UnloadGameContent();
-                        GameState = GameState.ProfileManagement;
-                        return;
-                    }
-
-                    if (ProfileMenuDialog.RightButton.JustClicked == true)
-                    {
-                        MenuClick.Play();
-                        DialogVisible = false;
-                        ProfileMenuDialog = null;
-                    }
-                }
-
-                if (MainMenuDialog != null)
-                {
-                    MainMenuDialog.Update(CursorPosition, gameTime);
-
-                    if (MainMenuDialog.LeftButton.JustClicked == true)
-                    {
-                        MenuClick.Play();
-                        StorageDevice.BeginShowSelector(this.SaveProfile, null);
-                        CurrentProfile = null;
-                        ResetUpgrades();
-                        //DrawableList.Clear();
-                        UnloadGameContent();
-                        DialogVisible = false;
-                        MainMenuDialog = null;
-                        GameState = GameState.Menu;
-                        return;
-                    }
-
-                    if (MainMenuDialog.RightButton.JustClicked == true)
-                    {
-                        MenuClick.Play();
-                        DialogVisible = false;
-                        MainMenuDialog = null;
-                    }
-                }
-
-                if (NoWeaponsDialog != null)
-                {
-                    NoWeaponsDialog.Update(CursorPosition, gameTime);
-
-                    if (NoWeaponsDialog.LeftButton.JustClicked == true)
-                    {
-                        MenuClick.Play();
-                        DialogVisible = false;
-                        NoWeaponsDialog = null;
-                    }
-                }
-
-                if (NameLengthDialog != null)
-                {
-                    NameLengthDialog.Update(CursorPosition, gameTime);
-
-                    if (NameLengthDialog.LeftButton.JustClicked == true)
-                    {
-                        MenuClick.Play();
-                        DialogVisible = false;
-                        NameLengthDialog = null;
-                    }
-                }
-                #endregion
 
                 #region Load screen
                 if (AllLoaded == true && GameState == GameState.Loading)
@@ -5433,16 +5418,48 @@ namespace TowerDefensePrototype
                     //Move to the game if the play presses a key and all the content is loaded
                     //if (CurrentKeyboardState.GetPressedKeys().Count() > 0)
                     //{
-                        Debug.WriteLine("All content loaded - moving to game");
-                        Debug.WriteLine(" ");
-                        IsLoading = false;
-                        MenuMusicInstance.Stop();
-                        GameState = GameState.Playing;                        
+                    Debug.WriteLine("All content loaded - moving to game");
+                    Debug.WriteLine(" ");
+                    IsLoading = false;
+                    MenuMusicInstance.Stop();
+                    GameState = GameState.Playing;
                     //ParticleThread.
                     //}
                 }
                 #endregion
             }
+
+            #region Dialog Boxes
+            if (ExitDialog != null)
+            {
+                ExitDialog.Update(CursorPosition, gameTime);
+            }
+
+            if (DeleteProfileDialog != null)
+            {
+                DeleteProfileDialog.Update(CursorPosition, gameTime);
+            }
+
+            if (ProfileMenuDialog != null)
+            {
+                ProfileMenuDialog.Update(CursorPosition, gameTime);
+            }
+
+            if (MainMenuDialog != null)
+            {
+                MainMenuDialog.Update(CursorPosition, gameTime);
+            }
+
+            if (NoWeaponsDialog != null)
+            {
+                NoWeaponsDialog.Update(CursorPosition, gameTime);
+            }
+
+            if (NameLengthDialog != null)
+            {
+                NameLengthDialog.Update(CursorPosition, gameTime);
+            }
+            #endregion
         }
 
         private void SpecialAbilitiesButtonUpdate(GameTime gameTime)
@@ -6663,21 +6680,6 @@ namespace TowerDefensePrototype
                 if (!turret.SelectBox.Contains(VectorToPoint(CursorPosition)))
                 {
                     UITurretOutlineList.RemoveAll(turretOutline => turretOutline.Turret == turret);
-                }
-                #endregion
-
-                #region Select the turret when it's clicked
-                if (turret.JustClicked == true)
-                {
-                    ClearSelected();
-                    turret.Selected = true;
-                    CurrentTurret = turret;
-
-                    //Makes sure two turrets cannot be selected at the same time
-                    foreach (Turret turret2 in TurretList.Where(Turret => Turret != null && Turret != turret))
-                    {
-                        turret2.Selected = false;
-                    }
                 }
                 #endregion
 
@@ -8363,7 +8365,7 @@ namespace TowerDefensePrototype
                 foreach (Button button in PlaceWeaponList)
                 {
                     button.IconTexture = null;
-                    button.LoadContent();
+                    button.Initialize(OnButtonClick);
                 }
 
                 Stream stream = container.CreateFile(FileName);
@@ -8656,7 +8658,8 @@ namespace TowerDefensePrototype
                 DeleteProfileDialog = new DialogBox(DialogBox, ShortButtonLeftSprite, ShortButtonRightSprite, RobotoRegular20_0, 
                                                     new Vector2(1920 / 2, 1080 / 2), "delete", 
                                                     "Do you want to delete " + ThisProfile.Name + "?", "cancel");
-                DeleteProfileDialog.LoadContent();
+                DeleteProfileDialog.Initialize(OnButtonClick);
+                CurrentDialogBox = DeleteProfileDialog;
                 DialogVisible = true;
             }
             else
@@ -9038,7 +9041,7 @@ namespace TowerDefensePrototype
                                 if (StartWave == true && StartWaveButton == null && InvaderList.Count == 0)
                                 {
                                     StartWaveButton = new Button(ButtonLeftSprite, new Vector2(1000, 200));
-                                    StartWaveButton.LoadContent();
+                                    StartWaveButton.Initialize(OnButtonClick);
                                     StartWave = false;
                                 }
                             }
@@ -9054,7 +9057,7 @@ namespace TowerDefensePrototype
                     Victory = true;
                     VictoryContinue = new Button(ButtonLeftSprite, new Vector2(-300, 834), null, null, null, "continue", RobotoRegular20_2, "Left", null, false);
                     VictoryContinue.NextPosition = new Vector2(665, 834);
-                    VictoryContinue.LoadContent();
+                    VictoryContinue.Initialize(OnButtonClick);
                     GameState = GameState.Victory;
                 }
                 #endregion

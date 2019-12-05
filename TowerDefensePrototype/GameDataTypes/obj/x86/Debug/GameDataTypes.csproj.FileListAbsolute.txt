@@ -1,6 +1,0 @@
-C:\Users\Gryff\Desktop\Temp for Fixing Broken Invaders, Trap and Turrets\TowerDefensePrototype 101\GameDataTypes\bin\x86\Debug\GameDataTypes.dll
-C:\Users\Gryff\Desktop\Temp for Fixing Broken Invaders, Trap and Turrets\TowerDefensePrototype 101\GameDataTypes\bin\x86\Debug\GameDataTypes.pdb
-C:\Users\Gryff\Desktop\Temp for Fixing Broken Invaders, Trap and Turrets\TowerDefensePrototype 101\GameDataTypes\obj\x86\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
-C:\Users\Gryff\Desktop\Temp for Fixing Broken Invaders, Trap and Turrets\TowerDefensePrototype 101\GameDataTypes\obj\x86\Debug\GameDataTypes.dll
-C:\Users\Gryff\Desktop\Temp for Fixing Broken Invaders, Trap and Turrets\TowerDefensePrototype 101\GameDataTypes\obj\x86\Debug\GameDataTypes.pdb
-C:\Users\Gryff\Desktop\Temp for Fixing Broken Invaders, Trap and Turrets\TowerDefensePrototype 101\GameDataTypes\obj\x86\Debug\GameDataTypes.csprojResolveAssemblyReference.cache

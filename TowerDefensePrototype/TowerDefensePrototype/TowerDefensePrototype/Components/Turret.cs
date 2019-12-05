@@ -11,6 +11,18 @@ namespace TowerDefensePrototype
 {
     public abstract class Turret : Drawable
     {
+        public event EventHandler<EventArgs> TurretClickHappened;
+        public void CreateTurretClick()
+        {
+            OnTurretClickHappened();
+        }
+        protected virtual void OnTurretClickHappened()
+        {
+            if (TurretClickHappened != null)
+                TurretClickHappened(this, null);
+        }
+
+        public bool InOut, PrevInOut;
         public Texture2D TurretBase, TurretBarrel;
         public Vector2 Direction, Position, MousePosition, BarrelPivot, BasePivot, 
                        FrameSize, BarrelEnd, BarrelCenter, FireDirection;
@@ -19,7 +31,7 @@ namespace TowerDefensePrototype
         public float Rotation, MaxHealth, CurrentHealth, FireRotation, CurrentHeat, MaxHeat,
                      CurrentHeatTime, MaxHeatTime, CoolValue, ShotHeat, BlastRadius, AngleOffset,
                      MaxAngleOffset, MinAngleOffset, LaunchVelocity;
-        public bool Selected, JustClicked, CanShoot, Animated, Looping, Overheated;
+        public bool Selected, CanShoot, Animated, Looping, Overheated;
         public double FireDelay, CurrentFrameTime;
         public double ElapsedTime = 0;
         public int Damage, CurrentFrame, ResourceCost;        
@@ -55,6 +67,34 @@ namespace TowerDefensePrototype
         //The time between when the mouse is clicked and then the shot is fired. 
         //Like the Deathstar building up power before blowing up Alderaan
         public float ChargeTime;
+
+        private ButtonState _LeftButtonState;
+        public ButtonState LeftButtonState
+        {
+            get { return _LeftButtonState; }
+            set
+            {
+                _LeftButtonState = value;
+                PrevInOut = InOut;
+                if (SelectBox.Contains(new Point((int)MousePosition.X, (int)MousePosition.Y)) == true)
+                {
+                    //In
+                    InOut = true;
+                }
+                else
+                {
+                    //Out
+                    InOut = false;
+                }
+
+                if (PrevInOut == true && InOut == true &&
+                    CurrentMouseState.LeftButton == ButtonState.Released &&
+                    PreviousMouseState.LeftButton == ButtonState.Pressed)
+                {
+                    CreateTurretClick();
+                }
+            }
+        }
 
         public virtual void Initialize(ContentManager contentManager)
         {
@@ -93,6 +133,9 @@ namespace TowerDefensePrototype
         public virtual void Update(GameTime gameTime, Vector2 cursorPosition)
         {
             CurrentMouseState = Mouse.GetState();
+
+            if (CurrentMouseState.LeftButton != PreviousMouseState.LeftButton)
+                LeftButtonState = Mouse.GetState().LeftButton;
 
             if (AmmoBelt != null)
             {
@@ -210,8 +253,6 @@ namespace TowerDefensePrototype
             {
                 if (Selected == true)
                 {
-                    //CurrentMouseState = Mouse.GetState();
-
                     if (MousePosition - new Vector2(BarrelCenter.X, BarrelCenter.Y) == Vector2.Zero)
                     {
                         MousePosition += Vector2.One;
@@ -227,8 +268,6 @@ namespace TowerDefensePrototype
                     
                     if (double.IsNaN(Rotation) == true)
                         Rotation = -20;
-
-                    //PreviousMouseState = CurrentMouseState;
                 }
                 else
                 {
@@ -245,24 +284,7 @@ namespace TowerDefensePrototype
             float Percent = (CurrentHeat / MaxHeat) * 100;
             Color = Color.Lerp(Color.White, Color.Lerp(Color.Red, Color.White, 0.5f), Percent / 100);
 
-            SourceRectangle = new Rectangle(0 + (int)FrameSize.X * CurrentFrame, 0, (int)FrameSize.X, (int)FrameSize.Y);
-
-            #region Handle selection
-            //(InsideRotatedRectangle(BarrelRectangle, BarrelPivot,
-            //    new Vector2(cursorPosition.X, cursorPosition.Y), MathHelper.ToRadians(Rotation)) == true ||
-            //    new Rectangle((int)(BaseRectangle.X - BasePivot.X), (int)(BaseRectangle.Y - BasePivot.Y),
-            //    BaseRectangle.Width, BaseRectangle.Height).Contains(new Point((int)cursorPosition.X, (int)cursorPosition.Y)
-
-            if (SelectBox.Contains(new Point((int)cursorPosition.X, (int)cursorPosition.Y)) == true &&
-                CurrentMouseState.LeftButton == ButtonState.Released && PreviousMouseState.LeftButton == ButtonState.Pressed)
-            {
-                JustClicked = true;
-            }
-            else
-            {
-                JustClicked = false;
-            }
-            #endregion                
+            SourceRectangle = new Rectangle(0 + (int)FrameSize.X * CurrentFrame, 0, (int)FrameSize.X, (int)FrameSize.Y);            
 
             PreviousMouseState = CurrentMouseState;
         }
