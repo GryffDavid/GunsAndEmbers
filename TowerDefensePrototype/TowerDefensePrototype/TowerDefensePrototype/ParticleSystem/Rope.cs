@@ -18,8 +18,8 @@ namespace TowerDefensePrototype
 
         public int Segments = 110;
 
-        public VertexPositionColorTexture[] projectileVertices = new VertexPositionColorTexture[4];
-        public int[] projectileIndices = new int[6];
+        public VertexPositionColorTexture[] ropeVertices = new VertexPositionColorTexture[4];
+        public int[] ropeIndices = new int[6];
 
         public class Stick
         {
@@ -165,51 +165,51 @@ namespace TowerDefensePrototype
 
                 float rot = (float)Math.Atan2(Direction.Y, Direction.X);
 
-                #region Draw projectile sprite
+                #region Draw rope segments
                 effect.World = Matrix.CreateTranslation(new Vector3(-stick.Point1.CurrentPosition.X - 0, -stick.Point1.CurrentPosition.Y - 0, 0)) *
                                Matrix.CreateRotationZ(rot) *
                                Matrix.CreateTranslation(new Vector3(stick.Point1.CurrentPosition.X, stick.Point1.CurrentPosition.Y, 0));
 
 
-                projectileVertices[0] = new VertexPositionColorTexture()
+                ropeVertices[0] = new VertexPositionColorTexture()
                 {
                     Position = new Vector3(stick.DestinationRectangle.Left, stick.DestinationRectangle.Top, 0),
                     TextureCoordinate = new Vector2(0, 0),
                     Color = Color.White
                 };
 
-                projectileVertices[1] = new VertexPositionColorTexture()
+                ropeVertices[1] = new VertexPositionColorTexture()
                 {
                     Position = new Vector3(stick.DestinationRectangle.Left + stick.DestinationRectangle.Width, stick.DestinationRectangle.Top, 0),
                     TextureCoordinate = new Vector2(1, 0),
                     Color = Color.White
                 };
 
-                projectileVertices[2] = new VertexPositionColorTexture()
+                ropeVertices[2] = new VertexPositionColorTexture()
                 {
                     Position = new Vector3(stick.DestinationRectangle.Left + stick.DestinationRectangle.Width, stick.DestinationRectangle.Top + stick.DestinationRectangle.Height, 0),
                     TextureCoordinate = new Vector2(1, 1),
                     Color = Color.White
                 };
 
-                projectileVertices[3] = new VertexPositionColorTexture()
+                ropeVertices[3] = new VertexPositionColorTexture()
                 {
                     Position = new Vector3(stick.DestinationRectangle.Left, stick.DestinationRectangle.Top + stick.DestinationRectangle.Height, 0),
                     TextureCoordinate = new Vector2(0, 1),
                     Color = Color.White
                 };
 
-                projectileIndices[0] = 0;
-                projectileIndices[1] = 1;
-                projectileIndices[2] = 2;
-                projectileIndices[3] = 2;
-                projectileIndices[4] = 3;
-                projectileIndices[5] = 0;
+                ropeIndices[0] = 0;
+                ropeIndices[1] = 1;
+                ropeIndices[2] = 2;
+                ropeIndices[3] = 2;
+                ropeIndices[4] = 3;
+                ropeIndices[5] = 0;
 
                 foreach (EffectPass pass in effect.CurrentTechnique.Passes)
                 {
                     pass.Apply();
-                    graphics.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, projectileVertices, 0, 4, projectileIndices, 0, 2, VertexPositionColorTexture.VertexDeclaration);
+                    graphics.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, ropeVertices, 0, 4, ropeIndices, 0, 2, VertexPositionColorTexture.VertexDeclaration);
                 }
                 #endregion
             }

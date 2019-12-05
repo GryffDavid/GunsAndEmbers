@@ -5,6 +5,8 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.IO;
 
 namespace TowerDefensePrototype
 {
@@ -20,6 +22,7 @@ namespace TowerDefensePrototype
         //public Nullable<Texture2D> texture;
     };
 
+    [Serializable]
     public class Emitter : Drawable
     {
         public Vector2 Position, PreviousPosition, AngleRange;
@@ -548,6 +551,18 @@ namespace TowerDefensePrototype
             //    DrawDepth = drawDepth.Value;
 
             return (Emitter)this.MemberwiseClone();
+        }
+
+        public static T DeepClone<T>(T obj)
+        {
+            using (var ms = new MemoryStream())
+            {
+                var formatter = new BinaryFormatter();
+                formatter.Serialize(ms, obj);
+                ms.Position = 0;
+
+                return (T)formatter.Deserialize(ms);
+            }
         }
     }
 }

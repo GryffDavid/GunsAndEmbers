@@ -29,6 +29,7 @@ namespace TowerDefensePrototype
             DetonateLimit = -1;
             ActiveTime = 3000f;
             CurrentActiveTime = 0;
+            ChanceToFear = 0.05f;
         }
 
         public override void Update(GameTime gameTime)

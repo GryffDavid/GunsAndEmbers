@@ -15,7 +15,7 @@ namespace TowerDefensePrototype
         float Friction = 0.999f;
 
         public Vector2 YRange;
-        //float MaxY;
+        public float BounceY;
 
         public class Stick
         {
@@ -40,8 +40,14 @@ namespace TowerDefensePrototype
 
         public VerletObject()
         {
-            YRange = new Vector2(690, 960);
-            MaxY = (float)Game1.RandomDouble(870, 870+80);
+            BounceY = (float)Game1.RandomDouble(870, 870 + 80);
+        }
+
+        public virtual void Initialize()
+        {
+            //YRange = new Vector2(870, 870 + 80);
+            BounceY = (float)Game1.RandomDouble(YRange.X, YRange.Y);
+            MaxY = BounceY;
         }
 
         public virtual void Update(GameTime gameTime)
@@ -129,9 +135,9 @@ namespace TowerDefensePrototype
                         node.PreviousPosition.X = node.CurrentPosition.X + node.Velocity.X * Bounce;
                     }
 
-                    if (node.CurrentPosition.Y > MaxY)
+                    if (node.CurrentPosition.Y > BounceY)
                     {
-                        node.CurrentPosition.Y = MaxY;
+                        node.CurrentPosition.Y = BounceY;
                         node.PreviousPosition.Y = node.CurrentPosition.Y + node.Velocity.Y * Bounce;
                     }
 
@@ -159,9 +165,9 @@ namespace TowerDefensePrototype
                         node.PreviousPosition.X = node.CurrentPosition.X + node.Velocity.X * Bounce;
                     }
 
-                    if (node.CurrentPosition.Y > MaxY)
+                    if (node.CurrentPosition.Y > BounceY)
                     {
-                        node.CurrentPosition.Y = MaxY;
+                        node.CurrentPosition.Y = BounceY;
                         node.PreviousPosition.Y = node.CurrentPosition.Y + node.Velocity.Y * Bounce;
                     }
 
@@ -185,7 +191,7 @@ namespace TowerDefensePrototype
                     node.Velocity.Y += Gravity * (float)Time;
                     node.CurrentPosition += node.Velocity;
 
-                    if (node.CurrentPosition.Y >= MaxY)
+                    if (node.CurrentPosition.Y >= BounceY)
                     {
                         Friction = 0.92f;
                     }
@@ -205,7 +211,7 @@ namespace TowerDefensePrototype
                     node.Velocity.Y += Gravity * (float)Time;
                     node.CurrentPosition += node.Velocity;
 
-                    if (node.CurrentPosition.Y >= MaxY)
+                    if (node.CurrentPosition.Y >= BounceY)
                     {
                         Friction = 0.92f;
                     }

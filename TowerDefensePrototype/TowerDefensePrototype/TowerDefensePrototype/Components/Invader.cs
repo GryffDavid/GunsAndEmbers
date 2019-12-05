@@ -121,6 +121,41 @@ namespace TowerDefensePrototype
     {
         public virtual float OriginalSpeed { get { return 1.0f; } }
 
+        VectorSprite EmotionSprite;
+
+        private InvaderEmotion _CurrentEmotion;
+
+        public InvaderEmotion CurrentEmotion
+        {
+            get 
+            { 
+                return _CurrentEmotion; 
+            }
+
+            set 
+            { 
+                _CurrentEmotion = value;
+
+                switch (_CurrentEmotion)
+                {
+                    case InvaderEmotion.Fear:
+                        {
+                            EmotionSprite = new VectorSprite(new Vector2(DestinationRectangle.Center.X - 16, DestinationRectangle.Top - 40), new Vector2(32, 32), FearEmotionIcon, new Color(255, 0, 0, 25));
+                        }
+                        break;
+
+                    case InvaderEmotion.Normal:
+                        {
+                            EmotionSprite = null;
+                        }
+                        break;
+                }
+            }
+        }
+        
+
+        //InvaderEmotion CurrentEmotion = InvaderEmotion.Fear;
+
         #region Variables used for invaders
         public static ObservableCollection<Trap> TrapList;
         public static List<Invader> InvaderList;
@@ -270,6 +305,8 @@ namespace TowerDefensePrototype
         } 
         #endregion
 
+        public Texture2D CurrentEmotionIcon, FearEmotionIcon;
+
         public float NextYPos; //The point on the Y axis that the invader should move towards
 
         public Trap TargetTrap;
@@ -347,6 +384,8 @@ namespace TowerDefensePrototype
             base.Active = true;            
 
             ResourceValue = Random.Next((int)ResourceMinMax.X, (int)ResourceMinMax.Y);
+
+            //EmotionSprite = new VectorSprite(new Vector2(100, 100), new Vector2(32, 32), FearEmotionIcon, new Color(255, 0, 0, 25));
 
             if (NeededOperators > 0)
             {
@@ -466,6 +505,9 @@ namespace TowerDefensePrototype
         {
             if (Active == true)
             {
+                if (EmotionSprite != null)
+                    EmotionSprite.Update(new Vector2(DestinationRectangle.Center.X - 16, DestinationRectangle.Top - 40));
+
                 OperatorList.RemoveAll(Invader => Invader.Active == false);
 
                 #region Hit a Trap
@@ -749,6 +791,9 @@ namespace TowerDefensePrototype
         {
             if (Active == true)
             {
+                if (EmotionSprite != null)
+                    EmotionSprite.Draw(graphics, effect);
+
                 effect.TextureEnabled = true;
                 effect.VertexColorEnabled = true;
                 effect.Texture = CurrentAnimation.Texture;

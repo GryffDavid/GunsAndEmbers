@@ -43,7 +43,9 @@ namespace TowerDefensePrototype
         public double MaxRemovalTime = 1000;
         public static Random Random = new Random();
         public UIBar TimingBar, HealthBar;
-        
+
+        public float ChanceToFear = 0;
+
         //What the traps can do to the invaders upon collision
         public DamageOverTimeStruct InvaderDOT;
         public SlowStruct InvaderSlow;

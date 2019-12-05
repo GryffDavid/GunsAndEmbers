@@ -9,6 +9,9 @@ namespace TowerDefensePrototype
 {
     class ShellCasing : VerletObject
     {
+        public VertexPositionColorTexture[] shellVertices = new VertexPositionColorTexture[4];
+        public int[] shellIndices = new int[6];
+
         public Vector2 Scale;
         public Texture2D ShellTexture;
         static Random Random = new Random();
@@ -16,25 +19,17 @@ namespace TowerDefensePrototype
         float DelayTime;
         float MaxDelayTime = 4000f;
 
-        float CurrentTime, MaxTime;
-        float Transparency;
-
+        float CurrentTime;
         public Color Color = Color.White;
-        public float ShrinkDelay = 2000f; //Only shrink after 2 seconds have passed
 
         int sourceHeight;
-
         Rectangle SourceRectangle;
                 
-        public ShellCasing(Vector2 position, Vector2 velocity, Texture2D shellTexture, Vector2? scale = null, Vector2? yRange = null)
+        public ShellCasing(Vector2 position, Vector2 velocity, Texture2D shellTexture, Vector2? yRange = null)
         {
             Active = true;
-
             CurrentTime = 0;
-            MaxTime = 8000;
-
-            //100/MaxTime * CurrentTime
-
+            
             ShellTexture = shellTexture;
 
             Nodes.Add(new Node()
@@ -51,23 +46,26 @@ namespace TowerDefensePrototype
                 Pinned = false
             });
 
-            Sticks.Add(new Stick() 
+            Sticks.Add(new Stick()
             { 
                 Length = ShellTexture.Width/2, 
                 Point1 = Nodes[0], 
                 Point2 = Nodes[1]
             });
 
-            if (scale == null)            
-                Scale = new Vector2(1, 1);
-            else            
-                Scale = scale.Value;
+            if (yRange == null)
+            {
+                YRange = new Vector2(870, 870 + 80);
+            }
+            else
+            {
+                YRange = yRange.Value;
+            }
 
             sourceHeight = ShellTexture.Height;
             SourceRectangle = new Rectangle(0, 0, ShellTexture.Width, ShellTexture.Height);
-
         }
-
+        
         public override void Update(GameTime gameTime)
         {
             if (DelayTime < MaxDelayTime)
@@ -90,9 +88,9 @@ namespace TowerDefensePrototype
 
                 if (Sticks[0].Rotation < MathHelper.ToRadians(90))
                 {
-                    if (CurrentTime > 100)
+                    if (CurrentTime > (100 / (ShellTexture.Height / 7)))
                     {
-                        MaxY++;
+                        BounceY++;
                         sourceHeight--;
 
                         foreach (Node node in Nodes)
@@ -118,22 +116,9 @@ namespace TowerDefensePrototype
                 }
                 else
                 {
-                    if (CurrentTime > 100)
+                    if (CurrentTime > (100 / (ShellTexture.Height / 7)))
                     {
-                        //MaxY++;
                         sourceHeight++;
-
-                        //foreach (Node node in Nodes)
-                        //{
-                        //    node.CurrentPosition.Y++;
-                        //    node.PreviousPosition.Y++;
-                        //}
-
-                        //foreach (Node node in Nodes2)
-                        //{
-                        //    node.CurrentPosition.Y++;
-                        //    node.PreviousPosition.Y++;
-                        //}
                         CurrentTime = 0;
                     }
 
@@ -154,22 +139,124 @@ namespace TowerDefensePrototype
                 stick.Rotation = rot;
                 
                 stick.DestinationRectangle = new Rectangle(
-                        (int)stick.Point1.CurrentPosition.X, (int)stick.Point1.CurrentPosition.Y,
+                        (int)stick.Point1.CurrentPosition.X, 
+                        (int)stick.Point1.CurrentPosition.Y,
                         (int)(ShellTexture.Width), (int)(SourceRectangle.Height));
             }
 
 
-            Color = Color.Lerp(Color.White, Color.Transparent, Transparency);            
+            Color = Color.White;          
             base.Update(gameTime);
         }
 
-        public override void Draw(SpriteBatch spriteBatch)
+        public override void Draw(GraphicsDevice graphics, BasicEffect effect)
         {
+            Matrix preserveWorld = effect.World;
+
+            effect.TextureEnabled = true;
+            effect.VertexColorEnabled = true;
+            effect.Texture = ShellTexture;
+
             foreach (Stick stick in Sticks)
             {
-                spriteBatch.Draw(ShellTexture, stick.DestinationRectangle, SourceRectangle, 
-                    Color, stick.Rotation, new Vector2(0, ShellTexture.Height / 2), SpriteEffects.None, 0);
+                Vector2 Direction = stick.Point2.CurrentPosition - stick.Point1.CurrentPosition;
+                Direction.Normalize();
+
+                float rot = (float)Math.Atan2(Direction.Y, Direction.X);
+
+                if (SourceRectangle.Height > 0)
+                {
+                    #region Draw rope segments
+                    effect.World = Matrix.CreateTranslation(new Vector3(-(stick.Point1.CurrentPosition.X + ShellTexture.Width / 2), -(stick.Point1.CurrentPosition.Y + ShellTexture.Height / 2), 0)) *
+                                   Matrix.CreateRotationZ(rot) *
+                                   Matrix.CreateTranslation(new Vector3(stick.Point1.CurrentPosition.X, stick.Point1.CurrentPosition.Y, 0));
+
+                    //TEXTURE COORDINATES NEED TO BE NORMALIZED FOR THE SHADER. i.e. ShellTexture.Height/2 = 0.5f;
+
+                    if (Sticks[0].Rotation < MathHelper.ToRadians(90))
+                    {
+                        shellVertices[0] = new VertexPositionColorTexture()
+                        {
+                            Position = new Vector3(stick.DestinationRectangle.Left, stick.DestinationRectangle.Top, 0),
+                            TextureCoordinate = new Vector2(0, ((float)SourceRectangle.Y / (float)ShellTexture.Height)),
+                            Color = Color.White
+                        };
+
+                        shellVertices[1] = new VertexPositionColorTexture()
+                        {
+                            Position = new Vector3(stick.DestinationRectangle.Left + stick.DestinationRectangle.Width, stick.DestinationRectangle.Top, 0),
+                            TextureCoordinate = new Vector2(1, ((float)SourceRectangle.Y / (float)ShellTexture.Height)),
+                            Color = Color.White
+                        };
+
+                        shellVertices[2] = new VertexPositionColorTexture()
+                        {
+                            Position = new Vector3(stick.DestinationRectangle.Left + stick.DestinationRectangle.Width, stick.DestinationRectangle.Top + stick.DestinationRectangle.Height, 0),
+                            TextureCoordinate = new Vector2(1, ((float)SourceRectangle.Height / (float)ShellTexture.Height)),
+                            Color = Color.White
+                        };
+
+                        shellVertices[3] = new VertexPositionColorTexture()
+                        {
+                            Position = new Vector3(stick.DestinationRectangle.Left, stick.DestinationRectangle.Top + stick.DestinationRectangle.Height, 0),
+                            TextureCoordinate = new Vector2(0, ((float)SourceRectangle.Height / (float)ShellTexture.Height)),
+                            Color = Color.White
+                        };
+                    }
+                    else
+                    {
+                        shellVertices[0] = new VertexPositionColorTexture()
+                        {
+                            Position = new Vector3(stick.DestinationRectangle.Left, stick.DestinationRectangle.Top, 0),
+                            TextureCoordinate = new Vector2(0, ((float)SourceRectangle.Y / (float)ShellTexture.Height)),
+                            Color = Color.White
+                        };
+
+                        shellVertices[1] = new VertexPositionColorTexture()
+                        {
+                            Position = new Vector3(stick.DestinationRectangle.Left + stick.DestinationRectangle.Width, stick.DestinationRectangle.Top, 0),
+                            TextureCoordinate = new Vector2(1, ((float)SourceRectangle.Y / (float)ShellTexture.Height)),
+                            Color = Color.White
+                        };
+
+                        shellVertices[2] = new VertexPositionColorTexture()
+                        {
+                            Position = new Vector3(stick.DestinationRectangle.Left + stick.DestinationRectangle.Width, stick.DestinationRectangle.Top + stick.DestinationRectangle.Height, 0),
+                            TextureCoordinate = new Vector2(1, 1),
+                            Color = Color.White
+                        };
+
+                        shellVertices[3] = new VertexPositionColorTexture()
+                        {
+                            Position = new Vector3(stick.DestinationRectangle.Left, stick.DestinationRectangle.Top + stick.DestinationRectangle.Height, 0),
+                            TextureCoordinate = new Vector2(0, 1),
+                            Color = Color.White
+                        };
+                    }
+
+                    shellIndices[0] = 0;
+                    shellIndices[1] = 1;
+                    shellIndices[2] = 2;
+                    shellIndices[3] = 2;
+                    shellIndices[4] = 3;
+                    shellIndices[5] = 0;
+
+                    foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+                    {
+                        pass.Apply();
+                        graphics.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, shellVertices, 0, 4, shellIndices, 0, 2, VertexPositionColorTexture.VertexDeclaration);
+                    }
+                }
+                #endregion
             }
+
+            effect.World = preserveWorld;
+
+            //foreach (Stick stick in Sticks)
+            //{
+            //    spriteBatch.Draw(ShellTexture, stick.DestinationRectangle, SourceRectangle, 
+            //        Color, stick.Rotation, new Vector2(0, ShellTexture.Height / 2), SpriteEffects.None, 0);
+            //}
         }
     }
 }
