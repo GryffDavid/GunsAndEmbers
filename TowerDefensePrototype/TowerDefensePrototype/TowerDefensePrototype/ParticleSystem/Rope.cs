@@ -18,10 +18,14 @@ namespace TowerDefensePrototype
 
         public int Segments = 110;
 
+        public VertexPositionColorTexture[] projectileVertices = new VertexPositionColorTexture[4];
+        public int[] projectileIndices = new int[6];
+
         public class Stick
         {
             public Node Point1, Point2;
             public float Length;
+            public Rectangle DestinationRectangle;
         }
 
         public class Node
@@ -33,8 +37,8 @@ namespace TowerDefensePrototype
         public List<Node> Nodes = new List<Node>();
         public List<Stick> Sticks = new List<Stick>();
 
-        HeavyProjectile TetherProjectile;
-        public Vector2 StartPoint;
+        public HeavyProjectile TetherProjectile;
+        public Vector2 StartPoint, EndPoint;
 
         public Rope(Vector2 startPoint, object tether)
         {
@@ -71,14 +75,11 @@ namespace TowerDefensePrototype
 
         public void Update(GameTime gameTime)
         {
+            EndPoint = Nodes[0].CurrentPosition;
+
             if (TetherProjectile != null)
             {
                 Nodes[0].CurrentPosition = TetherProjectile.BasePosition;
-                Nodes[0].Tether = true;
-            }
-            else
-            {
-                Nodes[0].CurrentPosition = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
                 Nodes[0].Tether = true;
             }
 
@@ -141,28 +142,102 @@ namespace TowerDefensePrototype
 
                     if (stick.Point2.Tether == false)
                         stick.Point2.CurrentPosition += Offset;
+
+                    stick.DestinationRectangle = new Rectangle((int)stick.Point1.CurrentPosition.X, (int)stick.Point1.CurrentPosition.Y, (int)Direction.Length(), StickTexture.Height);
                 }
             }
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public override void Draw(GraphicsDevice graphics, BasicEffect effect)
+        //public override void Draw(SpriteBatch spriteBatch)
         {
+
+            Matrix preserveWorld = effect.World;
+
+            effect.TextureEnabled = true;
+            effect.VertexColorEnabled = true;
+            effect.Texture = StickTexture;
+
+            foreach (Stick stick in Sticks)
+            {
+                Vector2 Direction = stick.Point2.CurrentPosition - stick.Point1.CurrentPosition;
+                Direction.Normalize();
+
+                float rot = (float)Math.Atan2(Direction.Y, Direction.X);
+
+                #region Draw projectile sprite
+                effect.World = Matrix.CreateTranslation(new Vector3(-stick.Point1.CurrentPosition.X - 0, -stick.Point1.CurrentPosition.Y - 0, 0)) *
+                               Matrix.CreateRotationZ(rot) *
+                               Matrix.CreateTranslation(new Vector3(stick.Point1.CurrentPosition.X, stick.Point1.CurrentPosition.Y, 0));
+
+
+                projectileVertices[0] = new VertexPositionColorTexture()
+                {
+                    Position = new Vector3(stick.DestinationRectangle.Left, stick.DestinationRectangle.Top, 0),
+                    TextureCoordinate = new Vector2(0, 0),
+                    Color = Color.White
+                };
+
+                projectileVertices[1] = new VertexPositionColorTexture()
+                {
+                    Position = new Vector3(stick.DestinationRectangle.Left + stick.DestinationRectangle.Width, stick.DestinationRectangle.Top, 0),
+                    TextureCoordinate = new Vector2(1, 0),
+                    Color = Color.White
+                };
+
+                projectileVertices[2] = new VertexPositionColorTexture()
+                {
+                    Position = new Vector3(stick.DestinationRectangle.Left + stick.DestinationRectangle.Width, stick.DestinationRectangle.Top + stick.DestinationRectangle.Height, 0),
+                    TextureCoordinate = new Vector2(1, 1),
+                    Color = Color.White
+                };
+
+                projectileVertices[3] = new VertexPositionColorTexture()
+                {
+                    Position = new Vector3(stick.DestinationRectangle.Left, stick.DestinationRectangle.Top + stick.DestinationRectangle.Height, 0),
+                    TextureCoordinate = new Vector2(0, 1),
+                    Color = Color.White
+                };
+
+                projectileIndices[0] = 0;
+                projectileIndices[1] = 1;
+                projectileIndices[2] = 2;
+                projectileIndices[3] = 2;
+                projectileIndices[4] = 3;
+                projectileIndices[5] = 0;
+
+                foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+                {
+                    pass.Apply();
+                    graphics.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, projectileVertices, 0, 4, projectileIndices, 0, 2, VertexPositionColorTexture.VertexDeclaration);
+                }
+                #endregion
+            }
+
+            effect.World = preserveWorld;
+
             //foreach (Node node in Nodes)
             //{
             //    spriteBatch.Draw(PointTexture, new Rectangle((int)node.CurrentPosition.X, (int)node.CurrentPosition.Y, 8, 8),
             //                     null, Color.White, 0, new Vector2(4, 4), SpriteEffects.None, 0);
             //}
 
-            foreach (Stick stick in Sticks)
-            {
-                for (int l = 0; l < (int)Vector2.Distance(stick.Point1.CurrentPosition, stick.Point2.CurrentPosition); l += 10)
-                {
-                    Vector2 Direction = stick.Point2.CurrentPosition - stick.Point1.CurrentPosition;
-                    Direction.Normalize();
+            //foreach (Stick stick in Sticks)
+            //{
+            //    //for (int l = 0; l < (int)Vector2.Distance(stick.Point1.CurrentPosition, stick.Point2.CurrentPosition); l += 10)
+            //    //{
+            //        Vector2 Direction = stick.Point2.CurrentPosition - stick.Point1.CurrentPosition;
+            //        Direction.Normalize();
 
-                    spriteBatch.Draw(StickTexture, new Rectangle((int)(stick.Point1.CurrentPosition.X + l * Direction.X), (int)(stick.Point1.CurrentPosition.Y + l * Direction.Y), StickTexture.Width, StickTexture.Height), null, Color.White, (float)Math.Atan2(Direction.Y, Direction.X), Vector2.Zero, SpriteEffects.None, 0);
-                }
-            }
+            //        spriteBatch.Draw(StickTexture, 
+            //            new Rectangle(
+            //                (int)(stick.Point1.CurrentPosition.X), 
+            //                (int)(stick.Point1.CurrentPosition.Y), 
+            //                StickTexture.Width, StickTexture.Height), 
+                            
+            //                null, Color.White, (float)Math.Atan2(Direction.Y, Direction.X), Vector2.Zero, SpriteEffects.None, DrawDepth);
+            //    //}
+            //}
         }
     }
 }

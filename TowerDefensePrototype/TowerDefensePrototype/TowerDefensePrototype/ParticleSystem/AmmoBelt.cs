@@ -59,7 +59,7 @@ namespace TowerDefensePrototype
                 {
                     Point1 = Nodes[i],
                     Point2 = Nodes[i + 1],
-                    Length = ShellTexture.Height/2
+                    Length = ShellTexture.Height-2
                 });
             }
 
@@ -69,7 +69,7 @@ namespace TowerDefensePrototype
                 {
                     Point1 = Nodes2[i],
                     Point2 = Nodes2[i + 1],
-                    Length = ShellTexture.Height / 2
+                    Length = ShellTexture.Height-2
                 });
             }
 
@@ -79,7 +79,7 @@ namespace TowerDefensePrototype
                 {
                     Point1 = Nodes[i],
                     Point2 = Nodes2[i],
-                    Length = ShellTexture.Width / 2
+                    Length = ShellTexture.Width
                 });
             }
 
@@ -121,13 +121,13 @@ namespace TowerDefensePrototype
                     Vector2 dir = stick.Point2.CurrentPosition - stick.Point1.CurrentPosition;
                     float rot = (float)Math.Atan2(dir.Y, dir.X);
 
-                    if (stick.Length == ShellTexture.Width / 2)
+                    if (stick.Length == ShellTexture.Width)
                         spriteBatch.Draw(ShellTexture, 
                             new Rectangle(
                                 (int)stick.Point1.CurrentPosition.X, 
                                 (int)stick.Point1.CurrentPosition.Y, 
-                                ShellTexture.Width / 2, ShellTexture.Height / 2),
-                            null, Color.White * Transparency, rot + (float)Math.PI, new Vector2(ShellTexture.Width / 2, ShellTexture.Height / 2), SpriteEffects.None, 1);
+                                ShellTexture.Width, ShellTexture.Height),
+                            null, Color.White * Transparency, rot + (float)Math.PI, new Vector2(ShellTexture.Width/2, ShellTexture.Height), SpriteEffects.None, 1);
                 }
             }
 

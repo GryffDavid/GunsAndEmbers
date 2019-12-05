@@ -42,14 +42,25 @@ namespace TowerDefensePrototype
 
         List<SmokePoint> Positions = new List<SmokePoint>();
 
-        Color Color = Color.LightGray;
+        Color Color = new Color(166, 166, 166);
 
         float eightSize = 0.25f;
-        bool AddMore = true;
+        public bool AddMore = true;
         public HeavyProjectile ProjectileTether;
+
+        float CurrentRandomWidth = Random.Next(3, 8);
+        float CurrentWidthChangeTime, MaxWidthChangeTime;
+
+        float WidthOscillateTime;
+        float CurrentMaxWidth;
+
+        public bool Active = true;
+
+        public Turret TurretTether;
 
         public SmokeTrail(Vector2 startPosition)
         {
+            MaxWidthChangeTime = 500f;
             StartPosition = startPosition;
 
             for (int i = 0; i < vertices.Length / 2 + 1; i++)
@@ -61,7 +72,7 @@ namespace TowerDefensePrototype
                     Velocity = new Vector2(0, -0.5f),
                     Friction = new Vector2(1, 1)
                 };
-                smokePoint.Width = Random.Next(5, 8);
+                smokePoint.Width = Random.Next(3, 8);
 
                 Positions.Add(smokePoint);
             }
@@ -72,9 +83,46 @@ namespace TowerDefensePrototype
 
         public void Update(GameTime gameTime)
         {
+            if (TurretTether != null)
+            {
+                StartPosition = TurretTether.BarrelEnd;
+            }
+
             CurrentTime += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
             Time2 += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
             Time3 += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+
+
+            CurrentWidthChangeTime += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+
+            if (AddMore == true)
+            {
+                if (CurrentWidthChangeTime > MaxWidthChangeTime)
+                {
+                    CurrentRandomWidth = Random.Next(3, 8);
+                    CurrentWidthChangeTime = 0;
+                }
+            }
+            else
+            {
+                if (CurrentWidthChangeTime > MaxWidthChangeTime)
+                {
+                    CurrentRandomWidth -= 1f;
+                    CurrentWidthChangeTime = 0;
+                }
+            }
+
+            WidthOscillateTime += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+            if (WidthOscillateTime > 100)
+            {
+                CurrentMaxWidth = MathHelper.Lerp(CurrentMaxWidth, CurrentRandomWidth, 0.2f);
+                WidthOscillateTime = 0;
+            }
+
+            //if (AddMore == false)
+            //{
+            //    Positions.RemoveAt(Positions.Count - 1);
+            //}
 
             if (ProjectileTether != null)
             {
@@ -90,7 +138,7 @@ namespace TowerDefensePrototype
             }
 
             #region Add a new point
-            if (Time2 > 60 && AddMore == true)
+            if (Time2 > 60)
             {
                 if (Positions.Count > vertices.Length / 2)
                 {
@@ -100,7 +148,7 @@ namespace TowerDefensePrototype
                 Positions.Insert(0, new SmokePoint()
                 {
                     Position = StartPosition,
-                    Width = Random.Next(5, 8),
+                    Width = CurrentMaxWidth,
                     Velocity = new Vector2(0.5f, -0.5f),
                     Acceleration = new Vector2(-0.002f, -0.05f),
                     Friction = new Vector2(0.85f, 1.0f)
@@ -241,6 +289,11 @@ namespace TowerDefensePrototype
                 t = 0;
             }
             #endregion
+
+            if (Positions.All(Position => Position.Width <= 0))
+            {
+                Active = false;
+            }
         }
 
         public void DrawVector(GraphicsDevice graphics, BasicEffect effect)

@@ -14,6 +14,9 @@ namespace TowerDefensePrototype
         float Gravity = 0.03f;
         float Friction = 0.999f;
 
+        public Vector2 YRange;
+        //float MaxY;
+
         public class Stick
         {
             public Node Point1, Point2;
@@ -37,7 +40,8 @@ namespace TowerDefensePrototype
 
         public VerletObject()
         {
-
+            YRange = new Vector2(690, 960);
+            MaxY = (float)Game1.RandomDouble(870, 870+80);
         }
 
         public virtual void Update(GameTime gameTime)
@@ -72,60 +76,13 @@ namespace TowerDefensePrototype
 
         public void UpdateSticks(GameTime gameTime)
         {
-            //foreach (Stick stick in Sticks)
-            //{
-            //    Vector2 Direction = stick.Point2.CurrentPosition - stick.Point1.CurrentPosition;
-            //    Direction.Normalize();
-
-            //    float Dist = Vector2.Distance(stick.Point1.CurrentPosition, stick.Point2.CurrentPosition);
-            //    float Diff = stick.Length - Dist;
-
-            //    float percent = Diff / Dist / 2;
-            //    Vector2 Offset = Direction * percent;
-
-            //    if (stick.Point1.Pinned == false)
-            //    {
-            //        stick.Point1.CurrentPosition -= Offset;
-            //    }
-
-            //    if (stick.Point2.Pinned == false)
-            //    {
-            //        stick.Point2.CurrentPosition += Offset;
-            //    }
-            //}
-
-            //foreach (Stick stick in Sticks2)
-            //{
-            //    Vector2 Direction = stick.Point2.CurrentPosition - stick.Point1.CurrentPosition;
-            //    Direction.Normalize();
-
-            //    float Dist = Vector2.Distance(stick.Point1.CurrentPosition, stick.Point2.CurrentPosition);
-            //    float Diff = stick.Length - Dist;
-
-            //    float percent = Diff / Dist / 2;
-            //    Vector2 Offset = Direction * percent;
-
-            //    if (stick.Point1.Pinned == false)
-            //    {
-            //        stick.Point1.CurrentPosition -= Offset;
-            //    }
-
-            //    if (stick.Point2.Pinned == false)
-            //    {
-            //        stick.Point2.CurrentPosition += Offset;
-            //    }
-            //}
-
-
             foreach (Stick stick in Sticks)
             {
-                
                 Vector2 directioon = stick.Point1.CurrentPosition - stick.Point2.CurrentPosition;
                 float currentLength = directioon.Length();
 
                 if (currentLength != stick.Length)
                 {
-                    
                     directioon.Normalize();
 
                     if (stick.Point2.Pinned == false)
@@ -135,8 +92,6 @@ namespace TowerDefensePrototype
                         stick.Point1.CurrentPosition -= (directioon * (currentLength - stick.Length) / 2);
                 }
             }
-
-            
 
             foreach (Stick stick in Sticks2)
             {
@@ -174,9 +129,9 @@ namespace TowerDefensePrototype
                         node.PreviousPosition.X = node.CurrentPosition.X + node.Velocity.X * Bounce;
                     }
 
-                    if (node.CurrentPosition.Y > 890)
+                    if (node.CurrentPosition.Y > MaxY)
                     {
-                        node.CurrentPosition.Y = 890;
+                        node.CurrentPosition.Y = MaxY;
                         node.PreviousPosition.Y = node.CurrentPosition.Y + node.Velocity.Y * Bounce;
                     }
 
@@ -204,9 +159,9 @@ namespace TowerDefensePrototype
                         node.PreviousPosition.X = node.CurrentPosition.X + node.Velocity.X * Bounce;
                     }
 
-                    if (node.CurrentPosition.Y > 890)
+                    if (node.CurrentPosition.Y > MaxY)
                     {
-                        node.CurrentPosition.Y = 890;
+                        node.CurrentPosition.Y = MaxY;
                         node.PreviousPosition.Y = node.CurrentPosition.Y + node.Velocity.Y * Bounce;
                     }
 
@@ -230,7 +185,7 @@ namespace TowerDefensePrototype
                     node.Velocity.Y += Gravity * (float)Time;
                     node.CurrentPosition += node.Velocity;
 
-                    if (node.CurrentPosition.Y >= 890)
+                    if (node.CurrentPosition.Y >= MaxY)
                     {
                         Friction = 0.92f;
                     }
@@ -250,7 +205,7 @@ namespace TowerDefensePrototype
                     node.Velocity.Y += Gravity * (float)Time;
                     node.CurrentPosition += node.Velocity;
 
-                    if (node.CurrentPosition.Y >= 890)
+                    if (node.CurrentPosition.Y >= MaxY)
                     {
                         Friction = 0.92f;
                     }

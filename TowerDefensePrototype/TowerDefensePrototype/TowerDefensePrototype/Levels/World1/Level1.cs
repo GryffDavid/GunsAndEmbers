@@ -39,13 +39,13 @@ namespace TowerDefensePrototype
                     new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
                     new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
                     new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                    new Soldier(new Vector2(2050, 600), new Vector2(700, 850))
+                    new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
 
-                    //new HarpoonCannon(new Vector2(2050, 600), new Vector2(700, 850)),
-                    //new HarpoonCannon(new Vector2(2050, 600), new Vector2(700, 850)),
-                    //new HarpoonCannon(new Vector2(2050, 600), new Vector2(700, 850)),
-                    //new HarpoonCannon(new Vector2(2050, 600), new Vector2(700, 850)),
-                    //new HarpoonCannon(new Vector2(2050, 600), new Vector2(700, 850))                
+                    new HarpoonCannon(new Vector2(2050, 600), new Vector2(700, 850)),
+                    new HarpoonCannon(new Vector2(2050, 600), new Vector2(700, 850)),
+                    new HarpoonCannon(new Vector2(2050, 600), new Vector2(700, 850)),
+                    new HarpoonCannon(new Vector2(2050, 600), new Vector2(700, 850)),
+                    new HarpoonCannon(new Vector2(2050, 600), new Vector2(700, 850))                
                  );
 
             Wave Wave3 = new Wave(true, 200, 1000,

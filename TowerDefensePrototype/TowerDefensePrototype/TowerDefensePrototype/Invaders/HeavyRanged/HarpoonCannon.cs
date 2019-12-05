@@ -55,6 +55,11 @@ namespace TowerDefensePrototype
                     case MicroBehaviour.Stationary:
                         {
                             Velocity.X = 0;
+
+                            if (Rope == null || Rope.Sticks.Count == 0)
+                            {
+                                CurrentMicroBehaviour = MicroBehaviour.MovingForwards;                                
+                            }
                         }
                         break;
                     #endregion
@@ -138,6 +143,11 @@ namespace TowerDefensePrototype
                                     CurrentMicroBehaviour = MicroBehaviour.Attack;
                                 }
                             }
+                            else
+                            {
+                                EndAngle = CurrentAngle;
+                                CurrentMicroBehaviour = MicroBehaviour.Attack;
+                            }
                         }
                         break;
                     #endregion
@@ -158,7 +168,7 @@ namespace TowerDefensePrototype
                                             {
                                                 if (HitTurret == 1)
                                                 {
-                                                    HarpoonCannonBehaviour = SpecificBehaviour.Attached;
+                                                    HarpoonCannonBehaviour = SpecificBehaviour.Attached;                                                    
                                                     ResetCollisions();
                                                 }
 
@@ -199,11 +209,11 @@ namespace TowerDefensePrototype
                     {
                         RopeDelay += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
 
-                        if (Rope.Sticks.Count > 40 && 
+                        if (Rope.Sticks.Count > 50 && 
                             RopeDelay > MaxRopeDelay &&
                             HarpoonedTurret.CurrentHealth > 0)
                         {
-                            Rope.Segments = Rope.Sticks.Count - 1;
+                            Rope.Segments = Rope.Sticks.Count;
                             Rope.Sticks.RemoveAt(Rope.Sticks.Count - 1);
                             Rope.StartPoint = BarrelEnd;
                             RopeDelay = 0;
@@ -216,11 +226,9 @@ namespace TowerDefensePrototype
                             break;
                         }
 
-                        if (Rope.Sticks.Count == 40 && Rope.Sticks[0] != null)
+                        if (Rope.Sticks.Count == 50 && Rope.Sticks[0] != null)
                         {
-                            Rope.Sticks.RemoveAt(0);
-                            HarpoonedTurret.CurrentHealth = 0;
-                            HarpoonCannonBehaviour = SpecificBehaviour.Retract;
+                            HarpoonCannonBehaviour = SpecificBehaviour.PullTaut;
                             break;
                         }
                     }
@@ -228,7 +236,28 @@ namespace TowerDefensePrototype
 
                 case SpecificBehaviour.PullTaut:
                     {
+                        Rope.StartPoint = BarrelEnd;
+                        CurrentMicroBehaviour = MicroBehaviour.MovingBackwards;
 
+                        if (DistToTower > MinTowerRange + 300)
+                        {
+                            if (Rope.Sticks.Count == 50 && Rope.Sticks[0] != null)
+                            {
+                                Rope.Sticks.RemoveAt(0);
+                                HarpoonedTurret.CurrentHealth = 0;
+                                CurrentMicroBehaviour = MicroBehaviour.Stationary;
+                                HarpoonCannonBehaviour = SpecificBehaviour.Retract;
+                                break;
+                            }
+                        }
+
+                        if (HarpoonedTurret.CurrentHealth == 0)
+                        {
+                            Rope.Sticks.RemoveAt(0);
+                            CurrentMicroBehaviour = MicroBehaviour.Stationary;
+                            HarpoonCannonBehaviour = SpecificBehaviour.Retract;
+                            break;
+                        }
                     }
                     break;
 

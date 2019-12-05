@@ -539,5 +539,15 @@ namespace TowerDefensePrototype
             int next = Random.Next(0, texture2D.Length);
             return texture2D[next];
         }
+
+        public Emitter ShallowCopy(Vector2 position)
+        {
+            Position = position;
+
+            //if (DrawDepth != null)
+            //    DrawDepth = drawDepth.Value;
+
+            return (Emitter)this.MemberwiseClone();
+        }
     }
 }

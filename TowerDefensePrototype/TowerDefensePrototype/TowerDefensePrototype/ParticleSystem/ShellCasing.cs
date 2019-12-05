@@ -13,13 +13,20 @@ namespace TowerDefensePrototype
         public Texture2D ShellTexture;
         static Random Random = new Random();
 
+        float DelayTime;
+        float MaxDelayTime = 4000f;
+
         float CurrentTime, MaxTime;
         float Transparency;
 
         public Color Color = Color.White;
         public float ShrinkDelay = 2000f; //Only shrink after 2 seconds have passed
+
+        int sourceHeight;
+
+        Rectangle SourceRectangle;
                 
-        public ShellCasing(Vector2 position, Vector2 velocity, Texture2D shellTexture, Vector2? scale = null)
+        public ShellCasing(Vector2 position, Vector2 velocity, Texture2D shellTexture, Vector2? scale = null, Vector2? yRange = null)
         {
             Active = true;
 
@@ -55,31 +62,102 @@ namespace TowerDefensePrototype
                 Scale = new Vector2(1, 1);
             else            
                 Scale = scale.Value;
-            
+
+            sourceHeight = ShellTexture.Height;
+            SourceRectangle = new Rectangle(0, 0, ShellTexture.Width, ShellTexture.Height);
+
         }
 
         public override void Update(GameTime gameTime)
         {
-            CurrentTime += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
-
-            Transparency = ((100 / MaxTime) * CurrentTime)/100;
-
-            if (Transparency >= 1)
+            if (DelayTime < MaxDelayTime)
             {
-                Active = false;
+                DelayTime += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+
+                if (Sticks[0].Rotation < MathHelper.ToRadians(90))
+                {
+                    sourceHeight = ShellTexture.Height;
+                }
+                else
+                {
+                    sourceHeight = 0;
+                }
             }
 
+            if (DelayTime >= MaxDelayTime)
+            {
+                CurrentTime += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+
+                if (Sticks[0].Rotation < MathHelper.ToRadians(90))
+                {
+                    if (CurrentTime > 100)
+                    {
+                        MaxY++;
+                        sourceHeight--;
+
+                        foreach (Node node in Nodes)
+                        {
+                            node.CurrentPosition.Y++;
+                            node.PreviousPosition.Y++;
+                        }
+
+                        foreach (Node node in Nodes2)
+                        {
+                            node.CurrentPosition.Y++;
+                            node.PreviousPosition.Y++;
+                        }
+                        CurrentTime = 0;
+                    }
+
+                    SourceRectangle = new Rectangle(0, 0, ShellTexture.Width, sourceHeight);
+
+                    if (sourceHeight <= 0)
+                    {
+                        Active = false;
+                    }
+                }
+                else
+                {
+                    if (CurrentTime > 100)
+                    {
+                        //MaxY++;
+                        sourceHeight++;
+
+                        //foreach (Node node in Nodes)
+                        //{
+                        //    node.CurrentPosition.Y++;
+                        //    node.PreviousPosition.Y++;
+                        //}
+
+                        //foreach (Node node in Nodes2)
+                        //{
+                        //    node.CurrentPosition.Y++;
+                        //    node.PreviousPosition.Y++;
+                        //}
+                        CurrentTime = 0;
+                    }
+
+                    SourceRectangle = new Rectangle(0, sourceHeight, ShellTexture.Width, ShellTexture.Height - sourceHeight);
+
+                    if (sourceHeight > ShellTexture.Height)
+                    {
+                        Active = false;
+                    }
+                }
+            }
+            
             foreach (Stick stick in Sticks)
             {
                 Vector2 dir = stick.Point2.CurrentPosition - stick.Point1.CurrentPosition;
                 float rot = (float)Math.Atan2(dir.Y, dir.X);
 
                 stick.Rotation = rot;
-
+                
                 stick.DestinationRectangle = new Rectangle(
                         (int)stick.Point1.CurrentPosition.X, (int)stick.Point1.CurrentPosition.Y,
-                        (int)(ShellTexture.Width * Scale.X), (int)(ShellTexture.Height * Scale.Y));
+                        (int)(ShellTexture.Width), (int)(SourceRectangle.Height));
             }
+
 
             Color = Color.Lerp(Color.White, Color.Transparent, Transparency);            
             base.Update(gameTime);
@@ -89,8 +167,8 @@ namespace TowerDefensePrototype
         {
             foreach (Stick stick in Sticks)
             {
-                spriteBatch.Draw(ShellTexture, stick.DestinationRectangle, null, Color, stick.Rotation, 
-                                 new Vector2(0, ShellTexture.Height / 2), SpriteEffects.None, 0);
+                spriteBatch.Draw(ShellTexture, stick.DestinationRectangle, SourceRectangle, 
+                    Color, stick.Rotation, new Vector2(0, ShellTexture.Height / 2), SpriteEffects.None, 0);
             }
         }
     }

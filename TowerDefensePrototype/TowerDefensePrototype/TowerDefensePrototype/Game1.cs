@@ -258,7 +258,7 @@ namespace TowerDefensePrototype
         #endregion
 
         #region Particle sprites
-        Texture2D BlankTexture, ShellCasing, LightningShellCasing, Coin, RoundSparkParticle, HealthParticle,
+        Texture2D BlankTexture, BigShellCasing, SmallShellingCasing, LightningShellCasing, Coin, RoundSparkParticle, HealthParticle,
                   HealthBarSprite, SplodgeParticle, SmokeParticle, FireParticle, FireParticle2, ExplosionParticle,
                   ExplosionParticle2, BallParticle, SparkParticle, BulletTrailCap, BulletTrailSegment, BlurrySnowflake,
                   FocusedSnowflake, MachineBullet, HitEffectParticle, BOOMParticle, PINGParticle, SNAPParticle,
@@ -630,7 +630,11 @@ namespace TowerDefensePrototype
         List<Rope> RopeList = new List<Rope>();
         
         #endregion
-        
+
+        #region Commonly re-used emitters. Use ShallowCopy to get.
+
+        #endregion
+
         public Game1()
         {
             DefaultSettings = new Settings
@@ -989,7 +993,8 @@ namespace TowerDefensePrototype
 
                 #region Loading particles
                 LightningShellCasing = Content.Load<Texture2D>("Particles/LightningTurretShell");
-                ShellCasing = Content.Load<Texture2D>("Particles/MachineShell");
+                BigShellCasing = Content.Load<Texture2D>("Particles/MachineShell");
+                SmallShellingCasing = Content.Load<Texture2D>("Particles/SmallShellCasing");
                 MachineBullet = Content.Load<Texture2D>("Particles/MachineBullet");
                 Coin = Content.Load<Texture2D>("Particles/Coin");
                 Lightning.LoadContent(Content);
@@ -2206,10 +2211,10 @@ namespace TowerDefensePrototype
 
                 Tower.Draw(spriteBatch);
 
-                foreach (Rope rope in RopeList)
-                {
-                    rope.Draw(spriteBatch);
-                }
+                //foreach (Rope rope in RopeList)
+                //{
+                //    rope.Draw(spriteBatch);
+                //}
 
                 spriteBatch.End();
                 #endregion
@@ -2236,6 +2241,11 @@ namespace TowerDefensePrototype
                     }
                     
                     if (drawable.GetType() == typeof(Shield))
+                    {
+                        drawable.Draw(GraphicsDevice, BasicEffect);
+                    }
+
+                    if (drawable.GetType() == typeof(Rope))
                     {
                         drawable.Draw(GraphicsDevice, BasicEffect);
                     }
@@ -2276,6 +2286,11 @@ namespace TowerDefensePrototype
                             drawable.Draw(spriteBatch);
                         }
                     }
+
+                    if (drawable.GetType() == typeof(Rope))
+                    {
+                        drawable.Draw(spriteBatch);
+                    }
                 }
 
                 //if (PowerupDelivery != null)
@@ -2285,6 +2300,9 @@ namespace TowerDefensePrototype
 
                 //if (CurrentSpecialAbility != null)
                 //    CurrentSpecialAbility.Draw(spriteBatch);
+
+
+               
 
                 spriteBatch.End();
                 #endregion
@@ -2453,7 +2471,12 @@ namespace TowerDefensePrototype
                     {
                         spriteBatch.DrawString(TooltipFont, "Rotation: " + MathHelper.ToDegrees(turret.Rotation).ToString(), turret.Position, Color.White);
                     }
-                    
+
+
+                    foreach (Rope rope in RopeList)
+                    {
+                        spriteBatch.DrawString(TooltipFont, "Rope DrawDepth: " + rope.DrawDepth.ToString(), rope.StartPoint, Color.Yellow);
+                    }
                     //foreach (HeavyRangedInvader invader in InvaderList.Where(Invader => Invader.InvaderType == InvaderType.StationaryCannon))
                     //{
                     //    spriteBatch.DrawString(RobotoRegular20_0, MathHelper.ToDegrees(invader.CurrentAngle).ToString(), invader.Position, Color.White);
@@ -3069,7 +3092,6 @@ namespace TowerDefensePrototype
 
                 spriteBatch.End();
                 #endregion
-
             }
 
             #region Draw everything to the backbuffer
@@ -3272,7 +3294,15 @@ namespace TowerDefensePrototype
                             engine.Update(gameTime);
                         }
 
-                        
+                        foreach (Rope rope in RopeList)
+                        {
+                            rope.Update(gameTime);
+
+                            if (rope.Sticks.Count <= 1)
+                            {
+                                DrawableList.Remove(rope);
+                            }
+                        }
 
                         RopeList.RemoveAll(Rope => Rope.Sticks.Count <= 1);
 
@@ -3281,13 +3311,22 @@ namespace TowerDefensePrototype
                             effect.Update(gameTime);
                         }
 
-                        //if (TurretList[0] != null)
-                        //    SmokeTrail.StartPosition = TurretList[0].BarrelEnd;
+                        //if (TurretList[0] != null && SmokeTrailList.Count > 0)
+                        //{
+                        //    SmokeTrailList[0].StartPosition = TurretList[0].BarrelEnd;
+
+                        //    //if (TurretList[0].Overheated == false)
+                        //    //{
+                        //    //    SmokeTrailList[0].AddMore = false;
+                        //    //}
+                        //}
 
                         foreach (SmokeTrail trail in SmokeTrailList)
                         {
                             trail.Update(gameTime);
                         }
+
+                        SmokeTrailList.RemoveAll(SmokeTrail => SmokeTrail.Active == false);
 
                         foreach (Emitter emitter in YSortedEmitterList.Where(Emitter => (Emitter.Tether as FlameThrowerTrap) != null))
                         {
@@ -3301,9 +3340,9 @@ namespace TowerDefensePrototype
                                       Trap.CollisionBox.Min.Y < (emitter.Tether as FlameThrowerTrap).CollisionBox.Max.Y))
                                      &&
                                     Trap.BoundingBox.Intersects(RectToBoundingBox(particle.DestinationRectangle))))
-                                {                                    
-                                    particle.Velocity.Y *= (particle.Velocity.X*1.5f);
-                                    particle.Velocity.X = 0;
+                                {
+                                    particle.Velocity.Y *= (particle.Velocity.X * 1.5f);
+                                    particle.Friction.X = 0.25f;
                                     //particle.Friction.X = 0.25f;
                                 }
 
@@ -3506,10 +3545,7 @@ namespace TowerDefensePrototype
                             BeamProjectileUpdate(gameTime);
                         #endregion
 
-                        foreach (Rope rope in RopeList)
-                        {
-                            rope.Update(gameTime);
-                        }
+                        
 
                         #region Turret stuff
                         if (TurretList.Any(Turret => Turret != null))
@@ -5475,12 +5511,15 @@ namespace TowerDefensePrototype
                                 heavyProjectile.Update(gameTime);
                                 heavyProjectile.YRange = new Vector2(invader.MaxY, invader.MaxY);
                                 HeavyProjectileList.Add(heavyProjectile);
-                                AddDrawable(heavyProjectile);
+                                
 
-                                Rope rope = new Rope(heavyRangedInvader.BarrelEnd, heavyProjectile);                                
+                                Rope rope = new Rope(heavyRangedInvader.BarrelEnd, heavyProjectile);
+                                rope.DrawDepth = invader.DrawDepth - (1f / 1080f);
                                 rope.LoadContent(Content);
                                 RopeList.Add(rope);
                                 (invader as HarpoonCannon).Rope = rope;
+
+                                AddDrawable(heavyProjectile, rope);
                             }
                             break;
                         #endregion
@@ -6397,8 +6436,11 @@ namespace TowerDefensePrototype
                         #region Harpoon Cannon
                         case InvaderType.HarpoonCannon:
                             {
-                                DeactivateProjectile(heavyProjectile);                                
+                                DeactivateProjectile(heavyProjectile);
+                                (sourceInvader as HarpoonCannon).Rope.TetherProjectile = null;
                                 (sourceInvader as HarpoonCannon).HarpoonedTurret = collisionTurret;
+                                (sourceInvader as HarpoonCannon).Rope.Sticks[0].Point1.CurrentPosition = collisionTurret.Position;
+
                             }
                             break;
                         #endregion
@@ -6765,6 +6807,26 @@ namespace TowerDefensePrototype
                                     AddDrawable(BloodEmitter, BloodEmitter2);
                                     break;
                                 #endregion
+
+                                case InvaderType.HarpoonCannon:
+                                    {
+                                        Emitter BOOMEmitter = SnapPing(collisionEnd);
+
+                                        YSortedEmitterList.Add(BOOMEmitter);
+
+                                        Emitter hitEmitter = new Emitter(HitEffectParticle, collisionEnd,
+                                                new Vector2(MathHelper.ToDegrees(-(float)Math.Atan2(CurrentProjectile.Ray.Direction.Y, CurrentProjectile.Ray.Direction.X)) - 180 - 45,
+                                                            MathHelper.ToDegrees(-(float)Math.Atan2(CurrentProjectile.Ray.Direction.Y, CurrentProjectile.Ray.Direction.X)) - 180 + 45), new Vector2(5, 8), new Vector2(250, 500), 1f, false,
+                                                new Vector2(0, 0), new Vector2(0, 0), new Vector2(0.15f, 0.15f),
+                                                Color.White, Color.Yellow, 0f, 0.05f, 50, 10, false, new Vector2(0, 1080), true,
+                                                1.0f, null, null, null, null, null, true, new Vector2(0.2f, 0.2f), false, false,
+                                                null, false, false, false);
+
+                                        YSortedEmitterList.Add(hitEmitter);
+
+                                        AddDrawable(hitEmitter, BOOMEmitter);
+                                    }
+                                    break;
                             }
                         }
                         break;
@@ -6774,7 +6836,7 @@ namespace TowerDefensePrototype
             #endregion
             
             #region TRAP hit by a projectile
-            Action<Vector2, object, Trap> TrapEffect = (Vector2 CollisionEnd, object sourceObject, Trap Trap) =>
+            Action<Vector2, object, Trap> TrapEffect = (Vector2 collisionEnd, object sourceObject, Trap Trap) =>
             {
                 Turret turret = sourceObject as Turret;
                 Invader invader = sourceObject as Invader;
@@ -6790,54 +6852,11 @@ namespace TowerDefensePrototype
                                 #region Wall
                                 case TrapType.Wall:
                                     {
-                                        //Emitter Emitter = new Emitter(SplodgeParticle, CollisionEnd,
-                                        //    new Vector2(MathHelper.ToDegrees(-(float)Math.Atan2(CurrentProjectile.Ray.Direction.Y, CurrentProjectile.Ray.Direction.X)) - 180 - (float)RandomDouble(0, 45),
-                                        //                MathHelper.ToDegrees(-(float)Math.Atan2(CurrentProjectile.Ray.Direction.Y, CurrentProjectile.Ray.Direction.X)) - 180 + (float)RandomDouble(0, 45)),
-                                        //    new Vector2(1, 2), new Vector2(800, 1600), 0.5f, true, new Vector2(0, 360),
-                                        //    new Vector2(1, 3), new Vector2(0.02f, 0.05f), Color.Gray, Color.DarkGray,
-                                        //    0.1f, 0.1f, 10, 2, true, new Vector2(Trap.DestinationRectangle.Bottom, Trap.DestinationRectangle.Bottom), false, 1, true, false);
-                                        //YSortedEmitterList.Add(Emitter);
-
-                                        //Need to calculate the reflection angle better. 
-                                        //for (int i = 0; i < Random.Next(2, 8); i++)
-                                        //{
-                                        //    Emitter SparkEmitter2 = new Emitter(RoundSparkParticle, CollisionEnd,
-                                        //    new Vector2(0, 360), new Vector2(0.5f, 1.5f), new Vector2(480, 960), 100f, true, new Vector2(0, 360),
-                                        //    new Vector2(1, 3), new Vector2(0.1f, 0.3f), Color.Orange, Color.Orange, 0.05f, 0.5f, 10, 1, true,
-                                        //    new Vector2(Trap.DestinationRectangle.Bottom, Trap.DestinationRectangle.Bottom),
-                                        //    false, null, true, true, new Vector2(2, 5),
-                                        //    new Vector2(MathHelper.ToDegrees(-(float)Math.Atan2(CurrentProjectile.Ray.Direction.Y, CurrentProjectile.Ray.Direction.X)) - 180 - (float)RandomDouble(0, 45),
-                                        //                MathHelper.ToDegrees(-(float)Math.Atan2(CurrentProjectile.Ray.Direction.Y, CurrentProjectile.Ray.Direction.X)) - 180 + (float)RandomDouble(0, 45)),
-                                        //                0.6f, false, new Vector2(0.5f, 0), null, null, null, true, null);
-
-                                        //    AdditiveEmitterList.Add(SparkEmitter2);
-                                        //}
-
-                                        Emitter BOOMEmitter;
-
-                                        if (Random.NextDouble() >= 0.5f)
-                                        {
-                                            BOOMEmitter = new Emitter(SNAPParticle, CollisionEnd,
-                                                          new Vector2(0, 0), new Vector2(0.001f, 0.001f), new Vector2(250, 250), 1f, false,
-                                                          new Vector2(-25, 25), new Vector2(0, 0), new Vector2(0.15f, 0.15f),
-                                                          Color.White, Color.White, 0f, 0.05f, 50, 1, false, new Vector2(0, 1080), true,
-                                                          CollisionEnd.Y + 4 / 1080f, null, null, null, null, null, false, new Vector2(0.11f, 0.11f), false, false,
-                                                          null, false, false, true);
-                                        }
-                                        else
-                                        {
-                                            BOOMEmitter = new Emitter(PINGParticle, CollisionEnd,
-                                                          new Vector2(0, 0), new Vector2(0.001f, 0.001f), new Vector2(250, 250), 1f, false,
-                                                          new Vector2(-25, 25), new Vector2(0, 0), new Vector2(0.15f, 0.15f),
-                                                          Color.White, Color.White, 0f, 0.05f, 50, 1, false, new Vector2(0, 1080), true,
-                                                          CollisionEnd.Y + 4 / 1080f, null, null, null, null, null, false, new Vector2(0.11f, 0.11f), false, false,
-                                                          null, false, false, true);
-                                        }
-
+                                        Emitter BOOMEmitter = SnapPing(collisionEnd);
                                         YSortedEmitterList.Add(BOOMEmitter);
 
                                         Emitter DustEmitter = new Emitter(ToonSmoke3,
-                                               new Vector2(CollisionEnd.X, CollisionEnd.Y),
+                                               new Vector2(collisionEnd.X, collisionEnd.Y),
                                                new Vector2(MathHelper.ToDegrees(-(float)Math.Atan2(CurrentProjectile.Ray.Direction.Y, CurrentProjectile.Ray.Direction.X)) - 180 - (float)RandomDouble(0, 45),
                                                            MathHelper.ToDegrees(-(float)Math.Atan2(CurrentProjectile.Ray.Direction.Y, CurrentProjectile.Ray.Direction.X)) - 180 + (float)RandomDouble(0, 45)),
                                                new Vector2(1.8f, 3f), new Vector2(1120, 1600), 1f, false, new Vector2(0, 360),
@@ -6846,7 +6865,7 @@ namespace TowerDefensePrototype
                                                null, null, null, null, null, null, new Vector2(0.08f, 0.08f), true, true);
                                         YSortedEmitterList.Add(DustEmitter);
 
-                                        Emitter hitEmitter = new Emitter(HitEffectParticle, CollisionEnd,
+                                        Emitter hitEmitter = new Emitter(HitEffectParticle, collisionEnd,
                                                     new Vector2(MathHelper.ToDegrees(-(float)Math.Atan2(CurrentProjectile.Ray.Direction.Y, CurrentProjectile.Ray.Direction.X)) - 180 - 45,
                                                                 MathHelper.ToDegrees(-(float)Math.Atan2(CurrentProjectile.Ray.Direction.Y, CurrentProjectile.Ray.Direction.X)) - 180 + 45),
                                                     new Vector2(5, 8), new Vector2(250, 500), 1f, false,
@@ -6855,7 +6874,6 @@ namespace TowerDefensePrototype
                                                     Trap.DrawDepth + (4f / 1080f), null, null, null, null, null, true, new Vector2(0.2f, 0.2f), false, false,
                                                     null, false, false, false);
                                         YSortedEmitterList.Add(hitEmitter);
-
                                         AddDrawable(DustEmitter, hitEmitter, BOOMEmitter);
                                     }
                                     break;
@@ -6885,7 +6903,7 @@ namespace TowerDefensePrototype
                                 #region Wall
                                 case TrapType.Wall:
                                     {
-                                        Emitter Emitter = new Emitter(SplodgeParticle, CollisionEnd,
+                                        Emitter Emitter = new Emitter(SplodgeParticle, collisionEnd,
                                             new Vector2(MathHelper.ToDegrees(-(float)Math.Atan2(CurrentProjectile.Ray.Direction.Y, CurrentProjectile.Ray.Direction.X)) - 180 - (float)RandomDouble(0, 45),
                                                         MathHelper.ToDegrees(-(float)Math.Atan2(CurrentProjectile.Ray.Direction.Y, CurrentProjectile.Ray.Direction.X)) - 180 + (float)RandomDouble(0, 45)),
                                             new Vector2(1, 2), new Vector2(800, 1600), 0.5f, true, new Vector2(0, 360),
@@ -6896,7 +6914,7 @@ namespace TowerDefensePrototype
                                         //Need to calculate the reflection angle better. 
                                         for (int i = 0; i < Random.Next(2, 8); i++)
                                         {
-                                            Emitter SparkEmitter2 = new Emitter(RoundSparkParticle, CollisionEnd,
+                                            Emitter SparkEmitter2 = new Emitter(RoundSparkParticle, collisionEnd,
                                             new Vector2(0, 360), new Vector2(0.5f, 1.5f), new Vector2(480, 960), 100f, true, new Vector2(0, 360),
                                             new Vector2(1, 3), new Vector2(0.1f, 0.3f), Color.Orange, Color.OrangeRed, 0.05f, 0.5f, 10, 1, true,
                                             new Vector2(Trap.DestinationRectangle.Bottom, Trap.DestinationRectangle.Bottom),
@@ -6909,12 +6927,12 @@ namespace TowerDefensePrototype
                                         }
 
                                         Emitter DustEmitter = new Emitter(SmokeParticle,
-                                               new Vector2(CollisionEnd.X, CollisionEnd.Y),
+                                               new Vector2(collisionEnd.X, collisionEnd.Y),
                                                new Vector2(MathHelper.ToDegrees(-(float)Math.Atan2(CurrentProjectile.Ray.Direction.Y, CurrentProjectile.Ray.Direction.X)) - 180 - (float)RandomDouble(0, 45),
                                                            MathHelper.ToDegrees(-(float)Math.Atan2(CurrentProjectile.Ray.Direction.Y, CurrentProjectile.Ray.Direction.X)) - 180 + (float)RandomDouble(0, 45)),
                                                new Vector2(1.8f, 3f), new Vector2(1120, 1600), 0.5f, true, new Vector2(0, 360),
                                                new Vector2(0.5f, 1f), new Vector2(0.2f, 0.5f), DirtColor2, DirtColor, 0.03f, 0.02f, 5, 1, false,
-                                               new Vector2(0, 1080), true, CollisionEnd.Y / 1080,
+                                               new Vector2(0, 1080), true, collisionEnd.Y / 1080,
                                                null, null, null, null, null, null, new Vector2(0.08f, 0.08f), true, true);
                                         YSortedEmitterList.Add(DustEmitter);
 
@@ -7718,10 +7736,22 @@ namespace TowerDefensePrototype
             {
                 turret.Update(gameTime, CursorPosition);
 
-                if (turret.Overheated == true && SmokeTrailList.Count < 1)
+                if (turret.Overheated == true && SmokeTrailList.All(Trail => Trail.TurretTether != turret))
                 {
                     SmokeTrail trail = new SmokeTrail(turret.BarrelEnd);
+                    trail.TurretTether = turret;
                     SmokeTrailList.Add(trail);
+                }
+
+                if (turret.Overheated == false)
+                {
+                    SmokeTrailList.ForEach(SmokeTrail =>
+                        {
+                            if (SmokeTrail.TurretTether == turret)
+                            {
+                                SmokeTrail.AddMore = false;
+                            }
+                        });
                 }
 
                 #region If the left mouse button is pressed, shoot the turret
@@ -7980,7 +8010,7 @@ namespace TowerDefensePrototype
                         //                                  null, null, null, null, null, null, null, true, true, 150f);
                         //YSortedEmitterList.Add(puffEmitter);
 
-                        ShellCasing newShell = new ShellCasing(new Vector2(turret.BarrelCenter.X, turret.BarrelCenter.Y), new Vector2(5, 5), ShellCasing, new Vector2(0.5f, 0.5f));
+                        ShellCasing newShell = new ShellCasing(new Vector2(turret.BarrelCenter.X, turret.BarrelCenter.Y), new Vector2(-Random.Next(10, 15), -Random.Next(20, 30)), SmallShellingCasing, new Vector2(0.65f, 0.65f));
                         VerletShells.Add(newShell);
 
                         AddDrawable(newShell, FlashEmitter, FlashEmitter2);//, puffEmitter);
@@ -10710,6 +10740,32 @@ namespace TowerDefensePrototype
         {
             public Vector3 position, direction;
             public float length;
+        }
+
+        public Emitter SnapPing(Vector2 collisionEnd)
+        {
+            Emitter BOOMEmitter;
+
+            if (Random.NextDouble() >= 0.5f)
+            {
+                BOOMEmitter = new Emitter(SNAPParticle, collisionEnd,
+                              new Vector2(0, 0), new Vector2(0.001f, 0.001f), new Vector2(250, 250), 1f, false,
+                              new Vector2(-25, 25), new Vector2(0, 0), new Vector2(0.15f, 0.15f),
+                              Color.White, Color.White, 0f, 0.05f, 50, 1, false, new Vector2(0, 1080), true,
+                              collisionEnd.Y + 4 / 1080f, null, null, null, null, null, false, new Vector2(0.11f, 0.11f), false, false,
+                              null, false, false, true);
+            }
+            else
+            {
+                BOOMEmitter = new Emitter(PINGParticle, collisionEnd,
+                              new Vector2(0, 0), new Vector2(0.001f, 0.001f), new Vector2(250, 250), 1f, false,
+                              new Vector2(-25, 25), new Vector2(0, 0), new Vector2(0.15f, 0.15f),
+                              Color.White, Color.White, 0f, 0.05f, 50, 1, false, new Vector2(0, 1080), true,
+                              collisionEnd.Y + 4 / 1080f, null, null, null, null, null, false, new Vector2(0.11f, 0.11f), false, false,
+                              null, false, false, true);
+            }
+
+            return BOOMEmitter;
         }
     }
 }
