@@ -56,7 +56,7 @@ namespace TowerDefensePrototype
                     {
                         CurrentID++;
 
-                        Crate crate = new Crate(new Vector2(500, 500), new Vector2(690, 930));
+                        Crate crate = new Crate(new Vector2(Random.Next(800, 1200), 500), new Vector2(690, 930));
                         Game1.AddInvader(crate, gameTime);                        
                     }
                     break;
@@ -102,7 +102,10 @@ namespace TowerDefensePrototype
 
                 case 11:
                     if (Game1.StartWave == false)
+                    {
+                        //Game1.CurrentWaveIndex++;
                         Game1.StartWaves();
+                    }
 
                     CurrentTime += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
                     
@@ -175,7 +178,7 @@ namespace TowerDefensePrototype
                         {
                             for (int i = 0; i < 7; i++)
                             {
-                                Crate crate = new Crate(new Vector2(500, 500), new Vector2(690, 930), 20);
+                                Crate crate = new Crate(new Vector2(Random.Next(800, 1200), 500), new Vector2(690, 930), 20);
                                 Game1.AddInvader(crate, gameTime);
                                 CrateNum++;
                             }
@@ -191,10 +194,36 @@ namespace TowerDefensePrototype
                     }
                     break;
 
-                case 21:
+                case 22:
                     {
+                        if (Game1.StartWave == false)
+                            Game1.StartWaves();
 
+                        CurrentTime += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+
+                        if (CurrentTime > ItemsList[CurrentID].Time)
+                        {
+                            CurrentID++;
+                            CurrentTime = 0;
+                        }
                     }
+                    break;
+
+                case 23:
+                    if (Game1.StartWave == false && Game1.InvaderList.Count == 0)
+                    {
+                        CurrentID++;
+                    }
+                    break;
+
+                case 24:
+                    CurrentTime += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+
+                        if (CurrentTime > ItemsList[CurrentID].Time)
+                        {
+                            Game1.PlayerVictory();
+                            CurrentTime = 0;
+                        }
                     break;
             }
 

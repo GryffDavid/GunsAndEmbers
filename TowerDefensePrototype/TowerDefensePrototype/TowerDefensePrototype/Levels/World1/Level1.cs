@@ -83,6 +83,11 @@ namespace TowerDefensePrototype
                 new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
                 new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
                 new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
                 new Soldier(new Vector2(2050, 600), new Vector2(700, 850)));
 
             #endregion

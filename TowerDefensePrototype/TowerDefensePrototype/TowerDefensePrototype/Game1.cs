@@ -478,7 +478,7 @@ namespace TowerDefensePrototype
             }
         }
 
-        int CurrentWaveIndex = 0;
+        public int CurrentWaveIndex = 0;
         int CurrentInvaderIndex = 0;
         int MaxWaves = 0;
 
@@ -1174,8 +1174,8 @@ namespace TowerDefensePrototype
 
                 #region Loading UI
 
-                StartWaveButton = new Button(ButtonRightSprite, new Vector2(1920 - (ButtonRightSprite.Width / 3), 200), null, null, null, "start waves", RobotoRegular20_2, "Right");
-                StartWaveButton.Initialize(OnButtonClick);
+                //StartWaveButton = new Button(ButtonRightSprite, new Vector2(1920 - (ButtonRightSprite.Width / 3), 200), null, null, null, "start waves", RobotoRegular20_2, "Right");
+                //StartWaveButton.Initialize(OnButtonClick);
                 
                 HealthBar = new UISlopedBar(new Vector2(1920 / 2 - 810 / 2, 980), new Vector2(800 + 15, 15), Color.Lerp(Color.DarkRed, Color.LightGray, 0.2f), false, 15, 0);
                 ShieldBar = new UISlopedBar(new Vector2(1920 / 2 - 810 / 2 + 5, 970), new Vector2(810 - 5 + 15, 10), Color.Lerp(Color.White, Color.LightGray, 0.2f), true, 0, 10);
@@ -1951,7 +1951,7 @@ namespace TowerDefensePrototype
         private void LoadFonts()
         {
             DefaultFont = SecondaryContent.Load<SpriteFont>("Fonts/RobotoRegular20_2");
-            DialogueFont = SecondaryContent.Load<SpriteFont>("Fonts/RobotoBold20_0_Outline");
+            DialogueFont = SecondaryContent.Load<SpriteFont>("Fonts/RobotoRegular20_2");
             //ButtonFont = SecondaryContent.Load<SpriteFont>("Fonts/RobotoRegular20_2");
 
             TooltipFont = SecondaryContent.Load<SpriteFont>("Fonts/SpriteFont1");
@@ -3487,7 +3487,8 @@ namespace TowerDefensePrototype
 
                         Tower.CurrentPowerUnits = Tower.MaxPowerUnits - totalPower;
 
-                        HandleWaves(gameTime);
+                        if (CurrentWaveIndex <= CurrentLevel.WaveList.Count -1)
+                            HandleWaves(gameTime);
 
                         //if (WaveCountDown != null && WaveCountDown.CurrentSeconds > -1)
                         //    WaveCountDown.Update(gameTime);
@@ -9238,7 +9239,9 @@ namespace TowerDefensePrototype
 
                 ReadyToPlace = false;
                 PlaceTrap.Play();
-                ClearSelected();
+
+                if (CurrentKeyboardState.IsKeyDown(Keys.LeftShift) == false)
+                    ClearSelected();
             };
             #endregion
 
@@ -9636,7 +9639,7 @@ namespace TowerDefensePrototype
                 if (CurrentInvaderTime >= CurrentWave.TimeToNextInvader)
                 {
                     #region If there are still elements to be added
-                    if (CurrentInvaderIndex < CurrentWave.InvaderList.Count)
+                    if (CurrentInvaderIndex < CurrentWave.InvaderList.Count && StartWave == true)
                     {
                         #region If the element is an invader
                         if (CurrentWave.InvaderList[CurrentInvaderIndex] is Invader)
@@ -9709,8 +9712,9 @@ namespace TowerDefensePrototype
                             //ADD THE START WAVE BUTTON HERE
                             if (StartWave == true && StartWaveButton == null && InvaderList.Count == 0)
                             {
-                                StartWaveButton = new Button(ButtonLeftSprite, new Vector2(1000, 200));
-                                StartWaveButton.Initialize(OnButtonClick);
+                                //StartWaveButton = new Button(ButtonLeftSprite, new Vector2(1000, 200));
+                                //StartWaveButton.Initialize(OnButtonClick);
+                                CurrentWaveIndex++;
                                 StartWave = false;
                             }
                         }
@@ -9719,18 +9723,27 @@ namespace TowerDefensePrototype
                 }
             }
 
-            #region Handle victory conditions
-            if (InvaderList.Count == 0 &&
-                CurrentWaveIndex > CurrentLevel.WaveList.Count - 1)
-            {
-                Victory = true;
-                VictoryContinue = new Button(ButtonLeftSprite, new Vector2(-300, 834), null, null, null, "continue", RobotoRegular20_2, "Left", null);
-                VictoryContinue.NextPosition = new Vector2(665, 834);
-                VictoryContinue.Initialize(OnButtonClick);
-                GameState = GameState.Victory;
-            }
-            #endregion
+            //#region Handle victory conditions
+            //if (InvaderList.Count == 0 &&
+            //    CurrentWaveIndex > CurrentLevel.WaveList.Count - 1)
+            //{
+            //    Victory = true;
+            //    VictoryContinue = new Button(ButtonLeftSprite, new Vector2(-300, 834), null, null, null, "continue", RobotoRegular20_2, "Left", null);
+            //    VictoryContinue.NextPosition = new Vector2(665, 834);
+            //    VictoryContinue.Initialize(OnButtonClick);
+            //    GameState = GameState.Victory;
             //}
+            //#endregion
+            //}
+        }
+
+        public void PlayerVictory()
+        {
+            Victory = true;
+            VictoryContinue = new Button(ButtonLeftSprite, new Vector2(-300, 834), null, null, null, "continue", RobotoRegular20_2, "Left", null);
+            VictoryContinue.NextPosition = new Vector2(665, 834);
+            VictoryContinue.Initialize(OnButtonClick);
+            GameState = GameState.Victory;
         }
 
         public void StartWaves()
@@ -9740,8 +9753,8 @@ namespace TowerDefensePrototype
             CurrentInvaderIndex = 0;
             CurrentInvaderTime = 0;
 
-            if (CurrentWaveIndex > 0)
-                CurrentWaveIndex++;
+            //if (CurrentWaveIndex > 0)
+                //CurrentWaveIndex++;
 
             //WaveCountDown = new WaveCountDown(10)
             //{

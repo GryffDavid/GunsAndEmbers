@@ -14,6 +14,7 @@ namespace TowerDefensePrototype
         public float CurrentTime, MaxTime;
         public List<DialogueItem> ItemsList;
         public string CurrentText = "";
+        public static Random Random = new Random();
 
         public LevelDialogue(Game1 game1)
         {

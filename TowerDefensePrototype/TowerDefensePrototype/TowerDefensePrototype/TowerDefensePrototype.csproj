@@ -171,6 +171,7 @@
     <Compile Include="Turrets\Heavy\GlueTurret.cs" />
     <Compile Include="UIComponents\CooldownButton.cs" />
     <Compile Include="UIComponents\Tabs.cs" />
+    <Compile Include="UIComponents\Tutorial\TutorialMarker.cs" />
     <Compile Include="UIComponents\UIBar.cs" />
     <Compile Include="Components\Decal.cs" />
     <Compile Include="UIComponents\DialogBox.cs" />
