@@ -70,7 +70,7 @@ namespace TowerDefensePrototype
             }
         }
 
-        public void Update(GameTime gameTime)
+        public void Update()
         {
             CurrentMouseState = Mouse.GetState();
 

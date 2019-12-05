@@ -30,9 +30,9 @@ namespace TowerDefensePrototype
             get { return "Wall"; } 
         }
 
-        public override TrapType TrapType
-        {
-            get { return TrapType.Wall; }
-        }
+        //public override TrapType TrapType
+        //{
+        //    get { return TrapType.Wall; }
+        //}
     }
 }

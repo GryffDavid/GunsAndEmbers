@@ -16,7 +16,7 @@ namespace TowerDefensePrototype
         public abstract string AssetName { get; }
         public Vector2 Position { get; set; }
         public abstract int HP { get; }
-        public abstract TrapType TrapType { get; }
+        //public abstract TrapType TrapType { get; }
 
         public void LoadContent(ContentManager contentManager)
         {

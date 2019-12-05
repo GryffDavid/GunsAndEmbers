@@ -27,9 +27,9 @@ namespace TowerDefensePrototype
 
         public override string AssetName { get { return "Blank"; } }
 
-        public override TrapType TrapType
-        {
-            get { return TrapType.Blank; }
-        }
+        //public override TrapType TrapType
+        //{
+        //    get { return TrapType.Blank; }
+        //}
     }
 }

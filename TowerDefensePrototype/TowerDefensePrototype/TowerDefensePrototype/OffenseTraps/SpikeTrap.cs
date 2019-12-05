@@ -27,9 +27,9 @@ namespace TowerDefensePrototype
 
         public override string AssetName { get { return "SpikeTrap"; } }
 
-        public override TrapType TrapType
-        {
-            get { return TrapType.Spikes; }
-        }
+        //public override TrapType TrapType
+        //{
+        //    get { return TrapType.Spikes; }
+        //}
     }
 }

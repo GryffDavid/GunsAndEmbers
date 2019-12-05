@@ -26,7 +26,7 @@ namespace TowerDefensePrototype
             graphics.PreferredBackBufferWidth = 1280;
             graphics.PreferredBackBufferHeight = 720;
             IsMouseVisible = true;
-            graphics.IsFullScreen = false;
+            //graphics.IsFullScreen = true;
             Content.RootDirectory = "Content";
         }
 

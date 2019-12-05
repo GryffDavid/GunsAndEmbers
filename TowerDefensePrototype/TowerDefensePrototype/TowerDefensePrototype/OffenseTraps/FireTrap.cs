@@ -27,12 +27,15 @@ namespace TowerDefensePrototype
             get { return false; }
         }
 
-        public override string AssetName { get { return "FireTrap"; } }
-
-        public override TrapType TrapType
+        public override string AssetName
         {
-            get { return TrapType.Fire; }
+            get { return "FireTrapStrip"; }
         }
+
+        //public override TrapType TrapType
+        //{
+        //    get { return TrapType.Fire; }
+        //}
     }
 }
 

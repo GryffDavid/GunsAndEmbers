@@ -14,6 +14,7 @@ Content\FireTrap.xnb
 Content\Soldier.xnb
 Content\BasicTurret.xnb
 Content\BasicTurretBase.xnb
-Content\ResourceFont.xnb
 Content\BatteringRam.xnb
 Content\BasicTurretIcon.xnb
+Content\FireTrapStrip.xnb
+Content\ResourceFont.xnb

@@ -37,11 +37,6 @@ namespace TowerDefensePrototype
         {
             CurrentMouseState = Mouse.GetState();
 
-            if ((PreviousMouseState.RightButton == ButtonState.Pressed) && (CurrentMouseState.RightButton == ButtonState.Released))
-            {
-                Selected = false;
-            }
-
             if (Active == true)
             {
                 if (Selected == true)
