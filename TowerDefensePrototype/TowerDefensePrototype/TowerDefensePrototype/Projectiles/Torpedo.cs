@@ -30,7 +30,7 @@ namespace TowerDefensePrototype
                 new Vector2(0, 0), new Vector2(40, 50), 0.5f, true, new Vector2(0, 0),
                 new Vector2(0, 2), new Vector2(0.2f, 0.3f), Color.MediumPurple, Color.Purple, 0, -1, 1, 10, false, new Vector2(0, 720), true);
             
-            Rotation = (float)Math.Atan2(Velocity.Y, Velocity.X);
+            CurrentRotation = (float)Math.Atan2(Velocity.Y, Velocity.X);
 
             if (yrange == null)
             {

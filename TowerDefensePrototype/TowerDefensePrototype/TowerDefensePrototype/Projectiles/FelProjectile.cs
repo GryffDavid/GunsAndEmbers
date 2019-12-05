@@ -15,7 +15,7 @@ namespace TowerDefensePrototype
             Active = true;
             Rotate = true;
             Fade = false;
-            TextureName = "Projectiles/FelProjectile2";
+            TextureName = "Blank";
             HeavyProjectileType = HeavyProjectileType.FelProjectile;
             Angle = angle;
             Speed = speed;
@@ -36,17 +36,18 @@ namespace TowerDefensePrototype
             Velocity.X = (float)(Math.Cos(angle) * speed);
             Velocity.Y = (float)(Math.Sin(angle) * speed);
 
-            //Color ParticleColor1 = Color.LimeGreen;
-            //Color ParticleColor2 = Color.Purple;
+            Emitter FlashSparks = new Emitter("Particles/GlowBall", Position,
+            new Vector2(0, 360), new Vector2(2, 3), new Vector2(15, 25), 1f, true, new Vector2(0, 360),
+            new Vector2(2, 5), new Vector2(0.25f, 0.25f), Color.LimeGreen, Color.LimeGreen, 0.0f, -1, 1, 1,
+            false, new Vector2(0, 720), false, null, false, false);
 
-            //EmitterList.Add(new Emitter("Particles/Smoke", new Vector2(Position.X + 16, Position.Y + 8), new Vector2(90, 180),
-            //    new Vector2(1.5f, 2), new Vector2(15, 20), 0.2f, true, new Vector2(-20, 20), new Vector2(-4, 4),
-            //    new Vector2(0.25f, 0.5f), ParticleColor1, ParticleColor2, 0.0f, -1, 1, 1, false, new Vector2(0, 720)));
+            Emitter FlashSmoke = new Emitter("Particles/Smoke", Position,
+            new Vector2(0, 360), new Vector2(1, 2), new Vector2(5, 15), 1f, true, new Vector2(0, 360),
+            new Vector2(2, 5), new Vector2(1f, 1f), Color.LimeGreen, Color.LimeGreen, 0.0f, -1, 1, 1,
+            false, new Vector2(0, 720), false, null, false, false);
 
-            //EmitterList.Add(new Emitter("Particles/FireParticle", new Vector2(Position.X + 16, Position.Y + 8),
-            //                    new Vector2(0, 360), new Vector2(0.5f, 0.75f), new Vector2(20, 30), 0.01f, true, new Vector2(-20, 20),
-            //                    new Vector2(-4, 4), new Vector2(0.5f, 0.75f), Color.LimeGreen, Color.Green, 0.0f, -1, 10, 1, false, new Vector2(0, 720),
-            //                    false, null));
+            EmitterList.Add(FlashSmoke);
+            EmitterList.Add(FlashSparks);
 
             Damage = damage;
         }

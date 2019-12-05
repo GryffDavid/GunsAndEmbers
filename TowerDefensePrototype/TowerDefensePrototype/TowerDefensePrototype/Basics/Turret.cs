@@ -168,7 +168,7 @@ namespace TowerDefensePrototype
                 }
             }
 
-            float Percent = (MaxHeat / 100) * CurrentHeat;
+            float Percent = (CurrentHeat / MaxHeat) * 100;
             Color = Color.Lerp(Color.White, Color.Lerp(Color.Red, Color.White, 0.5f), Percent / 100);
 
             SourceRectangle = new Rectangle(0 + (int)FrameSize.X * CurrentFrame, 0, (int)FrameSize.X, (int)FrameSize.Y);

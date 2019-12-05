@@ -93,6 +93,7 @@ Content\Buttons\ButtonTemplate.xnb
 Content\Test2.xnb
 Content\Foreground.xnb
 Content\Midground.xnb
+Content\StatBlock.xnb
 Content\Fonts\BoxFont1.xnb
 Content\Fonts\HUDFont.xnb
 Content\Fonts\ButtonFont.xnb

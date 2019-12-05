@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace TowerDefensePrototype
 {
-    public class InformationBox
+    public class Tooltip
     {
         Vector2 Position;
         Texture2D BoxTexture;
@@ -20,7 +20,7 @@ namespace TowerDefensePrototype
         Color Color;
         public bool Loaded;
 
-        public InformationBox(string text)
+        public Tooltip(string text)
         {
             Text = text;
             Loaded = false;

@@ -13,7 +13,7 @@ namespace TowerDefensePrototype
         Texture2D Texture;
         string AssetName;
         public Vector2 Position, Scale, Move;
-        Color Color;
+        public Color Color;
         public Rectangle DestinationRectangle;
         public BoundingBox BoundingBox;
         public bool VerticalLooping, HorizontalLooping;
