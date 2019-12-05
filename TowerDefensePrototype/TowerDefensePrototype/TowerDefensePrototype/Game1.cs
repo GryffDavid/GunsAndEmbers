@@ -19,13 +19,13 @@ namespace TowerDefensePrototype
     public enum TrapType { Blank, Wall, Spikes, Catapult, Fire, Ice, Tar, Barrel, SawBlade };
     public enum TurretType { Blank, Gatling, Cannon, FlameThrower };
     public enum InvaderType { Soldier, BatteringRam, Airship, Archer, Tank, Spider, Slime, SuicideBomber };
-    public enum HeavyProjectileType { CannonBall, FlameThrower, Arrow, Acid, Torpedo };
+    public enum HeavyProjectileType { CannonBall, FlameThrower, Arrow, Acid, Torpedo, ClusterBomb };
     public enum LightProjectileType { MachineGun, Freeze };
     public enum GameState { Menu, Loading, Playing, Paused, ProfileSelect, Options, ProfileManagement, Tutorial, LoadingGame };
     public enum WorldType { Normal, Ice, Lava };
 
     //public struct Animation
-    //{
+    //{ 
     //    public string AssetName;
     //    public int TotalFrames;
     //    public int FrameDelay;
@@ -61,6 +61,7 @@ namespace TowerDefensePrototype
         //Sound effects
         SoundEffect MenuClick;
         SoundEffect FireTrapStart;
+
         Color HalfWhite = Color.Lerp(Color.White, Color.Transparent, 0.5f);
 
         #region List declarations
@@ -70,9 +71,10 @@ namespace TowerDefensePrototype
         List<Trap> TrapList;
         List<Turret> TurretList;
         List<Invader> InvaderList;
-            
+
         List<HeavyProjectile> HeavyProjectileList, InvaderHeavyProjectileList;
         List<LightProjectile> LightProjectileList;
+        List<TimerHeavyProjectile> TimedProjectileList;
         
         List<Emitter> EmitterList, EmitterList2;
         List<Particle> ShellCasingList;
@@ -284,6 +286,7 @@ namespace TowerDefensePrototype
                 TrapUpdate(gameTime);
 
                 HeavyProjectileUpdate(gameTime);
+                TimedProjectileUpdate(gameTime);
                 LightProjectileUpdate();
 
                 InvaderProjectileUpdate(gameTime);
@@ -302,6 +305,12 @@ namespace TowerDefensePrototype
                 EnemyExplosionsUpdate();
 
                 TowerHealthBar.Update(new Vector2(90, 19), (int)Tower.CurrentHP);
+
+                for (int i = 0; i < TimedProjectileList.Count; i++)
+                {
+                    if (TimedProjectileList[i].Active == false)
+                        TimedProjectileList.RemoveAt(i);
+                }
 
                 for (int i = 0; i < LightProjectileList.Count; i++)
                 {
@@ -364,6 +373,7 @@ namespace TowerDefensePrototype
                             {
                                 turret.ElapsedTime = 0;
                                 TurretShoot();
+                                turret.Animated = true;
                             }
                         }
                 }                
@@ -645,14 +655,19 @@ namespace TowerDefensePrototype
                     heavyProjectile.Draw(spriteBatch2);
                 }
 
+                foreach (TimerHeavyProjectile timedProjectile in TimedProjectileList)
+                {
+                    timedProjectile.Draw(spriteBatch2);
+                }
+
+
                 CursorDraw(spriteBatch2);
             }
 
             CursorDraw(spriteBatch2);
 
             spriteBatch2.End();
-            #endregion            
-            
+            #endregion                        
         }
 
         #region Handle Game Content
@@ -857,6 +872,7 @@ namespace TowerDefensePrototype
                 }
 
                 HeavyProjectileList = new List<HeavyProjectile>();
+                TimedProjectileList = new List<TimerHeavyProjectile>();
                 InvaderHeavyProjectileList = new List<HeavyProjectile>();
 
                 LightProjectileList = new List<LightProjectile>();
@@ -1503,10 +1519,40 @@ namespace TowerDefensePrototype
                             break;
 
                         case InvaderType.Tank:
-                            EmitterList2.Add(new Emitter("Particles/Splodge", new Vector2(invader.DestinationRectangle.Center.X, invader.DestinationRectangle.Center.Y),
-                            new Vector2(0, 360), new Vector2(1, 2), new Vector2(50, 100), 0.5f, true, new Vector2(0, 360), new Vector2(1, 3),
-                            new Vector2(0.02f, 0.06f), Color.DarkOliveGreen, Color.DarkSeaGreen, 0.1f, 0.2f, 20, 10, true, new Vector2(invader.MaxY, invader.MaxY)));
-                        EmitterList2[EmitterList2.Count - 1].LoadContent(Content);
+                            
+                                Color FireColor = Color.DarkOrange;
+                                FireColor.A = 200;
+
+                                Color FireColor2 = Color.DarkOrange;
+                                FireColor2.A = 90;
+
+                                Emitter ExplosionEmitter2 = new Emitter("Particles/Splodge", new Vector2(invader.DestinationRectangle.Center.X, invader.MaxY),
+                                new Vector2(0, 180), new Vector2(1, 4), new Vector2(20, 50), 2f, true, new Vector2(0, 360), new Vector2(1, 3),
+                                new Vector2(0.02f, 0.06f), Color.DarkSlateGray, Color.SaddleBrown, 0.2f, 0.2f, 20, 10, true, new Vector2(invader.MaxY + 8, invader.MaxY + 8));
+
+                                EmitterList.Add(ExplosionEmitter2);
+                                EmitterList[EmitterList.IndexOf(ExplosionEmitter2)].LoadContent(Content);
+
+                                Emitter ExplosionEmitter = new Emitter("Particles/FireParticle",
+                                        new Vector2(invader.DestinationRectangle.Center.X, invader.MaxY),
+                                        new Vector2(0, 180), new Vector2(3, 8), new Vector2(1, 15), 0.01f, true, new Vector2(0, 360),
+                                        new Vector2(0, 0), new Vector2(3, 4), FireColor, FireColor2, 0.0f, 0.1f, 1, 20, false,
+                                        new Vector2(0, 720), true);
+
+                                EmitterList.Add(ExplosionEmitter);
+                                EmitterList[EmitterList.IndexOf(ExplosionEmitter)].LoadContent(Content);
+
+                                Color SmokeColor1 = Color.Lerp(Color.DarkGray, Color.Transparent, 0.5f);
+                                Color SmokeColor2 = Color.Lerp(Color.Gray, Color.Transparent, 0.5f);
+
+                                Emitter newEmitter2 = new Emitter("Particles/Smoke",
+                                        new Vector2(invader.DestinationRectangle.Center.X, invader.MaxY),
+                                        new Vector2(80, 100), new Vector2(0.5f, 1f), new Vector2(20, 40), 0.01f, true, new Vector2(0, 360),
+                                        new Vector2(0, 0), new Vector2(1, 2), SmokeColor1, SmokeColor2, 0.0f, 0.3f, 1, 1, false,
+                                        new Vector2(0, 720), false);
+
+                                EmitterList2.Add(newEmitter2);
+                                EmitterList2[EmitterList2.IndexOf(newEmitter2)].LoadContent(Content);
                             break;
 
                         case InvaderType.Airship:
@@ -1970,7 +2016,7 @@ namespace TowerDefensePrototype
                         {
                             case TurretType.Gatling:
                                 {
-                                    //MachineGunLoop.Play();
+                                    //MachineGunLoop.Play();                                   
 
                                     Color FireColor = Color.DarkOrange;
                                     FireColor.A = 200;
@@ -2006,7 +2052,7 @@ namespace TowerDefensePrototype
 
                             case TurretType.Cannon:
                                 {
-                                    HeavyProjectile heavyProjectile;
+                                    TimerHeavyProjectile heavyProjectile;
                                     Vector2 BarrelEnd;
 
                                     Color FireColor = Color.DarkOrange;
@@ -2028,11 +2074,12 @@ namespace TowerDefensePrototype
                                     EmitterList.Add(FlashEmitter);
                                     EmitterList[EmitterList.IndexOf(FlashEmitter)].LoadContent(Content);
 
-                                    heavyProjectile = new CannonBall(new Vector2(turret.BarrelRectangle.X + BarrelEnd.X, 
+                                    heavyProjectile = new ClusterBomb(1000, new Vector2(turret.BarrelRectangle.X + BarrelEnd.X, 
                                         turret.BarrelRectangle.Y + BarrelEnd.Y), 12, turret.Rotation, 0.2f, 
                                         new Vector2(MathHelper.Clamp(turret.Position.Y+32, 520, 630), 630));
                                     heavyProjectile.LoadContent(Content);
-                                    HeavyProjectileList.Add(heavyProjectile);
+                                    TimedProjectileList.Add(heavyProjectile);
+                                    //HeavyProjectileList.Add(heavyProjectile);
 
                                     ShellCasingList.Add(new Particle(BigShellCasing,
                                         new Vector2(turret.BarrelRectangle.X, turret.BarrelRectangle.Y),
@@ -2383,6 +2430,78 @@ namespace TowerDefensePrototype
                 }                
                 #endregion                
             }          
+        }
+
+        private void TimedProjectileUpdate(GameTime gameTime)
+        {
+            foreach (TimerHeavyProjectile timedProjectile in TimedProjectileList)
+            {
+                timedProjectile.Update(gameTime);
+
+                if (timedProjectile.Position.Y > timedProjectile.MaxY && timedProjectile.Active == true)
+                {
+                    switch (timedProjectile.HeavyProjectileType)
+                    {
+                        case HeavyProjectileType.ClusterBomb:
+
+                            Emitter ExplosionEmitter2 = new Emitter("Particles/Splodge", new Vector2(timedProjectile.Position.X, timedProjectile.MaxY),
+                                new Vector2(0, 180), new Vector2(1, 4), new Vector2(10, 30), 2f, true, new Vector2(0, 360), new Vector2(1, 3),
+                                new Vector2(0.02f, 0.06f), Color.DarkSlateGray, Color.SaddleBrown, 0.2f, 0.2f, 20, 10, true, new Vector2(timedProjectile.MaxY + 8, timedProjectile.MaxY + 8));
+
+                                EmitterList.Add(ExplosionEmitter2);
+                                EmitterList[EmitterList.IndexOf(ExplosionEmitter2)].LoadContent(Content);
+                            break;
+                    }
+
+                    #region Deactivate the Projectile
+                    timedProjectile.Emitter.AddMore = false;
+                    timedProjectile.Active = false;
+                    timedProjectile.Velocity = Vector2.Zero;
+                    #endregion
+
+                }
+
+                if (timedProjectile.Detonated == true)
+                switch (timedProjectile.HeavyProjectileType)
+                {
+                    case HeavyProjectileType.ClusterBomb:
+                        //HeavyProjectileList.Add(new CannonBall(timedProjectile.Position, 4f, 90, 0.2f));                     
+                        if (timedProjectile.Position.Y >= 520)
+                            AddCluster(10, timedProjectile.Position, new Vector2(0, 360), HeavyProjectileType.CannonBall, timedProjectile.MaxY);
+                        else
+                            AddCluster(10, timedProjectile.Position, new Vector2(0, 360), HeavyProjectileType.CannonBall, 520);
+
+                        timedProjectile.Active = false;
+                        break;
+                }
+            }
+        }
+
+        private void AddCluster(int number, Vector2 position, Vector2 angleRange, HeavyProjectileType type, float minY)
+        {
+            HeavyProjectile heavyProjectile;
+            float MaxY;
+
+            for (int i = 0; i < number; i++)
+            {
+                MaxY = Random.Next((int)minY, 630);
+                switch (type)
+                {
+                    case HeavyProjectileType.CannonBall:
+                        heavyProjectile = new CannonBall(position, 2, (float)DoubleRange(angleRange.X, angleRange.Y), 0.2f, new Vector2(MaxY,MaxY));
+                        break;
+
+                    default:
+                        heavyProjectile = null;
+                        break;
+                }
+
+                if (heavyProjectile != null)
+                {
+                    heavyProjectile.LoadContent(Content);
+                    HeavyProjectileList.Add(heavyProjectile);
+                }
+            }
         }
 
         private void LightProjectileUpdate()

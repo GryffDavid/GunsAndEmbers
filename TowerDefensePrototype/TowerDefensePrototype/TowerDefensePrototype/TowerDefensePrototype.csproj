@@ -112,6 +112,7 @@
   <ItemGroup>
     <Compile Include="Basics\Explosion.cs" />
     <Compile Include="Basics\RangedInvader.cs" />
+    <Compile Include="Basics\TimerHeavyProjectile.cs" />
     <Compile Include="Basics\World.cs" />
     <Compile Include="Basics\CheckBox.cs" />
     <Compile Include="Invaders\Archer.cs" />
@@ -135,6 +136,7 @@
     <Compile Include="Projectiles\AcidProjectile.cs" />
     <Compile Include="Projectiles\Arrow.cs" />
     <Compile Include="Projectiles\CannonBall.cs" />
+    <Compile Include="Projectiles\ClusterBomb.cs" />
     <Compile Include="Projectiles\Torpedo.cs" />
     <Compile Include="Projectiles\FlameProjectile.cs" />
     <Compile Include="Projectiles\FreezeProjectile.cs" />

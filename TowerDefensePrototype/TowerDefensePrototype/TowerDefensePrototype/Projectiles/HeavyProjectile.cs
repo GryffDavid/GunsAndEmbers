@@ -20,7 +20,7 @@ namespace TowerDefensePrototype
         public HeavyProjectileType HeavyProjectileType;
         public Rectangle DestinationRectangle, CollisionRectangle;
         public int Damage;
-        public Random Random;
+        public Random Random = new Random();
 
         public void LoadContent(ContentManager contentManager)
         {            
@@ -31,12 +31,12 @@ namespace TowerDefensePrototype
 
             CurrentTransparency = 0;
 
-            Random = new Random();
+            //Random = new Random();
 
             MaxY = Random.Next((int)YRange.X, (int)YRange.Y);
         }
 
-        public void Update(GameTime gameTime)
+        public virtual void Update(GameTime gameTime)
         {
             if (Active == true)
             {
@@ -66,8 +66,8 @@ namespace TowerDefensePrototype
                 CurrentColor = Color.Lerp(Color.White, Color.Transparent, CurrentTransparency);
                 DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, Texture.Width, Texture.Height);
                 CollisionRectangle = new Rectangle(DestinationRectangle.X, DestinationRectangle.Y, DestinationRectangle.Width / 2, DestinationRectangle.Height / 2);
-                spriteBatch.Draw(Texture, DestinationRectangle, null, CurrentColor, Rotation, 
-                    new Vector2(Texture.Width/2, Texture.Height/2), SpriteEffects.None, MaxY/720);
+                spriteBatch.Draw(Texture, DestinationRectangle, null, CurrentColor, Rotation,
+                    new Vector2(Texture.Width / 2, Texture.Height / 2), SpriteEffects.None, MaxY / 720);
             }
 
             if (Emitter != null)

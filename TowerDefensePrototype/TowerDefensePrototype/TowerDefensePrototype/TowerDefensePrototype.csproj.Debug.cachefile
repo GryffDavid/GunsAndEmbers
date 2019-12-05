@@ -56,6 +56,10 @@ Content\Traps\SawbladeTrap.xnb
 Content\Icons\SawbladeIcon.xnb
 Content\Buttons\LeftArrow.xnb
 Content\Buttons\RightArrow.xnb
+Content\Particles\BigShell.xnb
+Content\Projectiles\CannonRound.xnb
+Content\Turrets\MachineTurretBarrel2.xnb
+Content\TrapDetBlock.xnb
 Content\Levels\Level1.xnb
 Content\Levels\Level6.xnb
 Content\Fonts\ButtonFont.xnb
@@ -64,7 +68,7 @@ Content\HealthBarEffect.xnb
 Content\Sounds\MenuClick.xnb
 Content\Sounds\FireTrapStart.xnb
 Content\Sounds\MenuAmbiance.xnb
-Content\Particles\BigShell.xnb
-Content\Projectiles\CannonRound.xnb
-Content\Turrets\MachineTurretBarrel2.xnb
-Content\TrapDetBlock.xnb
+Content\Turrets\MachineTurretAnimation3.xnb
+Content\Turrets\MachineTurretAnimation4.xnb
+Content\Turrets\CannonAnimation1.xnb
+Content\Particles\HealthParticle.xnb

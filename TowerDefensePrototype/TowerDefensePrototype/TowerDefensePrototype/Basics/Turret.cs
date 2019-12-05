@@ -12,10 +12,10 @@ namespace TowerDefensePrototype
     public abstract class Turret
     {
         public String TurretAsset, BaseAsset;
-        public Texture2D TurretBase, TurretBarrel, Line;
+        public Texture2D TurretBase, TurretBarrel, Line, TurretAnimationTexture;
         public Vector2 Direction, Position, MousePosition;
         public Vector2 BarrelPivot, BasePivot;
-        public Rectangle BaseRectangle, BarrelRectangle, SelectBox;
+        public Rectangle BaseRectangle, BarrelRectangle, SelectBox, SourceRectangle;
         MouseState CurrentMouseState, PreviousMouseState;
         public float Rotation;
         public bool Selected, Active, JustClicked, CanShoot;
@@ -28,6 +28,12 @@ namespace TowerDefensePrototype
         public TurretType TurretType;
         public HorizontalBar TimingBar;
         public double ElapsedTime = 0;
+
+        public Animation CurrentAnimation;
+        public double CurrentFrameTime;
+        public int CurrentFrame;
+        public Vector2 FrameSize;
+        public bool Animated, Looping;
 
         public void LoadContent(ContentManager contentManager)
         {
@@ -42,16 +48,39 @@ namespace TowerDefensePrototype
             if (Active == true)
             {
                 TurretBase = contentManager.Load<Texture2D>(BaseAsset);
-                TurretBarrel = contentManager.Load<Texture2D>(TurretAsset);
+                TurretBarrel = contentManager.Load<Texture2D>(CurrentAnimation.AssetName);
+                FrameSize = new Vector2(TurretBarrel.Width / CurrentAnimation.TotalFrames, TurretBarrel.Height);
             }
 
             SelectBox = new Rectangle((int)Position.X, (int)Position.Y-24, 64, 64);
 
-            Random = new Random();
+            Random = new Random();            
         }
 
         public void Update(GameTime gameTime)
         {
+            if (Animated == true)
+            {
+                CurrentFrameTime += gameTime.ElapsedGameTime.TotalMilliseconds;
+
+                if (CurrentFrameTime > FireDelay/(CurrentAnimation.TotalFrames+1))
+                {
+                    CurrentFrame++;
+
+                    if (CurrentFrame >= CurrentAnimation.TotalFrames)
+                    {
+                        CurrentFrame = 0;
+
+                        if (Looping == false)
+                        {
+                            Animated = false;
+                        }
+                    }
+
+                    CurrentFrameTime = 0;
+                }
+            }
+
             ElapsedTime += gameTime.ElapsedGameTime.TotalMilliseconds;
 
             if (ElapsedTime > FireDelay)
@@ -86,6 +115,8 @@ namespace TowerDefensePrototype
                     Rotation = MathHelper.ToRadians(-20);
                 }
             }
+
+            SourceRectangle = new Rectangle(0 + (int)FrameSize.X * CurrentFrame, 0, (int)FrameSize.X, (int)FrameSize.Y);
 
             #region Handle selection
                 if (SelectBox.Contains(new Point(CurrentMouseState.X, CurrentMouseState.Y)) && CurrentMouseState.LeftButton == ButtonState.Released && PreviousMouseState.LeftButton == ButtonState.Pressed)            

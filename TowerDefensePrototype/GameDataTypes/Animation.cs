@@ -9,6 +9,6 @@ namespace TowerDefensePrototype
     {
         public string AssetName;
         public int TotalFrames;
-        public int FrameDelay;
+        public double FrameDelay;
     }
 }
