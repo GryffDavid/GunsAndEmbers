@@ -16,6 +16,17 @@ namespace TowerDefensePrototype
 
         }
 
+        public override void Update(GameTime gameTime, Vector2 cursorPosition)
+        {
+            BaseRectangle = new Rectangle((int)Position.X, (int)Position.Y,
+                                          TurretBase.Width, TurretBase.Height);
+
+            BarrelRectangle = new Rectangle((int)Position.X, (int)Position.Y,
+                                            TurretBarrel.Width / CurrentAnimation.TotalFrames, TurretBarrel.Height);
+
+            base.Update(gameTime, cursorPosition);
+        }
+
         public override void Draw(SpriteBatch spriteBatch)
         {
 

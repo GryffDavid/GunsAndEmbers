@@ -18,6 +18,8 @@ namespace TowerDefensePrototype
         public bool Active, Fade, BouncedOnGround, CanBounce, Shrink, StopBounce, HardBounce, Shadow, RotateVelocity, SortDepth;
         static Random Random = new Random();
         public SpriteEffects Orientation;
+        Color Color = Color.White;
+        float RadRotation;
 
         public Particle(Texture2D texture, Vector2 position, float angle, float speed, float maxHP,
             float startingTransparency, bool fade, float startingRotation, float rotationChange,
@@ -245,15 +247,16 @@ namespace TowerDefensePrototype
                 DrawDepth = DestinationRectangle.Center.Y / 1080.0f;
             }
 
-            CurrentColor = Color.Lerp(EndColor, StartColor, PercentageHP / 100);        
+            CurrentColor = Color.Lerp(EndColor, StartColor, PercentageHP / 100);
+            Color = Color.Lerp(Color.Transparent, CurrentColor, CurrentTransparency);
+            RadRotation = MathHelper.ToRadians(CurrentRotation);
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
             if (Active == true)
             {
-                spriteBatch.Draw(Texture, DestinationRectangle, null, Color.Lerp(Color.Transparent, CurrentColor, CurrentTransparency),
-                                 MathHelper.ToRadians(CurrentRotation), Origin, Orientation, DrawDepth);
+                spriteBatch.Draw(Texture, DestinationRectangle, null, Color, RadRotation, Origin, Orientation, DrawDepth);
 
                 //if (Shadow == true)
                 //{

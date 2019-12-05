@@ -61,23 +61,28 @@ namespace TowerDefensePrototype
                 Active = false;
             }
 
+            foreach (Stick stick in Sticks)
+            {
+                Vector2 dir = stick.Point2.CurrentPosition - stick.Point1.CurrentPosition;
+                float rot = (float)Math.Atan2(dir.Y, dir.X);
+
+                stick.Rotation = rot;
+
+                stick.DestinationRectangle = new Rectangle(
+                        (int)stick.Point1.CurrentPosition.X, (int)stick.Point1.CurrentPosition.Y,
+                        ShellTexture.Width / 2, ShellTexture.Height / 2);
+            }
+
             Color = Color.Lerp(Color.White, Color.Transparent, Transparency);            
             base.Update(gameTime);
         }
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            //Calculate rotation of shell from verlet object
-            //Draw shell with calculated rotation
             foreach (Stick stick in Sticks)
             {
-                Vector2 dir = stick.Point2.CurrentPosition - stick.Point1.CurrentPosition;
-                float rot = (float)Math.Atan2(dir.Y, dir.X);
-
-                spriteBatch.Draw(ShellTexture, 
-                    new Rectangle((int)stick.Point1.CurrentPosition.X, (int)stick.Point1.CurrentPosition.Y, 
-                        ShellTexture.Width / 2, ShellTexture.Height / 2), 
-                        null, Color, rot, new Vector2(0, ShellTexture.Height / 2), SpriteEffects.None, 0);
+                spriteBatch.Draw(ShellTexture, stick.DestinationRectangle, null, Color, stick.Rotation, 
+                                 new Vector2(0, ShellTexture.Height / 2), SpriteEffects.None, 0);
             }
         }
     }

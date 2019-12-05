@@ -35,7 +35,25 @@ namespace TowerDefensePrototype
                 TotalFrames = 6
             };
 
-            MaxHealth = 100;      
+            MaxHealth = 100;
+        }
+
+        public override void Initialize(ContentManager contentManager)
+        {
+            BarrelPivot = new Vector2(32, 32);
+            BasePivot = new Vector2(40, 5);
+            base.Initialize(contentManager);
+        }
+
+        public override void Update(GameTime gameTime, Vector2 cursorPosition)
+        {
+            BaseRectangle = new Rectangle((int)Position.X, (int)Position.Y,
+                                          TurretBase.Width, TurretBase.Height);
+
+            BarrelRectangle = new Rectangle((int)Position.X, (int)Position.Y,
+                                            TurretBarrel.Width / CurrentAnimation.TotalFrames, TurretBarrel.Height);
+
+            base.Update(gameTime, cursorPosition);
         }
 
         public override void Draw(SpriteBatch spriteBatch)
@@ -47,15 +65,6 @@ namespace TowerDefensePrototype
 
             if (Active == true)
             {
-                BaseRectangle = new Rectangle((int)Position.X, (int)Position.Y, 
-                                              TurretBase.Width, TurretBase.Height);
-
-                BarrelRectangle = new Rectangle((int)Position.X, (int)Position.Y, 
-                                                TurretBarrel.Width/CurrentAnimation.TotalFrames, TurretBarrel.Height);
-
-                BarrelPivot = new Vector2(32, 32);
-                BasePivot = new Vector2(40, 5);
-
                 if (AmmoBelt != null)
                 {
                     AmmoBelt.Draw(spriteBatch);

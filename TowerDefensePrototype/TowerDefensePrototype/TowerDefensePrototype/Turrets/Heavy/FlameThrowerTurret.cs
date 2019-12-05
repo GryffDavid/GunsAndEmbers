@@ -33,8 +33,25 @@ namespace TowerDefensePrototype
                 TotalFrames = 6
             };
 
-            MaxHealth = 100;   
+            MaxHealth = 100;
+        }
 
+        public override void Initialize(ContentManager contentManager)
+        {
+            BarrelPivot = new Vector2(32, 32);
+            BasePivot = new Vector2(40, 5);
+            base.Initialize(contentManager);
+        }
+
+        public override void Update(GameTime gameTime, Vector2 cursorPosition)
+        {
+            BaseRectangle = new Rectangle((int)Position.X, (int)Position.Y,
+                                          TurretBase.Width, TurretBase.Height);
+
+            BarrelRectangle = new Rectangle((int)Position.X, (int)Position.Y,
+                                            TurretBarrel.Width / CurrentAnimation.TotalFrames, TurretBarrel.Height);
+
+            base.Update(gameTime, cursorPosition);
         }
 
         public override void Draw(SpriteBatch spriteBatch)
@@ -46,20 +63,9 @@ namespace TowerDefensePrototype
 
             if (Active == true)
             {
-                BaseRectangle = new Rectangle((int)Position.X, (int)Position.Y,
-                                              TurretBase.Width, TurretBase.Height);
-
-                BarrelRectangle = new Rectangle((int)Position.X, (int)Position.Y,
-                                                TurretBarrel.Width / CurrentAnimation.TotalFrames, TurretBarrel.Height);
-
-                BarrelPivot = new Vector2(32, 32);
-                BasePivot = new Vector2(40, 5);
-
                 spriteBatch.Draw(TurretBarrel, BarrelRectangle, SourceRectangle, Color, Rotation, BarrelPivot, SpriteEffects.None, 0.89f);
 
                 spriteBatch.Draw(TurretBase, BaseRectangle, null, Color, 0, BasePivot, SpriteEffects.None, 0.90f);
-
-                //spriteBatch.Draw(TurretBase, new Rectangle((int)(BasePivot.X + Position.X), (int)(BasePivot.Y + Position.Y), 1920, 4), null, Color.White, FireRotation, Vector2.Zero, SpriteEffects.None, 0);
             }
         }
     }

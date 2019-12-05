@@ -25,6 +25,8 @@ namespace TowerDefensePrototype
             public float Length;
             public Vector2 Center, PreviousCenter, Direction;
             public bool Rotate = true;
+            public float Rotation;
+            public Rectangle DestinationRectangle;
         }
 
         public class Node
@@ -48,32 +50,6 @@ namespace TowerDefensePrototype
             {
                 Constraints = constraints.Value;
             }
-
-            //Vector2 dir = new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
-            //velocity = dir * 15;
-
-            //Nodes.Add(new Node()
-            //{
-            //    CurrentPosition = new Vector2(200, 200),
-            //    PreviousPosition = new Vector2(200, 200) - velocity,
-            //    Pinned = false
-            //});
-
-            //Nodes2.Add(new Node()
-            //{
-            //    CurrentPosition = new Vector2(200 - (float)Math.Cos(angle) * (32),
-            //                                  200 - (float)Math.Sin(angle) * 32),
-            //    PreviousPosition = new Vector2(200 - (float)Math.Cos(angle) * (32),
-            //                                  200 - (float)Math.Sin(angle) * 32) - velocity,
-            //    Pinned = false
-            //});
-
-            //Sticks.Add(new Stick()
-            //{
-            //    Length = 32,
-            //    Point1 = Nodes[0],
-            //    Point2 = Nodes2[0]
-            //});
         }
 
         public virtual void Update(GameTime gameTime)
@@ -92,9 +68,6 @@ namespace TowerDefensePrototype
 
                 Time = 0;
             }
-
-            //ConstrainNodes();
-            //UpdateSticks();
         }
 
         public virtual void Draw(SpriteBatch spriteBatch)
@@ -105,53 +78,50 @@ namespace TowerDefensePrototype
 
         public void UpdateNodes()
         {
-            //foreach (Stick stick in Sticks)
+            if (Rotate == true)
             {
-                if (Rotate == true)
+                Sticks.Point1.Velocity = (Sticks.Center - Sticks.PreviousCenter) * Friction;
+                Sticks.Point1.CurrentPosition = Sticks.Center - (Sticks.Direction * Sticks.Length / 2);
+                Sticks.Point1.PreviousPosition = Sticks.Point1.CurrentPosition;
+                Sticks.Point1.CurrentPosition += Sticks.Point1.Velocity * Sticks.Point1.Friction;
+
+                Sticks.Point1.CurrentPosition.Y += Gravity;
+
+                Sticks.Point2.Velocity = (Sticks.Center - Sticks.PreviousCenter) * Friction;
+                Sticks.Point2.CurrentPosition = Sticks.Center + (Sticks.Direction * Sticks.Length / 2);
+                Sticks.Point2.PreviousPosition = Sticks.Point2.CurrentPosition;
+                Sticks.Point2.CurrentPosition += Sticks.Point2.Velocity * Sticks.Point2.Friction;
+
+                Sticks.Point2.CurrentPosition.Y += Gravity;
+            }
+            else
+            {
+                if (Node1.Pinned == false)
                 {
-                    Sticks.Point1.Velocity = (Sticks.Center - Sticks.PreviousCenter) * Friction;
-                    Sticks.Point1.CurrentPosition = Sticks.Center - (Sticks.Direction * Sticks.Length / 2);
-                    Sticks.Point1.PreviousPosition = Sticks.Point1.CurrentPosition;
-                    Sticks.Point1.CurrentPosition += Sticks.Point1.Velocity * Sticks.Point1.Friction;
+                    Node1.Velocity = (Node1.CurrentPosition - Node1.PreviousPosition) * Friction;
+                    Node1.PreviousPosition = Node1.CurrentPosition;
+                    Node1.CurrentPosition += Node1.Velocity * Node1.Friction;
+                    Node1.CurrentPosition.Y += Gravity;
 
-                    Sticks.Point1.CurrentPosition.Y += Gravity;
-
-                    Sticks.Point2.Velocity = (Sticks.Center - Sticks.PreviousCenter) * Friction;
-                    Sticks.Point2.CurrentPosition = Sticks.Center + (Sticks.Direction * Sticks.Length / 2);
-                    Sticks.Point2.PreviousPosition = Sticks.Point2.CurrentPosition;
-                    Sticks.Point2.CurrentPosition += Sticks.Point2.Velocity * Sticks.Point2.Friction;
-
-                    Sticks.Point2.CurrentPosition.Y += Gravity;
-                }
-                else
-                {                    
-                    if (Node1.Pinned == false)
+                    if (Node1.Velocity.X < 1f && Node1.Velocity.Y < 1f)
                     {
-                        Node1.Velocity = (Node1.CurrentPosition - Node1.PreviousPosition) * Friction;
-                        Node1.PreviousPosition = Node1.CurrentPosition;
-                        Node1.CurrentPosition += Node1.Velocity * Node1.Friction;
-                        Node1.CurrentPosition.Y += Gravity;
-
-                        if (Node1.Velocity.X < 1f && Node1.Velocity.Y < 1f)
-                        {
-                            Node1.Velocity = new Vector2(0, 0);
-                        }
+                        Node1.Velocity = new Vector2(0, 0);
                     }
-
-                    if (Node2.Pinned == false)
-                    {
-                        Node2.Velocity = (Node2.CurrentPosition - Node2.PreviousPosition) * Friction;
-                        Node2.PreviousPosition = Node2.CurrentPosition;
-                        Node2.CurrentPosition += Node2.Velocity * Node2.Friction;
-                        Node2.CurrentPosition.Y += Gravity;
-
-                        if (Node2.Velocity.X < 1f && Node2.Velocity.Y < 1f)
-                        {
-                            Node2.Velocity = new Vector2(0, 0);
-                        }
-                    }                    
                 }
-            }            
+
+                if (Node2.Pinned == false)
+                {
+                    Node2.Velocity = (Node2.CurrentPosition - Node2.PreviousPosition) * Friction;
+                    Node2.PreviousPosition = Node2.CurrentPosition;
+                    Node2.CurrentPosition += Node2.Velocity * Node2.Friction;
+                    Node2.CurrentPosition.Y += Gravity;
+
+                    if (Node2.Velocity.X < 1f && Node2.Velocity.Y < 1f)
+                    {
+                        Node2.Velocity = new Vector2(0, 0);
+                    }
+                }
+            }                     
         }
 
         public void ConstrainNodes()
@@ -266,22 +236,7 @@ namespace TowerDefensePrototype
 
                 if (Sticks.Point1.Pinned == false)
                     Sticks.Point1.CurrentPosition += (Direction * (currentLength - Sticks.Length) / 2);
-            }
-
-            //float Dist = Vector2.Distance(Sticks.Point1.CurrentPosition, Sticks.Point2.CurrentPosition);
-            //float Diff = Sticks.Length - Dist;
-
-            ////if (Math.Abs(Diff) > 5)
-            ////{
-            //    float percent = Diff / Dist / 2;
-            //    Vector2 Offset = Direction * percent;
-
-            //    if (Sticks.Point1.Pinned == false)
-            //        Sticks.Point1.CurrentPosition -= Offset;
-
-            //    if (Sticks.Point2.Pinned == false)
-            //        Sticks.Point2.CurrentPosition += Offset;
-            ////}            
+            }     
         }    
     }
 }

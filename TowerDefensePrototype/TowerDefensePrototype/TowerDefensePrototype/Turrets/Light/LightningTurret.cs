@@ -31,16 +31,29 @@ namespace TowerDefensePrototype
             Charges = 6;
         }
 
+        public override void Initialize(ContentManager contentManager)
+        {
+            BarrelPivot = new Vector2(45, TurretBarrel.Height / 2 - 8);
+            BasePivot = new Vector2(TurretBase.Width / 2 + 10, TurretBase.Height / 2 - 20);
+            base.Initialize(contentManager);
+        }
+
+        public override void Update(GameTime gameTime, Vector2 cursorPosition)
+        {
+            BaseRectangle = new Rectangle((int)Position.X, (int)Position.Y,
+                                          TurretBase.Width, TurretBase.Height);
+
+            //Got a divide by zero error here
+            BarrelRectangle = new Rectangle((int)Position.X, (int)Position.Y,
+                                            TurretBarrel.Width, TurretBarrel.Height);
+
+            base.Update(gameTime, cursorPosition);
+        }
+
         public override void Draw(SpriteBatch spriteBatch)
         {
             if (Active == true)
             {
-                BaseRectangle = new Rectangle((int)Position.X+20, (int)Position.Y+6, TurretBase.Width, TurretBase.Height);
-                BarrelRectangle = new Rectangle((int)Position.X+20, (int)Position.Y+6, TurretBarrel.Width, TurretBarrel.Height);
-
-                BarrelPivot = new Vector2(45, TurretBarrel.Height / 2 - 8);
-                BasePivot = new Vector2(TurretBase.Width / 2 + 10, TurretBase.Height / 2 - 20);
-
                 spriteBatch.Draw(TurretBase, BaseRectangle, null, Color, 0, BasePivot, SpriteEffects.None, 1f);
 
                 spriteBatch.Draw(TurretBarrel, BarrelRectangle, SourceRectangle, Color, Rotation, BarrelPivot, SpriteEffects.None, 0.99f);                

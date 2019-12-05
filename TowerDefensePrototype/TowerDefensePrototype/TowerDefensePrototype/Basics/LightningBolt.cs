@@ -96,11 +96,6 @@ namespace TowerDefensePrototype
         
         public void Update(GameTime gameTime)
         {
-            //Results = new List<Line>();
-            //Segments = new List<Line>();
-            //Positions = new List<float>();
-            //Segments = CreateBolt(Source, Destination, 2);
-
             if (Vibrate == true)
             {
                 CurrentTime += (float)gameTime.ElapsedGameTime.TotalMilliseconds;

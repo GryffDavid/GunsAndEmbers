@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading;
 using System.Windows;
 using System.Xml.Serialization;
+using System.Diagnostics;
 using GameDataTypes;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
@@ -99,17 +100,28 @@ namespace TowerDefensePrototype
     public class Game1 : Game
     {
         #region Variable declarations
-
+        GameTime CurrentGameTime;
         GraphicsDeviceManager graphics;
         ContentManager SecondaryContent;
         SpriteBatch spriteBatch, targetBatch;
-        RenderTarget2D GameRenderTarget1, GameRenderTarget2, GameRenderTarget3;
+        RenderTarget2D GameRenderTarget1;
         RenderTarget2D MenuRenderTarget, UIRenderTarget;
         RenderTarget2D ShaderTarget1, ShaderTarget2;
         RenderTarget2D CrepuscularMap, LightMap;
         Texture2D ScreenTex;
-        
-        string Error = "";
+        Rectangle ScreenDrawRectangle;
+
+        private GameState _GameState;
+        public GameState GameState
+        {
+            get { return _GameState; }
+            set
+            {
+                _GameState = value;
+                Debug.WriteLine("Changed To " + value.ToString(), "GAME STATE");
+                Debug.WriteLine(" ");
+            }
+        }
 
         #region XNA Declarations
         static Random Random = new Random();
@@ -250,7 +262,7 @@ namespace TowerDefensePrototype
         int CurrentInvaderIndex = 0;
         int MaxWaves = 0;
 
-        string FileName, ContainerName, ProfileName, LoadingContentString;
+        string FileName, ContainerName, ProfileName;
 
         bool ReadyToPlace, IsLoading, AllLoaded, Slow;
         bool DialogVisible = false;
@@ -292,12 +304,14 @@ namespace TowerDefensePrototype
         List<LightProjectile> InvaderLightProjectileList, LightProjectileList;
         List<TimerHeavyProjectile> TimedProjectileList;
 
-        List<Emitter> YSortedEmitterList, EmitterList2, AlphaEmitterList, AdditiveEmitterList;
+        List<Emitter> YSortedEmitterList, EmitterList2, AlphaEmitterList, AdditiveEmitterList, GasEmitterList;
         List<Particle> ShellCasingList, CoinList;
 
         List<string> PauseMenuNameList;
 
-        List<Explosion> ExplosionList, EnemyExplosionList;
+        List<Explosion> EnemyExplosionList;
+        List<Explosion> ExplosionList;
+        
 
         List<LightningBolt> LightningList;
         List<BulletTrail> TrailList, InvaderTrailList;
@@ -322,6 +336,12 @@ namespace TowerDefensePrototype
 
         List<ShellCasing> VerletShells = new List<ShellCasing>();
         List<GrassBlade> GrassBladeList = new List<GrassBlade>();
+
+        //Powerups need to be drawn in a stack [Power 30] [Blast 15] [TrapDistance 60] at the middle-top of the screen
+        List<Powerup> PowerupsList = new List<Powerup>();
+        List<UIPowerupIcon> UIPowerupsList = new List<UIPowerupIcon>();
+        List<UIPowerupInfo> UIPowerupsInfoList = new List<UIPowerupInfo>();        
+        List<SoundEffectInstance> LevelAmbience = new List<SoundEffectInstance>();        
         #endregion
 
         #region Custom class declarations
@@ -336,7 +356,6 @@ namespace TowerDefensePrototype
         Nullable<TurretType> SelectedTurret;
         Nullable<SpecialType> SelectedSpecial;
         LightProjectile CurrentProjectile, CurrentInvaderProjectile;
-        GameState GameState;
         ProfileManagementState ProfileManagementState;
         Thread LoadingThread;
         Profile CurrentProfile;
@@ -384,27 +403,17 @@ namespace TowerDefensePrototype
 
         float CurrentWeatherTime;
         Nullable<Weather> CurrentWeather;
-        #endregion
 
         PowerupDelivery PowerupDelivery;
         StoryDialogueBox StoryDialogueBox;
         StoryDialogue StoryDialogue;
+        #endregion
 
-        //Powerups need to be drawn in a stack [Power 30] [Blast 15] [TrapDistance 60] at the middle-top of the screen
-        List<Powerup> PowerupsList = new List<Powerup>();
-        List<UIPowerupIcon> UIPowerupsList = new List<UIPowerupIcon>();
-        List<UIPowerupInfo> UIPowerupsInfoList = new List<UIPowerupInfo>();
-
-        List<Emitter> GasEmitterList = new List<Emitter>();
-
-        List<SoundEffectInstance> LevelAmbience = new List<SoundEffectInstance>();
-        DepthStencilState dsState = new DepthStencilState() { StencilEnable = false, DepthBufferEnable = true, DepthBufferWriteEnable = true };
-        Texture2D JetTexture, LightTexture, BaseLightTexture;
-        BlendState Multiply = new BlendState() { ColorSourceBlend = Blend.DestinationColor, AlphaSourceBlend = Blend.DestinationAlpha };
-
-        Effect DrawBlack;
         public Game1()
         {
+            Debug.WriteLine("Game Started");
+            Debug.WriteLine(" ");
+
             DefaultSettings = new Settings
             {
                 FullScreen = false,
@@ -425,7 +434,10 @@ namespace TowerDefensePrototype
             };
 
             graphics.SynchronizeWithVerticalRetrace = false;
+            Debug.WriteLine("Vsync: " + graphics.SynchronizeWithVerticalRetrace.ToString());
+
             IsFixedTimeStep = false;
+            Debug.WriteLine("Fixed Time Step: " + this.IsFixedTimeStep.ToString());
             //IsFixedTimeStep = true;
             //TargetElapsedTime = TimeSpan.FromMilliseconds(8);
             Content.RootDirectory = "Content";
@@ -440,7 +452,9 @@ namespace TowerDefensePrototype
 
             if (CurrentSettings.FullScreen == true)
             {
+                Debug.WriteLine("Full screen mode active");
                 Vector2 ScreenSize = new Vector2(GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width, GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height);
+                Debug.WriteLine("System resolution: " + ScreenSize.ToString());
                 double ScreenRatio = ScreenSize.X / ScreenSize.Y;
                 double Reciprocal = 1 / ScreenRatio;
 
@@ -453,6 +467,7 @@ namespace TowerDefensePrototype
             }
             else
             {
+                Debug.WriteLine("Windowed mode active");
                 ActualResolution = new Vector2(CurrentSettings.ResWidth, CurrentSettings.ResHeight);
                 graphics.PreferredBackBufferHeight = (int)ActualResolution.Y;
                 graphics.PreferredBackBufferWidth = (int)ActualResolution.X;
@@ -461,7 +476,12 @@ namespace TowerDefensePrototype
             }
 
             graphics.ApplyChanges();
+
+            ScreenDrawRectangle = new Rectangle(0, (int)(ActualResolution.Y - CurrentSettings.ResHeight) / 2,
+                                                CurrentSettings.ResWidth, CurrentSettings.ResHeight);
             #endregion
+
+            Debug.WriteLine(" ");
         }
 
         protected override void Initialize()
@@ -670,203 +690,849 @@ namespace TowerDefensePrototype
             base.Initialize();
         }
 
-        protected override void Draw(GameTime gameTime)
+        #region CONTENT that needs to be loaded
+        protected override void LoadContent()
         {
-            #region Get real position of mouse
-            if (CurrentSettings.FullScreen == false)
-            {
-                MouseTransform = Matrix.CreateTranslation(new Vector3(Mouse.GetState().X, Mouse.GetState().Y, 0)) *
-                                 Matrix.CreateTranslation(new Vector3(0, 0, 0)) *
-                                 Matrix.CreateScale(new Vector3((float)(ResolutionOffsetRatio / 2), (float)(ResolutionOffsetRatio / 2), 1));
-            }
-            else
-            {
-                MouseTransform = Matrix.CreateTranslation(new Vector3(0, -(ActualResolution.Y - CurrentSettings.ResHeight) / 2, 0)) *
-                                 Matrix.CreateScale(new Vector3((float)(ResolutionOffsetRatio), (float)(ResolutionOffsetRatio), 1));
+            Debug.WriteLine("Preloading Content");
+            spriteBatch = new SpriteBatch(GraphicsDevice);
+            targetBatch = new SpriteBatch(GraphicsDevice);
 
-            }
+            Debug.WriteLine("Creating Render Targets");
+            GameRenderTarget1 = new RenderTarget2D(GraphicsDevice, 1920, 1080, false, SurfaceFormat.Rgba64, DepthFormat.Depth24, 0, RenderTargetUsage.PreserveContents);
+            LightMap = new RenderTarget2D(GraphicsDevice, 1920, 1080, false, SurfaceFormat.Rgba64, DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents);
+            UIRenderTarget = new RenderTarget2D(GraphicsDevice, 1920, 1080, false, SurfaceFormat.Rgba64, DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents);
 
-            Vector2 worldMouse = Vector2.Transform(new Vector2(Mouse.GetState().X, Mouse.GetState().Y), MouseTransform);
+            CrepuscularMap = new RenderTarget2D(GraphicsDevice, 1920, 1080);
+            MenuRenderTarget = new RenderTarget2D(GraphicsDevice, 1920, 1080);
+            ShaderTarget1 = new RenderTarget2D(GraphicsDevice, 1920, 1080);
+            ShaderTarget2 = new RenderTarget2D(GraphicsDevice, 1920, 1080);
+            Debug.WriteLine("Render Targets Created");
 
-            CursorPosition.X = worldMouse.X;
-            CursorPosition.Y = worldMouse.Y;
+            MainMenuBackground.LoadContent(SecondaryContent);
+
+            BlankTexture = SecondaryContent.Load<Texture2D>("Blank");
+
+            DefaultCursor = SecondaryContent.Load<Texture2D>("Cursors/DefaultCursor");
+            CrosshairCursor = SecondaryContent.Load<Texture2D>("Cursors/Crosshair");
+
+            TooltipBox = SecondaryContent.Load<Texture2D>("InformationBox");
+
+            CurrencyIcon = SecondaryContent.Load<Texture2D>("Icons/CurrencyIcon");
+
+            Debug.WriteLine("Loading Cursors");
+            #region Cursor sprites
+            //Turret Cursors        
+            MachineGunTurretCursor = SecondaryContent.Load<Texture2D>("Icons/TurretIcons/MachineGunTurretIcon");
+            CannonTurretCursor = SecondaryContent.Load<Texture2D>("Icons/TurretIcons/MachineGunTurretIcon");
+            FlameThrowerTurretCursor = SecondaryContent.Load<Texture2D>("Icons/TurretIcons/MachineGunTurretIcon");
+            LightningTurretCursor = SecondaryContent.Load<Texture2D>("Icons/TurretIcons/MachineGunTurretIcon");
+            ClusterTurretCursor = SecondaryContent.Load<Texture2D>("Icons/TurretIcons/MachineGunTurretIcon");
+            FelCannonTurretCursor = SecondaryContent.Load<Texture2D>("Icons/TurretIcons/MachineGunTurretIcon");
+            BeamTurretCursor = SecondaryContent.Load<Texture2D>("Icons/TurretIcons/MachineGunTurretIcon");
+            FreezeTurretCursor = SecondaryContent.Load<Texture2D>("Icons/TurretIcons/MachineGunTurretIcon");
+            BoomerangTurretCursor = SecondaryContent.Load<Texture2D>("Icons/TurretIcons/MachineGunTurretIcon");
+            GrenadeTurretCursor = SecondaryContent.Load<Texture2D>("Icons/TurretIcons/MachineGunTurretIcon");
+            GasGrenadeTurretCursor = SecondaryContent.Load<Texture2D>("Icons/TurretIcons/MachineGunTurretIcon");
+            ShotgunTurretCursor = SecondaryContent.Load<Texture2D>("Icons/TurretIcons/MachineGunTurretIcon");
+            PersistentBeamTurretCursor = SecondaryContent.Load<Texture2D>("Icons/TurretIcons/MachineGunTurretIcon");
+
+            //Trap Cursors
+            WallTrapCursor = SecondaryContent.Load<Texture2D>("Icons/TrapIcons/WallTrapIcon");
+            SpikesTrapCursor = SecondaryContent.Load<Texture2D>("Icons/TrapIcons/FireTrapIcon");
+            CatapultTrapCursor = SecondaryContent.Load<Texture2D>("Icons/TrapIcons/FireTrapIcon");
+            FireTrapCursor = SecondaryContent.Load<Texture2D>("Icons/TrapIcons/FireTrapIcon");
+            IceTrapCursor = SecondaryContent.Load<Texture2D>("Icons/TrapIcons/FireTrapIcon");
+            TarTrapCursor = SecondaryContent.Load<Texture2D>("Icons/TrapIcons/TarTrapIcon");
+            BarrelTrapCursor = SecondaryContent.Load<Texture2D>("Icons/TrapIcons/FireTrapIcon");
+            SawBladeTrapCursor = SecondaryContent.Load<Texture2D>("Icons/TrapIcons/FireTrapIcon");
+            LineTrapCursor = SecondaryContent.Load<Texture2D>("Icons/TrapIcons/FireTrapIcon");
+            TriggerTrapCursor = SecondaryContent.Load<Texture2D>("Icons/TrapIcons/FireTrapIcon");
             #endregion
 
-            #region Draw menus
-            GraphicsDevice.SetRenderTarget(MenuRenderTarget);
-            GraphicsDevice.Clear(Color.Transparent);
+            Debug.WriteLine("Loading Icons");
+            #region Load icon sprites
 
-            if (GameState != GameState.Playing)
+            LockIcon = SecondaryContent.Load<Texture2D>("Icons/LockIcon");
+            HealthIcon = SecondaryContent.Load<Texture2D>("Icons/HealthIcon");
+            OverHeatIcon = SecondaryContent.Load<Texture2D>("Icons/OverHeatIcon");
+
+            //Turret icons
+            BeamTurretIcon = SecondaryContent.Load<Texture2D>("Icons/TurretIcons/BeamTurretIcon");
+            BoomerangTurretIcon = SecondaryContent.Load<Texture2D>("Icons/TurretIcons/BoomerangTurretIcon");
+            CannonTurretIcon = SecondaryContent.Load<Texture2D>("Icons/TurretIcons/CannonTurretIcon");
+            ClusterTurretIcon = SecondaryContent.Load<Texture2D>("Icons/TurretIcons/ClusterTurretIcon");
+            FelCannonTurretIcon = SecondaryContent.Load<Texture2D>("Icons/TurretIcons/FelCannonTurretIcon");
+            FlameThrowerTurretIcon = SecondaryContent.Load<Texture2D>("Icons/TurretIcons/FlameThrowerTurretIcon");
+            FreezeTurretIcon = SecondaryContent.Load<Texture2D>("Icons/TurretIcons/FreezeTurretIcon");
+            GrenadeTurretIcon = SecondaryContent.Load<Texture2D>("Icons/TurretIcons/GrenadeTurretIcon");
+            GasGrenadeTurretIcon = SecondaryContent.Load<Texture2D>("Icons/TurretIcons/GrenadeTurretIcon");
+            LightningTurretIcon = SecondaryContent.Load<Texture2D>("Icons/TurretIcons/LightningTurretIcon");
+            MachineGunTurretIcon = SecondaryContent.Load<Texture2D>("Icons/TurretIcons/MachineGunTurretIcon");
+            PersistentBeamTurretIcon = SecondaryContent.Load<Texture2D>("Icons/TurretIcons/PersistentBeamTurretIcon");
+            ShotgunTurretIcon = SecondaryContent.Load<Texture2D>("Icons/TurretIcons/ShotgunTurretIcon");
+
+            //Trap Icons
+            CatapultTrapIcon = SecondaryContent.Load<Texture2D>("Icons/TrapIcons/CatapultTrapIcon");
+            IceTrapIcon = SecondaryContent.Load<Texture2D>("Icons/TrapIcons/IceTrapIcon");
+            TarTrapIcon = SecondaryContent.Load<Texture2D>("Icons/TrapIcons/TarTrapIcon");
+            WallTrapIcon = SecondaryContent.Load<Texture2D>("Icons/TrapIcons/WallTrapIcon");
+            BarrelTrapIcon = SecondaryContent.Load<Texture2D>("Icons/TrapIcons/BarrelTrapIcon");
+            FireTrapIcon = SecondaryContent.Load<Texture2D>("Icons/TrapIcons/FireTrapIcon");
+            LineTrapIcon = SecondaryContent.Load<Texture2D>("Icons/TrapIcons/LineTrapIcon");
+            SawBladeTrapIcon = SecondaryContent.Load<Texture2D>("Icons/TrapIcons/SawBladeTrapIcon");
+            SpikesTrapIcon = SecondaryContent.Load<Texture2D>("Icons/TrapIcons/SpikesTrapIcon");
+
+            //Damage Type Icons
+            ConcussiveDamageIcon = SecondaryContent.Load<Texture2D>("Icons/DamageTypeIcons/ConcussiveDamageIcon");
+            KineticDamageIcon = SecondaryContent.Load<Texture2D>("Icons/DamageTypeIcons/ConcussiveDamageIcon");
+            FireDamageIcon = SecondaryContent.Load<Texture2D>("Icons/DamageTypeIcons/FireDamageIcon");
+            RadiationDamageIcon = SecondaryContent.Load<Texture2D>("Icons/DamageTypeIcons/ConcussiveDamageIcon");
+            ElectricDamageIcon = SecondaryContent.Load<Texture2D>("Icons/DamageTypeIcons/ConcussiveDamageIcon");
+            #endregion
+
+            Debug.WriteLine("Loading Menu Sounds");
+            #region Menu sounds
+            MenuClick = SecondaryContent.Load<SoundEffect>("Sounds/Menu/MenuPing");
+            MenuWoosh = SecondaryContent.Load<SoundEffect>("Sounds/Menu/MenuWoosh");
+            MenuMusic = SecondaryContent.Load<SoundEffect>("Sounds/Menu/MenuMusic1");
+
+            MenuMusicInstance = MenuMusic.CreateInstance();
+            MenuMusicInstance.IsLooped = true;
+            //MenuMusicInstance.Play();
+            #endregion
+
+            Projection = Matrix.CreateOrthographicOffCenter(0, 1920, 1080, 0, -5.0f, 5.0f);
+
+            BackgroundEffect = SecondaryContent.Load<Effect>("Shaders/BackgroundEffect");
+            BackgroundEffect.Parameters["MatrixTransform"].SetValue(Projection);
+
+            ButtonBlurEffect = SecondaryContent.Load<Effect>("Shaders/ButtonBlurEffect");
+            ButtonBlurEffect.Parameters["MatrixTransform"].SetValue(Projection);
+            
+            FPSCounter.spriteFont = DefaultFont;
+            Debug.WriteLine("Preloading Completed");
+            Debug.WriteLine(" ");
+        }
+
+        protected override void UnloadContent()
+        {
+            Content.Unload();
+            SecondaryContent.Unload();
+        }
+
+
+        private void LoadGameContent()
+        {
+            if (GameState == GameState.Loading && IsLoading == false)
             {
-                spriteBatch.Begin();
-                if (GameState != GameState.Paused && GameState != GameState.Victory)
-                    MainMenuBackground.Draw(GraphicsDevice, QuadEffect);
-                spriteBatch.End();
+                ProfileManagementPlay.JustClicked = false;
 
-                #region Draw Profile Select Menu
-                if (GameState == GameState.ProfileSelect)
-                {
-                    spriteBatch.Begin();
-                        foreach (Button button in ProfileButtonList)
-                        {
-                            button.Draw(spriteBatch);
-                        }
+                IsLoading = true;
+                AllLoaded = false;
 
-                        foreach (Button button in ProfileDeleteList)
-                        {
-                            button.Draw(spriteBatch);
-                        }
+                ReadyToPlace = false;
 
-                        ProfileBackButton.Draw(spriteBatch);
-                    spriteBatch.End();
-                }
+                #region Loading audio
+                Debug.WriteLine("Loading Audio", "Audio");
+                LoadGameSounds();
+                Debug.WriteLine("Audio Loaded", "Audio");
+                Debug.WriteLine(" ");
                 #endregion
 
-                #region Draw Profile Managment Screen
-                if (GameState == GameState.ProfileManagement)
+                #region Loading tower
+                Debug.WriteLine("Loading Tower Content", "Tower");
+                Tower.LoadContent(Content);
+                Debug.WriteLine("Tower Content Loaded", "Tower");
+                Debug.WriteLine(" ");
+                #endregion
+
+                #region Loading sprites
+                Debug.WriteLine("Loading Invader Sprites");                
+                LoadInvaderSprites();
+                Debug.WriteLine("Invaders Loaded", "Sprites");
+
+                Debug.WriteLine("Loading Turret Sprites", "Sprites");   
+                LoadTurretSprites();
+                Debug.WriteLine("Turrets Loaded", "Sprites");
+
+                Debug.WriteLine("Loading Trap Sprites", "Sprites");   
+                LoadTrapSprites();
+                Debug.WriteLine("Traps Loaded", "Sprites");
+
+                Debug.WriteLine("Loading Projectile Sprites", "Sprites");
+                LoadProjectileSprites();
+                Debug.WriteLine("Projectiles Loaded", "Sprites");
+
+                Debug.WriteLine("Loading Weather Sprites", "Sprites");   
+                LoadWeatherSprites();
+                Debug.WriteLine("Weather Sprites Loaded", "Sprites");
+                
+                Debug.WriteLine("Loading Decals", "Sprites");
+                ExplosionDecal1 = Content.Load<Texture2D>("Decals/ExplosionDecal1");
+                BloodDecal1 = Content.Load<Texture2D>("Decals/BloodDecal1");
+                Debug.WriteLine("Decals loaded", "Sprites");
+
+                Debug.WriteLine("Loading Other Sprites", "Sprites");
+                TerrainShrub1 = Content.Load<Texture2D>("Terrain/Shrub");
+                GrassBlade1 = Content.Load<Texture2D>("GrassBlade1");
+
+                PowerupDeliveryPod = Content.Load<Texture2D>("PowerupDeliveryPod");
+                PowerupDeliveryFin = Content.Load<Texture2D>("PowerupDeliveryFin");
+                Debug.WriteLine("Other sprites loaded", "Sprites");
+                Debug.WriteLine("Finished Loading Sprites");
+                Debug.WriteLine(" ");
+                #endregion
+
+                #region Loading shaders
+                Debug.WriteLine("Started loading Shaders");
+
+                Debug.WriteLine("Crepuscular Rays", "Shaders");
+                CrepuscularEffect = Content.Load<Effect>("Shaders/CrepuscularRaysEffect");
+                CrepuscularEffect.Parameters["Projection"].SetValue(Matrix.CreateOrthographicOffCenter(0, 1920, 1080, 0, 0, 1));
+
+                Debug.WriteLine("Healthbars", "Shaders");
+                HealthBarEffect = Content.Load<Effect>("Shaders/HealthBarEffect");
+                HealthBarEffect.Parameters["MatrixTransform"].SetValue(Projection);
+                HealthBarSprite = Content.Load<Texture2D>("HealthBarSprite");
+
+                Debug.WriteLine("Shock Wave", "Shaders");
+                ShockWaveEffect = Content.Load<Effect>("Shaders/ShockWaveEffect");
+                ShockWaveEffect.Parameters["MatrixTransform"].SetValue(Projection);
+
+                Debug.WriteLine("Shield Bubble", "Shaders");
+                ShieldBubbleEffect = Content.Load<Effect>("Shaders/ShieldBubbleEffect");
+                ShieldBubbleEffect.Parameters["MatrixTransform"].SetValue(Projection);
+                ShieldBubbleEffect.Parameters["NormalTexture"].SetValue(Content.Load<Texture2D>("ShieldNormalMap"));
+                ShieldBubbleEffect.Parameters["DistortionTexture"].SetValue(Content.Load<Texture2D>("ShieldDistortionMap"));
+
+                Debug.WriteLine("Finished Loading Shaders");
+                Debug.WriteLine(" ");
+                #endregion
+
+                #region Loading particles
+                Debug.WriteLine("Loading Particles");
+                Debug.WriteLine("Loading Special Particles", "Particles");
+                LightningShellCasing = Content.Load<Texture2D>("Particles/LightningTurretShell");
+                ShellCasing = Content.Load<Texture2D>("Particles/MachineShell");
+                MachineBullet = Content.Load<Texture2D>("Particles/MachineBullet");
+                Coin = Content.Load<Texture2D>("Particles/Coin");
+                Lightning.LoadContent(Content);
+                Bolt.LoadContent(Content);
+                Debug.WriteLine("Special Particles Loaded", "Particles");
+
+                Debug.WriteLine("Loading Particle Sprites", "Particles");
+                SplodgeParticle = Content.Load<Texture2D>("Particles/Splodge");
+                SmokeParticle = Content.Load<Texture2D>("Particles/Smoke");
+                FireParticle = Content.Load<Texture2D>("Particles/FireParticle");
+                FireParticle2 = Content.Load<Texture2D>("Particles/FireParticle2");
+                ExplosionParticle = Content.Load<Texture2D>("Particles/ExplosionParticle");
+                ExplosionParticle2 = Content.Load<Texture2D>("Particles/ExplosionParticle2");
+                BallParticle = Content.Load<Texture2D>("Particles/GlowBall");
+                SparkParticle = Content.Load<Texture2D>("Particles/Spark");
+                RoundSparkParticle = Content.Load<Texture2D>("Particles/RoundSpark");
+                HealthParticle = Content.Load<Texture2D>("Particles/HealthParticle");
+
+                BulletTrailCap = Content.Load<Texture2D>("Particles/Cap");
+                BulletTrailSegment = Content.Load<Texture2D>("Particles/Segment");
+                Debug.WriteLine("Finished Loading Particles");
+                Debug.WriteLine(" ");
+                #endregion
+
+                Debug.WriteLine("Creating Lists", "Lists");   
+                #region List Creating Code
+                //This code just creates the lists for the buttons and traps with the right number of possible slots
+                TrapList = new List<Trap>();
+
+                TurretList = new List<Turret>();
+                for (int i = 0; i < TowerButtons; i++)
                 {
-                    spriteBatch.Begin();
-                        //ProfileMenuTitle.Draw(spriteBatch);
+                    TurretList.Add(null);
+                    //TurretList[i].LoadContent(Content);
+                }
 
+                InvaderList = new List<Invader>();
 
-                        //spriteBatch.DrawString(RobotoRegular20_2, CurrentProfile.Name, new Vector2(16, 16), HalfWhite);
-                        //ProfileManagementHeader.Draw(spriteBatch);
+                HeavyProjectileList = new List<HeavyProjectile>();
+                TimedProjectileList = new List<TimerHeavyProjectile>();
 
-                        ProfileManagementTabs.Draw(spriteBatch, QuadEffect, GraphicsDevice);
+                InvaderHeavyProjectileList = new List<HeavyProjectile>();
+                InvaderLightProjectileList = new List<LightProjectile>();
 
-                        switch (ProfileManagementState)
+                LightningList = new List<LightningBolt>();
+
+                TrailList = new List<BulletTrail>();
+                InvaderTrailList = new List<BulletTrail>();
+
+                YSortedEmitterList = new List<Emitter>();
+                EmitterList2 = new List<Emitter>();
+                AlphaEmitterList = new List<Emitter>();
+                AdditiveEmitterList = new List<Emitter>();
+                GasEmitterList = new List<Emitter>();
+
+                ExplosionList = new List<Explosion>();
+                EnemyExplosionList = new List<Explosion>();
+                ShellCasingList = new List<Particle>();
+                CoinList = new List<Particle>();
+                LightProjectileList = new List<LightProjectile>();
+                TerrainSpriteList = new List<StaticSprite>();
+                WeatherSpriteList = new List<StaticSprite>();
+                //NumberChangeList = new List<NumberChange>();
+                #endregion
+                Debug.WriteLine("Lists Created", "Lists");
+                Debug.WriteLine(" ");
+
+                Debug.WriteLine("Loading Buttons", "Buttons");   
+                #region Setting up the buttons
+                TowerButtonList = new List<Button>();
+                SpecialAbilitiesButtonList = new List<Button>();
+
+                for (int i = 0; i < TowerButtons; i++)
+                {
+                    TowerButtonList.Add(new Button(TurretSlotButtonSprite, new Vector2(40 + Tower.DestinationRectangle.Width - 32, 500 + ((38 + 90) * i) - 32)));
+                    TowerButtonList[i].LoadContent();
+                }
+
+                CooldownButtonList.Clear();
+
+                //Not clearing these lists causes a Disposed Object error to show up for some reason
+                //Don't forget to clear the lists between levels or even when moving from menu back to game
+                UIWeaponInfoList.Clear();
+
+                UITrapQuickInfoList.Clear();
+                UITrapOutlineList.Clear();
+                UITurretOutlineList.Clear();
+                UITurretInfo = null;
+                //CurrentTurret = null;
+                ClearTurretSelect();
+                ClearSelected();
+                VerletShells.Clear();
+
+                for (int i = 0; i < 8; i++)
+                {
+                    CooldownButton button = new CooldownButton(new Vector2(565 + (i * 100), 1080 - 80), new Vector2(90, 65), 1, PlaceWeaponList[i].IconTexture);
+
+                    if (CurrentProfile.Buttons[i] != null)
+                    {
+                        UIWeaponInfoTip uiWeaponInfo = new UIWeaponInfoTip(Vector2.Zero, null, null);
+
+                        if (CurrentProfile.Buttons[i].CurrentTurret != null)
                         {
-                                                                                                                                            #region Loadout screen
-                        case ProfileManagementState.Loadout:
-                            spriteBatch.DrawString(RobotoRegular20_2, "turrets", new Vector2(158 + 113, 105 - 32), Color.White);
-                            spriteBatch.DrawString(RobotoRegular20_2, "traps", new Vector2(158 + 113, 120 + 130 + 60 + 200 - 36), Color.White);
-                            spriteBatch.DrawString(RobotoRegular20_2, "selected weapons", new Vector2(118, 1080 - 224), Color.White);
+                            uiWeaponInfo = new UIWeaponInfoTip(new Vector2(button.CurrentPosition.X, button.CurrentPosition.Y - 32),
+                                                            ApplyTurretUpgrades((TurretType)CurrentProfile.Buttons[i].CurrentTurret, 0), null);
+                        }
 
-                            MoveTurretsRight.Draw(spriteBatch);
-                            MoveTurretsLeft.Draw(spriteBatch);
+                        if (CurrentProfile.Buttons[i].CurrentTrap != null)
+                        {
+                            uiWeaponInfo = new UIWeaponInfoTip(new Vector2(button.CurrentPosition.X, button.CurrentPosition.Y - 32),
+                                                              null, ApplyTrapUpgrades((TrapType)CurrentProfile.Buttons[i].CurrentTrap, Vector2.Zero));
+                        }
 
-                            MoveTrapsRight.Draw(spriteBatch);
-                            MoveTrapsLeft.Draw(spriteBatch);
 
-                            #region Draw the boxes to select turrets from
-                            foreach (WeaponBox turretBox in SelectTurretList)
-                            {
-                                turretBox.Draw(spriteBatch, GraphicsDevice, QuadEffect);
-                            }
-                            #endregion
+                        uiWeaponInfo.CurrencyIcon = CurrencyIcon;
+                        uiWeaponInfo.RobotoBold40_2 = RobotoBold40_2;
+                        uiWeaponInfo.RobotoRegular20_0 = RobotoRegular20_0;
+                        uiWeaponInfo.RobotoRegular20_2 = RobotoRegular20_2;
+                        uiWeaponInfo.RobotoItalic20_0 = RobotoItalic20_0;
 
-                            #region Draw the boxes to select traps from
-                            foreach (WeaponBox trapBox in SelectTrapList)
-                            {
-                                trapBox.Draw(spriteBatch, GraphicsDevice, QuadEffect);
-                            }
-                            #endregion
+                        uiWeaponInfo.LoadContent(Content);
+                        UIWeaponInfoList.Add(uiWeaponInfo);
+                    }
+                    else
+                    {
+                        UIWeaponInfoList.Add(null);
+                    }
 
-                            #region Draw the slots where weapons are placed
-                            foreach (Button button in PlaceWeaponList)
+                    CooldownButtonList.Add(button);
+                }
+
+                //if (Tutorial == true)
+                //{
+                //    SelectButtonList[0].IconTexture = MachineGunTurretIcon;
+                //    SelectButtonList[0].LoadContent();
+
+                //    SelectButtonList[1].IconTexture = FireTrapIcon;
+                //    SelectButtonList[1].LoadContent();
+                //}
+
+                SpecialAbilitiesButtonList.Add(new Button(DiamondButtonSprite, new Vector2(1450, 1080 - 120)));
+                SpecialAbilitiesButtonList.Add(new Button(DiamondButtonSprite, new Vector2(1450 + 64 + 4, 1080 - 120)));
+                SpecialAbilitiesButtonList.Add(new Button(DiamondButtonSprite, new Vector2(1450 + 32 + 2, 1080 - 120 - 32 - 2)));
+                SpecialAbilitiesButtonList.Add(new Button(DiamondButtonSprite, new Vector2(1450 + 32 + 2, 1080 - 120 + 32 + 2)));
+
+                foreach (Button button in SpecialAbilitiesButtonList)
+                {
+                    button.LoadContent();
+                }
+
+                #endregion
+                Debug.WriteLine("Buttons Loaded", "Buttons");
+                Debug.WriteLine(" ");
+
+                Debug.WriteLine("Setting Up Dialogue");
+                MysteryEmployerTexture = Content.Load<Texture2D>("MysteryEmployer");
+                StoryDialogueBox = new StoryDialogueBox(new Vector2(-400, 64), new Vector2(0, 64), new Vector2(500, 180), MysteryEmployerTexture, RobotoRegular20_0, StoryDialogue, CurrentProfile.Name);
+
+                Debug.WriteLine("Setting Up Waves");
+                MaxWaves = CurrentLevel.WaveList.Count;
+                CurrentWaveIndex = 0;
+                Debug.WriteLine(" ");
+
+                #region Loading UI
+                Debug.WriteLine("Loading UI");
+                StartWaveButton = new Button(ButtonRightSprite, new Vector2(1920 - (ButtonRightSprite.Width / 3), 200), null, null, null, "start waves", RobotoRegular20_2, "Right");
+                StartWaveButton.LoadContent();
+
+                UITurretInfo = new UITurretInfo();
+                UITurretInfo.Texture = WhiteBlock;
+                UITurretInfo.OverHeatIconTexture = OverHeatIcon;
+                UITurretInfo.Font = BigUIFont;
+
+                HealthBar = new UISlopedBar(new Vector2(1920 / 2 - 810 / 2, 980), new Vector2(800 + 15, 15), Color.Lerp(Color.DarkRed, Color.LightGray, 0.2f), false, 15, 0);
+                ShieldBar = new UISlopedBar(new Vector2(1920 / 2 - 810 / 2 + 5, 970), new Vector2(810 - 5 + 15, 10), Color.Lerp(Color.White, Color.LightGray, 0.2f), true, 0, 10);
+                Debug.WriteLine("UI Loaded");
+                Debug.WriteLine(" ");
+                #endregion
+
+                AllLoaded = true;
+                Debug.WriteLine("Everything Loaded at " + CurrentGameTime.TotalGameTime.TotalSeconds.ToString());
+            }
+        } //This is called as a separate thread to be displayed while content is loaded
+
+        private void UnloadGameContent()
+        {
+            //Clear some variables that aren't cleared as they're not lists that are reset back to new List<> when
+            //the "List Creating Code" is called
+            PowerupDelivery = null;
+            SelectedTrap = null;
+            SelectedTurret = null;
+            DecalList.Clear();
+
+            Content.Unload();
+        } //This is called when the player exits to the main menu. Unloads game content, not menu content
+
+
+        private void LoadGameSounds()
+        {
+            //Load all the in-game sounds here
+            //Ambience
+
+
+
+            //Turrets
+            TurretOverheat = Content.Load<SoundEffect>("Sounds/TurretOverheat");
+            LightningSound = Content.Load<SoundEffect>("Sounds/LightningSound");
+            CannonExplosion = Content.Load<SoundEffect>("Sounds/CannonExplosion");
+            CannonFire = Content.Load<SoundEffect>("Sounds/CannonFire");
+            MachineShot1 = Content.Load<SoundEffect>("Sounds/Shot11");
+
+            //Traps
+            PlaceTrap = Content.Load<SoundEffect>("Sounds/PlaceTrap");
+            FireTrapStart = Content.Load<SoundEffect>("Sounds/FireTrapStart");
+
+
+            //Invaders
+
+
+
+            GroundImpact = Content.Load<SoundEffect>("Sounds/Shot12");
+            Ricochet1 = Content.Load<SoundEffect>("Sounds/Ricochet1");
+            Ricochet2 = Content.Load<SoundEffect>("Sounds/Ricochet2");
+            Ricochet3 = Content.Load<SoundEffect>("Sounds/Ricochet3");
+            Splat1 = Content.Load<SoundEffect>("Sounds/Splat1");
+            Splat2 = Content.Load<SoundEffect>("Sounds/Splat2");
+            Implosion = Content.Load<SoundEffect>("Sounds/Implosion2");
+
+        }
+
+        private void LoadInvaderSprites()
+        {
+            IceBlock = Content.Load<Texture2D>("IceBlock");
+            Shadow = Content.Load<Texture2D>("Shadow");
+
+            //SoldierSprite = new List<Texture2D>(4);
+            //SoldierSprite.Add(Content.Load<Texture2D>("Invaders/Soldier/SoldierWalk"));
+            //SoldierSprite.Add(Content.Load<Texture2D>("Invaders/Soldier/SoldierStand"));
+            //SoldierSprite.Add(Content.Load<Texture2D>("Invaders/Soldier/SoldierMelee"));
+
+            SoldierSprite = new List<Texture2D>(3) 
+            {
+                Content.Load<Texture2D>("Invaders/Soldier/SoldierWalk"),
+                Content.Load<Texture2D>("Invaders/Soldier/SoldierStand"),
+                Content.Load<Texture2D>("Invaders/Soldier/SoldierMelee")
+            };
+
+            StationaryCannonSprite = new List<Texture2D>(2)
+            {
+                Content.Load<Texture2D>("Invaders/StationaryCannon/StationaryCannonBase"),
+                Content.Load<Texture2D>("Invaders/StationaryCannon/StationaryCannonBarrel")
+            };
+
+            HealDroneSprite = new List<Texture2D>(1)
+            {
+                Content.Load<Texture2D>("Invaders/HealDrone/HealDrone")
+            };
+
+
+            //SoldierSprite = Content.Load<Texture2D>("Invaders/Soldier3");
+            //BatteringRamSprite = Content.Load<Texture2D>("Invaders/Invader");
+            //AirshipSprite = Content.Load<Texture2D>("Invaders/Invader");
+            //ArcherSprite = Content.Load<Texture2D>("Invaders/Invader");
+            //TankSprite = Content.Load<Texture2D>("Invaders/BlankTank");
+            //SpiderSprite = Content.Load<Texture2D>("Invaders/Invader");
+            //SlimeSprite = Content.Load<Texture2D>("Invaders/Invader");
+            //SuicideBomberSprite = Content.Load<Texture2D>("Invaders/Invader");
+            //FireElementalSprite = Content.Load<Texture2D>("Invaders/Invader");
+            //TestInvaderSprite = Content.Load<Texture2D>("Invaders/Invader");
+        }
+
+        private void LoadTrapSprites()
+        {
+            WallSprite = new List<Texture2D>(1)
+            {
+                Content.Load<Texture2D>("Traps/WallTrap")
+            };
+
+            BarrelTrapSprite = new List<Texture2D>(1)
+            {
+                Content.Load<Texture2D>("Traps/Trap")
+            };
+
+            CatapultTrapSprite = new List<Texture2D>(1)
+            {
+                Content.Load<Texture2D>("Traps/Trap")
+            };
+
+            IceTrapSprite = new List<Texture2D>(1)
+            {
+                Content.Load<Texture2D>("Traps/Trap")
+            };
+
+            TarTrapSprite = new List<Texture2D>(1)
+            {
+                Content.Load<Texture2D>("Traps/Trap")
+            };
+
+            LineTrapSprite = new List<Texture2D>(1)
+            {
+                Content.Load<Texture2D>("Traps/Trap")
+            };
+
+            SawBladeTrapSprite = new List<Texture2D>(1)
+            {
+                Content.Load<Texture2D>("Traps/Trap")
+            };
+
+            SpikeTrapSprite = new List<Texture2D>(1)
+            {
+                Content.Load<Texture2D>("Traps/Trap")
+            };
+
+            FireTrapSprite = new List<Texture2D>(1)
+            {
+                Content.Load<Texture2D>("Traps/FireTrap")
+            };
+        }
+
+        private void LoadProjectileSprites()
+        {
+            CannonBallSprite = Content.Load<Texture2D>("Projectiles/CannonRound");
+            CannonBallSprite = Content.Load<Texture2D>("Projectiles/CannonRound");
+            GrenadeSprite = Content.Load<Texture2D>("Projectiles/Grenade");
+            GasGrenadeSprite = Content.Load<Texture2D>("Projectiles/Grenade");
+            FlameSprite = Content.Load<Texture2D>("Projectiles/CannonRound");
+            ClusterBombSprite = Content.Load<Texture2D>("Projectiles/CannonRound");
+            ClusterShellSprite = Content.Load<Texture2D>("Projectiles/CannonRound");
+            BoomerangSprite = Content.Load<Texture2D>("Projectiles/CannonRound");
+            AcidSprite = Content.Load<Texture2D>("Projectiles/CannonRound");
+            //"Projectiles/Torpedo";
+            //"Projectiles/ClusterBombShell";
+            //"Projectiles/AcidProjectileSprite";
+            //"Projectiles/CannonRound";
+            //"Projectiles/Arrow";
+            //"Projectiles/CannonRound";
+            //"Projectiles/ClusterBomb";
+        }
+
+        private void LoadTurretSprites()
+        {
+            TurretSelectBox = Content.Load<Texture2D>("SelectBox");
+
+            MachineGunTurretBase = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBase");
+            MachineGunTurretBarrel = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBarrel");
+
+            CannonTurretBase = Content.Load<Texture2D>("Turrets/CannonTurret/CannonTurretBase");
+            CannonTurretBarrel = Content.Load<Texture2D>("Turrets/CannonTurret/CannonTurretBarrel");
+
+            LightningTurretBase = Content.Load<Texture2D>("Turrets/LightningTurret/LightningTurretBase");
+            LightningTurretBarrel = Content.Load<Texture2D>("Turrets/LightningTurret/LightningTurretBarrel");
+
+            BeamTurretBase = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBase");
+            BeamTurretBarrel = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBarrel");
+
+            ClusterTurretBase = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBase");
+            ClusterTurretBarrel = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBarrel");
+
+            GrenadeTurretBase = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBase");
+            GrenadeTurretBarrel = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBarrel");
+
+            GasGrenadeTurretBase = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBase");
+            GasGrenadeTurretBarrel = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBarrel");
+
+            ShotgunTurretBase = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBase");
+            ShotgunTurretBarrel = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBarrel");
+
+            FlameThrowerTurretBase = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBase");
+            FlameThrowerTurretBarrel = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBarrel");
+
+            PersistentBeamTurretBase = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBase");
+            PersistentBeamTurretBarrel = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBarrel");
+
+            FelCannonTurretBase = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBase");
+            FelCannonTurretBarrel = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBarrel");
+
+            BoomerangTurretBase = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBase");
+            BoomerangTurretBarrel = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBarrel");
+        }
+
+        private void LoadWeatherSprites()
+        {
+            SnowDust1 = Content.Load<Texture2D>("Weather/SnowDust1");
+            SnowDust2 = Content.Load<Texture2D>("Weather/SnowDust2");
+            SnowDust3 = Content.Load<Texture2D>("Weather/SnowDust3");
+            SnowDust4 = Content.Load<Texture2D>("Weather/SnowDust4");
+            SnowDust5 = Content.Load<Texture2D>("Weather/SnowDust5");
+            BlurrySnowflake = Content.Load<Texture2D>("Weather/BlurrySnowflake");
+            FocusedSnowflake = Content.Load<Texture2D>("Weather/FocusedSnowflake");
+
+            BlurryEmitter = new Emitter(BlurrySnowflake, new Vector2(0, -64), new Vector2(270, 270), new Vector2(0.95f, 1.8f),
+                new Vector2(1500, 2500), 0.5f, true, new Vector2(0, 360), new Vector2(0, 5), new Vector2(0.1f, 0.25f),
+                Color.White, Color.White, 0.0005f, -1, 25, 1, false, new Vector2(690, 930));
+
+            FocusedEmitter = new Emitter(FocusedSnowflake, new Vector2(0, -64), new Vector2(-90, -90), new Vector2(0.5f, 0.75f),
+                new Vector2(2000, 3000), 0.25f, true, new Vector2(0, 360), new Vector2(-1f, 1f), new Vector2(0.1f, 0.25f),
+                Color.White, Color.White, 0.0005f, -1, 25, 1, true, new Vector2(690, 930), false, 0.25f, true, false, null, null, null, null, null, true, true, null);
+        }
+
+        private void LoadFonts()
+        {
+            DefaultFont = SecondaryContent.Load<SpriteFont>("Fonts/RobotoRegular20_2");
+            //ButtonFont = SecondaryContent.Load<SpriteFont>("Fonts/RobotoRegular20_2");
+            TooltipFont = SecondaryContent.Load<SpriteFont>("Fonts/RobotoRegular20_0");
+            BigUIFont = SecondaryContent.Load<SpriteFont>("Fonts/RobotoRegular40_2");
+            ResourceFont = Content.Load<SpriteFont>("Fonts/RobotoRegular20_2");
+
+
+            RobotoBold40_2 = SecondaryContent.Load<SpriteFont>("Fonts/RobotoBold40_2");
+            RobotoRegular40_2 = SecondaryContent.Load<SpriteFont>("Fonts/RobotoRegular40_2");
+            RobotoRegular20_2 = SecondaryContent.Load<SpriteFont>("Fonts/RobotoRegular20_2");
+            RobotoRegular20_0 = SecondaryContent.Load<SpriteFont>("Fonts/RobotoRegular20_0");
+            RobotoItalic20_0 = SecondaryContent.Load<SpriteFont>("Fonts/RobotoItalic20_0");
+        }
+        #endregion
+
+
+        protected override void Draw(GameTime gameTime)
+        {
+            //This is just for testing what's happening when/if I get the unexpected error problem
+            if (GameState != GameState.Loading && IsLoading == true)
+            {
+                Debug.WriteLine("GAMESTATE =" + GameState.ToString() + " ISLOADING = TRUE");
+                Debug.WriteLine("!Unexpected Error!");
+            }
+
+            #region Draw menus
+            if (GameState != GameState.Playing)
+            {
+                GraphicsDevice.SetRenderTarget(MenuRenderTarget);
+                GraphicsDevice.Clear(Color.Transparent);
+
+                spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
+
+                if (GameState != GameState.Paused && GameState != GameState.Victory)
+                    MainMenuBackground.Draw(GraphicsDevice, QuadEffect);
+
+                switch (GameState)
+                {
+                    #region Loading Screen
+                    case GameState.Loading:
+                        {
+                            if (AllLoaded == false)
+                                LoadingAnimation.Draw(spriteBatch);
+
+                            spriteBatch.DrawString(RobotoBold40_2, AllLoaded.ToString(), new Vector2(100, 100), Color.White);
+                        }
+                        break;
+                    #endregion
+
+                    #region Profile Select Menu
+                    case GameState.ProfileSelect:
+                        {
+                            foreach (Button button in ProfileButtonList)
                             {
                                 button.Draw(spriteBatch);
                             }
-                            #endregion
 
-                            break;
-                        #endregion
+                            foreach (Button button in ProfileDeleteList)
+                            {
+                                button.Draw(spriteBatch);
+                            }
 
-                                        #region Stats screen
-                        case ProfileManagementState.Stats:
-
-                            break;
-                        #endregion
-
-                                        #region Upgrades screen
-                        case ProfileManagementState.Upgrades:
-
-                            break;
-                        #endregion
+                            ProfileBackButton.Draw(spriteBatch);
                         }
+                        break;
+                    #endregion
 
-                        ProfileManagementPlay.Draw(spriteBatch);
-                        ProfileManagementBack.Draw(spriteBatch);
-                    spriteBatch.End();
-                }
-                #endregion
-
-                #region Draw Loading Screen
-                if (GameState == GameState.Loading)
-                {
-                    spriteBatch.Begin();
-                        if (AllLoaded == false)
-                            LoadingAnimation.Draw(spriteBatch);
-
-                        spriteBatch.DrawString(RobotoBold40_2, AllLoaded.ToString(), new Vector2(100, 100), Color.White);
-
-                        if (LoadingContentString != null)
-                            spriteBatch.DrawString(RobotoBold40_2, LoadingContentString, new Vector2(200, 200), Color.White);
-                    spriteBatch.End();
-                }
-                #endregion
-
-                #region Draw Main Menu
-                if (GameState == GameState.Menu)
-                {
-                    spriteBatch.Begin();
-                        foreach (Button button in MainMenuButtonList)
+                    #region Profile Management Menu
+                    case GameState.ProfileManagement:
                         {
-                            button.Draw(spriteBatch);
+                            ProfileManagementTabs.Draw(spriteBatch, QuadEffect, GraphicsDevice);
+
+                            switch (ProfileManagementState)
+                            {
+                                #region Loadout screen
+                                case ProfileManagementState.Loadout:
+                                    spriteBatch.DrawString(RobotoRegular20_2, "turrets", new Vector2(158 + 113, 105 - 32), Color.White);
+                                    spriteBatch.DrawString(RobotoRegular20_2, "traps", new Vector2(158 + 113, 120 + 130 + 60 + 200 - 36), Color.White);
+                                    spriteBatch.DrawString(RobotoRegular20_2, "selected weapons", new Vector2(118, 1080 - 224), Color.White);
+
+                                    MoveTurretsRight.Draw(spriteBatch);
+                                    MoveTurretsLeft.Draw(spriteBatch);
+
+                                    MoveTrapsRight.Draw(spriteBatch);
+                                    MoveTrapsLeft.Draw(spriteBatch);
+
+                                    #region Draw the boxes to select turrets from
+                                    foreach (WeaponBox turretBox in SelectTurretList)
+                                    {
+                                        turretBox.Draw(spriteBatch, GraphicsDevice, QuadEffect);
+                                    }
+                                    #endregion
+
+                                    #region Draw the boxes to select traps from
+                                    foreach (WeaponBox trapBox in SelectTrapList)
+                                    {
+                                        trapBox.Draw(spriteBatch, GraphicsDevice, QuadEffect);
+                                    }
+                                    #endregion
+
+                                    #region Draw the slots where weapons are placed
+                                    foreach (Button button in PlaceWeaponList)
+                                    {
+                                        button.Draw(spriteBatch);
+                                    }
+                                    #endregion
+
+                                    break;
+                                #endregion
+
+                                #region Stats screen
+                                case ProfileManagementState.Stats:
+
+                                    break;
+                                #endregion
+
+                                #region Upgrades screen
+                                case ProfileManagementState.Upgrades:
+
+                                    break;
+                                #endregion
+                            }
+
+                            ProfileManagementPlay.Draw(spriteBatch);
+                            ProfileManagementBack.Draw(spriteBatch);
                         }
-                    spriteBatch.End();
+                        break;
+                    #endregion
+
+                    #region Main Menu
+                    case GameState.Menu:
+                        {
+                            foreach (Button button in MainMenuButtonList)
+                            {
+                                button.Draw(spriteBatch);
+                            }
+                        }
+                        break;
+                    #endregion
+
+                    #region Options Menu
+                    case GameState.Options:
+                        {
+                            OptionsSFXUp.Draw(spriteBatch);
+                            OptionsSFXDown.Draw(spriteBatch);
+
+                            OptionsMusicUp.Draw(spriteBatch);
+                            OptionsMusicDown.Draw(spriteBatch);
+
+                            OptionsBack.Draw(spriteBatch);
+
+                            string SFXVol, MusicVol;
+                            SFXVol = MenuSFXVolume.ToString();
+                            MusicVol = MenuMusicVolume.ToString();
+
+                            if (SFXVol.Length == 1)
+                                SFXVol = SFXVol.Insert(0, "0");
+
+                            if (MusicVol.Length == 1)
+                                MusicVol = MusicVol.Insert(0, "0");
+
+                            spriteBatch.DrawString(DefaultFont, SFXVol, new Vector2(640 - 16, 320), Color.White);
+                            spriteBatch.DrawString(DefaultFont, MusicVol, new Vector2(640 - 16, 384), Color.White);
+                        }
+                        break;
+                    #endregion
+
+                    #region Get Name Screen
+                    case GameState.GettingName:
+                        {
+                            spriteBatch.DrawString(RobotoRegular20_2, "profile name",
+                                                   new Vector2(TextBox.Position.X, TextBox.Position.Y - DefaultFont.MeasureString("E").Y),
+                                                   Color.White);
+                            TextBox.Draw(spriteBatch);
+
+                            GetNameBack.Draw(spriteBatch);
+                            GetNameOK.Draw(spriteBatch);
+
+                            NameInput.Draw(spriteBatch);
+                        }
+                        break;
+                    #endregion
+
+                    #region Pause menu
+                    case GameState.Paused:
+                        {
+                            foreach (Button button in PauseButtonList)
+                            {
+                                button.Draw(spriteBatch);
+                            }
+
+                            if (MainMenuDialog != null)
+                            {
+                                MainMenuDialog.Draw(spriteBatch);
+                            }
+
+                            if (ProfileMenuDialog != null)
+                            {
+                                ProfileMenuDialog.Draw(spriteBatch);
+                            }
+                        }
+                        break;
+                    #endregion
+
+                    #region Victory Screen
+                    case GameState.Victory:
+                        {
+                            spriteBatch.Draw(WhiteBlock, new Rectangle(665, 180, 590, 720), null, Color.Lerp(Color.Black, Color.Transparent, 0.5f), 0, new Vector2(0, 0), SpriteEffects.None, 1);
+                            spriteBatch.DrawString(RobotoRegular40_2, "mission completed", new Vector2(1920 / 2, 210), Color.White, 0, RobotoBold40_2.MeasureString("mission completed") / 2, 1, SpriteEffects.None, 0);
+                            VictoryContinue.Draw(spriteBatch);
+                        }
+                        break;
+                    #endregion
                 }
-                #endregion
-
-                #region Draw Options Menu
-                if (GameState == GameState.Options)
-                {
-                    spriteBatch.Begin();
-                        OptionsSFXUp.Draw(spriteBatch);
-                        OptionsSFXDown.Draw(spriteBatch);
-
-                        OptionsMusicUp.Draw(spriteBatch);
-                        OptionsMusicDown.Draw(spriteBatch);
-
-                        OptionsBack.Draw(spriteBatch);
-
-                        string SFXVol, MusicVol;
-                        SFXVol = MenuSFXVolume.ToString();
-                        MusicVol = MenuMusicVolume.ToString();
-
-                        if (SFXVol.Length == 1)
-                            SFXVol = SFXVol.Insert(0, "0");
-
-                        if (MusicVol.Length == 1)
-                            MusicVol = MusicVol.Insert(0, "0");
-
-                        spriteBatch.DrawString(DefaultFont, SFXVol, new Vector2(640 - 16, 320), Color.White);
-                        spriteBatch.DrawString(DefaultFont, MusicVol, new Vector2(640 - 16, 384), Color.White);
-                    spriteBatch.End();
-                }
-                #endregion
-
-                #region Draw GetName Menu
-                if (GameState == GameState.GettingName)
-                {
-                    spriteBatch.Begin();
-                        spriteBatch.DrawString(RobotoRegular20_2, "profile name", 
-                                               new Vector2(TextBox.Position.X, TextBox.Position.Y - DefaultFont.MeasureString("E").Y), 
-                                               Color.White);
-                        TextBox.Draw(spriteBatch);
-
-                        GetNameBack.Draw(spriteBatch);
-                        GetNameOK.Draw(spriteBatch);
-
-                        NameInput.Draw(spriteBatch);
-                    spriteBatch.End();
-                }
-                #endregion
-
+                
                 #region Draw menu Dialog boxes
                 if (GameState != GameState.Loading)
                 {
-                    spriteBatch.Begin();
                     if (ExitDialog != null)
                     {
                         ExitDialog.Draw(spriteBatch);
@@ -886,349 +1552,183 @@ namespace TowerDefensePrototype
                     {
                         NameLengthDialog.Draw(spriteBatch);
                     }
-                    spriteBatch.End();
                 }
                 #endregion
 
-                spriteBatch.Begin();
-                CursorDraw(spriteBatch);
                 spriteBatch.End();
-                //spriteBatch.Draw(MenuFade, ScreenRectangle, MenuColor);
-
-                #region Draw pause menu buttons
-                if (GameState == GameState.Paused)
-                {
-                    spriteBatch.Begin();
-                        foreach (Button button in PauseButtonList)
-                        {
-                            button.Draw(spriteBatch);
-                        }
-                    spriteBatch.End();
-                }
-                #endregion
-
-                //Unexpected error, might need to move this out again if it breaks things
-                //spriteBatch.End();
             }
             #endregion
 
-            #region Draw actual game
-            GraphicsDevice.SetRenderTarget(GameRenderTarget1);
-            GraphicsDevice.Clear(Color.Transparent);
+            if (GameState == GameState.Playing || GameState == GameState.Paused || GameState == GameState.Victory && IsLoading == false)
+            {
+                #region Draw actual game
+                GraphicsDevice.SetRenderTarget(GameRenderTarget1);
+                GraphicsDevice.Clear(Color.Transparent);
 
-            #region Draw the background type stuff - ground, tower, sky, snow etc.
-                if (GameState == GameState.Playing || GameState == GameState.Paused || GameState == GameState.Victory && IsLoading == false)
+                #region Draw the background type stuff - ground, tower, sky, snow etc.
+                spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
+
+                SkyBackground.Draw(spriteBatch);
+                Ground.Draw(spriteBatch);
+
+                foreach (Decal decal in DecalList)
                 {
-                    spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend,
-                                      null, null, null, null);
+                    decal.Draw(spriteBatch);
+                }
 
-                    SkyBackground.Draw(spriteBatch);
-                    Ground.Draw(spriteBatch);
+                //FocusedEmitter.Draw(spriteBatch);
 
-                    foreach (Decal decal in DecalList)
+                Tower.Draw(spriteBatch);
+
+                foreach (Emitter emitter in EmitterList2)
+                {
+                    emitter.Draw(spriteBatch);
+                }
+
+                //BlurryEmitter.Draw(spriteBatch);
+
+                spriteBatch.End();
+                #endregion
+
+                #region Draw things sorted according to their Y value - To create depth illusion
+
+                spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend);
+
+                if (PowerupDelivery != null)
+                {
+                    PowerupDelivery.Draw(spriteBatch);
+                }
+
+                foreach (Particle shellCasing in ShellCasingList)
+                {
+                    shellCasing.Draw(spriteBatch);
+                }
+
+                foreach (ShellCasing shell in VerletShells)
+                {
+                    shell.Draw(spriteBatch);
+                }
+
+                foreach (Emitter emitter in YSortedEmitterList)
+                {
+                    emitter.Draw(spriteBatch);
+                }
+
+                #region Draw turrets
+                foreach (Turret turret in TurretList)
+                {
+                    if (turret != null && turret.Active == true)
                     {
-                        decal.Draw(spriteBatch);
+                        turret.Draw(spriteBatch);
                     }
-
-                    FocusedEmitter.Draw(spriteBatch);
-
-                    Tower.Draw(spriteBatch);
-
-                    foreach (Emitter emitter in EmitterList2)
-                    {
-                        emitter.Draw(spriteBatch);
-                    }
-
-                    BlurryEmitter.Draw(spriteBatch);
-
-                    spriteBatch.End();
                 }
                 #endregion
 
-            #region Draw additive emitter behind the invaders
-                if (GameState == GameState.Playing || GameState == GameState.Paused || GameState == GameState.Victory && IsLoading == false)
+                #region Draw invaders
+                foreach (Invader invader in InvaderList)
                 {
-                    spriteBatch.Begin(SpriteSortMode.Immediate,
-                                      BlendState.Additive,
-                                      null, null, null, null);
-
-                    foreach (Emitter emitter in AlphaEmitterList)
-                    {
-                        emitter.Draw(spriteBatch);
-                    }
-
-                    spriteBatch.End();
+                    invader.Draw(spriteBatch);
                 }
                 #endregion
 
-
-            GraphicsDevice.SetRenderTarget(GameRenderTarget2);
-            GraphicsDevice.Clear(Color.Transparent);
-            #region Draw things sorted according to their Y value - To create depth illusion
-                //This second spritebatch sorts everthing Back to Front, 
-                //to make sure that the invaders are drawn correctly according to their Y value
-                if (GameState == GameState.Playing || GameState == GameState.Paused || GameState == GameState.Victory && IsLoading == false)
+                #region Draw traps
+                foreach (Trap trap in TrapList)
                 {
-                    spriteBatch.Begin(
-                        SpriteSortMode.FrontToBack,
-                        BlendState.AlphaBlend,
-                        null, null, null, null);
+                    trap.Draw(spriteBatch);
+                }
+                #endregion
 
-                    if (PowerupDelivery != null)
-                    {
-                        PowerupDelivery.Draw(spriteBatch);
-                    }
-
-                    foreach (Particle shellCasing in ShellCasingList)
-                    {
-                        shellCasing.Draw(spriteBatch);
-                        //shellCasing.DrawShadow(spriteBatch);
-                    }
-
-                    foreach (ShellCasing shell in VerletShells)
-                    {
-                        shell.Draw(spriteBatch);
-                    }
-
-                    foreach (Emitter emitter in YSortedEmitterList)
-                    {
-                        emitter.Draw(spriteBatch);
-                    }
-
-                    #region Draw turrets
-                    foreach (Turret turret in TurretList)
-                    {
-                        if (turret != null && turret.Active == true)
-                        {
-                            turret.Draw(spriteBatch);
-                        }
-                    }
-                    #endregion
-
-                    #region Draw invaders
-                    foreach (Invader invader in InvaderList)
-                    {
-                        invader.Draw(spriteBatch);
-                    }
-                    #endregion
-
-                    #region Draw traps
-                    foreach (Trap trap in TrapList)
-                    {
-                        trap.Draw(spriteBatch);
-                    }
-                    #endregion
-
-                    #region Draw heavy projectiles
-                    foreach (HeavyProjectile heavyProjectile in HeavyProjectileList)
-                    {
-                        if (heavyProjectile.HeavyProjectileType != HeavyProjectileType.FelProjectile)
-                        {
-                            heavyProjectile.Draw(spriteBatch);
-                        }
-                    }
-
-                    foreach (HeavyProjectile heavyProjectile in InvaderHeavyProjectileList)
+                #region Draw heavy projectiles
+                foreach (HeavyProjectile heavyProjectile in HeavyProjectileList)
+                {
+                    if (heavyProjectile.HeavyProjectileType != HeavyProjectileType.FelProjectile)
                     {
                         heavyProjectile.Draw(spriteBatch);
                     }
+                }
 
-                    foreach (TimerHeavyProjectile timedProjectile in TimedProjectileList)
-                    {
-                        timedProjectile.Draw(spriteBatch);
-                    }
-                    #endregion
+                foreach (HeavyProjectile heavyProjectile in InvaderHeavyProjectileList)
+                {
+                    heavyProjectile.Draw(spriteBatch);
+                }
 
-                    if (CurrentSpecialAbility != null)
-                        CurrentSpecialAbility.Draw(spriteBatch);
-
-                    //There was a disposed object error here and I don't know why
-                    //Seems to have something to do with the turrets
-                    //EDIT: OK, seems to have been to do with the verlet shells - keep an eye on it though
-                    spriteBatch.End();
+                foreach (TimerHeavyProjectile timedProjectile in TimedProjectileList)
+                {
+                    timedProjectile.Draw(spriteBatch);
                 }
                 #endregion
 
-            GraphicsDevice.SetRenderTarget(LightMap);
-            GraphicsDevice.Clear(Color.Black);
-
-            #region DrawBlack
-            //This second spritebatch sorts everthing Back to Front, 
-            //to make sure that the invaders are drawn correctly according to their Y value
-            if (GameState == GameState.Playing || GameState == GameState.Paused || GameState == GameState.Victory && IsLoading == false)
-            {
-                spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, SamplerState.LinearClamp, dsState, RasterizerState.CullCounterClockwise, DrawBlack);
-                //GraphicsDevice.DepthStencilState = new DepthStencilState() { DepthBufferEnable = true, DepthBufferWriteEnable = false };
-
-
-                //DrawBlack.Parameters["diff"].SetValue(1);
-                ////GraphicsDevice.DepthStencilState = new DepthStencilState { DepthBufferEnable = true, DepthBufferWriteEnable = false, StencilDepthBufferFail = StencilOperation.Invert };
-                ////GraphicsDevice.DepthStencilState = dsState;
-                //GraphicsDevice.BlendState = BlendState.AlphaBlend;
-
-                //if (PowerupDelivery != null)
-                //{
-                //    PowerupDelivery.Draw(spriteBatch);
-                //}
-
-                //foreach (Particle shellCasing in ShellCasingList)
-                //{
-                //    shellCasing.Draw(spriteBatch);
-                //}
-
-                //foreach (ShellCasing shell in VerletShells)
-                //{
-                //    shell.Draw(spriteBatch);
-                //}
-
-                //foreach (Emitter emitter in YSortedEmitterList)
-                //{
-                //    emitter.Draw(spriteBatch);
-                //}
-
-                //#region Draw turrets
-                //foreach (Turret turret in TurretList)
-                //{
-                //    if (turret != null && turret.Active == true)
-                //    {
-                //        turret.Draw(spriteBatch);
-                //    }
-                //}
-                //#endregion
-
-                //#region Draw invaders
-                //foreach (Invader invader in InvaderList)
-                //{
-                //    invader.Draw(spriteBatch);
-                //}
-                //#endregion
-
-                //#region Draw traps
-                //foreach (Trap trap in TrapList)
-                //{
-                //    trap.Draw(spriteBatch);
-                //}
-                //#endregion
-
-                //#region Draw heavy projectiles
-                //foreach (HeavyProjectile heavyProjectile in HeavyProjectileList)
-                //{
-                //    if (heavyProjectile.HeavyProjectileType != HeavyProjectileType.FelProjectile)
-                //    {
-                //        heavyProjectile.Draw(spriteBatch);
-                //    }
-                //}
-
-                //foreach (HeavyProjectile heavyProjectile in InvaderHeavyProjectileList)
-                //{
-                //    heavyProjectile.Draw(spriteBatch);
-                //}
-
-                //foreach (TimerHeavyProjectile timedProjectile in TimedProjectileList)
-                //{
-                //    timedProjectile.Draw(spriteBatch);
-                //}
-                //#endregion
-
-                //if (CurrentSpecialAbility != null)
-                //    CurrentSpecialAbility.Draw(spriteBatch);
-
-                
-
-                GraphicsDevice.BlendState = BlendState.Additive;
-                DrawBlack.Parameters["diff"].SetValue(0);
-                foreach (Light light in LightList)
-                {
-                    light.Draw(spriteBatch);
-                }
-
-                //DrawBlack.Parameters["diff"].SetValue(0);
-                //GraphicsDevice.BlendState = BlendState.Additive;
-                spriteBatch.Draw(BaseLightTexture, new Rectangle(0, 0, 1920, 1080), null, Color.White, 0, Vector2.Zero, SpriteEffects.FlipHorizontally, 1);
+                if (CurrentSpecialAbility != null)
+                    CurrentSpecialAbility.Draw(spriteBatch);
 
                 spriteBatch.End();
-            }
-            #endregion
+                #endregion
 
-            GraphicsDevice.SetRenderTarget(GameRenderTarget3);
-            GraphicsDevice.Clear(Color.Transparent);
-            #region Draw with additive blending - Makes stuff look glowy
-                if (GameState == GameState.Playing || GameState == GameState.Paused || GameState == GameState.Victory && IsLoading == false)
+                #region Draw with additive blending - Makes stuff look glowy
+                spriteBatch.Begin(SpriteSortMode.Texture, BlendState.Additive);
+
+                foreach (Emitter emitter in AlphaEmitterList)
                 {
-                    spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, null, null, null, null);
-                    GraphicsDevice.DepthStencilState = DepthStencilState.Default;
-                    foreach (LightningBolt lightningBolt in LightningList)
-                    {
-                        lightningBolt.Draw(spriteBatch);
-                    }
+                    emitter.Draw(spriteBatch);
+                }
 
-                    foreach (BulletTrail trail in TrailList)
-                    {
-                        trail.Draw(spriteBatch);
-                    }
+                foreach (LightningBolt lightningBolt in LightningList)
+                {
+                    lightningBolt.Draw(spriteBatch);
+                }
 
-                    foreach (BulletTrail trail in InvaderTrailList)
-                    {
-                        trail.Draw(spriteBatch);
-                    }
+                foreach (BulletTrail trail in TrailList)
+                {
+                    trail.Draw(spriteBatch);
+                }
 
-                    foreach (Particle coin in CoinList)
-                    {
-                        coin.Draw(spriteBatch);
-                    }
+                foreach (BulletTrail trail in InvaderTrailList)
+                {
+                    trail.Draw(spriteBatch);
+                }
 
-                    foreach (HeavyProjectile heavyProjectile in HeavyProjectileList)
-                    {
-                        if (heavyProjectile.HeavyProjectileType == HeavyProjectileType.FelProjectile)
-                            heavyProjectile.Draw(spriteBatch);
-                    }
+                foreach (Particle coin in CoinList)
+                {
+                    coin.Draw(spriteBatch);
+                }
 
-                    foreach (Emitter emitter in AdditiveEmitterList)
-                    {
-                        emitter.Draw(spriteBatch);
-                    }
+                foreach (HeavyProjectile heavyProjectile in HeavyProjectileList)
+                {
+                    if (heavyProjectile.HeavyProjectileType == HeavyProjectileType.FelProjectile)
+                        heavyProjectile.Draw(spriteBatch);
+                }
 
-                    foreach (Invader invader in InvaderList)
+                foreach (Emitter emitter in AdditiveEmitterList)
+                {
+                    emitter.Draw(spriteBatch);
+                }
+
+                foreach (Invader invader in InvaderList)
+                {
+                    switch (invader.InvaderType)
                     {
-                        switch (invader.InvaderType)
-                        {
-                            case InvaderType.HealDrone:
+                        case InvaderType.HealDrone:
+                            {
+                                HealDrone drone = invader as HealDrone;
+
+                                foreach (LightningBolt bolt in drone.BoltList)
                                 {
-                                    HealDrone drone = invader as HealDrone;
-
-                                    foreach (LightningBolt bolt in drone.BoltList)
-                                    {
-                                        bolt.Draw(spriteBatch);
-                                    }
+                                    bolt.Draw(spriteBatch);
                                 }
-                                break;
-                        }
-                    }
-                    spriteBatch.End();
-                }
-                #endregion
-
-            #region Draw weather on top of invaders
-                spriteBatch.Begin(SpriteSortMode.Texture, BlendState.AlphaBlend);
-                if (GameState == GameState.Playing || GameState == GameState.Paused || GameState == GameState.Victory && IsLoading == false)
-                {
-                  foreach (StaticSprite weatherSprite in WeatherSpriteList)
-                    {
-                        weatherSprite.Draw(spriteBatch);
+                            }
+                            break;
                     }
                 }
                 spriteBatch.End();
-                #endregion            
-            #endregion
+                #endregion
 
-            #region Draw UI
-            GraphicsDevice.SetRenderTarget(UIRenderTarget);
-            GraphicsDevice.Clear(Color.Transparent);
+                #endregion
 
-            #region Draw the UI elements
-            if (GameState == GameState.Playing || GameState == GameState.Paused || GameState == GameState.Victory && IsLoading == false)
-            {
-                spriteBatch.Begin(SpriteSortMode.Texture, BlendState.AlphaBlend, null, null, null);
+                #region Draw UI
+                GraphicsDevice.SetRenderTarget(UIRenderTarget);                
+                GraphicsDevice.Clear(Color.Transparent);
+
+                spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
 
                 #region Draw diagnostics
                 if (Diagnostics == true)
@@ -1260,15 +1760,16 @@ namespace TowerDefensePrototype
                     spriteBatch.DrawString(DefaultFont, "UITrapOutlines:" + UITrapOutlineList.Count.ToString(), new Vector2(0, 248 + 64 + 16), Color.Lime);
                     spriteBatch.DrawString(DefaultFont, "UITurretOutlines:" + UITurretOutlineList.Count.ToString(), new Vector2(0, 248 + 64 + 32), Color.Lime);
                     spriteBatch.DrawString(DefaultFont, "WeatherSprites:" + WeatherSpriteList.Count.ToString(), new Vector2(0, 248 + 64 + 32 + 16), Color.Lime);
-                    
+
                     spriteBatch.DrawString(DefaultFont, (gameTime.ElapsedGameTime.TotalMilliseconds).ToString(), new Vector2(1920 - 50, 0), Color.Red);
                     FPSCounter.Draw(spriteBatch);
                 }
                 #endregion
+
                 //Draw the damage numbers for when the invaders are damaged
                 foreach (NumberChange numChange in NumberChangeList)
                 {
-                    numChange.Draw(spriteBatch); 
+                    numChange.Draw(spriteBatch);
                 }
 
                 spriteBatch.Draw(CurrencyIcon, new Rectangle(485, 1080 - 52, 24, 24), Color.White);
@@ -1286,11 +1787,9 @@ namespace TowerDefensePrototype
 
                 if (CurrentTurret != null && UITurretInfo != null)
                     UITurretInfo.Draw(spriteBatch, GraphicsDevice);
-
-                //if (UIInvaderInfo != null)
-                //    UIInvaderInfo.Draw(spriteBatch, GraphicsDevice);
                 #endregion
 
+                
                 #region Drawing buttons
                 if (StartWaveButton != null)
                     StartWaveButton.Draw(spriteBatch);
@@ -1308,7 +1807,13 @@ namespace TowerDefensePrototype
                 //Draw tooltips for the buttons
                 if (InGameInformation != null)
                     InGameInformation.Draw(spriteBatch);
-                #endregion                
+                #endregion
+
+                foreach (Button towerSlot in TowerButtonList)
+                {
+                    towerSlot.Draw(spriteBatch);
+                }
+
 
                 #region Draw turret bars
                 foreach (Turret turret in TurretList)
@@ -1329,6 +1834,7 @@ namespace TowerDefensePrototype
                     trap.DrawBars(GraphicsDevice, QuadEffect);
                 }
                 #endregion
+
 
                 #region Draw Powerup delivery bars
                 if (PowerupDelivery != null)
@@ -1351,6 +1857,7 @@ namespace TowerDefensePrototype
 
                 UIPowerupsList.RemoveAll(UIPowerup => UIPowerup.Active == false);
                 #endregion
+
 
                 #region Draw outlines around traps when moused-over
                 foreach (Trap trap in TrapList)
@@ -1380,16 +1887,6 @@ namespace TowerDefensePrototype
                 #endregion
 
                 #region Draw outlines and health bars around invaders when moused over
-                //foreach (Invader invader in InvaderList)
-                //{
-                //    if (invader != null && invader.DestinationRectangle.Contains(VectorToPoint(CursorPosition)))
-                //    {
-                //        foreach (UIOutline invaderOutline in UIInvaderOutlineList)
-                //        {
-                //            invaderOutline.Draw(spriteBatch);
-                //        }
-                //    }
-                //}
                 foreach (Invader invader in InvaderList)
                 {
                     if (invader.InvaderOutline.Visible == true)
@@ -1408,202 +1905,81 @@ namespace TowerDefensePrototype
                 }
                 #endregion
 
-                if (GameState != GameState.Paused)
-                    StoryDialogueBox.Draw(spriteBatch, GraphicsDevice, QuadEffect);
 
-                //if (UIWeaponInfo != null)
+
+                #region Draw Weapon Info Boxes
                 foreach (UIWeaponInfoTip uiWeaponInfo in UIWeaponInfoList)
                 {
                     if (uiWeaponInfo != null)
-                    uiWeaponInfo.Draw(spriteBatch, GraphicsDevice, QuadEffect);
+                        uiWeaponInfo.Draw(spriteBatch, GraphicsDevice, QuadEffect);
                 }
+                #endregion
 
+                #region Draw Trap Quick Info
                 foreach (UITrapQuickInfo uiTrapQuickInfo in UITrapQuickInfoList)
                 {
                     uiTrapQuickInfo.Draw(GraphicsDevice, QuadEffect, spriteBatch);
                 }
-                spriteBatch.End();
-
-                #region Draw UI stuff that needs additive blending
-                spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive);
-                foreach (Button towerSlot in TowerButtonList)
-                {
-                    towerSlot.Draw(spriteBatch);
-                }
-                spriteBatch.End();
                 #endregion
-            }
 
-            
-            #region Draw pause menu Dialog boxes
-            if (GameState == GameState.Paused)
-            {
-                spriteBatch.Begin();
+                if (GameState != GameState.Paused)
+                    StoryDialogueBox.Draw(spriteBatch, GraphicsDevice, QuadEffect);
 
-                //if (ExitDialog != null)
-                //{
-                //    ExitDialog.Draw(spriteBatch);
-                //}
-
-                if (MainMenuDialog != null)
-                {
-                    MainMenuDialog.Draw(spriteBatch);
-                }
-
-                if (ProfileMenuDialog != null)
-                {
-                    ProfileMenuDialog.Draw(spriteBatch);
-                }
-                //There's been an unexpected error here a few times. 
-                //Moved it inside the "If GameState" check to see if it helps?
                 spriteBatch.End();
-            }
             #endregion
-
-            
-
-            #region Draw the victory screen
-            if (GameState == GameState.Victory)
-            {
-                spriteBatch.Begin();
-                spriteBatch.Draw(WhiteBlock, new Rectangle(665, 180, 590, 720), null, Color.Lerp(Color.Black, Color.Transparent, 0.5f), 0, new Vector2(0, 0), SpriteEffects.None, 1);
-                spriteBatch.DrawString(RobotoRegular40_2, "mission completed", new Vector2(1920 / 2, 210), Color.White, 0, RobotoBold40_2.MeasureString("mission completed") / 2, 1, SpriteEffects.None, 0);
-                VictoryContinue.Draw(spriteBatch);
-                spriteBatch.End();
-            }
-            #endregion
-
-            #region Draw the cursor on top of EVERYTHING
-            if (GameState != GameState.Loading)
-            {
-                spriteBatch.Begin();
-                CursorDraw(spriteBatch);
-                spriteBatch.End();
             }
 
-            if (GameState == GameState.Playing && CurrentTurret != null)
+            #region Draw the cursor detail - circular bars showing overheat etc.
+            if (GameState != GameState.Loading && GameState == GameState.Playing && CurrentTurret != null)
             {
-                spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.NonPremultiplied, SamplerState.LinearWrap,
-                DepthStencilState.None, RasterizerState.CullCounterClockwise, HealthBarEffect);
+                //THIS MAY HAVE BEEN CAUSING UNEXPECTED ERROR. IT WASN'T CHECKING IF GAMESTATE != LOADING FIRST
+                //MOVED IT INSIDE THE ABOVE CURSOR DRAW CHECK.
+                spriteBatch.Begin(SpriteSortMode.Texture, BlendState.NonPremultiplied, SamplerState.LinearWrap,
+                                  DepthStencilState.None, RasterizerState.CullCounterClockwise, HealthBarEffect);
 
                 HealthBarEffect.Parameters["meterValue"].SetValue(((CurrentTurret.MaxHeat / 100) * CurrentTurret.CurrentHeat) / 100);
                 spriteBatch.Draw(HealthBarSprite, new Vector2(CursorPosition.X, CursorPosition.Y), null, Color.White, MathHelper.ToRadians(-90),
                            new Vector2(HealthBarSprite.Width / 2, HealthBarSprite.Height / 2), 1f, SpriteEffects.None, 0);
 
-                //HealthBarEffect.Parameters["meterValue"].SetValue((((float)CurrentTurret.ElapsedTime / 100) * (float)CurrentTurret.FireDelay) / 100);
-                //spriteBatch.Draw(HealthBarSprite, new Vector2(CursorPosition.X, CursorPosition.Y), null, Color.White, MathHelper.ToRadians(-90),
-                //           new Vector2(HealthBarSprite.Width / 2, HealthBarSprite.Height / 2), 1f, SpriteEffects.FlipVertically, 0);
-
                 spriteBatch.End();
             }
             #endregion
-            #endregion
-            #endregion
-
-            //#region Apply pixel shaders to game world
-            ////Layer up all the shaders that need to be applied to the game world - Not including the interface
-            //ScreenTex = GameRenderTarget;
-
-            //if (GameState == GameState.Playing || GameState == GameState.Paused)
-            //{
-            //    ShieldBubbleEffect.Parameters["ScreenTexture"].SetValue(GameRenderTarget);
-            //    ShockWaveEffect.Parameters["ScreenTexture"].SetValue(GameRenderTarget);
-
-            //    if (Tower.CurrentShield > 0)
-            //    {
-            //        ScreenTex = HandleShaders(GameRenderTarget
-            //                                  , ShockWaveEffect.CurrentTechnique.Passes[0]
-            //                                  //, ShieldBubbleEffect.CurrentTechnique.Passes[0]
-            //                                  );
-            //    }
-            //    else
-            //    {
-            //        ScreenTex = HandleShaders(GameRenderTarget
-            //                                  , ShockWaveEffect.CurrentTechnique.Passes[0]
-            //                                  );
-            //    }
-            //}
-            //#endregion
             
             #region Draw everything to the backbuffer
             GraphicsDevice.SetRenderTarget(null);
             GraphicsDevice.Clear(Color.Black);
 
+            targetBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
             #region DRAW ACTUAL GAME
-            if (GameState == GameState.Playing || GameState == GameState.Paused || GameState == GameState.Victory)
+            if (GameState == GameState.Playing || GameState == GameState.Paused || GameState == GameState.Victory && IsLoading == false)
             {
-                //if (ScreenTex != null)
-                {
-                    //CrepuscularEffect.Parameters["ColorMap"].SetValue(ScreenTex);
-                    targetBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, null, null);
-                    //CrepuscularEffect.CurrentTechnique.Passes[0].Apply();
-
-
-
-                    targetBatch.Draw(GameRenderTarget1, new Rectangle(0, (int)(ActualResolution.Y - CurrentSettings.ResHeight) / 2,
-                                     CurrentSettings.ResWidth, CurrentSettings.ResHeight), null, Color.White, 0, Vector2.Zero,
-                                     SpriteEffects.None, 1f);
-
-                    targetBatch.Draw(GameRenderTarget2, new Rectangle(0, (int)(ActualResolution.Y - CurrentSettings.ResHeight) / 2,
-                                     CurrentSettings.ResWidth, CurrentSettings.ResHeight), null, Color.White, 0, Vector2.Zero,
-                                     SpriteEffects.None, 0.5f);
-
-                    targetBatch.GraphicsDevice.BlendState = Multiply;
-                    targetBatch.Draw(LightMap, new Rectangle(0, (int)(ActualResolution.Y - CurrentSettings.ResHeight) / 2,
-                    CurrentSettings.ResWidth, CurrentSettings.ResHeight), null, Color.White, 0, Vector2.Zero,
-                    SpriteEffects.None, 1f);
-
-                    targetBatch.GraphicsDevice.BlendState = BlendState.Additive;
-                    targetBatch.Draw(GameRenderTarget3, new Rectangle(0, (int)(ActualResolution.Y - CurrentSettings.ResHeight) / 2,
-                                     CurrentSettings.ResWidth, CurrentSettings.ResHeight), null, Color.White, 0, Vector2.Zero,
-                                     SpriteEffects.None, 1);
-
-                    targetBatch.DrawString(DefaultFont, Error, new Vector2(100, 100), Color.Red);
-                    targetBatch.End();
-                }
+                targetBatch.Draw(GameRenderTarget1, ScreenDrawRectangle, null, Color.White, 0, Vector2.Zero, SpriteEffects.None, 1f);
+                targetBatch.Draw(UIRenderTarget, ScreenDrawRectangle, null, Color.White, 0, Vector2.Zero, SpriteEffects.None, 0);
             }
             #endregion
 
             #region DRAW THE MENU ITEMS
-            //Check loading screen animation state
             if (GameState != GameState.Playing)
             {
-                if (MenuRenderTarget != null)
-                {
-                    //Keeps getting an unexpected error here. Might need to make another render target just for the loading screen
-                    targetBatch.Begin(SpriteSortMode.Texture, BlendState.AlphaBlend);
-                    targetBatch.Draw(MenuRenderTarget, new Rectangle(0, (int)(ActualResolution.Y - CurrentSettings.ResHeight) / 2,
-                                     CurrentSettings.ResWidth, CurrentSettings.ResHeight), null, Color.White, 0, Vector2.Zero,
-                                     SpriteEffects.None, 0);
-                    targetBatch.DrawString(DefaultFont, Error, new Vector2(100, 100), Color.Red);
-                    targetBatch.End();
-                }
+                targetBatch.Draw(MenuRenderTarget, ScreenDrawRectangle, null, Color.White, 0, Vector2.Zero, SpriteEffects.None, 0);
             }
             #endregion
 
-            #region DRAW THE UI ITEMS, MOUSE, ETC.
-            if (GameState == GameState.Playing ||
-                GameState == GameState.Victory ||
-                GameState == GameState.Paused &&
-                UIRenderTarget != null)
-            {
-                targetBatch.Begin();
-                targetBatch.Draw(UIRenderTarget, new Rectangle(0, (int)(ActualResolution.Y - CurrentSettings.ResHeight) / 2,
-                                 CurrentSettings.ResWidth, CurrentSettings.ResHeight), null, Color.White, 0, Vector2.Zero,
-                                 SpriteEffects.None, 0);
-                targetBatch.DrawString(DefaultFont, Error, new Vector2(100, 100), Color.Red);
-                targetBatch.End();
-            }
-            #endregion
+            CursorDraw(targetBatch);
+            targetBatch.End();
+
             #endregion
             base.Draw(gameTime);
         }
 
         protected override void Update(GameTime gameTime)
         {
+            CurrentGameTime = gameTime;
             //This is just the stuff that needs to be updated every step
             //This is where I call all the smaller procedures that I broke the update into   
             CurrentMouseState = Mouse.GetState();
+            CursorPosition = GetRealMousePosition();
+
             CurrentKeyboardState = Keyboard.GetState();
             
             Slow = gameTime.IsRunningSlowly;
@@ -1682,8 +2058,6 @@ namespace TowerDefensePrototype
                 ShieldBar.Update(Tower.MaxShield, Tower.CurrentShield, gameTime);
 
                 Tower.Update(gameTime);
-
-                //InvaderUpdate(gameTime);
                 
                 RightClickClearSelected();
 
@@ -1700,9 +2074,6 @@ namespace TowerDefensePrototype
 
                 if (WaveCountDown != null && WaveCountDown.CurrentSeconds > -1)
                     WaveCountDown.Update(gameTime);
-
-                if (GameState != GameState.Playing)
-                    return;
 
                 if (InGameInformation != null)
                     InGameInformation.Update(CursorPosition, gameTime);
@@ -2108,7 +2479,7 @@ namespace TowerDefensePrototype
                 #endregion
 
 
-                LightList = LightList.OrderBy(Light => Light.DrawDepth).ToList();                
+                LightList = LightList.OrderByDescending(Light => Light.DrawDepth).ToList();                
                 
                 //Powerups have to be applied before the invaders are updates and after the explosions and projectiles are updated
                 //Create explosions/projectiles
@@ -2132,656 +2503,6 @@ namespace TowerDefensePrototype
 
             base.Update(gameTime);
         }
-
-        #region CONTENT that needs to be loaded
-        protected override void LoadContent()
-        {
-            spriteBatch = new SpriteBatch(GraphicsDevice);
-            targetBatch = new SpriteBatch(GraphicsDevice);
-
-            GameRenderTarget1 = new RenderTarget2D(GraphicsDevice, 1920, 1080);
-            GameRenderTarget2 = new RenderTarget2D(GraphicsDevice, 1920, 1080);
-            GameRenderTarget3 = new RenderTarget2D(GraphicsDevice, 1920, 1080);
-            LightMap = new RenderTarget2D(GraphicsDevice, 1920, 1080, false, SurfaceFormat.Rgba64, DepthFormat.Depth24Stencil8, 8, RenderTargetUsage.PreserveContents);
-
-            CrepuscularMap = new RenderTarget2D(GraphicsDevice, 1920, 1080);
-
-            UIRenderTarget = new RenderTarget2D(GraphicsDevice, 1920, 1080, 
-                false, SurfaceFormat.Rgba64, DepthFormat.Depth24Stencil8, 0, RenderTargetUsage.DiscardContents);
-            
-            MenuRenderTarget = new RenderTarget2D(GraphicsDevice, 1920, 1080);
-            ShaderTarget1 = new RenderTarget2D(GraphicsDevice, 1920, 1080);
-            ShaderTarget2 = new RenderTarget2D(GraphicsDevice, 1920, 1080);
-
-            MainMenuBackground.LoadContent(SecondaryContent);
-
-            BlankTexture = SecondaryContent.Load<Texture2D>("Blank");
-
-            DefaultCursor = SecondaryContent.Load<Texture2D>("Cursors/DefaultCursor");
-            CrosshairCursor = SecondaryContent.Load<Texture2D>("Cursors/Crosshair");
-
-            TooltipBox = SecondaryContent.Load<Texture2D>("InformationBox");
-
-            CurrencyIcon = SecondaryContent.Load<Texture2D>("Icons/CurrencyIcon");
-
-            #region Cursor sprites
-            //Turret Cursors        
-            MachineGunTurretCursor = SecondaryContent.Load<Texture2D>("Icons/TurretIcons/MachineGunTurretIcon");
-            CannonTurretCursor = SecondaryContent.Load<Texture2D>("Icons/TurretIcons/MachineGunTurretIcon");
-            FlameThrowerTurretCursor = SecondaryContent.Load<Texture2D>("Icons/TurretIcons/MachineGunTurretIcon");
-            LightningTurretCursor = SecondaryContent.Load<Texture2D>("Icons/TurretIcons/MachineGunTurretIcon");
-            ClusterTurretCursor = SecondaryContent.Load<Texture2D>("Icons/TurretIcons/MachineGunTurretIcon");
-            FelCannonTurretCursor = SecondaryContent.Load<Texture2D>("Icons/TurretIcons/MachineGunTurretIcon");
-            BeamTurretCursor = SecondaryContent.Load<Texture2D>("Icons/TurretIcons/MachineGunTurretIcon");
-            FreezeTurretCursor = SecondaryContent.Load<Texture2D>("Icons/TurretIcons/MachineGunTurretIcon");
-            BoomerangTurretCursor = SecondaryContent.Load<Texture2D>("Icons/TurretIcons/MachineGunTurretIcon");
-            GrenadeTurretCursor = SecondaryContent.Load<Texture2D>("Icons/TurretIcons/MachineGunTurretIcon");
-            GasGrenadeTurretCursor = SecondaryContent.Load<Texture2D>("Icons/TurretIcons/MachineGunTurretIcon");
-            ShotgunTurretCursor = SecondaryContent.Load<Texture2D>("Icons/TurretIcons/MachineGunTurretIcon");
-            PersistentBeamTurretCursor = SecondaryContent.Load<Texture2D>("Icons/TurretIcons/MachineGunTurretIcon");
-
-            //Trap Cursors
-            WallTrapCursor = SecondaryContent.Load<Texture2D>("Icons/TrapIcons/WallTrapIcon");
-            SpikesTrapCursor = SecondaryContent.Load<Texture2D>("Icons/TrapIcons/FireTrapIcon");
-            CatapultTrapCursor = SecondaryContent.Load<Texture2D>("Icons/TrapIcons/FireTrapIcon");
-            FireTrapCursor = SecondaryContent.Load<Texture2D>("Icons/TrapIcons/FireTrapIcon");
-            IceTrapCursor = SecondaryContent.Load<Texture2D>("Icons/TrapIcons/FireTrapIcon");
-            TarTrapCursor = SecondaryContent.Load<Texture2D>("Icons/TrapIcons/TarTrapIcon");
-            BarrelTrapCursor = SecondaryContent.Load<Texture2D>("Icons/TrapIcons/FireTrapIcon");
-            SawBladeTrapCursor = SecondaryContent.Load<Texture2D>("Icons/TrapIcons/FireTrapIcon");
-            LineTrapCursor = SecondaryContent.Load<Texture2D>("Icons/TrapIcons/FireTrapIcon");
-            TriggerTrapCursor = SecondaryContent.Load<Texture2D>("Icons/TrapIcons/FireTrapIcon");
-            #endregion
-
-            #region Load icon sprites
-
-            LockIcon = SecondaryContent.Load<Texture2D>("Icons/LockIcon");
-            HealthIcon = SecondaryContent.Load<Texture2D>("Icons/HealthIcon");
-            OverHeatIcon = SecondaryContent.Load<Texture2D>("Icons/OverHeatIcon");
-
-            //Turret icons
-            BeamTurretIcon = SecondaryContent.Load<Texture2D>("Icons/TurretIcons/BeamTurretIcon");
-            BoomerangTurretIcon = SecondaryContent.Load<Texture2D>("Icons/TurretIcons/BoomerangTurretIcon");
-            CannonTurretIcon = SecondaryContent.Load<Texture2D>("Icons/TurretIcons/CannonTurretIcon");
-            ClusterTurretIcon = SecondaryContent.Load<Texture2D>("Icons/TurretIcons/ClusterTurretIcon");
-            FelCannonTurretIcon = SecondaryContent.Load<Texture2D>("Icons/TurretIcons/FelCannonTurretIcon");
-            FlameThrowerTurretIcon = SecondaryContent.Load<Texture2D>("Icons/TurretIcons/FlameThrowerTurretIcon");
-            FreezeTurretIcon = SecondaryContent.Load<Texture2D>("Icons/TurretIcons/FreezeTurretIcon");
-            GrenadeTurretIcon = SecondaryContent.Load<Texture2D>("Icons/TurretIcons/GrenadeTurretIcon");
-            GasGrenadeTurretIcon = SecondaryContent.Load<Texture2D>("Icons/TurretIcons/GrenadeTurretIcon");
-            LightningTurretIcon = SecondaryContent.Load<Texture2D>("Icons/TurretIcons/LightningTurretIcon");
-            MachineGunTurretIcon = SecondaryContent.Load<Texture2D>("Icons/TurretIcons/MachineGunTurretIcon");
-            PersistentBeamTurretIcon = SecondaryContent.Load<Texture2D>("Icons/TurretIcons/PersistentBeamTurretIcon");
-            ShotgunTurretIcon = SecondaryContent.Load<Texture2D>("Icons/TurretIcons/ShotgunTurretIcon");
-
-            //Trap Icons
-            CatapultTrapIcon = SecondaryContent.Load<Texture2D>("Icons/TrapIcons/CatapultTrapIcon");
-            IceTrapIcon = SecondaryContent.Load<Texture2D>("Icons/TrapIcons/IceTrapIcon");
-            TarTrapIcon = SecondaryContent.Load<Texture2D>("Icons/TrapIcons/TarTrapIcon");
-            WallTrapIcon = SecondaryContent.Load<Texture2D>("Icons/TrapIcons/WallTrapIcon");
-            BarrelTrapIcon = SecondaryContent.Load<Texture2D>("Icons/TrapIcons/BarrelTrapIcon");
-            FireTrapIcon = SecondaryContent.Load<Texture2D>("Icons/TrapIcons/FireTrapIcon");
-            LineTrapIcon = SecondaryContent.Load<Texture2D>("Icons/TrapIcons/LineTrapIcon");
-            SawBladeTrapIcon = SecondaryContent.Load<Texture2D>("Icons/TrapIcons/SawBladeTrapIcon");
-            SpikesTrapIcon = SecondaryContent.Load<Texture2D>("Icons/TrapIcons/SpikesTrapIcon");
-
-            //Damage Type Icons
-            ConcussiveDamageIcon = SecondaryContent.Load<Texture2D>("Icons/DamageTypeIcons/ConcussiveDamageIcon");
-            KineticDamageIcon = SecondaryContent.Load<Texture2D>("Icons/DamageTypeIcons/ConcussiveDamageIcon");
-            FireDamageIcon = SecondaryContent.Load<Texture2D>("Icons/DamageTypeIcons/FireDamageIcon");
-            RadiationDamageIcon = SecondaryContent.Load<Texture2D>("Icons/DamageTypeIcons/ConcussiveDamageIcon");
-            ElectricDamageIcon = SecondaryContent.Load<Texture2D>("Icons/DamageTypeIcons/ConcussiveDamageIcon");
-            #endregion
-
-            #region Menu sounds
-            MenuClick = SecondaryContent.Load<SoundEffect>("Sounds/Menu/MenuPing");
-            MenuWoosh = SecondaryContent.Load<SoundEffect>("Sounds/Menu/MenuWoosh");
-            MenuMusic = SecondaryContent.Load<SoundEffect>("Sounds/Menu/MenuMusic1");
-
-            MenuMusicInstance = MenuMusic.CreateInstance();
-            MenuMusicInstance.IsLooped = true;
-            //MenuMusicInstance.Play();
-            #endregion
-
-            Projection = Matrix.CreateOrthographicOffCenter(0, 1920, 1080, 0, -1.0f, 1.0f);
-
-            BackgroundEffect = SecondaryContent.Load<Effect>("Shaders/BackgroundEffect");
-            BackgroundEffect.Parameters["MatrixTransform"].SetValue(Projection);
-
-            ButtonBlurEffect = SecondaryContent.Load<Effect>("Shaders/ButtonBlurEffect");
-            ButtonBlurEffect.Parameters["MatrixTransform"].SetValue(Projection);
-
-            DrawBlack = SecondaryContent.Load<Effect>("Shaders/DrawBlack");
-            DrawBlack.Parameters["MatrixTransform"].SetValue(Projection);
-
-            FPSCounter.spriteFont = DefaultFont;
-        }
-
-        protected override void UnloadContent()
-        {
-            Content.Unload();
-            SecondaryContent.Unload();
-        }
-
-
-        private void LoadGameContent()
-        {
-            if (GameState == GameState.Loading && IsLoading == false)
-            {
-                ProfileManagementPlay.JustClicked = false;
-
-                LoadingContentString = "Starting Load";
-
-                IsLoading = true;
-                AllLoaded = false;
-
-                ReadyToPlace = false;
-
-                FlareMap1 = Content.Load<Texture2D>("FlareMap1");
-
-                LoadingContentString = "Loading Audio";
-                LoadGameSounds();
-
-                LoadingContentString = "Loading Special Particles";
-                LightningShellCasing = Content.Load<Texture2D>("Particles/LightningTurretShell");
-                ShellCasing = Content.Load<Texture2D>("Particles/MachineShell");
-                MachineBullet = Content.Load<Texture2D>("Particles/MachineBullet");
-                Coin = Content.Load<Texture2D>("Particles/Coin");
-
-                Tower.LoadContent(Content);
-
-                LoadingContentString = "Loading Invaders";
-                LoadInvaderSprites();
-
-                LoadingContentString = "Loading Turrets";
-                LoadTurretSprites();
-
-                LoadingContentString = "Loading Traps";
-                LoadTrapSprites();
-
-                LoadingContentString = "Loading Projectiles";
-                LoadProjectileSprites();
-
-                LoadingContentString = "Loading Weather";
-                LoadWeatherSprites();
-
-                LoadingContentString = "Setting Up Lists";
-                #region List Creating Code
-                //This code just creates the lists for the buttons and traps with the right number of possible slots
-                TrapList = new List<Trap>();
-
-                TurretList = new List<Turret>();
-                for (int i = 0; i < TowerButtons; i++)
-                {
-                    TurretList.Add(null);
-                    //TurretList[i].LoadContent(Content);
-                }
-
-                InvaderList = new List<Invader>();
-
-                HeavyProjectileList = new List<HeavyProjectile>();
-                TimedProjectileList = new List<TimerHeavyProjectile>();
-                InvaderHeavyProjectileList = new List<HeavyProjectile>();
-                InvaderLightProjectileList = new List<LightProjectile>();
-                LightningList = new List<LightningBolt>();
-                TrailList = new List<BulletTrail>();
-                InvaderTrailList = new List<BulletTrail>();
-                YSortedEmitterList = new List<Emitter>();
-                EmitterList2 = new List<Emitter>();
-                AlphaEmitterList = new List<Emitter>();
-                AdditiveEmitterList = new List<Emitter>();
-                ExplosionList = new List<Explosion>();
-                EnemyExplosionList = new List<Explosion>();
-                ShellCasingList = new List<Particle>();
-                CoinList = new List<Particle>();
-                LightProjectileList = new List<LightProjectile>();
-                TerrainSpriteList = new List<StaticSprite>();
-                WeatherSpriteList = new List<StaticSprite>();
-                //NumberChangeList = new List<NumberChange>();
-                #endregion
-
-                LoadingContentString = "Setting Up Buttons";
-                #region Setting up the buttons
-                TowerButtonList = new List<Button>();
-                SpecialAbilitiesButtonList = new List<Button>();
-
-                for (int i = 0; i < TowerButtons; i++)
-                {
-                    TowerButtonList.Add(new Button(TurretSlotButtonSprite, new Vector2(40 + Tower.DestinationRectangle.Width - 32, 500 + ((38 + 90) * i) - 32)));
-                    TowerButtonList[i].LoadContent();
-                }
-
-                CooldownButtonList.Clear();
-
-                //Not clearing these lists causes a Disposed Object error to show up for some reason
-                //Don't forget to clear the lists between levels or even when moving from menu back to game
-                UIWeaponInfoList.Clear();
-
-                UITrapQuickInfoList.Clear();
-                UITrapOutlineList.Clear();
-                UITurretOutlineList.Clear();
-                UITurretInfo = null;
-                //CurrentTurret = null;
-                ClearTurretSelect();
-                ClearSelected();
-                VerletShells.Clear();
-
-                for (int i = 0; i < 8; i++)
-                {
-                    CooldownButton button = new CooldownButton(new Vector2(565 + (i * 100), 1080 - 80), new Vector2(90, 65), 1, PlaceWeaponList[i].IconTexture);
-
-                    if (CurrentProfile.Buttons[i] != null)
-                    {
-                        UIWeaponInfoTip uiWeaponInfo = new UIWeaponInfoTip(Vector2.Zero, null, null);
-
-                        if (CurrentProfile.Buttons[i].CurrentTurret != null)
-                        {
-                            uiWeaponInfo = new UIWeaponInfoTip(new Vector2(button.CurrentPosition.X, button.CurrentPosition.Y - 32),
-                                                            ApplyTurretUpgrades((TurretType)CurrentProfile.Buttons[i].CurrentTurret, 0), null);
-                        }
-
-                        if (CurrentProfile.Buttons[i].CurrentTrap != null)
-                        {
-                            uiWeaponInfo = new UIWeaponInfoTip(new Vector2(button.CurrentPosition.X, button.CurrentPosition.Y - 32),
-                                                              null, ApplyTrapUpgrades((TrapType)CurrentProfile.Buttons[i].CurrentTrap, Vector2.Zero));
-                        }
-
-
-                        uiWeaponInfo.CurrencyIcon = CurrencyIcon;
-                        uiWeaponInfo.RobotoBold40_2 = RobotoBold40_2;
-                        uiWeaponInfo.RobotoRegular20_0 = RobotoRegular20_0;
-                        uiWeaponInfo.RobotoRegular20_2 = RobotoRegular20_2;
-                        uiWeaponInfo.RobotoItalic20_0 = RobotoItalic20_0;
-
-                        uiWeaponInfo.LoadContent(Content);
-                        UIWeaponInfoList.Add(uiWeaponInfo);
-                    }
-                    else
-                    {
-                        UIWeaponInfoList.Add(null);
-                    }
-
-                    CooldownButtonList.Add(button);
-                }
-
-                //if (Tutorial == true)
-                //{
-                //    SelectButtonList[0].IconTexture = MachineGunTurretIcon;
-                //    SelectButtonList[0].LoadContent();
-
-                //    SelectButtonList[1].IconTexture = FireTrapIcon;
-                //    SelectButtonList[1].LoadContent();
-                //}
-
-                SpecialAbilitiesButtonList.Add(new Button(DiamondButtonSprite, new Vector2(1450, 1080-120)));
-                SpecialAbilitiesButtonList.Add(new Button(DiamondButtonSprite, new Vector2(1450+64+4, 1080 - 120)));
-                SpecialAbilitiesButtonList.Add(new Button(DiamondButtonSprite, new Vector2(1450 + 32 + 2, 1080 - 120 - 32 - 2)));
-                SpecialAbilitiesButtonList.Add(new Button(DiamondButtonSprite, new Vector2(1450 + 32 + 2, 1080 - 120 + 32 + 2)));
-
-                foreach (Button button in SpecialAbilitiesButtonList)
-                {
-                    button.LoadContent();
-                }
-                
-                #endregion
-
-                LoadingContentString = "Setting Up Dialogue";
-                MysteryEmployerTexture = Content.Load<Texture2D>("MysteryEmployer");
-                StoryDialogueBox = new StoryDialogueBox(new Vector2(-400, 64), new Vector2(0, 64), new Vector2(500, 180), MysteryEmployerTexture, RobotoRegular20_0, StoryDialogue, CurrentProfile.Name);
-                //StoryDialogueBox.Text = StoryDialogue.Lines[0];
-                //StoryDialogueBox.ReplaceName(CurrentProfile.Name);
-                //StoryDialogueBox.WrapText();
-
-                LoadingContentString = "Loading Shaders";
-                CrepuscularEffect = Content.Load<Effect>("Shaders/CrepuscularRaysEffect");
-                CrepuscularEffect.Parameters["Projection"].SetValue(Matrix.CreateOrthographicOffCenter(0, 1920, 1080, 0, 0, 1));
-
-                LoadingContentString += "1";
-                HealthBarEffect = Content.Load<Effect>("Shaders/HealthBarEffect");
-                HealthBarEffect.Parameters["MatrixTransform"].SetValue(Projection);
-                HealthBarSprite = Content.Load<Texture2D>("HealthBarSprite");
-
-                LoadingContentString += "2";
-                ShockWaveEffect = Content.Load<Effect>("Shaders/ShockWaveEffect");
-                ShockWaveEffect.Parameters["MatrixTransform"].SetValue(Projection);
-
-                LoadingContentString += "3";
-                ShieldBubbleEffect = Content.Load<Effect>("Shaders/ShieldBubbleEffect");
-                LoadingContentString += "Cont";
-                ShieldBubbleEffect.Parameters["MatrixTransform"].SetValue(Projection);
-                LoadingContentString += "Matr";
-                ShieldBubbleEffect.Parameters["NormalTexture"].SetValue(Content.Load<Texture2D>("ShieldNormalMap"));
-                LoadingContentString += "Norm";
-                ShieldBubbleEffect.Parameters["DistortionTexture"].SetValue(Content.Load<Texture2D>("ShieldDistortionMap"));
-                LoadingContentString += "Dist";
-
-                LoadingContentString = "Setting Up Waves";
-                MaxWaves = CurrentLevel.WaveList.Count;
-                CurrentWaveIndex = 0;
-
-                StartWaveButton = new Button(ButtonRightSprite, new Vector2(1920-(ButtonRightSprite.Width/3), 200), null, null, null, "start waves", RobotoRegular20_2, "Right");
-                StartWaveButton.LoadContent();
-
-                Lightning.LoadContent(Content);
-                Bolt.LoadContent(Content);
-
-                LoadingContentString = "Loading Decals";
-                ExplosionDecal1 = Content.Load<Texture2D>("Decals/ExplosionDecal1");
-                BloodDecal1 = Content.Load<Texture2D>("Decals/BloodDecal1");
-
-                LoadingContentString = "Loading Particles";
-                //Texture2D SplodgeParticle, SmokeParticle, FireParticle, BallParticle;
-                SplodgeParticle = Content.Load<Texture2D>("Particles/Splodge");
-                SmokeParticle = Content.Load<Texture2D>("Particles/Smoke");
-                FireParticle = Content.Load<Texture2D>("Particles/FireParticle");
-                FireParticle2 = Content.Load<Texture2D>("Particles/FireParticle2");
-                ExplosionParticle = Content.Load<Texture2D>("Particles/ExplosionParticle");
-                ExplosionParticle2 = Content.Load<Texture2D>("Particles/ExplosionParticle2");
-                BallParticle = Content.Load<Texture2D>("Particles/GlowBall");
-                SparkParticle = Content.Load<Texture2D>("Particles/Spark");
-                RoundSparkParticle = Content.Load<Texture2D>("Particles/RoundSpark");
-                HealthParticle = Content.Load<Texture2D>("Particles/HealthParticle");
-
-                BulletTrailCap = Content.Load<Texture2D>("Particles/Cap");
-                BulletTrailSegment = Content.Load<Texture2D>("Particles/Segment");
-
-                TerrainShrub1 = Content.Load<Texture2D>("Terrain/Shrub");
-
-                GrassBlade1 = Content.Load<Texture2D>("GrassBlade1");
-
-                PowerupDeliveryPod = Content.Load<Texture2D>("PowerupDeliveryPod");
-                PowerupDeliveryFin = Content.Load<Texture2D>("PowerupDeliveryFin");
-
-                JetTexture = Content.Load<Texture2D>("JetSprite3");
-                LightTexture = Content.Load<Texture2D>("SmallLight");
-                BaseLightTexture = Content.Load<Texture2D>("BaseLight");
-
-                //LightList.Add(new Light(LightTexture, new Vector2(900, 800), new Vector2(1, 1), Color.White));
-
-                //Light baseLight = new Light(BaseLightTexture, new Vector2(1920/2, 1080/2), new Vector2(1, 1), Color.Lerp(Color.White, Color.Transparent, 0.5f));
-                //baseLight.DrawDepth = 0f;
-                //LightList.Add(baseLight);
-               
-                
-                //LightList.Add(baseLight);
-                
-                //for (int i = 0; i < 15; i++)
-                //{
-                //    Vector2 newPos = new Vector2(Random.Next(0, 1920), Random.Next(690, 930));
-
-                //    if (TerrainSpriteList.Any(Sprite => Vector2.Distance(Sprite.Position, newPos) < 150))
-                //    {
-                //        newPos = new Vector2(Random.Next(0, 1920), Random.Next(690, 930));
-                //    }
-
-                //    StaticSprite terrainSprite = new StaticSprite(TerrainShrub1, newPos);
-                //    terrainSprite.DrawDepth = (float)(terrainSprite.DestinationRectangle.Bottom / 1080.0);
-                //    TerrainSpriteList.Add(terrainSprite);                    
-                //}
-
-                //for (int x = 250; x < 1920; x += 80)
-                //{
-                //    for (int y = 690; y < 930; y += 80)
-                //    {
-                //        for (int i = 0; i < 10; i++)
-                //        {
-                //            GrassBladeList.Add(new GrassBlade(GrassBlade1,
-                //                new Vector2(x + Random.Next(-40, 40), y + Random.Next(-40, 40)),
-                //                new Vector2(Random.Next(2, 6), Random.Next(20, 40))));
-                //        }
-                //    }
-                //}
-
-                LoadingContentString = "Loading UI";
-                UITurretInfo = new UITurretInfo();
-                UITurretInfo.Texture = WhiteBlock;
-                UITurretInfo.OverHeatIconTexture = OverHeatIcon;
-                UITurretInfo.Font = BigUIFont;
-
-                HealthBar = new UISlopedBar(new Vector2(1920/2 - 810/2, 980), new Vector2(800 + 15, 15), Color.Lerp(Color.DarkRed, Color.LightGray, 0.2f), false, 15, 0);
-                ShieldBar = new UISlopedBar(new Vector2(1920 / 2 - 810 / 2 + 5, 970), new Vector2(810 - 5 + 15, 10), Color.Lerp(Color.White, Color.LightGray, 0.2f), true, 0, 10);
-
-                AllLoaded = true;
-                LoadingContentString = "All Loaded - Press any key to continue";
-
-                //LoadingThread.Abort();
-                //IsLoading = false;
-
-                //GameState = GameState.Playing;
-            }
-        } //This is called as a separate thread to be displayed while content is loaded
-
-        private void UnloadGameContent()
-        {
-            //Clear some variables that aren't cleared as they're not lists that are reset back to new List<> when
-            //the "List Creating Code" is called
-            PowerupDelivery = null;
-            SelectedTrap = null;
-            SelectedTurret = null;
-            DecalList.Clear();
-
-            Content.Unload();
-        } //This is called when the player exits to the main menu. Unloads game content, not menu content
-
-
-        private void LoadGameSounds()
-        {
-            //Load all the in-game sounds here
-            //Ambience
-
-
-
-            //Turrets
-            TurretOverheat = Content.Load<SoundEffect>("Sounds/TurretOverheat");
-            LightningSound = Content.Load<SoundEffect>("Sounds/LightningSound");
-            CannonExplosion = Content.Load<SoundEffect>("Sounds/CannonExplosion");
-            CannonFire = Content.Load<SoundEffect>("Sounds/CannonFire");
-            MachineShot1 = Content.Load<SoundEffect>("Sounds/Shot11");
-
-            //Traps
-            PlaceTrap = Content.Load<SoundEffect>("Sounds/PlaceTrap");
-            FireTrapStart = Content.Load<SoundEffect>("Sounds/FireTrapStart");
-
-
-            //Invaders
-            
-
-            
-            GroundImpact = Content.Load<SoundEffect>("Sounds/Shot12");
-            Ricochet1 = Content.Load<SoundEffect>("Sounds/Ricochet1");
-            Ricochet2 = Content.Load<SoundEffect>("Sounds/Ricochet2");
-            Ricochet3 = Content.Load<SoundEffect>("Sounds/Ricochet3");
-            Splat1 = Content.Load<SoundEffect>("Sounds/Splat1");
-            Splat2 = Content.Load<SoundEffect>("Sounds/Splat2");
-            Implosion = Content.Load<SoundEffect>("Sounds/Implosion2");
-            
-        }
-
-        private void LoadInvaderSprites()
-        {
-            IceBlock = Content.Load<Texture2D>("IceBlock");
-            Shadow = Content.Load<Texture2D>("Shadow");
-
-            //SoldierSprite = new List<Texture2D>(4);
-            //SoldierSprite.Add(Content.Load<Texture2D>("Invaders/Soldier/SoldierWalk"));
-            //SoldierSprite.Add(Content.Load<Texture2D>("Invaders/Soldier/SoldierStand"));
-            //SoldierSprite.Add(Content.Load<Texture2D>("Invaders/Soldier/SoldierMelee"));
-
-            SoldierSprite = new List<Texture2D>(3) 
-            {
-                Content.Load<Texture2D>("Invaders/Soldier/SoldierWalk"),
-                Content.Load<Texture2D>("Invaders/Soldier/SoldierStand"),
-                Content.Load<Texture2D>("Invaders/Soldier/SoldierMelee")
-            };
-
-            StationaryCannonSprite = new List<Texture2D>(2)
-            {
-                Content.Load<Texture2D>("Invaders/StationaryCannon/StationaryCannonBase"),
-                Content.Load<Texture2D>("Invaders/StationaryCannon/StationaryCannonBarrel")
-            };
-
-            HealDroneSprite = new List<Texture2D>(1)
-            {
-                Content.Load<Texture2D>("Invaders/HealDrone/HealDrone")
-            };
-
-
-            //SoldierSprite = Content.Load<Texture2D>("Invaders/Soldier3");
-            //BatteringRamSprite = Content.Load<Texture2D>("Invaders/Invader");
-            //AirshipSprite = Content.Load<Texture2D>("Invaders/Invader");
-            //ArcherSprite = Content.Load<Texture2D>("Invaders/Invader");
-            //TankSprite = Content.Load<Texture2D>("Invaders/BlankTank");
-            //SpiderSprite = Content.Load<Texture2D>("Invaders/Invader");
-            //SlimeSprite = Content.Load<Texture2D>("Invaders/Invader");
-            //SuicideBomberSprite = Content.Load<Texture2D>("Invaders/Invader");
-            //FireElementalSprite = Content.Load<Texture2D>("Invaders/Invader");
-            //TestInvaderSprite = Content.Load<Texture2D>("Invaders/Invader");
-        }
-
-        private void LoadTrapSprites()
-        {
-            WallSprite = new List<Texture2D>(1)
-            {
-                Content.Load<Texture2D>("Traps/WallTrap")
-            };
-
-            BarrelTrapSprite = new List<Texture2D>(1)
-            {
-                Content.Load<Texture2D>("Traps/Trap")
-            };
-
-            CatapultTrapSprite = new List<Texture2D>(1)
-            {
-                Content.Load<Texture2D>("Traps/Trap")
-            };
-
-            IceTrapSprite = new List<Texture2D>(1)
-            {
-                Content.Load<Texture2D>("Traps/Trap")
-            };
-
-            TarTrapSprite = new List<Texture2D>(1)
-            {
-                Content.Load<Texture2D>("Traps/Trap")
-            };
-
-            LineTrapSprite = new List<Texture2D>(1)
-            {
-                Content.Load<Texture2D>("Traps/Trap")
-            };
-
-            SawBladeTrapSprite = new List<Texture2D>(1)
-            {
-                Content.Load<Texture2D>("Traps/Trap")
-            };
-
-            SpikeTrapSprite = new List<Texture2D>(1)
-            {
-                Content.Load<Texture2D>("Traps/Trap")
-            };
-
-            FireTrapSprite = new List<Texture2D>(1)
-            {
-                Content.Load<Texture2D>("Traps/FireTrap")
-            };
-        }
-
-        private void LoadProjectileSprites()
-        {
-            CannonBallSprite = Content.Load<Texture2D>("Projectiles/CannonRound");
-            CannonBallSprite = Content.Load<Texture2D>("Projectiles/CannonRound");
-            GrenadeSprite = Content.Load<Texture2D>("Projectiles/Grenade");
-            GasGrenadeSprite = Content.Load<Texture2D>("Projectiles/Grenade");
-            FlameSprite = Content.Load<Texture2D>("Projectiles/CannonRound");
-            ClusterBombSprite = Content.Load<Texture2D>("Projectiles/CannonRound");
-            ClusterShellSprite = Content.Load<Texture2D>("Projectiles/CannonRound");
-            BoomerangSprite = Content.Load<Texture2D>("Projectiles/CannonRound");
-            AcidSprite = Content.Load<Texture2D>("Projectiles/CannonRound");
-            //"Projectiles/Torpedo";
-            //"Projectiles/ClusterBombShell";
-            //"Projectiles/AcidProjectileSprite";
-            //"Projectiles/CannonRound";
-            //"Projectiles/Arrow";
-            //"Projectiles/CannonRound";
-            //"Projectiles/ClusterBomb";
-        }
-
-        private void LoadTurretSprites()
-        {
-            TurretSelectBox = Content.Load<Texture2D>("SelectBox");
-
-            MachineGunTurretBase = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBase");
-            MachineGunTurretBarrel = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBarrel");
-
-            CannonTurretBase = Content.Load<Texture2D>("Turrets/CannonTurret/CannonTurretBase");
-            CannonTurretBarrel = Content.Load<Texture2D>("Turrets/CannonTurret/CannonTurretBarrel");
-
-            LightningTurretBase = Content.Load<Texture2D>("Turrets/LightningTurret/LightningTurretBase");
-            LightningTurretBarrel = Content.Load<Texture2D>("Turrets/LightningTurret/LightningTurretBarrel");
-
-            BeamTurretBase = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBase");
-            BeamTurretBarrel = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBarrel");
-
-            ClusterTurretBase = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBase");
-            ClusterTurretBarrel = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBarrel");
-
-            GrenadeTurretBase = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBase");
-            GrenadeTurretBarrel = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBarrel");
-
-            GasGrenadeTurretBase = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBase");
-            GasGrenadeTurretBarrel = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBarrel");
-
-            ShotgunTurretBase = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBase");
-            ShotgunTurretBarrel = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBarrel");
-
-            FlameThrowerTurretBase = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBase");
-            FlameThrowerTurretBarrel = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBarrel");
-
-            PersistentBeamTurretBase = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBase");
-            PersistentBeamTurretBarrel = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBarrel");
-
-            FelCannonTurretBase = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBase");
-            FelCannonTurretBarrel = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBarrel");
-
-            BoomerangTurretBase = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBase");
-            BoomerangTurretBarrel = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBarrel");
-        }
-
-        private void LoadWeatherSprites()
-        {
-            SnowDust1 = Content.Load<Texture2D>("Weather/SnowDust1");
-            SnowDust2 = Content.Load<Texture2D>("Weather/SnowDust2");
-            SnowDust3 = Content.Load<Texture2D>("Weather/SnowDust3");
-            SnowDust4 = Content.Load<Texture2D>("Weather/SnowDust4");
-            SnowDust5 = Content.Load<Texture2D>("Weather/SnowDust5");
-            BlurrySnowflake = Content.Load<Texture2D>("Weather/BlurrySnowflake");
-            FocusedSnowflake = Content.Load<Texture2D>("Weather/FocusedSnowflake");
-
-            BlurryEmitter = new Emitter(BlurrySnowflake, new Vector2(0, -64), new Vector2(270, 270), new Vector2(0.95f, 1.8f), 
-                new Vector2(1500, 2500), 0.5f, true, new Vector2(0, 360), new Vector2(0, 5), new Vector2(0.1f, 0.25f), 
-                Color.White, Color.White, 0.0005f, -1, 25, 1, false, new Vector2(690, 930));
-
-            FocusedEmitter = new Emitter(FocusedSnowflake, new Vector2(0, -64), new Vector2(-90, -90), new Vector2(0.5f, 0.75f), 
-                new Vector2(2000, 3000), 0.25f, true, new Vector2(0, 360), new Vector2(-1f, 1f), new Vector2(0.1f, 0.25f), 
-                Color.White, Color.White, 0.0005f, -1, 25, 1, true, new Vector2(690, 930), false, 0.25f, true, false, null, null, null, null, null, true, true, null);    
-        }
-
-        private void LoadFonts()
-        {
-            DefaultFont = SecondaryContent.Load<SpriteFont>("Fonts/RobotoRegular20_2");
-            //ButtonFont = SecondaryContent.Load<SpriteFont>("Fonts/RobotoRegular20_2");
-            TooltipFont = SecondaryContent.Load<SpriteFont>("Fonts/RobotoRegular20_0");
-            BigUIFont = SecondaryContent.Load<SpriteFont>("Fonts/RobotoRegular40_2");
-            ResourceFont = Content.Load<SpriteFont>("Fonts/RobotoRegular20_2");
-
-
-            RobotoBold40_2 = SecondaryContent.Load<SpriteFont>("Fonts/RobotoBold40_2");
-            RobotoRegular40_2 = SecondaryContent.Load<SpriteFont>("Fonts/RobotoRegular40_2");
-            RobotoRegular20_2 = SecondaryContent.Load<SpriteFont>("Fonts/RobotoRegular20_2");
-            RobotoRegular20_0 = SecondaryContent.Load<SpriteFont>("Fonts/RobotoRegular20_0");
-            RobotoItalic20_0 = SecondaryContent.Load<SpriteFont>("Fonts/RobotoItalic20_0");
-        }
-        #endregion
 
 
         #region BUTTON stuff that needs to be done every step
@@ -3042,11 +2763,22 @@ namespace TowerDefensePrototype
                                         Buttons = TutorialWeaponList
                                     };
 
-
                                     GameState = GameState.Loading;
                                     LoadingThread = new Thread(LoadGameContent);
+                                    LoadingThread.Name = "Loading Content Thread";
+                                    Debug.WriteLine(" ");
+                                    Debug.WriteLine("Loading Started At:" + gameTime.TotalGameTime.TotalSeconds.ToString());
+                                    LoadingThread.IsBackground = true;
                                     LoadingThread.Start();
                                     IsLoading = false;
+
+                                    //GameState = GameState.Loading;
+                                    //LoadingThread = new Thread(LoadGameContent);
+                                    //LoadingThread.Name = "Loading Content Thread";
+                                    //Debug.WriteLine("Loading Started At:" + gameTime.TotalGameTime.TotalSeconds.ToString());
+                                    
+                                    //LoadingThread.Start();
+                                    //IsLoading = false;
                                     break;
 
                                 case 2:
@@ -3357,6 +3089,9 @@ namespace TowerDefensePrototype
                                 StorageDevice.BeginShowSelector(this.SaveProfile, null);
                                 GameState = GameState.Loading;
                                 LoadingThread = new Thread(LoadGameContent);
+                                LoadingThread.Name = "Loading Content Thread";
+                                Debug.WriteLine(" ");
+                                Debug.WriteLine("Loading Started At:" + gameTime.TotalGameTime.TotalSeconds.ToString());
 
                                 //Changed this to run in background now. Keep an eye on it.
                                 //Did that in an attempt to stop the loading screen giving an "Unexpected Error"
@@ -3913,12 +3648,14 @@ namespace TowerDefensePrototype
                 if (AllLoaded == true && GameState == GameState.Loading)
                 {
                     //Move to the game if the play presses a key and all the content is loaded
-                    if (CurrentKeyboardState.GetPressedKeys().Count() > 0)
-                    {
+                    //if (CurrentKeyboardState.GetPressedKeys().Count() > 0)
+                    //{
+                        Debug.WriteLine("All content loaded - moving to game");
+                        Debug.WriteLine(" ");
                         IsLoading = false;
                         MenuMusicInstance.Stop();
                         GameState = GameState.Playing;
-                    }
+                    //}
                 }
                 #endregion
             }
@@ -4352,79 +4089,52 @@ namespace TowerDefensePrototype
             if (ExplosionList.Count > 0)
                 foreach (Explosion explosion in ExplosionList)
                 {
-                    ////Change the properties of the explosions based on powerups.
-                    //foreach (Powerup powerup in PowerupsList)
-                    //{
-                    //    switch (powerup.CurrentEffect.GeneralPowerup)
-                    //    {
-                    //        case GeneralPowerup.ExplosivePower:
-                    //            explosion.Damage = (float)PercentageChange(explosion.Damage, powerup.CurrentEffect.PowerupValue);
-                    //            break;
-
-                    //        case GeneralPowerup.BlastRadii:
-                    //            explosion.BlastRadius = (float)PercentageChange(explosion.BlastRadius, powerup.CurrentEffect.PowerupValue);
-                    //            break;
-                    //    }
-                    //}
-                    ////explosion.BlastRadius = explosion.BlastRadius * PowerUp.BlastRadiusValue;
-
-                    List<Trap> WallList = new List<Trap>();
-                    WallList = TrapList.FindAll(Trap => Trap.TrapType == TrapType.Wall);
-
-                    List<Invader> InRangeInvaders = InvaderList.FindAll(Invader => Vector2.Distance(PointToVector(Invader.DestinationRectangle.Center), explosion.Position) < explosion.BlastRadius).ToList();
-                    InRangeInvaders = InRangeInvaders.OrderBy(Invader => Vector2.Distance(PointToVector(Invader.DestinationRectangle.Center), explosion.Position)).ToList();
-
-                    foreach (Invader invader in InvaderList)
+                    if (explosion.Active == true)
                     {
-                        if (limit < 5)
+                        Debug.WriteLine("Position:" + explosion.Position.ToString() + ", Radius:" + explosion.BlastRadius.ToString() + ", MaxDamage:" + explosion.Damage.ToString(), "Explosion");
+                        ////Change the properties of the explosions based on powerups.
+                        //foreach (Powerup powerup in PowerupsList)
+                        //{
+                        //    switch (powerup.CurrentEffect.GeneralPowerup)
+                        //    {
+                        //        case GeneralPowerup.ExplosivePower:
+                        //            explosion.Damage = (float)PercentageChange(explosion.Damage, powerup.CurrentEffect.PowerupValue);
+                        //            break;
+
+                        //        case GeneralPowerup.BlastRadii:
+                        //            explosion.BlastRadius = (float)PercentageChange(explosion.BlastRadius, powerup.CurrentEffect.PowerupValue);
+                        //            break;
+                        //    }
+                        //}
+                        ////explosion.BlastRadius = explosion.BlastRadius * PowerUp.BlastRadiusValue;
+
+                        List<Trap> WallList = new List<Trap>();
+                        WallList = TrapList.FindAll(Trap => Trap.TrapType == TrapType.Wall);
+
+                        List<Invader> InRangeInvaders = InvaderList.FindAll(Invader => Vector2.Distance(PointToVector(Invader.DestinationRectangle.Center), explosion.Position) < explosion.BlastRadius).ToList();
+                        InRangeInvaders = InRangeInvaders.OrderBy(Invader => Vector2.Distance(PointToVector(Invader.DestinationRectangle.Center), explosion.Position)).ToList();
+
+                        foreach (Invader invader in InvaderList)
                         {
-                            //Distance between the explosion and the centre of the invader
-                            float InvaderToExpl = Vector2.Distance(PointToVector(invader.DestinationRectangle.Center), explosion.Position);
-
-                            Vector3 RayDirection = new Vector3(PointToVector(invader.DestinationRectangle.Center), 0) - new Vector3(explosion.Position, 0);
-                            RayDirection.Normalize();
-
-                            Ray ExplosionRay = new Ray(new Vector3(explosion.Position, 0), RayDirection);
-
-                            #region No walls exist
-                            if (WallList.Count < 1 && InvaderToExpl <= explosion.BlastRadius)
+                            if (limit < 5)
                             {
-                                double Damage = explosion.Damage - (InvaderToExpl / (2 * explosion.BlastRadius)) * explosion.Damage;
-                                invader.CurrentHP -= (float)Damage;
+                                //Distance between the explosion and the centre of the invader
+                                float InvaderToExpl = Vector2.Distance(PointToVector(invader.DestinationRectangle.Center), explosion.Position);
 
-                                Vector2 DirectionToInvader = explosion.Position - new Vector2(invader.DestinationRectangle.Center.X, invader.DestinationRectangle.Center.Y);
-                                switch (invader.InvaderType)
-                                {
-                                    #region Soldier
-                                    case InvaderType.Soldier:
-                                        {
-                                            Emitter BloodEmitter = new Emitter(SplodgeParticle,
-                                                new Vector2(invader.DestinationRectangle.Center.X, invader.DestinationRectangle.Center.Y),
-                                                new Vector2(
-                                                MathHelper.ToDegrees(-(float)Math.Atan2(-DirectionToInvader.Y, -DirectionToInvader.X)) - (float)RandomDouble(0, 45),
-                                                MathHelper.ToDegrees(-(float)Math.Atan2(-DirectionToInvader.Y, -DirectionToInvader.X)) + (float)RandomDouble(0, 45)),
-                                                new Vector2((float)(0.1 * Damage), (float)(0.23 * Damage)), new Vector2(80, 130), 0.5f, true, new Vector2(0, 360),
-                                                new Vector2(1, 3), new Vector2(0.01f, 0.03f), Color.Red, Color.DarkRed,
-                                                0.1f, 0.1f, 3, 5, true, new Vector2(invader.MaxY - 8, invader.MaxY + 8), false, 1, true, false,
-                                                null, null, null, null, null, true, true, 1000);
+                                Vector3 RayDirection = new Vector3(PointToVector(invader.DestinationRectangle.Center), 0) - new Vector3(explosion.Position, 0);
+                                RayDirection.Normalize();
 
-                                            YSortedEmitterList.Add(BloodEmitter);
-                                        }
-                                        break;
-                                    #endregion
-                                }
-                            }
-                            #endregion
+                                Ray ExplosionRay = new Ray(new Vector3(explosion.Position, 0), RayDirection);
 
-                            #region Check if any walls are in the way of the explosion
-                            if (InvaderToExpl <= explosion.BlastRadius)
-                            {
-                                //Check if the wall is further away than the invader - i.e. not between the explosion and invader
-                                if (WallList.Any(Wall => Wall.BoundingBox.Intersects(ExplosionRay) > InvaderToExpl) ||
-                                    WallList.Any(Wall => Wall.BoundingBox.Intersects(ExplosionRay) == null))
+                                #region No walls exist
+                                if (WallList.Count < 1 && InvaderToExpl <= explosion.BlastRadius)
                                 {
                                     double Damage = explosion.Damage - (InvaderToExpl / (2 * explosion.BlastRadius)) * explosion.Damage;
                                     invader.CurrentHP -= (float)Damage;
+
+                                    limit++;
+
+                                    Debug.WriteLine(invader.InvaderType.ToString() + " Damage: " + (int)Damage + ", Distance:" + ExplosionRay.Intersects(invader.BoundingBox).ToString(), "Explosion");
 
                                     Vector2 DirectionToInvader = explosion.Position - new Vector2(invader.DestinationRectangle.Center.X, invader.DestinationRectangle.Center.Y);
                                     switch (invader.InvaderType)
@@ -4433,14 +4143,14 @@ namespace TowerDefensePrototype
                                         case InvaderType.Soldier:
                                             {
                                                 Emitter BloodEmitter = new Emitter(SplodgeParticle,
-                                                new Vector2(invader.DestinationRectangle.Center.X, invader.DestinationRectangle.Center.Y),
-                                                new Vector2(
-                                                MathHelper.ToDegrees(-(float)Math.Atan2(-DirectionToInvader.Y, -DirectionToInvader.X)) - (float)RandomDouble(0, 45),
-                                                MathHelper.ToDegrees(-(float)Math.Atan2(-DirectionToInvader.Y, -DirectionToInvader.X)) + (float)RandomDouble(0, 45)),
-                                                new Vector2((float)(0.1 * Damage), (float)(0.23 * Damage)), new Vector2(80, 130), 0.5f, true, new Vector2(0, 360),
-                                                new Vector2(1, 3), new Vector2(0.01f, 0.03f), Color.Red, Color.DarkRed,
-                                                0.1f, 0.1f, 3, 5, true, new Vector2(invader.MaxY - 8, invader.MaxY + 8), false, 1, true, false,
-                                                null, null, null, null, null, true, true, 1000);
+                                                    new Vector2(invader.DestinationRectangle.Center.X, invader.DestinationRectangle.Center.Y),
+                                                    new Vector2(
+                                                    MathHelper.ToDegrees(-(float)Math.Atan2(-DirectionToInvader.Y, -DirectionToInvader.X)) - (float)RandomDouble(0, 45),
+                                                    MathHelper.ToDegrees(-(float)Math.Atan2(-DirectionToInvader.Y, -DirectionToInvader.X)) + (float)RandomDouble(0, 45)),
+                                                    new Vector2((float)(0.1 * Damage), (float)(0.23 * Damage)), new Vector2(80, 130), 0.5f, true, new Vector2(0, 360),
+                                                    new Vector2(1, 3), new Vector2(0.01f, 0.03f), Color.Red, Color.DarkRed,
+                                                    0.1f, 0.1f, 3, 5, true, new Vector2(invader.MaxY - 8, invader.MaxY + 8), false, 1, true, false,
+                                                    null, null, null, null, null, true, true, 1000);
 
                                                 YSortedEmitterList.Add(BloodEmitter);
                                             }
@@ -4448,15 +4158,72 @@ namespace TowerDefensePrototype
                                         #endregion
                                     }
                                 }
+                                #endregion
+
+                                #region Check if any walls are in the way of the explosion
+                                if (WallList.Count > 0 && InvaderToExpl <= explosion.BlastRadius)
+                                {
+                                    foreach (Wall wall in WallList)
+                                    {
+                                        if (wall.BoundingBox.Intersects(ExplosionRay) != null)
+                                        {
+                                            float WallToExpl = (float)wall.BoundingBox.Intersects(ExplosionRay);
+                                            Debug.WriteLine("Wall To Explosion: " + WallToExpl.ToString(), "Explosion");
+
+
+                                            float InvaderToExplosion = (float)invader.BoundingBox.Intersects(ExplosionRay);
+                                            Debug.WriteLine("Invader To Explosion: " + InvaderToExplosion.ToString(), "Explosion");
+
+                                            Debug.WriteLineIf(WallToExpl < InvaderToExpl, "Wall Hit First", "Explosion");
+                                            Debug.WriteLineIf(InvaderToExpl < WallToExpl, "Invader Hit First", "Explosion");
+                                        }
+                                        else
+                                        {
+                                            Debug.WriteLine("Wall wasn't in the way", "Explosion");
+                                        }
+
+                                        //Check if the wall is further away than the invader - i.e. not between the explosion and invader
+                                        if (WallList.Any(Wall => Wall.BoundingBox.Intersects(ExplosionRay) > invader.BoundingBox.Intersects(ExplosionRay)) ||
+                                            WallList.Any(Wall => Wall.BoundingBox.Intersects(ExplosionRay) == null))
+                                        {
+                                            double Damage = explosion.Damage - (InvaderToExpl / (2 * explosion.BlastRadius)) * explosion.Damage;
+                                            invader.CurrentHP -= (float)Damage;
+
+                                            limit++;
+
+                                            Debug.WriteLine(invader.InvaderType.ToString() + " Damage: " + (int)Damage + ", Distance:" + ExplosionRay.Intersects(invader.BoundingBox).ToString(), "Explosion");
+
+                                            Vector2 DirectionToInvader = explosion.Position - new Vector2(invader.DestinationRectangle.Center.X, invader.DestinationRectangle.Center.Y);
+                                            switch (invader.InvaderType)
+                                            {
+                                                #region Soldier
+                                                case InvaderType.Soldier:
+                                                    {
+                                                        Emitter BloodEmitter = new Emitter(SplodgeParticle,
+                                                        new Vector2(invader.DestinationRectangle.Center.X, invader.DestinationRectangle.Center.Y),
+                                                        new Vector2(
+                                                        MathHelper.ToDegrees(-(float)Math.Atan2(-DirectionToInvader.Y, -DirectionToInvader.X)) - (float)RandomDouble(0, 45),
+                                                        MathHelper.ToDegrees(-(float)Math.Atan2(-DirectionToInvader.Y, -DirectionToInvader.X)) + (float)RandomDouble(0, 45)),
+                                                        new Vector2((float)(0.1 * Damage), (float)(0.23 * Damage)), new Vector2(80, 130), 0.5f, true, new Vector2(0, 360),
+                                                        new Vector2(1, 3), new Vector2(0.01f, 0.03f), Color.Red, Color.DarkRed,
+                                                        0.1f, 0.1f, 3, 5, true, new Vector2(invader.MaxY - 8, invader.MaxY + 8), false, 1, true, false,
+                                                        null, null, null, null, null, true, true, 1000);
+
+                                                        YSortedEmitterList.Add(BloodEmitter);
+                                                    }
+                                                    break;
+                                                #endregion
+                                            }
+                                        }
+                                    }
+                                }
+                                #endregion
                             }
-                            #endregion
-
-                            limit++;
                         }
+                        Debug.WriteLineIf(limit > 0, "Hit Invaders: " + limit.ToString(), "Explosion");
+                        limit = 0;
+                        Debug.WriteLine(" ");
                     }
-
-                    limit = 0;
-                    explosion.Active = false;
                 }
             #endregion
         }
@@ -4954,7 +4721,6 @@ namespace TowerDefensePrototype
                                     0.1f, 0.1f, 10, 2, true, new Vector2(Trap.DestinationRectangle.Bottom, Trap.DestinationRectangle.Bottom), false, 1, true, false);
 
                                 YSortedEmitterList.Add(Emitter);
-                                //DrawableList.Add(Emitter);
                                 break;
 
                             case TrapType.Barrel:
@@ -5077,8 +4843,6 @@ namespace TowerDefensePrototype
 
                     Trap HitTrap;
                     Turret HitTurret;
-
-                    Vector2 CollisionEnd;
 
                     float? MinDistTrap, MinDistTower, MinDistTurret;
                     float MinDist;
@@ -6556,7 +6320,7 @@ namespace TowerDefensePrototype
                                         new Vector2(20, 160), new Vector2(6, 14), new Vector2(5, 7), 1f, true, new Vector2(0, 360),
                                         new Vector2(0, 0), new Vector2(3, 4), Color.Lerp(ExplosionColor, Color.Transparent, 0.5f),
                                         Color.Lerp(ExplosionColor2, Color.Transparent, 0.5f), 0.0f, 0.1f, 1, 1, false,
-                                        new Vector2(heavyProjectile.MaxY, heavyProjectile.MaxY + 8), true, heavyProjectile.MaxY / 1080);
+                                        new Vector2(heavyProjectile.MaxY, heavyProjectile.MaxY + 8), true, heavyProjectile.MaxY / 1080f);
                                 YSortedEmitterList.Add(ExplosionEmitter);
 
                                 Emitter ExplosionEmitter2 = new Emitter(ExplosionParticle,
@@ -6564,14 +6328,14 @@ namespace TowerDefensePrototype
                                         new Vector2(70, 110), new Vector2(6, 12), new Vector2(7, 18), 1f, true, new Vector2(0, 360),
                                         new Vector2(0, 0), new Vector2(3, 4), Color.Lerp(ExplosionColor, Color.Transparent, 0.5f),
                                         Color.Lerp(ExplosionColor2, Color.DarkRed, 0.5f), 0.0f, 0.15f, 10, 1, false,
-                                        new Vector2(heavyProjectile.MaxY, heavyProjectile.MaxY + 8), true, heavyProjectile.MaxY / 1080);
+                                        new Vector2(heavyProjectile.MaxY, heavyProjectile.MaxY + 8), true, heavyProjectile.MaxY / 1080f);
                                 YSortedEmitterList.Add(ExplosionEmitter2);
 
                                 Emitter SmokeEmitter = new Emitter(SmokeParticle,
                                         new Vector2(heavyProjectile.Position.X, heavyProjectile.MaxY - 30),
                                         new Vector2(0, 0), new Vector2(0f, 1f), new Vector2(30, 40), 0.8f, true, new Vector2(0, 360),
                                         new Vector2(0, 0), new Vector2(0.8f, 1.2f), SmokeColor1, SmokeColor2, -0.1f, 0.4f, 20, 1, false,
-                                        new Vector2(heavyProjectile.MaxY, heavyProjectile.MaxY + 8), false, heavyProjectile.MaxY / 1080,
+                                        new Vector2(heavyProjectile.MaxY, heavyProjectile.MaxY + 8), false, heavyProjectile.MaxY / 1080f,
                                         null, null, null, null, null, null, null, true, true);
                                 YSortedEmitterList.Add(SmokeEmitter);
 
@@ -6580,7 +6344,7 @@ namespace TowerDefensePrototype
                                         new Vector2(85, 95), new Vector2(2, 4), new Vector2(25, 40), 0.35f, true, new Vector2(0, 0),
                                         new Vector2(0, 0), new Vector2(0.085f, 0.2f), FireColor,
                                         Color.Lerp(Color.Red, FireColor2, 0.5f), -0.1f, 0.05f, 10, 1, false,
-                                        new Vector2(heavyProjectile.MaxY, heavyProjectile.MaxY + 8), true, heavyProjectile.MaxY / 1080,
+                                        new Vector2(heavyProjectile.MaxY, heavyProjectile.MaxY + 8), true, heavyProjectile.MaxY / 1080f,
                                         null, null, null, null, null, null, new Vector2(0.0025f, 0.0025f), true, true, 50);
                                 YSortedEmitterList.Add(ExplosionEmitter3);
 
@@ -6588,21 +6352,21 @@ namespace TowerDefensePrototype
                                         new Vector2(heavyProjectile.Position.X, heavyProjectile.MaxY),
                                         new Vector2(70, 110), new Vector2(5, 7), new Vector2(30, 110), 1f, true, new Vector2(0, 360),
                                         new Vector2(1, 3), new Vector2(0.007f, 0.05f), Color.DarkSlateGray, Color.SaddleBrown,
-                                        0.2f, 0.2f, 5, 1, true, new Vector2(heavyProjectile.MaxY + 8, heavyProjectile.MaxY + 16), null, heavyProjectile.MaxY / 1080);
+                                        0.2f, 0.2f, 5, 1, true, new Vector2(heavyProjectile.MaxY + 8, heavyProjectile.MaxY + 16), null, heavyProjectile.MaxY / 1080f);
                                 YSortedEmitterList.Add(DebrisEmitter);
 
                                 Emitter DebrisEmitter2 = new Emitter(SplodgeParticle,
                                         new Vector2(heavyProjectile.Position.X, heavyProjectile.MaxY), new Vector2(80, 100),
                                         new Vector2(2, 8), new Vector2(80, 150), 1f, true, new Vector2(0, 360), new Vector2(1, 3),
                                         new Vector2(0.01f, 0.02f), Color.Gray, Color.SaddleBrown, 0.2f, 0.3f, 10, 5, true,
-                                        new Vector2(heavyProjectile.MaxY + 8, heavyProjectile.MaxY + 16), null, heavyProjectile.MaxY / 1080);
+                                        new Vector2(heavyProjectile.MaxY + 8, heavyProjectile.MaxY + 16), null, heavyProjectile.MaxY / 1080f);
                                 YSortedEmitterList.Add(DebrisEmitter2);
 
                                 Emitter SparkEmitter = new Emitter(RoundSparkParticle,
                                         new Vector2(heavyProjectile.Position.X, heavyProjectile.MaxY - 20), new Vector2(0, 360),
                                         new Vector2(1, 4), new Vector2(120, 140), 1f, true, new Vector2(0, 360), new Vector2(1, 3),
                                         new Vector2(0.1f, 0.3f), Color.Orange, Color.OrangeRed, 0.05f, 0.1f, 2, 7, true,
-                                        new Vector2(heavyProjectile.MaxY + 4, heavyProjectile.MaxY + 16), null, heavyProjectile.MaxY / 1080);
+                                        new Vector2(heavyProjectile.MaxY + 4, heavyProjectile.MaxY + 16), null, heavyProjectile.MaxY / 1080f);
                                 AlphaEmitterList.Add(SparkEmitter);
 
                                 //DrawableList.Add(SparkEmitter);
@@ -7632,7 +7396,7 @@ namespace TowerDefensePrototype
                             EmitterList2.Add(newEmitter2);
 
                             Explosion newExplosion = new Explosion(PointToVector(trap.DestinationRectangle.Center), 150, 100);
-                            ExplosionList.Add(newExplosion); 
+                            ExplosionList.Add(newExplosion);
                         }
                         break;
 
@@ -7714,13 +7478,13 @@ namespace TowerDefensePrototype
                                 new Vector2(newTrap.DestinationRectangle.Center.X, newTrap.DestinationRectangle.Bottom),
                                 new Vector2(160, 200), new Vector2(1, 4), new Vector2(20, 40), 0.25f, true, new Vector2(0, 360),
                                 new Vector2(0, 1.5f), new Vector2(0.1f, 0.5f), DirtColor, DirtColor2, -0.05f, 0.2f, 3, 1, false,
-                                new Vector2(0, 1080), false, 0.9f, null, null, null, null, null, null, new Vector2(0.05f, 0.05f)));
+                                new Vector2(0, 1080), false, null, null, null, null, null, null, null, new Vector2(0.05f, 0.05f)));
 
                             YSortedEmitterList.Add(new Emitter(SmokeParticle,
                                 new Vector2(newTrap.DestinationRectangle.Center.X, newTrap.DestinationRectangle.Bottom),
                                 new Vector2(-20, 20), new Vector2(1, 4), new Vector2(20, 40), 0.25f, true, new Vector2(0, 360),
                                 new Vector2(0, 1.5f), new Vector2(0.1f, 0.5f), DirtColor, DirtColor2, -0.05f, 0.1f, 3, 1, false,
-                                new Vector2(0, 1080), false, 0.9f, null, null, null, null, null, null, new Vector2(0.05f, 0.05f)));
+                                new Vector2(0, 1080), false, null, null, null, null, null, null, null, new Vector2(0.05f, 0.05f)));
                             break;
                         #endregion
 
@@ -7730,13 +7494,13 @@ namespace TowerDefensePrototype
                                 new Vector2(newTrap.DestinationRectangle.Center.X, newTrap.DestinationRectangle.Bottom),
                                 new Vector2(160, 200), new Vector2(1, 4), new Vector2(20, 40), 1f, true, new Vector2(0, 360),
                                 new Vector2(0, 1.5f), new Vector2(0.25f, 0.25f), FireColor, FireColor2, -0.05f, 0.2f, 3, 1, false,
-                                new Vector2(0, 1080), false, 0.9f, null, null, null, null, null, null, new Vector2(0.05f, 0.05f)));
+                                new Vector2(0, 1080), false, null, null, null, null, null, null, null, new Vector2(0.05f, 0.05f)));
 
                             AdditiveEmitterList.Add(new Emitter(RoundSparkParticle,
                                 new Vector2(newTrap.DestinationRectangle.Center.X, newTrap.DestinationRectangle.Bottom),
                                 new Vector2(-20, 20), new Vector2(1, 4), new Vector2(20, 40), 1f, true, new Vector2(0, 360),
                                 new Vector2(0, 1.5f), new Vector2(0.25f, 0.25f), FireColor, FireColor2, -0.05f, 0.1f, 3, 1, false,
-                                new Vector2(0, 1080), false, 0.9f, null, null, null, null, null, null, new Vector2(0.05f, 0.05f)));
+                                new Vector2(0, 1080), false, null, null, null, null, null, null, null, new Vector2(0.05f, 0.05f)));
                             break;
 
                             
@@ -8034,6 +7798,7 @@ namespace TowerDefensePrototype
 
         public void LoadProfile(IAsyncResult result)
         {
+            Debug.WriteLine("Loading Profile");
             Device = StorageDevice.EndShowSelector(result);
 
             result = Device.BeginOpenContainer(ContainerName, null, null);
@@ -8075,10 +7840,13 @@ namespace TowerDefensePrototype
             container.Dispose();
 
             HandlePlacedIcons();
+
+            Debug.WriteLine("Profile " + CurrentProfile.Name + " Loaded Successfully");
         }
 
         public void SaveProfile(IAsyncResult result)
         {
+            Debug.WriteLine("Saving Profile Data");
             Device = StorageDevice.EndShowSelector(result);
 
             FileName = "Profile" + ProfileNumber.ToString() + ".sav";
@@ -8129,11 +7897,13 @@ namespace TowerDefensePrototype
                 container.Dispose();
 
                 result.AsyncWaitHandle.Close();
+                Debug.WriteLine("Profile Data Saved Succesfully");
             }
         }
 
         public void DeleteProfile(IAsyncResult result)
         {
+            Debug.WriteLine("Deleting Profile " + FileName);
             Device = StorageDevice.EndShowSelector(result);
 
             if (Device != null && Device.IsConnected)
@@ -8151,6 +7921,7 @@ namespace TowerDefensePrototype
 
                 result.AsyncWaitHandle.Close();
             }
+            Debug.WriteLine("Profile Deleted Successfully");
         }
 
         public void GetProfileName(IAsyncResult result)
@@ -8283,6 +8054,7 @@ namespace TowerDefensePrototype
 
         public void AddNewProfile()
         {
+            Debug.WriteLine("Creating New Profile with name: " + NameInput.RealString);
             List<string> TempList = new List<string>();
 
             for (int i = 0; i < 10; i++)
@@ -8339,6 +8111,7 @@ namespace TowerDefensePrototype
             NameInput.TypePosition = 0;
 
             GameState = GameState.ProfileManagement;
+            Debug.WriteLine("Profile Created Successfully");
         }
         #endregion
 
@@ -8352,6 +8125,7 @@ namespace TowerDefensePrototype
 
             if (File.Exists("Content\\Settings\\Settings.xml"))
             {
+                Debug.WriteLine("Settings Loaded");
                 Stream stream = new FileStream("Content\\Settings\\Settings.xml", FileMode.Open);
                 CurrentSettings = (Settings)serializer.Deserialize(stream);
                 stream.Close();
@@ -8359,6 +8133,7 @@ namespace TowerDefensePrototype
             }
             else
             {
+                Debug.WriteLine("Settings not found. Loading defaults.");
                 Stream stream = new FileStream("Content\\Settings\\Settings.xml", FileMode.Create);
                 CurrentSettings = DefaultSettings;
                 serializer.Serialize(stream, CurrentSettings);
@@ -8588,10 +8363,6 @@ namespace TowerDefensePrototype
                         NewTrap.TrapEmitterList.Add(SmokeEmitter);
                         NewTrap.TrapEmitterList.Add(FireEmitter);
                         NewTrap.TrapEmitterList.Add(SparkEmitter);
-
-                        LightList.Add(new Light(LightTexture, 
-                            new Vector2(PointToVector(NewTrap.DestinationRectangle.Center).X, NewTrap.DestinationRectangle.Bottom - 8), 
-                            new Vector2(1.5f, 0.75f), Color.Orange, NewTrap.DestinationRectangle.Bottom/1080f, NewTrap));
                     }
                     break;
                 #endregion
@@ -8808,8 +8579,6 @@ namespace TowerDefensePrototype
                                 {
                                     case InvaderType.HealDrone:
                                         HealDrone drone = nextInvader as HealDrone;
-                                        drone.Jet = new Jet(JetTexture, drone);
-                                        //drone.Bolt.LoadContent(Content);
                                         break;
                                 }
 
@@ -8948,9 +8717,10 @@ namespace TowerDefensePrototype
             Ground.BoundingBox = new BoundingBox(new Vector3(0, MathHelper.Clamp(CursorPosition.Y, 690, 1080), 0), new Vector3(1920, MathHelper.Clamp(CursorPosition.Y + 1, 800, 1080), 0));
 
             ForeGround = new StaticSprite(CurrentLevel.ForegroundTexture, new Vector2(0, 1080 - 400));
-            ForeGround.DrawDepth = 1;
+            ForeGround.DrawDepth = 1.0f;
 
             SkyBackground = new StaticSprite(CurrentLevel.SkyBackgroundTexture, new Vector2(0, 0));
+            SkyBackground.DrawDepth = 1.0f;
             #endregion
 
             //CurrentLevel.AmbienceList[0].Play();
@@ -9042,12 +8812,12 @@ namespace TowerDefensePrototype
                 {
                     spriteBatch.Draw(CurrentCursorTexture, new Rectangle((int)CursorPosition.X - (CurrentCursorTexture.Width / 2),
                                     (int)CursorPosition.Y - CurrentCursorTexture.Height, CurrentCursorTexture.Width,
-                                    CurrentCursorTexture.Height), null, CursorColor, MathHelper.ToRadians(0), Vector2.Zero,
+                                    CurrentCursorTexture.Height), null, CursorColor, 0, Vector2.Zero,
                                     SpriteEffects.None, 1);
 
                     spriteBatch.Draw(PrimaryCursorTexture, new Rectangle((int)CursorPosition.X, (int)CursorPosition.Y,
                                      PrimaryCursorTexture.Width, PrimaryCursorTexture.Height), null,
-                                     CursorColor, MathHelper.ToRadians(0), Vector2.Zero, SpriteEffects.None, 1);
+                                     CursorColor, 0, Vector2.Zero, SpriteEffects.None, 1);
                 }
                 else
                 {
@@ -9055,13 +8825,13 @@ namespace TowerDefensePrototype
                     {
                         spriteBatch.Draw(CurrentCursorTexture, new Rectangle((int)(CursorPosition.X - CursorPosition.X % 32),
                                         (int)(CursorPosition.Y - CursorPosition.Y % 32), CurrentCursorTexture.Width, CurrentCursorTexture.Height),
-                                        null, CursorColor, MathHelper.ToRadians(0), Vector2.Zero, SpriteEffects.None, 1);
+                                        null, CursorColor, 0, Vector2.Zero, SpriteEffects.None, 1);
                     }
                     else
                     {
                         spriteBatch.Draw(CurrentCursorTexture, new Rectangle((int)(CursorPosition.X), (int)(CursorPosition.Y),
                                     CurrentCursorTexture.Width, CurrentCursorTexture.Height),
-                                    null, CursorColor, MathHelper.ToRadians(0), new Vector2(CurrentCursorTexture.Width / 2, CurrentCursorTexture.Height), SpriteEffects.None, 1);
+                                    null, CursorColor, 0, new Vector2(CurrentCursorTexture.Width / 2, CurrentCursorTexture.Height), SpriteEffects.None, 1);
                     }
 
 
@@ -9069,13 +8839,13 @@ namespace TowerDefensePrototype
                     {
                         spriteBatch.Draw(PrimaryCursorTexture, new Rectangle((int)CursorPosition.X, (int)CursorPosition.Y,
                                          PrimaryCursorTexture.Width, PrimaryCursorTexture.Height), null, Color.White,
-                                         MathHelper.ToRadians(0), Vector2.Zero, SpriteEffects.None, 1);
+                                         0, Vector2.Zero, SpriteEffects.None, 1);
                     }
                     else
                     {
                         spriteBatch.Draw(PrimaryCursorTexture, new Rectangle((int)CursorPosition.X - PrimaryCursorTexture.Width / 2,
                                          (int)CursorPosition.Y - PrimaryCursorTexture.Height / 2, PrimaryCursorTexture.Width,
-                                         PrimaryCursorTexture.Height), null, Color.White, MathHelper.ToRadians(0), Vector2.Zero,
+                                         PrimaryCursorTexture.Height), null, Color.White, 0, Vector2.Zero,
                                          SpriteEffects.None, 1);
                     }
                 }
@@ -9509,7 +9279,7 @@ namespace TowerDefensePrototype
                 }
                 catch (Exception e)
                 {
-                    Error = e.ToString();
+                    Debug.WriteLine(e.ToString(), "ERROR");
                 }
 
                 //Render Target2 back to Target1 so that the next effect can be stacked
@@ -9590,6 +9360,27 @@ namespace TowerDefensePrototype
                 }
                 #endregion
             }
+        }
+
+        public Vector2 GetRealMousePosition()
+        {
+            if (CurrentSettings.FullScreen == false)
+            {
+                MouseTransform = Matrix.CreateTranslation(new Vector3(Mouse.GetState().X, Mouse.GetState().Y, 0)) *
+                                 Matrix.CreateTranslation(new Vector3(0, 0, 0)) *
+                                 Matrix.CreateScale(new Vector3((float)(ResolutionOffsetRatio / 2), (float)(ResolutionOffsetRatio / 2), 1));
+            }
+            else
+            {
+                MouseTransform = Matrix.CreateTranslation(new Vector3(0, -(ActualResolution.Y - CurrentSettings.ResHeight) / 2, 0)) *
+                                 Matrix.CreateScale(new Vector3((float)(ResolutionOffsetRatio), (float)(ResolutionOffsetRatio), 1));
+
+            }
+
+            return Vector2.Transform(new Vector2(Mouse.GetState().X, Mouse.GetState().Y), MouseTransform);
+
+            //CursorPosition.X = worldMouse.X;
+            //CursorPosition.Y = worldMouse.Y;
         }
     }
 }

@@ -104,13 +104,6 @@ namespace TowerDefensePrototype
         {
             if (Active == true)
             {
-                //Position += Velocity * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
-                //Velocity.Y += Gravity * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
-
-                //foreach (Emitter emitter in EmitterList)
-                //{
-                //    emitter.Position = Position;
-                //}
                 DestinationRectangle = new Rectangle((int)Sticks.Point1.CurrentPosition.X, 
                                                      (int)Sticks.Point1.CurrentPosition.Y,
                                                      Texture.Width, Texture.Height);
@@ -124,7 +117,6 @@ namespace TowerDefensePrototype
                     emitter.Position = Node2.CurrentPosition;
                 }
 
-                //Position = Node2.CurrentPosition;// +new Vector2(0, 1);
                 Position = Node1.CurrentPosition;
             }
 
@@ -138,6 +130,13 @@ namespace TowerDefensePrototype
                 CurrentTransparency += 0.1f;
             }
 
+            Vector2 dir = Sticks.Point2.CurrentPosition - Sticks.Point1.CurrentPosition;
+            Sticks.Rotation = (float)Math.Atan2(dir.Y, dir.X);
+
+            Sticks.DestinationRectangle = new Rectangle(
+                                              (int)Sticks.Point1.CurrentPosition.X, 
+                                              (int)Sticks.Point1.CurrentPosition.Y, 
+                                              Texture.Width, Texture.Height);
             base.Update(gameTime);
         }
 
@@ -145,26 +144,8 @@ namespace TowerDefensePrototype
         {
             if (Active == true)
             {
-                //foreach (Stick stick in Sticks)
-                //{
-                Vector2 dir = Sticks.Point2.CurrentPosition - Sticks.Point1.CurrentPosition;
-                    float rot = (float)Math.Atan2(dir.Y, dir.X);
-
-                    spriteBatch.Draw(Texture, new Rectangle(
-                        (int)Sticks.Point1.CurrentPosition.X, (int)Sticks.Point1.CurrentPosition.Y,
-                        Texture.Width, Texture.Height),
-                        null, Color.White, rot, new Vector2(0, Texture.Height / 2), SpriteEffects.None, 0);
-                //}
-
-                //spriteBatch.Draw(Texture, new Rectangle(
-                //       (int)Nodes[0].CurrentPosition.X, (int)Nodes[0].CurrentPosition.Y,
-                //       Texture.Width/2, Texture.Height/2),
-                //       null, Color.Red, 0, new Vector2(0, Texture.Height / 2), SpriteEffects.None, 0);
-
-                //spriteBatch.Draw(Texture, new Rectangle(
-                //       (int)Nodes[1].CurrentPosition.X, (int)Nodes[1].CurrentPosition.Y,
-                //       Texture.Width / 2, Texture.Height / 2),
-                //       null, Color.Green, 0, new Vector2(0, Texture.Height / 2), SpriteEffects.None, 0);
+                    spriteBatch.Draw(Texture, Sticks.DestinationRectangle, null, Color.White, Sticks.Rotation, 
+                                     new Vector2(0, Texture.Height / 2), SpriteEffects.None, 0);
             }
 
             foreach (Emitter emitter in EmitterList)

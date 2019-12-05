@@ -22,14 +22,14 @@ namespace TowerDefensePrototype
 
         public override void Update(GameTime gameTime)
         {
-            base.Update(gameTime);
-
             CurrentTime += gameTime.ElapsedGameTime.TotalMilliseconds;
 
             if (CurrentTime > MaxTime)
             {
                 Detonated = true;
-            }            
+            }
+
+            base.Update(gameTime);
         }
     }
 }

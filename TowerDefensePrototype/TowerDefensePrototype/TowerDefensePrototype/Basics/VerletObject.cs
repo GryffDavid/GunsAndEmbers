@@ -18,6 +18,8 @@ namespace TowerDefensePrototype
         {
             public Node Point1, Point2;
             public float Length;
+            public float Rotation;
+            public Rectangle DestinationRectangle;
         }
 
         public class Node

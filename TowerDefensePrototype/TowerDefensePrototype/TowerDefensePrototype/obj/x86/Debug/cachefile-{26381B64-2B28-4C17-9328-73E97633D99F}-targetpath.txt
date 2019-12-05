@@ -170,5 +170,5 @@ Content\Shaders\ShieldBubbleEffect.xnb
 Content\Shaders\BackgroundEffect.xnb
 Content\Shaders\ButtonBlurEffect.xnb
 Content\Shaders\CrepuscularRaysEffect.xnb
-Content\Shaders\DrawBlack.xnb
+Content\Shaders\AlphaTest.xnb
 Content\StoryDialogue\StoryDialogue1.xnb

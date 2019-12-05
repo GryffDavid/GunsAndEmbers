@@ -49,6 +49,7 @@ namespace TowerDefensePrototype
         public SoundEffectInstance MoveLoop;
         public SpriteEffects Orientation = SpriteEffects.None;
         public float Rotation = 0;
+        public float RadRotation;
 
         private InvaderBehaviour RandomOrientation(params InvaderBehaviour[] Orientations)
         {
@@ -298,8 +299,11 @@ namespace TowerDefensePrototype
                 DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y,
                                                      (int)(CurrentAnimation.FrameSize.X * Scale.X), (int)(CurrentAnimation.FrameSize.Y * Scale.Y));
 
+                //BoundingBox = new BoundingBox(new Vector3(Position.X, Position.Y, 0),
+                //                              new Vector3(Position.X + CurrentAnimation.FrameSize.X, Position.Y + CurrentAnimation.FrameSize.Y, 0));
+
                 BoundingBox = new BoundingBox(new Vector3(Position.X, Position.Y, 0),
-                                              new Vector3(Position.X + CurrentAnimation.FrameSize.X, Position.Y + CurrentAnimation.FrameSize.Y, 0));
+                             new Vector3(Position.X + (CurrentAnimation.FrameSize.X * Scale.X), Position.Y + (CurrentAnimation.FrameSize.Y * Scale.Y), 0));
 
                 Center = new Vector2(DestinationRectangle.Center.X, DestinationRectangle.Center.Y);
 
@@ -323,6 +327,8 @@ namespace TowerDefensePrototype
                 //    Color = Color.White;
                 //}
 
+                RadRotation = MathHelper.ToRadians(Rotation);
+
                 Bottom = DestinationRectangle.Bottom;
                 DrawDepth = Bottom / 1080.0f;
 
@@ -332,6 +338,9 @@ namespace TowerDefensePrototype
                 //{
                 //    Color = Color.Black;
                 //}
+
+               
+
             }
         }
 
@@ -342,17 +351,14 @@ namespace TowerDefensePrototype
                 if (Airborne == false)
                     spriteBatch.Draw(Shadow, new Rectangle(DestinationRectangle.Left, (int)MaxY - (DestinationRectangle.Height / 8), DestinationRectangle.Width, DestinationRectangle.Height / 4), Color.Lerp(Color.White, Color.Transparent, 0.75f));
                 
-                BoundingBox = new BoundingBox(new Vector3(Position.X, Position.Y, 0),
-                              new Vector3(Position.X + (CurrentAnimation.FrameSize.X * Scale.X), Position.Y + (CurrentAnimation.FrameSize.Y * Scale.Y), 0));
-
-                if (HealthEmitter != null)
+                                if (HealthEmitter != null)
                 {
                     HealthEmitter.Draw(spriteBatch);
                 }
 
                 if (CurrentTexture != null)
-                    spriteBatch.Draw(CurrentTexture, DestinationRectangle, CurrentAnimation.SourceRectangle, Color, MathHelper.ToRadians(Rotation),
-                                 Vector2.Zero, Orientation, DrawDepth);
+                    spriteBatch.Draw(CurrentTexture, DestinationRectangle, CurrentAnimation.SourceRectangle, Color, 
+                                     RadRotation, Vector2.Zero, Orientation, DrawDepth);
 
                 if (FireEmitter != null)
                 {

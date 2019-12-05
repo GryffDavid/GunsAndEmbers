@@ -9,9 +9,6 @@ using Microsoft.Xna.Framework.Input;
 
 namespace TowerDefensePrototype
 {
-    
-    
-
     public class Button
     {
         public string Text;

@@ -56,7 +56,7 @@ namespace TowerDefensePrototype
         //Like the Deathstar building up power before blowing up Alderaan
         public float ChargeTime;
 
-        public void Initialize(ContentManager contentManager)
+        public virtual void Initialize(ContentManager contentManager)
         {
             CanShoot = false;
 
@@ -90,7 +90,7 @@ namespace TowerDefensePrototype
             Direction = new Vector2(1, 1);
         }
 
-        public void Update(GameTime gameTime, Vector2 cursorPosition)
+        public virtual void Update(GameTime gameTime, Vector2 cursorPosition)
         {
             CurrentMouseState = Mouse.GetState();
 

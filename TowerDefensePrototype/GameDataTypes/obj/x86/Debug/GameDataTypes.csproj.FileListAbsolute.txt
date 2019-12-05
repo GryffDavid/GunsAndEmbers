@@ -154,9 +154,45 @@ G:\Google Drive\Tower Defense Backups\TowerDefensePrototype 90 (With lighting wo
 G:\Google Drive\Tower Defense Backups\TowerDefensePrototype 90 (With lighting working)\GameDataTypes\obj\x86\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
 G:\Google Drive\Tower Defense Backups\TowerDefensePrototype 90 (With lighting working)\GameDataTypes\obj\x86\Debug\GameDataTypes.dll
 G:\Google Drive\Tower Defense Backups\TowerDefensePrototype 90 (With lighting working)\GameDataTypes\obj\x86\Debug\GameDataTypes.pdb
-G:\Google Drive\Tower Defense Backups\TowerDefensePrototype 91\GameDataTypes\bin\x86\Debug\GameDataTypes.dll
-G:\Google Drive\Tower Defense Backups\TowerDefensePrototype 91\GameDataTypes\bin\x86\Debug\GameDataTypes.pdb
-G:\Google Drive\Tower Defense Backups\TowerDefensePrototype 91\GameDataTypes\obj\x86\Debug\GameDataTypes.csprojResolveAssemblyReference.cache
-G:\Google Drive\Tower Defense Backups\TowerDefensePrototype 91\GameDataTypes\obj\x86\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
-G:\Google Drive\Tower Defense Backups\TowerDefensePrototype 91\GameDataTypes\obj\x86\Debug\GameDataTypes.dll
-G:\Google Drive\Tower Defense Backups\TowerDefensePrototype 91\GameDataTypes\obj\x86\Debug\GameDataTypes.pdb
+C:\Users\Gryff\Desktop\Testing for TDP\TowerDefensePrototype - Lighting Efficiency\GameDataTypes\bin\x86\Debug\GameDataTypes.dll
+C:\Users\Gryff\Desktop\Testing for TDP\TowerDefensePrototype - Lighting Efficiency\GameDataTypes\bin\x86\Debug\GameDataTypes.pdb
+C:\Users\Gryff\Desktop\Testing for TDP\TowerDefensePrototype - Lighting Efficiency\GameDataTypes\obj\x86\Debug\GameDataTypes.csprojResolveAssemblyReference.cache
+C:\Users\Gryff\Desktop\Testing for TDP\TowerDefensePrototype - Lighting Efficiency\GameDataTypes\obj\x86\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
+C:\Users\Gryff\Desktop\Testing for TDP\TowerDefensePrototype - Lighting Efficiency\GameDataTypes\obj\x86\Debug\GameDataTypes.dll
+C:\Users\Gryff\Desktop\Testing for TDP\TowerDefensePrototype - Lighting Efficiency\GameDataTypes\obj\x86\Debug\GameDataTypes.pdb
+C:\Users\Gryff\Desktop\Testing for TDP\TowerDefensePrototype -Drawing Efficiency 2\GameDataTypes\bin\x86\Debug\GameDataTypes.dll
+C:\Users\Gryff\Desktop\Testing for TDP\TowerDefensePrototype -Drawing Efficiency 2\GameDataTypes\bin\x86\Debug\GameDataTypes.pdb
+C:\Users\Gryff\Desktop\Testing for TDP\TowerDefensePrototype -Drawing Efficiency 2\GameDataTypes\obj\x86\Debug\GameDataTypes.csprojResolveAssemblyReference.cache
+C:\Users\Gryff\Desktop\Testing for TDP\TowerDefensePrototype -Drawing Efficiency 2\GameDataTypes\obj\x86\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
+C:\Users\Gryff\Desktop\Testing for TDP\TowerDefensePrototype -Drawing Efficiency 2\GameDataTypes\obj\x86\Debug\GameDataTypes.dll
+C:\Users\Gryff\Desktop\Testing for TDP\TowerDefensePrototype -Drawing Efficiency 2\GameDataTypes\obj\x86\Debug\GameDataTypes.pdb
+C:\Users\Gryff\Desktop\Testing for TDP\TowerDefensePrototype -Drawing Efficiency 3\GameDataTypes\bin\x86\Debug\GameDataTypes.dll
+C:\Users\Gryff\Desktop\Testing for TDP\TowerDefensePrototype -Drawing Efficiency 3\GameDataTypes\bin\x86\Debug\GameDataTypes.pdb
+C:\Users\Gryff\Desktop\Testing for TDP\TowerDefensePrototype -Drawing Efficiency 3\GameDataTypes\obj\x86\Debug\GameDataTypes.csprojResolveAssemblyReference.cache
+C:\Users\Gryff\Desktop\Testing for TDP\TowerDefensePrototype -Drawing Efficiency 3\GameDataTypes\obj\x86\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
+C:\Users\Gryff\Desktop\Testing for TDP\TowerDefensePrototype -Drawing Efficiency 3\GameDataTypes\obj\x86\Debug\GameDataTypes.dll
+C:\Users\Gryff\Desktop\Testing for TDP\TowerDefensePrototype -Drawing Efficiency 3\GameDataTypes\obj\x86\Debug\GameDataTypes.pdb
+C:\Users\Gryff\Desktop\Testing for TDP\TowerDefensePrototype -Drawing Efficiency 4\GameDataTypes\bin\x86\Debug\GameDataTypes.dll
+C:\Users\Gryff\Desktop\Testing for TDP\TowerDefensePrototype -Drawing Efficiency 4\GameDataTypes\bin\x86\Debug\GameDataTypes.pdb
+C:\Users\Gryff\Desktop\Testing for TDP\TowerDefensePrototype -Drawing Efficiency 4\GameDataTypes\obj\x86\Debug\GameDataTypes.csprojResolveAssemblyReference.cache
+C:\Users\Gryff\Desktop\Testing for TDP\TowerDefensePrototype -Drawing Efficiency 4\GameDataTypes\obj\x86\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
+C:\Users\Gryff\Desktop\Testing for TDP\TowerDefensePrototype -Drawing Efficiency 4\GameDataTypes\obj\x86\Debug\GameDataTypes.dll
+C:\Users\Gryff\Desktop\Testing for TDP\TowerDefensePrototype -Drawing Efficiency 4\GameDataTypes\obj\x86\Debug\GameDataTypes.pdb
+C:\Users\Gryff\Desktop\Testing for TDP\TowerDefensePrototype -Drawing Efficiency 5\GameDataTypes\bin\x86\Debug\GameDataTypes.dll
+C:\Users\Gryff\Desktop\Testing for TDP\TowerDefensePrototype -Drawing Efficiency 5\GameDataTypes\bin\x86\Debug\GameDataTypes.pdb
+C:\Users\Gryff\Desktop\Testing for TDP\TowerDefensePrototype -Drawing Efficiency 5\GameDataTypes\obj\x86\Debug\GameDataTypes.csprojResolveAssemblyReference.cache
+C:\Users\Gryff\Desktop\Testing for TDP\TowerDefensePrototype -Drawing Efficiency 5\GameDataTypes\obj\x86\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
+C:\Users\Gryff\Desktop\Testing for TDP\TowerDefensePrototype -Drawing Efficiency 5\GameDataTypes\obj\x86\Debug\GameDataTypes.dll
+C:\Users\Gryff\Desktop\Testing for TDP\TowerDefensePrototype -Drawing Efficiency 5\GameDataTypes\obj\x86\Debug\GameDataTypes.pdb
+C:\Users\Gryff\Desktop\Tests\Testing for TDP\TowerDefensePrototype -Drawing Efficiency 5\GameDataTypes\bin\x86\Debug\GameDataTypes.dll
+C:\Users\Gryff\Desktop\Tests\Testing for TDP\TowerDefensePrototype -Drawing Efficiency 5\GameDataTypes\bin\x86\Debug\GameDataTypes.pdb
+C:\Users\Gryff\Desktop\Tests\Testing for TDP\TowerDefensePrototype -Drawing Efficiency 5\GameDataTypes\obj\x86\Debug\GameDataTypes.csprojResolveAssemblyReference.cache
+C:\Users\Gryff\Desktop\Tests\Testing for TDP\TowerDefensePrototype -Drawing Efficiency 5\GameDataTypes\obj\x86\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
+C:\Users\Gryff\Desktop\Tests\Testing for TDP\TowerDefensePrototype -Drawing Efficiency 5\GameDataTypes\obj\x86\Debug\GameDataTypes.dll
+C:\Users\Gryff\Desktop\Tests\Testing for TDP\TowerDefensePrototype -Drawing Efficiency 5\GameDataTypes\obj\x86\Debug\GameDataTypes.pdb
+G:\Google Drive\Tower Defense Backups\TowerDefensePrototype 92\GameDataTypes\bin\x86\Debug\GameDataTypes.dll
+G:\Google Drive\Tower Defense Backups\TowerDefensePrototype 92\GameDataTypes\bin\x86\Debug\GameDataTypes.pdb
+G:\Google Drive\Tower Defense Backups\TowerDefensePrototype 92\GameDataTypes\obj\x86\Debug\GameDataTypes.csprojResolveAssemblyReference.cache
+G:\Google Drive\Tower Defense Backups\TowerDefensePrototype 92\GameDataTypes\obj\x86\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
+G:\Google Drive\Tower Defense Backups\TowerDefensePrototype 92\GameDataTypes\obj\x86\Debug\GameDataTypes.dll
+G:\Google Drive\Tower Defense Backups\TowerDefensePrototype 92\GameDataTypes\obj\x86\Debug\GameDataTypes.pdb

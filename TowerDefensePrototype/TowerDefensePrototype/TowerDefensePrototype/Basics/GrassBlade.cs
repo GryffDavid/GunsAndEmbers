@@ -14,7 +14,7 @@ namespace TowerDefensePrototype
         public Texture2D BladeTexture;
         Rectangle DestinationRectangle;
         Vector2 BladeSize, Origin;
-        float DrawDepth, CurrentRotation, OriginalRotation;
+        float DrawDepth, CurrentRotation;
         static Random Random = new Random();
         SpriteEffects CurrentOrientation;
 

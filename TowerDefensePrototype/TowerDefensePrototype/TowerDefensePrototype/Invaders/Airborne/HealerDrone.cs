@@ -17,8 +17,7 @@ namespace TowerDefensePrototype
         public Invader HealTarget;
         public LightningBolt Bolt = new LightningBolt(Vector2.One, Vector2.Zero, Color.Transparent, 1f);
         public List<LightningBolt> BoltList = new List<LightningBolt>();
-        public Jet Jet;
-        
+
         //MEDBOT
         //Flies above the other invaders and heals them when necessary.
         //Should check which invader is the most urgently in need of attention but not too close to the tower
@@ -62,9 +61,6 @@ namespace TowerDefensePrototype
             {
                 bolt.Update(gameTime);
             }
-
-            if (Jet != null)
-                Jet.Update(gameTime);
 
             BoltList.RemoveAll(Bolt => Bolt.Alpha <= 0);
 
