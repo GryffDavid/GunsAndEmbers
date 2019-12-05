@@ -570,6 +570,7 @@ namespace TowerDefensePrototype
         
         #region For lighting - needs to be moved once lighting all works properly
         BasicEffect BasicEffect, BasicEffect2, ProjectileBasicEffect, JetBasicEffect;
+        BasicEffect TrailBasicEffect;
         Effect ShadowBlurEffect;
 
         #region For Lighting
@@ -938,6 +939,11 @@ namespace TowerDefensePrototype
                 BasicEffect.Projection = Projection;
                 BasicEffect.TextureEnabled = true;
                 BasicEffect.VertexColorEnabled = true;
+
+                TrailBasicEffect = new BasicEffect(GraphicsDevice);
+                TrailBasicEffect.Projection = Projection;
+                TrailBasicEffect.TextureEnabled = true;
+                TrailBasicEffect.VertexColorEnabled = true;
                 
                 ProjectileBasicEffect = new BasicEffect(GraphicsDevice);
                 ProjectileBasicEffect.Projection = Projection;
@@ -2571,7 +2577,9 @@ namespace TowerDefensePrototype
                         (drawable as JetEngine).JetEmitter.Draw(GraphicsDevice, ParticleEffect);
                     }
 
-                    if (drawable.GetType() != typeof(Emitter) && drawable.Emissive == false)
+                    if (drawable.GetType() != typeof(Emitter) &&
+                        drawable.GetType() != typeof(BulletTrail) && 
+                        drawable.Emissive == false)
                     {
                         drawable.DrawSpriteOcclusion(GraphicsDevice, BasicEffect);
                     }
@@ -2689,6 +2697,11 @@ namespace TowerDefensePrototype
                         drawable.Draw(GraphicsDevice, ProjectileBasicEffect, ShadowBlurEffect, ParticleEffect);
                     }
 
+                    if (drawable.GetType() == typeof(BulletTrail))
+                    {
+                        drawable.Draw(GraphicsDevice, TrailBasicEffect);
+                    }
+
                     if (drawable.GetType() == typeof(JetEngine))
                     {
                         drawable.Draw(GraphicsDevice, BasicEffect);
@@ -2787,10 +2800,10 @@ namespace TowerDefensePrototype
                     lightningBolt.Draw(spriteBatch);
                 }
 
-                foreach (BulletTrail trail in TrailList)
-                {
-                    trail.Draw(spriteBatch);
-                }
+                //foreach (BulletTrail trail in TrailList)
+                //{
+                //    trail.Draw(spriteBatch);
+                //}
 
                 foreach (Particle coin in CoinList)
                 {
@@ -2924,7 +2937,8 @@ namespace TowerDefensePrototype
 
                 foreach (Drawable drawable in DrawableList)
                 {
-                    if (drawable.GetType() != typeof(Emitter))
+                    if (drawable.GetType() != typeof(Emitter) && 
+                        drawable.GetType() != typeof(BulletTrail))
                         drawable.DrawSpriteOcclusion(GraphicsDevice, BasicEffect);
                 }
                 spriteBatch.End();
@@ -4656,11 +4670,18 @@ namespace TowerDefensePrototype
                         #endregion
 
                         #region Update and clean TrailList
-                        TrailList.ForEach(Trail => Trail.Update(gameTime));
-                        //TrailList.RemoveAll(Trail => Trail.MiddleScale.X <= 0);
+                        if (TrailList.Count > 0)
+                            TrailList.ForEach(Trail => Trail.Update(gameTime));
+                        
+                        TrailList.ForEach(Trail =>
+                            {
+                                if (Trail.Color == Color.Transparent)
+                                {
+                                    DrawableList.Remove(Trail);
+                                }
+                            });
 
                         TrailList.RemoveAll(Trail => Trail.Color == Color.Transparent);
-
                         
                         //for (int i = 0; i < TrailList.Count; i++)
                         //{
@@ -7746,10 +7767,12 @@ namespace TowerDefensePrototype
                     #region MachineGun
                     case LightProjectileType.MachineGun:
                         Trail = new BulletTrail(CollisionStart, CollisionEnd);
-                        Trail.Segment = BulletTrailSegment;
-                        Trail.Cap = BulletTrailCap;
-                        Trail.SetUp();
-                        TrailList.Add(Trail);
+                        Trail.Texture = BulletTrailSegment;
+                            //Trail.Segment = BulletTrailSegment;
+                            //Trail.Cap = BulletTrailCap;
+                            Trail.SetUp();
+                            TrailList.Add(Trail);
+                            AddDrawable(Trail);
                         break;
                     #endregion
 
@@ -7822,11 +7845,10 @@ namespace TowerDefensePrototype
 
                     #region Shotgun
                     case LightProjectileType.Shotgun:
-                        Trail = new BulletTrail(CollisionStart, CollisionEnd);
-                        Trail.Segment = BulletTrailSegment;
-                        Trail.Cap = BulletTrailCap;
-                        Trail.SetUp();
-                        TrailList.Add(Trail);
+                        //Trail = new BulletTrail(CollisionStart, CollisionEnd);
+                        ////Trail.Segment = BulletTrailSegment;
+                        //Trail.SetUp();
+                        //TrailList.Add(Trail);
                         break;
                     #endregion
                 }
@@ -8694,10 +8716,12 @@ namespace TowerDefensePrototype
                         #region MachineGun
                         case LightProjectileType.MachineGun:
                             Trail = new BulletTrail(CollisionStart, CollisionEnd);
-                            Trail.Segment = BulletTrailSegment;
-                            Trail.Cap = BulletTrailCap;
+                            Trail.Texture = BulletTrailSegment;
+                            //Trail.Segment = BulletTrailSegment;
+                            //Trail.Cap = BulletTrailCap;
                             Trail.SetUp();
                             TrailList.Add(Trail);
+                            AddDrawable(Trail);
                             break;
                         #endregion
 
@@ -8769,11 +8793,11 @@ namespace TowerDefensePrototype
 
                         #region Shotgun
                         case LightProjectileType.Shotgun:
-                            Trail = new BulletTrail(CollisionStart, CollisionEnd);
-                            Trail.Segment = BulletTrailSegment;
-                            Trail.Cap = BulletTrailCap;
-                            Trail.SetUp();
-                            TrailList.Add(Trail);
+                            //Trail = new BulletTrail(CollisionStart, CollisionEnd);
+                            //Trail.Segment = BulletTrailSegment;
+                            ////Trail.Cap = BulletTrailCap;
+                            //Trail.SetUp();
+                            //TrailList.Add(Trail);
                             break;
                         #endregion
                     }
@@ -13052,6 +13076,7 @@ namespace TowerDefensePrototype
             GraphicsDevice.BlendState = PSBlendState.Multiply;
             BasicEffect.TextureEnabled = false;
             BasicEffect.Techniques[0].Passes[0].Apply();
+            //BasicEffect.World = Matrix.CreateTranslation(new Vector3(0, 0, 0));
 
             foreach (PolygonShadow shadow in ShadowList)
             {
