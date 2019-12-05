@@ -1,7 +1,6 @@
-TowerDefensePrototype/TowerDefensePrototype/TowerDefensePrototypeContent/
-TowerDefensePrototype/TowerDefensePrototype/TowerDefensePrototype/bin/
-TowerDefensePrototype/.vs/
-TowerDefensePrototype */
-TowerDefensePrototype/TowerDefensePrototype/TowerDefensePrototype/obj/
-TowerDefensePrototype/GameDataTypes/obj/
-TowerDefensePrototype/GameDataTypes/bin/
+TowerDefensePrototype/TowerDefensePrototypeContent/
+TowerDefensePrototype/TowerDefensePrototype/bin/
+.vs/
+TowerDefensePrototype/TowerDefensePrototype/obj/
+GameDataTypes/obj/
+GameDataTypes/bin/
