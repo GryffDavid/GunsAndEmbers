@@ -7,6 +7,7 @@ using System.Xml.Serialization;
 
 namespace TowerDefensePrototype
 {
+    [Serializable]
     public class Upgrade2 : Upgrade
     {        
         public Upgrade2()

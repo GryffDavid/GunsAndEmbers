@@ -279,5 +279,13 @@ namespace TowerDefensePrototype
             else
                 return false;
         }
+
+        public void ChangeFireDirection()
+        {
+            FireRotation = Rotation + MathHelper.ToRadians((float)(-AngleOffset + Random.NextDouble() * (AngleOffset - (-AngleOffset))));
+
+            FireDirection.X = (float)Math.Cos(FireRotation);
+            FireDirection.Y = (float)Math.Sin(FireRotation);
+        }
     }
 }

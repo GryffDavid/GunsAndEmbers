@@ -10,7 +10,8 @@ namespace TowerDefensePrototype
     [Serializable]
     public class Upgrade
     {
-        public int GatlingSpeed;
+        public float GatlingSpeed, GatlingDamage, GatlingAccuracy;
+        public float CannonSpeed, CannonAccuracy, CannonBlastRadius;
         public string Text;
     }
 }

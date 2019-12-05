@@ -122,6 +122,7 @@
     <Compile Include="Basics\RangedInvader.cs" />
     <Compile Include="Basics\WeaponInfoBox.cs" />
     <Compile Include="Basics\NumberChange.cs" />
+    <Compile Include="Projectiles\ShotgunProjectile.cs" />
     <Compile Include="Projectiles\PulseGunProjectile.cs" />
     <Compile Include="Projectiles\TimerHeavyProjectile.cs" />
     <Compile Include="Basics\World.cs" />
@@ -152,6 +153,7 @@
     <Compile Include="Invaders\StationaryCannon.cs" />
     <Compile Include="Turrets\BeamTurret.cs" />
     <Compile Include="Turrets\BoomerangTurret.cs" />
+    <Compile Include="Turrets\ShotgunTurret.cs" />
     <Compile Include="Turrets\PulseGunTurret.cs" />
     <Compile Include="Turrets\FreezeTurret.cs" />
     <Compile Include="Turrets\FelCannon.cs" />
