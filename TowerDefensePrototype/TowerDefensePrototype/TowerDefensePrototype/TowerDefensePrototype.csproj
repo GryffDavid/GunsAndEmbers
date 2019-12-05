@@ -115,12 +115,19 @@
     <Compile Include="Basics\DialogBox.cs" />
     <Compile Include="Basics\Explosion.cs" />
     <Compile Include="Basics\LightningBolt.cs" />
+    <Compile Include="Basics\Profile.cs" />
     <Compile Include="Basics\RangedInvader.cs" />
     <Compile Include="Basics\TimerHeavyProjectile.cs" />
     <Compile Include="Basics\World.cs" />
     <Compile Include="Basics\CheckBox.cs" />
     <Compile Include="Basics\InformationBox.cs" />
-    <Compile Include="Decal.cs" />
+    <Compile Include="Basics\Upgrade.cs" />
+    <Compile Include="Level.cs" />
+    <Compile Include="Level1.cs" />
+    <Compile Include="Projectiles\LightningProjectile.cs" />
+    <Compile Include="Invaders\StationaryCannon.cs" />
+    <Compile Include="Turrets\EnergyTurret.cs" />
+    <Compile Include="Upgrades\Upgrade2.cs" />
     <Compile Include="Invaders\Archer.cs" />
     <Compile Include="Invaders\FireElemental.cs" />
     <Compile Include="Invaders\Healer.cs" />
@@ -172,12 +179,9 @@
     <Compile Include="Basics\VerticalBar.cs" />
     <Compile Include="Turrets\CannonTurret.cs" />
     <Compile Include="Turrets\FlameThrowerTurret.cs" />
-    <Compile Include="Basics\Wave.cs" />
-    <Compile Include="Basics\Upgrade.cs" />
     <Compile Include="Turrets\LightningTurret.cs" />
     <Compile Include="Upgrades\Upgrade1.cs" />
-    <Compile Include="World\IceWorld.cs" />
-    <Compile Include="World\LavaWorld.cs" />
+    <Compile Include="Basics\Wave.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Service References\aOtherStuff\Game.ico" />
@@ -225,6 +229,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Bosses\" />
+    <Folder Include="World\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />

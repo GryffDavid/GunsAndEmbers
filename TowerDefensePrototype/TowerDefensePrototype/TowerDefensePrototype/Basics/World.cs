@@ -7,7 +7,6 @@ namespace TowerDefensePrototype
 {
     public class World
     {
-        public WorldType WorldType;
         public string BackgroundAsset, GroundAsset;
         //This stores the data for each world type
         //Background

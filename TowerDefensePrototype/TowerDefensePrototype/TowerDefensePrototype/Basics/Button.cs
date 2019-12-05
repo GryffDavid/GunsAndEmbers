@@ -63,11 +63,14 @@ namespace TowerDefensePrototype
             else
                 TextColor = textColor.Value;
 
-            //if (canBeRightClicked == null)
-            //    CanBeRightClicked = false;
-            //else
-            //    CanBeRightClicked = canBeRightClicked.Value;
-            CanBeRightClicked = true;
+            if (canBeRightClicked == null)
+            {
+                CanBeRightClicked = false;
+            }
+            else
+            {
+                CanBeRightClicked = canBeRightClicked.Value;
+            }
 
             Alignment = alignment;
 
@@ -346,10 +349,15 @@ namespace TowerDefensePrototype
         {
             Color[] retrievedColor = new Color[1];
 
-            if (CurrentMousePosition == MousePosition.Inside)
+            if (CurrentMousePosition == MousePosition.Inside && 
+                new Rectangle(0, 0, 1280, 720).Contains(new Point(Mouse.GetState().X, Mouse.GetState().Y)))
             {
-                Vector2 pos = new Vector2((1 / Scale.X) * (Mouse.GetState().X - Position.X), (1 / Scale.Y) * (Mouse.GetState().Y - Position.Y));
-                ButtonStrip.GetData<Color>(0, new Rectangle((int)(pos.X), (int)(pos.Y), 1, 1), retrievedColor, 0, 1);
+                if (DestinationRectangle.Contains(new Point(Mouse.GetState().X, Mouse.GetState().Y)))
+                {
+                    //Vector2 pos = new Vector2((1 / Scale.X) * (Mouse.GetState().X - Position.X), (1 / Scale.Y) * (Mouse.GetState().Y - Position.Y));
+                    //Rectangle testRect = new Rectangle((int)((1 / Scale.X) * (Mouse.GetState().X - Position.X)), (int)((1 / Scale.Y) * (Mouse.GetState().Y - Position.Y)), 1, 1);
+                    ButtonStrip.GetData<Color>(0, new Rectangle((int)((1 / Scale.X) * (Mouse.GetState().X - Position.X)), (int)((1 / Scale.Y) * (Mouse.GetState().Y - Position.Y)), 1, 1), retrievedColor, 0, 1);
+                }
             }
 
             return retrievedColor[0];

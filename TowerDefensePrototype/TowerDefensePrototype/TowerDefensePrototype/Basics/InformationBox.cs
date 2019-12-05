@@ -49,28 +49,35 @@ namespace TowerDefensePrototype
             MouseState MouseState = Mouse.GetState();
             Vector2 Offset;
 
-            if (MouseState.Y <= (720 - 350))
+            if (MouseState.X <= ActualSize.X + 16)
             {
-                Offset.Y = 0;
+                Offset.X = ActualSize.X;
             }
             else
+            {
+                Offset.X = -16;
+            }
+
+            if (MouseState.Y >= ActualSize.Y)
             {
                 Offset.Y = -ActualSize.Y;
             }
-
-            if (MouseState.X < (1280 - 300))
-            {
-                Offset.X = 0;
-            }
             else
             {
-                Offset.X = -ActualSize.X;
+                Offset.Y = 0;
             }
 
-            spriteBatch.Draw(BoxTexture, new Rectangle((int)(Position.X + Offset.X), (int)(Position.Y + Offset.Y)-16, 
-                             (int)ActualSize.X+32, (int)ActualSize.Y+8), Color.White);
-            spriteBatch.DrawString(Font, Text, new Vector2(Position.X + 16 + Offset.X, 
-                                   Position.Y - Font.MeasureString(Text[0].ToString()).Y + Offset.Y), Color.White);
+            spriteBatch.Draw(BoxTexture, 
+                new Rectangle((int)(MouseState.X - ActualSize.X + Offset.X), 
+                              (int)(MouseState.Y + Offset.Y), 
+                              (int)ActualSize.X + 16, 
+                              (int)ActualSize.Y), 
+                    Color.White);
+
+            spriteBatch.DrawString(Font, Text, 
+                new Vector2(MouseState.X - ActualSize.X + Offset.X + 8, 
+                            MouseState.Y + Offset.Y - 8),
+                Color.Lerp(Color.White, Color.Transparent, 0.5f));
 
         }
     }

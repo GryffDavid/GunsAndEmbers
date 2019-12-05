@@ -45,8 +45,6 @@ Content\ProfileMenuTitle.xnb
 Content\Backgrounds\NewInterface.xnb
 Content\Projectiles\Torpedo.xnb
 Content\Cursors\Crosshair.xnb
-Content\ShieldBar.xnb
-Content\HealthBar.xnb
 Content\LoadingAnimation.xnb
 Content\Invaders\Tank.xnb
 Content\Backgrounds\MainMenuBackground.xnb
@@ -75,8 +73,9 @@ Content\InformationBox.xnb
 Content\Projectiles\ClusterBomb.xnb
 Content\Projectiles\ClusterBombShell.xnb
 Content\Particles\Coin.xnb
-Content\Levels\Level1.xnb
-Content\Levels\Level6.xnb
+Content\HealthBar.xnb
+Content\ShieldBar.xnb
+Content\Shadow.xnb
 Content\Fonts\BoxFont1.xnb
 Content\Fonts\HUDFont.xnb
 Content\Fonts\ButtonFont.xnb

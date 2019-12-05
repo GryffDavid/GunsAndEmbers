@@ -7,12 +7,12 @@ using System.Xml.Serialization;
 
 namespace TowerDefensePrototype
 {
-    public class Upgrade1 : Upgrade
+    public class Upgrade2 : Upgrade
     {        
-        public Upgrade1()
+        public Upgrade2()
         {
             GatlingSpeed = -50;
-            Text = "Increases gatling gun speed 50%.";
+            Text = "Rory is a butt face.";
         }
     }
 }

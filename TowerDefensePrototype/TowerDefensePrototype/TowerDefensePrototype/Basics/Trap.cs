@@ -26,6 +26,7 @@ namespace TowerDefensePrototype
         public float AffectedTime, CurrentAffectedTime;
         public float DrawDepth, Bottom;
         public int ElapsedTime, FrameTime, FrameCount, CurrentFrame;
+        public int ResourceCost;
 
         public virtual void LoadContent(ContentManager contentManager)
         {

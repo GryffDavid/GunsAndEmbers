@@ -11,7 +11,7 @@ namespace TowerDefensePrototype
     public abstract class Invader
     {
         //public string AssetName;
-        public Texture2D CurrentTexture;
+        public Texture2D CurrentTexture, Shadow;
         public Rectangle DestinationRectangle, SourceRectangle;
         public Vector2 Position, MoveVector, CurrentMoveVector, ResourceMinMax, Velocity;
         public bool Active, VulnerableToTurret, VulnerableToTrap, CanAttack, Burning, Frozen, Slow, Airborne;//, CanMove;
@@ -19,11 +19,12 @@ namespace TowerDefensePrototype
         public BoundingBox BoundingBox;
         public Double CurrentMoveDelay, MoveDelay, CurrentDelay, AttackDelay, CurrentAttackDelay;
         public float MaxHP, CurrentHP;
-        public int ResourceValue, MaxY;
+        public int ResourceValue;
+        public float MaxY;
         public Vector2 YRange;
         public abstract void TrapDamage(TrapType trapType);
         public int AttackPower;
-        static Random Random = new Random();
+        public static Random Random = new Random();
         public float Gravity, BurnDamage, DrawDepth;
         public double BurnDelay, FreezeDelay, CurrentBurnDelay, CurrentFreezeDelay,
                         CurrentBurnInterval, BurnInterval, SlowDelay, CurrentSlowDelay;
@@ -35,10 +36,11 @@ namespace TowerDefensePrototype
         public Vector2 Scale = new Vector2(1, 1);
         public float Bottom;
         public Animation CurrentAnimation;
+        public Emitter ParticleEmitter;        
 
         public void LoadContent(ContentManager contentManager)
         {
-            Random = new System.Random();
+            Shadow = contentManager.Load<Texture2D>("Shadow");
             VulnerableToTurret = true;
             VulnerableToTrap = true;
             CurrentTexture = contentManager.Load<Texture2D>(CurrentAnimation.AssetName);
@@ -48,12 +50,21 @@ namespace TowerDefensePrototype
             CurrentMoveVector = MoveVector;
             MaxY = Random.Next((int)YRange.X, (int)YRange.Y);
             FrameSize = new Vector2(CurrentTexture.Width / CurrentAnimation.TotalFrames, CurrentTexture.Height);
+          
+            if (ParticleEmitter != null)
+            ParticleEmitter.LoadContent(contentManager);
         }
 
         public virtual void Update(GameTime gameTime)
         {
             if (Active == true)
-            {                
+            {
+                if (ParticleEmitter != null)
+                {
+                    ParticleEmitter.Update(gameTime);
+                    ParticleEmitter.Position = new Vector2(DestinationRectangle.Center.X, DestinationRectangle.Bottom);
+                }
+
                 ResourceValue = Random.Next((int)ResourceMinMax.X, (int)ResourceMinMax.Y);
 
                 VulnerableToTurret = true;
@@ -192,7 +203,12 @@ namespace TowerDefensePrototype
         public void Draw(SpriteBatch spriteBatch)
         {
             if (Active == true)
-            {                
+            {               
+                spriteBatch.Draw(Shadow, new Rectangle(DestinationRectangle.Left, (int)MaxY-(DestinationRectangle.Height/8), DestinationRectangle.Width, DestinationRectangle.Height / 4), Color.Lerp(Color.White, Color.Transparent, 0.75f));
+                
+                if (ParticleEmitter != null)
+                    ParticleEmitter.Draw(spriteBatch);
+
                 BoundingBox = new BoundingBox(new Vector3(Position.X, Position.Y, 0), 
                               new Vector3(Position.X + (FrameSize.X * Scale.X), Position.Y + (FrameSize.Y * Scale.Y), 0));
 

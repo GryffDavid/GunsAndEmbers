@@ -19,9 +19,10 @@ namespace TowerDefensePrototype
             Selected = true;
             FireDelay = 200;
             Damage = 5;
-            AngleOffset = 0;
+            AngleOffset = 5;
             Animated = false;
             Looping = false;
+            ResourceCost = 200;
 
             CurrentAnimation = new Animation()
             {

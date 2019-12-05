@@ -27,7 +27,7 @@ namespace TowerDefensePrototype
         public TurretType TurretType;
         public HorizontalBar TimingBar;
         public double ElapsedTime = 0;
-
+        public int ResourceCost;
         public Animation CurrentAnimation;
         public double CurrentFrameTime;
         public int CurrentFrame;

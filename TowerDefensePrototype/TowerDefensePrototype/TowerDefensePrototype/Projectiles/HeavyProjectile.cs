@@ -19,7 +19,7 @@ namespace TowerDefensePrototype
         public Color CurrentColor;
         public HeavyProjectileType HeavyProjectileType;
         public Rectangle DestinationRectangle, CollisionRectangle;
-        public float Damage, Range;
+        public float Damage, BlastRadius;
         static Random Random = new Random();
 
         public void LoadContent(ContentManager contentManager)

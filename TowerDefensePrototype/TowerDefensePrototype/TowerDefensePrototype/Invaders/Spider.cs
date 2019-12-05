@@ -13,11 +13,11 @@ namespace TowerDefensePrototype
         public Spider(Vector2 position)
          {
             Active = true;
-            MoveVector = new Vector2(-1, 0);
+            MoveVector = new Vector2(-2, 0);
             Position = position;
             CurrentHP = 50;
             MaxHP = 50;
-            MoveDelay = 20;
+            MoveDelay = 10;
             ResourceMinMax = new Vector2(1, 5);
             CurrentAttackDelay = 0;
             AttackDelay = 3000;
@@ -36,6 +36,12 @@ namespace TowerDefensePrototype
                 TotalFrames = 3, 
                 FrameDelay = 500 
             };
+
+            ParticleEmitter = new Emitter("Particles/Smoke", new Vector2(DestinationRectangle.Center.X, DestinationRectangle.Bottom - 8),
+                                               new Vector2(60, 60), new Vector2(0.5f, 1f), new Vector2(20, 30), 0.5f, true, new Vector2(0, 0),
+                                               new Vector2(-2, 2), new Vector2(0.25f, 0.5f), Color.SaddleBrown, Color.SaddleBrown, 0f, -1, 600, 1, false, new Vector2(0, 720), false);
+
+ 
         }
 
         public override void Update(GameTime gameTime)

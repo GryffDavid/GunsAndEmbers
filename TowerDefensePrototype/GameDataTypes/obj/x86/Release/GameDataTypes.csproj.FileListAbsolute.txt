@@ -1,0 +1,6 @@
+C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\GameDataTypes\bin\x86\Release\GameDataTypes.dll
+C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\GameDataTypes\bin\x86\Release\GameDataTypes.pdb
+C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\GameDataTypes\obj\x86\Release\GameDataTypes.csprojResolveAssemblyReference.cache
+C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\GameDataTypes\obj\x86\Release\Microsoft.Xna.Framework.RuntimeProfile.txt
+C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\GameDataTypes\obj\x86\Release\GameDataTypes.dll
+C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\GameDataTypes\obj\x86\Release\GameDataTypes.pdb

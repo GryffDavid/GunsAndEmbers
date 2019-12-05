@@ -12,6 +12,7 @@ namespace TowerDefensePrototype
         public string Name;
         public int LevelNumber, Points, Credits, ShotsFired;
         public List<string> Buttons;
+        public List<Upgrade> UpgradesList;
 
         //What turrets the player has access to
         public bool FlameThrower, MachineGun, Cannon, LightningTurret, ClusterTurret;
@@ -20,6 +21,6 @@ namespace TowerDefensePrototype
         public bool Fire, Spikes, Wall, Catapult, SawBlade, Ice;
 
         //Upgrades the player has purchased
-        public bool Upgrade1, Upgrade2, Upgrade3;
+        
     }
 }
