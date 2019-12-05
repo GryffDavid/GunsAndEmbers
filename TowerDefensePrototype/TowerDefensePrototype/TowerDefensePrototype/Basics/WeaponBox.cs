@@ -14,7 +14,7 @@ namespace TowerDefensePrototype
         public Nullable<TurretType> ContainsTurret = null;
         public Nullable<TrapType> ContainsTrap = null;
 
-        public WeaponBox(string buttonName, Vector2 postion, Vector2 scale) : base(buttonName, postion, null, scale )
+        public WeaponBox(Texture2D buttonTexture, Vector2 postion, Vector2 scale) : base(buttonTexture, postion, null, scale)
         {
 
         }

@@ -14,12 +14,12 @@ namespace TowerDefensePrototype
 
     public class Button
     {
-        public string AssetName, IconName, Text, FontName;
+        public string Text;
         public Vector2 FrameSize, Scale, CurrentPosition, CursorPosition, IconPosition, NextPosition, IconNextPosition, NextScale;
         public Rectangle DestinationRectangle, SourceRectangle;
 
         public Color Color, TextColor;
-        Texture2D ButtonStrip, IconTexture;       
+        public Texture2D ButtonStrip, IconTexture;       
         Rectangle IconRectangle;
         SpriteFont Font;
         SpriteBatch SpriteBatch;
@@ -36,17 +36,19 @@ namespace TowerDefensePrototype
         public float DrawDepth;
         string Alignment;
 
-        public Button(string assetName, Vector2 position, string iconName = null, Vector2? scale = null, 
-            Color? color = null, string text = "", string fontName = "", string alignment = "Left", Color? textColor = null, bool? canBeRightClicked = null)
+        public Button(Texture2D buttonStrip, Vector2 position, Texture2D icon = null, Vector2? scale = null, 
+            Color? color = null, string text = "", SpriteFont font = null, string alignment = "Left", Color? textColor = null, bool? canBeRightClicked = null)
         {
             ButtonActive = true;
 
-            AssetName = assetName;
+            ButtonStrip = buttonStrip;
+            Font = font;
+            IconTexture = icon;
 
             CurrentPosition = position;
             NextPosition = position;
 
-            IconName = iconName;
+            Text = text;
 
             if (scale == null)
                 Scale = new Vector2(1, 1);
@@ -57,10 +59,6 @@ namespace TowerDefensePrototype
                 Color = Color.White;
             else
                 Color = color.Value;
-
-            Text = text;
-
-            FontName = fontName;
 
             if (textColor == null)
                 TextColor = Color.White;
@@ -87,27 +85,25 @@ namespace TowerDefensePrototype
             NextScale = Vector2.One;
         }
 
-        public void LoadContent(ContentManager contentManager)
+        public void LoadContent()
         {
             if (ButtonActive == true)
             {
-                ButtonStrip = contentManager.Load<Texture2D>(AssetName);
-
                 FrameSize = new Vector2((int)(ButtonStrip.Width / 3f), ButtonStrip.Height);
                 DestinationRectangle = new Rectangle((int)CurrentPosition.X, (int)CurrentPosition.Y, (int)(FrameSize.X * Scale.X), (int)(FrameSize.Y * Scale.Y));
 
-                if (IconName != null)
-                {
-                    IconTexture = contentManager.Load<Texture2D>(IconName);
-                    IconPosition = new Vector2(CurrentPosition.X + (DestinationRectangle.Width - IconTexture.Width) / 2, CurrentPosition.Y + (DestinationRectangle.Height - IconTexture.Height) / 2);
-                    IconNextPosition = IconPosition;
-                    IconRectangle = new Rectangle((int)IconPosition.X, (int)IconPosition.Y, IconTexture.Width, IconTexture.Height);
-                }
+                //if (IconName != null)
+                //{
+                //    IconTexture = contentManager.Load<Texture2D>(IconName);
+                //    IconPosition = new Vector2(CurrentPosition.X + (DestinationRectangle.Width - IconTexture.Width) / 2, CurrentPosition.Y + (DestinationRectangle.Height - IconTexture.Height) / 2);
+                //    IconNextPosition = IconPosition;
+                //    IconRectangle = new Rectangle((int)IconPosition.X, (int)IconPosition.Y, IconTexture.Width, IconTexture.Height);
+                //}
 
-                if (FontName != "")
-                {
-                    Font = contentManager.Load<SpriteFont>(FontName);
-                }
+                //if (FontName != "")
+                //{
+                //    Font = contentManager.Load<SpriteFont>(FontName);
+                //}
             }
         }
 
@@ -141,8 +137,8 @@ namespace TowerDefensePrototype
                                    
             DestinationRectangle = new Rectangle((int)CurrentPosition.X, (int)CurrentPosition.Y, (int)(FrameSize.X * Scale.X), (int)(FrameSize.Y * Scale.Y));
 
-            if (IconName != null)
-            IconRectangle = new Rectangle((int)IconPosition.X, (int)IconPosition.Y, IconTexture.Width, IconTexture.Height);
+            //if (IconName != null)
+            //IconRectangle = new Rectangle((int)IconPosition.X, (int)IconPosition.Y, IconTexture.Width, IconTexture.Height);
 
             switch (CurrentButtonState)
             {
@@ -323,14 +319,18 @@ namespace TowerDefensePrototype
             {                
                 spriteBatch.Draw(ButtonStrip, DestinationRectangle, SourceRectangle, Color, MathHelper.ToRadians(0), Vector2.Zero, SpriteEffects.None, DrawDepth);
 
-                if (IconName != null)
+                if (IconTexture != null)
                 {
-                    if (CurrentButtonState != ButtonSpriteState.Pressed)                    
-                        spriteBatch.Draw(IconTexture, IconRectangle, null, CurrentIconColor, MathHelper.ToRadians(0), Vector2.Zero, 
+                    //IconPosition = new Vector2(CurrentPosition.X + (DestinationRectangle.Width - IconTexture.Width) / 2, CurrentPosition.Y + (DestinationRectangle.Height - IconTexture.Height) / 2);
+                    //IconNextPosition = IconPosition;
+                    //IconRectangle = new Rectangle((int)IconPosition.X, (int)IconPosition.Y, IconTexture.Width, IconTexture.Height);
+
+                    if (CurrentButtonState != ButtonSpriteState.Pressed)
+                        spriteBatch.Draw(IconTexture, new Rectangle((int)(CurrentPosition.X + (DestinationRectangle.Width - IconTexture.Width)/2), (int)(CurrentPosition.Y + (DestinationRectangle.Height - IconTexture.Height)/2), IconTexture.Width, IconTexture.Height), null, CurrentIconColor, MathHelper.ToRadians(0), Vector2.Zero,
                             SpriteEffects.None, 0.991f);
                     else
-                        spriteBatch.Draw(IconTexture, new Rectangle(IconRectangle.X + 2, IconRectangle.Y + 2, IconRectangle.Width,
-                            IconRectangle.Height), null, CurrentIconColor, MathHelper.ToRadians(0), Vector2.Zero, SpriteEffects.None, 0.991f);              
+                        spriteBatch.Draw(IconTexture, new Rectangle((int)(CurrentPosition.X + (DestinationRectangle.Width - IconTexture.Width) / 2) + 2, (int)(CurrentPosition.Y + (DestinationRectangle.Height - IconTexture.Height) / 2) + 2, IconTexture.Width, IconTexture.Height), null, CurrentIconColor, MathHelper.ToRadians(0), Vector2.Zero,
+                            SpriteEffects.None, 0.991f);
                 }
 
                 switch (CurrentButtonState)

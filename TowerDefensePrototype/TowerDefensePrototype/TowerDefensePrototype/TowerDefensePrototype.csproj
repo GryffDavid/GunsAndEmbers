@@ -131,7 +131,6 @@
     <Compile Include="Projectiles\ShotgunProjectile.cs" />
     <Compile Include="Projectiles\TimerHeavyProjectile.cs" />
     <Compile Include="Basics\World.cs" />
-    <Compile Include="Basics\CheckBox.cs" />
     <Compile Include="Basics\Tooltip.cs" />
     <Compile Include="Basics\Upgrade.cs" />
     <Compile Include="Basics\Level.cs" />

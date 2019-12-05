@@ -11,16 +11,21 @@ namespace TowerDefensePrototype
     public class DialogBox
     {
         Vector2 Position;
-        Texture2D Box;
+        Texture2D Box, LeftButtonSprite, RightButtonSprite;
         public Button LeftButton, RightButton;
         string LeftText, RightText, BoxText;
         SpriteFont TextFont;
 
-        public DialogBox(Vector2 position, string leftText, string boxText, string rightText = "")
+        public DialogBox(Texture2D boxSprite, Texture2D leftButton, Texture2D rightButton, SpriteFont font, Vector2 position, string leftText, string boxText, string rightText = "")
         {
             Position = position;
             BoxText = boxText;
             LeftText = leftText;
+
+            TextFont = font;
+            LeftButtonSprite = leftButton;
+            RightButtonSprite = rightButton;
+            Box = boxSprite;
 
             if (rightText != "")
                 RightText = rightText;
@@ -28,30 +33,30 @@ namespace TowerDefensePrototype
                 RightText = null;
         }
 
-        public void LoadContent(ContentManager contentManager)
+        public void LoadContent()
         {
-            Box = contentManager.Load<Texture2D>("DialogBox");
+        //    Box = contentManager.Load<Texture2D>("DialogBox");
 
-            LeftButton = new Button("Buttons/ButtonLeft", new Vector2(-300, 
-                Position.Y + 128 - (Box.Height/2)), null, new Vector2(0.5f, 1), null, LeftText, "Fonts/DefaultFont", "Left", Color.White);
+            LeftButton = new Button(LeftButtonSprite, new Vector2(-300,
+            Position.Y + 128 - (Box.Height / 2)), null, new Vector2(0.5f, 1), null, LeftText, TextFont, "Left", Color.White);
             LeftButton.NextPosition.X = Position.X - (Box.Width / 2);
             LeftButton.Scale = new Vector2(1,2);
-            LeftButton.LoadContent(contentManager);
+            LeftButton.LoadContent();
             LeftButton.NextScale = new Vector2(0.5f, 1);
             
 
             if (RightText != null)
             {
-                RightButton = new Button("Buttons/ButtonRight", new Vector2(1280+300,
-                    Position.Y + 128 - (Box.Height / 2)), null, new Vector2(0.5f, 1), null, RightText, "Fonts/DefaultFont", "Right", Color.White);
+                RightButton = new Button(RightButtonSprite, new Vector2(1280+300,
+                    Position.Y + 128 - (Box.Height / 2)), null, new Vector2(0.5f, 1), null, RightText, TextFont, "Right", Color.White);
                 RightButton.NextPosition.X = Position.X + 252 - (Box.Width / 2);
                 RightButton.Scale = new Vector2(1, 2);
-                RightButton.LoadContent(contentManager);
+                RightButton.LoadContent();
                 RightButton.NextScale = new Vector2(0.5f, 1);
                 
             }
 
-            TextFont = contentManager.Load<SpriteFont>("Fonts/DefaultFont");
+            //TextFont = contentManager.Load<SpriteFont>("Fonts/DefaultFont");
 
             for (int i = 0; i < BoxText.Length; i++)
             {
