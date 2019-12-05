@@ -26,7 +26,7 @@ namespace TowerDefensePrototype
 
         public void Update(GameTime gameTime)
         {
-            TurretHealthBar.Update(CurrentTurret.Health, CurrentTurret.CurrentHealth, gameTime);
+            TurretHealthBar.Update(CurrentTurret.MaxHealth, CurrentTurret.CurrentHealth, gameTime);
             TurretTimingBar.Update((float)CurrentTurret.FireDelay, (float)CurrentTurret.ElapsedTime, gameTime);
             //CurrentTurret.CurrentHealth -= 0.1f;
         }

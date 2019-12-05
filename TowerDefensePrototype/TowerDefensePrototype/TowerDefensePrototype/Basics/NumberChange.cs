@@ -14,9 +14,9 @@ namespace TowerDefensePrototype
         int Number;
         Vector2 Position, Change;
         public bool Active;
-        Color Color;
+        Color OriginalColor, Color;
 
-        float CurrentTime;
+        float CurrentTime, MaxTime;
 
         public NumberChange(SpriteFont spriteFont, Vector2 position, Vector2 change, int number)
         {
@@ -25,14 +25,15 @@ namespace TowerDefensePrototype
             Position = position;
             Change = change;
             Number = number;
+            MaxTime = 500;
 
             if (number < 0)
             {
-                Color = new Color(255, 0, 0, 255);
+                OriginalColor = new Color(255, 0, 0, 255);
             }
             else
             {
-                Color = new Color(255, 255, 255, 255);
+                OriginalColor = new Color(255, 255, 255, 255);
             }
         }
 
@@ -42,13 +43,13 @@ namespace TowerDefensePrototype
 
             CurrentTime += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
 
-            if (CurrentTime > 2000)
+            if (CurrentTime > MaxTime)
             {                
                 CurrentTime = 0;
                 Active = false;
             }
-
-            Color = Color.Lerp(Color, Color.Transparent, 0.05f * (float)(gameTime.ElapsedGameTime.TotalSeconds * 60));
+            double colorPercent = (100.0 / MaxTime * CurrentTime) / 100.0;
+            Color = Color.Lerp(OriginalColor, Color.Transparent, (float)colorPercent);
         }
 
         public void Draw(SpriteBatch spriteBatch)

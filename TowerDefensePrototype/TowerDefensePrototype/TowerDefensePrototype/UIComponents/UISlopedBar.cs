@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace TowerDefensePrototype
 {
-    public class UIBar
+    public class UISlopedBar
     {
         public List<Quad> QuadList = new List<Quad>();
         public float MaxValue, CurrentValue, PreviousValue;
@@ -20,7 +20,7 @@ namespace TowerDefensePrototype
         public float CurrentPulseTime, MaxPulseTime, TopXOffset, BottomXOffset;
         public Vector2 CurrentScale;
 
-        public UIBar(Vector2 position, Vector2 maxSize, Color Color, bool? drawMarker = false)
+        public UISlopedBar(Vector2 position, Vector2 maxSize, Color Color, bool? drawMarker = false, float? topXOffset = 0, float? bottomXOffset = 0)
         {
             Position = position;
             MaxSize = maxSize;          
@@ -32,12 +32,15 @@ namespace TowerDefensePrototype
             MaxPulseTime = 1000;
             CurrentPulseTime = 0;
 
+            TopXOffset = topXOffset.Value;
+            BottomXOffset = bottomXOffset.Value;
+
             Quad BackgroundQuad = new Quad(
                 new Vector2[] 
                 {
-                    new Vector2(Position.X, Position.Y + MaxSize.Y),
-                    new Vector2(Position.X, Position.Y),
-                    new Vector2(Position.X + MaxSize.X, Position.Y + MaxSize.Y),
+                    new Vector2(Position.X + BottomXOffset, Position.Y + MaxSize.Y),
+                    new Vector2(Position.X + TopXOffset, Position.Y),
+                    new Vector2(Position.X + MaxSize.X - MaxSize.Y, Position.Y + MaxSize.Y),
                     new Vector2(Position.X + MaxSize.X, Position.Y)
                 },
                 new Color[]
@@ -52,9 +55,9 @@ namespace TowerDefensePrototype
             Quad ValueQuad = new Quad(
                 new Vector2[] 
                 {
-                    new Vector2(Position.X, Position.Y + MaxSize.Y),
-                    new Vector2(Position.X, Position.Y),
-                    new Vector2(Position.X + MaxSize.X, Position.Y + MaxSize.Y),
+                    new Vector2(Position.X + BottomXOffset, Position.Y + MaxSize.Y),
+                    new Vector2(Position.X + TopXOffset, Position.Y),
+                    new Vector2(Position.X + MaxSize.X - MaxSize.Y, Position.Y + MaxSize.Y),
                     new Vector2(Position.X + MaxSize.X, Position.Y)
                 },
                 new Color[]
@@ -64,6 +67,7 @@ namespace TowerDefensePrototype
                     BarColor,
                     BarColor
                 });
+
             //The actual value quad
             QuadList.Add(ValueQuad);
 
@@ -78,11 +82,11 @@ namespace TowerDefensePrototype
         {
             CurrentValue = currentValue;
 
-            //if (PreviousValue < CurrentValue &&
-            //    ((100 / maxValue * currentValue) / 100) == 1)
-            //{
-            //    Pulsing = true;
-            //}
+            if (PreviousValue < CurrentValue &&
+                ((100 / maxValue * currentValue) / 100) == 1)
+            {
+                Pulsing = true;
+            }
 
             if (PreviousValue != CurrentValue)
             {
@@ -98,8 +102,8 @@ namespace TowerDefensePrototype
                         Position.X + TopXOffset, 
                         Position.Y),
                     new Vector2(
-                        MathHelper.Clamp((Position.X + (MaxSize.X * PercentValue)), Position.X, (Position.X + MaxSize.X)), 
-                        Position.Y + MaxSize.Y),
+                        MathHelper.Clamp((Position.X + (MaxSize.X * PercentValue) - MaxSize.Y), Position.X, (Position.X + MaxSize.X - MaxSize.Y)), 
+                        Position.Y + MathHelper.Clamp(MaxSize.X * PercentValue, 0, MaxSize.Y)),
                     new Vector2(
                         MathHelper.Clamp(Position.X + (MaxSize.X * PercentValue), Position.X, Position.X + MaxSize.X), 
                         Position.Y)
@@ -110,7 +114,7 @@ namespace TowerDefensePrototype
                     BarColor,
                     BarColor,
                     BarColor
-                });                
+                });
             }
 
             if (DrawMarker == true && PreviousValue != CurrentValue)
@@ -119,13 +123,13 @@ namespace TowerDefensePrototype
                     new Vector2[] 
                 {
                     new Vector2(
-                        MathHelper.Clamp((Position.X + (MaxSize.X * PercentValue)), Position.X, (Position.X + MaxSize.X)) - 3, 
+                        MathHelper.Clamp((Position.X + (MaxSize.X * PercentValue) - MaxSize.Y), Position.X, (Position.X + MaxSize.X - MaxSize.Y)) - 3, 
                         Position.Y + MathHelper.Clamp(MaxSize.X * PercentValue, 0, MaxSize.Y)),
                     new Vector2(
                         MathHelper.Clamp(Position.X + (MaxSize.X * PercentValue), Position.X, Position.X + MaxSize.X) - 3, 
                         Position.Y),
                     new Vector2(
-                        MathHelper.Clamp((Position.X + (MaxSize.X * PercentValue)), Position.X, (Position.X + MaxSize.X)), 
+                        MathHelper.Clamp((Position.X + (MaxSize.X * PercentValue) - MaxSize.Y), Position.X, (Position.X + MaxSize.X - MaxSize.Y)), 
                         Position.Y + MathHelper.Clamp(MaxSize.X * PercentValue, 0, MaxSize.Y)),
                     new Vector2(
                         MathHelper.Clamp(Position.X + (MaxSize.X * PercentValue), Position.X, Position.X + MaxSize.X), 
@@ -159,8 +163,8 @@ namespace TowerDefensePrototype
                 {
                     new Vector2(Position.X - CurrentScale.X, Position.Y + MaxSize.Y + CurrentScale.Y),
                     new Vector2(Position.X - CurrentScale.X, Position.Y - CurrentScale.Y),
-                    new Vector2(Position.X + MaxSize.X + CurrentScale.X, Position.Y + MaxSize.Y + CurrentScale.Y),
-                    new Vector2(Position.X + MaxSize.X + CurrentScale.X, Position.Y - CurrentScale.Y)
+                    new Vector2(Position.X + MaxSize.X - (MaxSize.Y + CurrentScale.X) + CurrentScale.X, Position.Y + MaxSize.Y + CurrentScale.Y),
+                    new Vector2(Position.X + MaxSize.X + (CurrentScale.X+ CurrentScale.X), Position.Y - CurrentScale.Y)
                 },
                 new Color[]
                 {
@@ -174,48 +178,13 @@ namespace TowerDefensePrototype
             PreviousValue = CurrentValue;
         }
 
-        public void Update(float maxValue, float currentValue)
-        {
-            CurrentValue = currentValue;
-
-            if (PreviousValue != CurrentValue)
-            {
-                PercentValue = (100 / maxValue * currentValue) / 100;
-
-                QuadList[1] = new Quad(
-                    new Vector2[] 
-                {
-                    new Vector2(
-                        Position.X + BottomXOffset, 
-                        Position.Y + MaxSize.Y),
-                    new Vector2(
-                        Position.X + TopXOffset, 
-                        Position.Y),
-                    new Vector2(
-                        MathHelper.Clamp((Position.X + (MaxSize.X * PercentValue)), Position.X, (Position.X + MaxSize.X)), 
-                        Position.Y + MathHelper.Clamp(MaxSize.X * PercentValue, 0, MaxSize.Y)),
-                    new Vector2(
-                        MathHelper.Clamp(Position.X + (MaxSize.X * PercentValue), Position.X, Position.X + MaxSize.X), 
-                        Position.Y)
-                },
-                    new Color[]
-                {
-                    BarColor,
-                    BarColor,
-                    BarColor,
-                    BarColor
-                });
-            }
-
-            PreviousValue = CurrentValue;
-        }
-
         public void Draw(GraphicsDevice graphicsDevice)
         {
-            graphicsDevice.DrawUserPrimitives<VertexPositionColor>(PrimitiveType.TriangleStrip, QuadList[0].Vertices, 0, 2, VertexPositionColor.VertexDeclaration);
-            graphicsDevice.DrawUserPrimitives<VertexPositionColor>(PrimitiveType.TriangleStrip, QuadList[1].Vertices, 0, 2, VertexPositionColor.VertexDeclaration);
+            QuadList[0].DrawQuad(graphicsDevice);
+            QuadList[1].DrawQuad(graphicsDevice);
 
             //if (DrawMarker == true)
+            //    QuadList[2].DrawQuad(graphicsDevice);
             //    graphicsDevice.DrawUserPrimitives<VertexPositionColor>(PrimitiveType.TriangleStrip, QuadList[2].Vertices, 0, 2, VertexPositionColor.VertexDeclaration);            
 
             if (Pulsing == true)

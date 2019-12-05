@@ -22,10 +22,10 @@ namespace TowerDefensePrototype
             Damage = 21;
             Animated = false;
             Looping = false;
-            Health = 500;
+            MaxHealth = 500;
             ResourceCost = 600;
             BlastRadius = 270;
-            Health = 200;
+            MaxHealth = 200;
 
             CurrentAnimation = new Animation()
             {

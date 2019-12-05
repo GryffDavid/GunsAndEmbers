@@ -16,7 +16,7 @@ namespace TowerDefensePrototype
         public Color Color, StartColor;
         public Rectangle DestinationRectangle;
         public BoundingBox BoundingBox;
-        public bool VerticalLooping, HorizontalLooping, FadeIn;
+        public bool VerticalLooping, HorizontalLooping, FadeIn, Active;
         public double CurrentTime, UpdateDelay, FadeTime, CurrentFadeTime;
         public float Rotation, DrawDepth;
         public float Transparency = 0;
@@ -25,6 +25,7 @@ namespace TowerDefensePrototype
                             Vector2? move = null, bool? horizontalLooping = null, bool? verticalLooping = null, 
                             double? updateDelay = null, float? rotation = null, float? fadeTime = null, bool fadeIn = false)
         {
+            Active = true;
             AssetName = assetName;
             Position = position;
 
@@ -78,6 +79,7 @@ namespace TowerDefensePrototype
                             Vector2? move = null, bool? horizontalLooping = null, bool? verticalLooping = null, 
                             double? updateDelay = null, float? rotation = null, float? fadeTime = null, bool fadeIn = false)
         {
+            Active = true;
             Texture = texture;
             Position = position;
 
@@ -173,6 +175,7 @@ namespace TowerDefensePrototype
             if (CurrentFadeTime > FadeTime)
             {
                 Color = Color.Transparent;
+                Active = false;
             }
 
 

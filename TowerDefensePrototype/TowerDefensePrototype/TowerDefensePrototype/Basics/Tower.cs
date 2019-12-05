@@ -49,13 +49,16 @@ namespace TowerDefensePrototype
                 CurrentShieldTime += gameTime.ElapsedGameTime.TotalMilliseconds;
             }
 
-            if (ShieldOn == false && CurrentShieldTime >= ShieldTime)
+            if (ShieldOn == false && 
+                CurrentShieldTime >= ShieldTime)
             {
                 CurrentShield += 0.05f * (float)(gameTime.ElapsedGameTime.TotalSeconds * 60);
                 CurrentShield = MathHelper.Clamp(CurrentShield, 0, MaxShield);
             }
 
-            if (ShieldOn == false && CurrentShieldTime >= ShieldTime && CurrentShield == MaxShield)
+            if (ShieldOn == false && 
+                CurrentShieldTime >= ShieldTime && 
+                CurrentShield == MaxShield)
             {
                 ShieldOn = true;
                 CurrentShieldTime = 0;
@@ -69,11 +72,17 @@ namespace TowerDefensePrototype
 
         public void TakeDamage(float value)
         {
-            if (ShieldOn == true && CurrentShield > 0)
+            if (ShieldOn == true &&
+                CurrentShield > 0)
+            {
                 CurrentShield -= value;
+            }
 
-            if (ShieldOn == true && CurrentShield <= 0)
+            if (ShieldOn == true &&
+                CurrentShield <= 0)
+            {
                 ShieldOn = false;
+            }
 
             if (ShieldOn == false)
             {

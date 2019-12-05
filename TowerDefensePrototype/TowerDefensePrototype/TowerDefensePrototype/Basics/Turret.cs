@@ -11,36 +11,29 @@ namespace TowerDefensePrototype
 {
     public abstract class Turret
     {
-        public Texture2D TurretBase, TurretBarrel, Rect;
+        public Texture2D TurretBase, TurretBarrel;
         public Vector2 Direction, Position, MousePosition, BarrelPivot, BasePivot, 
                        FrameSize, BarrelEnd, BarrelCenter, FireDirection;
         public Rectangle BaseRectangle, BarrelRectangle, SelectBox, SourceRectangle;
         MouseState CurrentMouseState, PreviousMouseState;
-        public float Rotation, Health, CurrentHealth, FireRotation, CurrentHeat, MaxHeat,
-                     CurrentHeatTime, MaxHeatTime, CoolValue, ShotHeat, BlastRadius;
+        public float Rotation, MaxHealth, CurrentHealth, FireRotation, CurrentHeat, MaxHeat,
+                     CurrentHeatTime, MaxHeatTime, CoolValue, ShotHeat, BlastRadius, AngleOffset, 
+                     MaxAngleOffset, MinAngleOffset;
         public bool Selected, Active, JustClicked, CanShoot, Animated, Looping, Overheated;
         public double FireDelay, CurrentFrameTime;
         public double ElapsedTime = 0;
-        public int Damage, CurrentFrame;
-        public int ResourceCost;
-        public float AngleOffset, MaxAngleOffset, MinAngleOffset;
-        public static Random Random = new Random();
+        public int Damage, CurrentFrame, ResourceCost;        
+        static Random Random = new Random();
         public TurretType TurretType;
-        public HorizontalBar TimingBar, HealthBar, HeatBar;
         public Color Color;        
         public Animation CurrentAnimation;
         public List<Emitter> EmitterList = new List<Emitter>();
-        public List<Rectangle> RectList = new List<Rectangle>();
-        public SpriteFont Font;
         public DamageType DamageType;
+        public UIBar TimingBar, HealthBar;
 
         public void Initialize(ContentManager contentManager)
         {
             CanShoot = false;
-
-            TimingBar = new HorizontalBar(new Vector2(32, 4), (int)FireDelay, (int)ElapsedTime, Color.Green, Color.DarkRed);
-            HealthBar = new HorizontalBar(new Vector2(32, 4), (int)Health, (int)CurrentHealth, Color.Green, Color.DarkRed);
-            HeatBar = new HorizontalBar(new Vector2(32, 4), (int)MaxHeat, (int)CurrentHeat, Color.Blue, Color.Orange);
 
             Color = Color.White;
             BaseRectangle = new Rectangle();
@@ -57,8 +50,11 @@ namespace TowerDefensePrototype
                     FrameSize = new Vector2(TurretBarrel.Width, TurretBarrel.Height);
                 }
             }
-                        
-            CurrentHealth = Health;
+
+            TimingBar = new UIBar(new Vector2(Position.X, Position.Y + 48), new Vector2(32, 4), Color.DodgerBlue);
+            HealthBar = new UIBar(new Vector2(Position.X, Position.Y + 52), new Vector2(32, 4), Color.White); 
+
+            CurrentHealth = MaxHealth;
             CurrentHeat = 0;
 
             ElapsedTime = FireDelay;
@@ -155,11 +151,10 @@ namespace TowerDefensePrototype
                 CanShoot = false;
             }
 
-            CurrentMouseState = Mouse.GetState();
+            TimingBar.Update((float)FireDelay, (float)ElapsedTime);
+            HealthBar.Update((float)MaxHealth, (float)CurrentHealth);
 
-            TimingBar.Update(new Vector2(Position.X, Position.Y + 40), (int)ElapsedTime);
-            HealthBar.Update(new Vector2(Position.X, Position.Y + 48), (int)CurrentHealth);
-            HeatBar.Update(new Vector2(Position.X, Position.Y + 56), (int)CurrentHeat);
+            CurrentMouseState = Mouse.GetState();
 
             if (Active == true)
             {
@@ -238,7 +233,6 @@ namespace TowerDefensePrototype
         //    //TimingBar.Draw(spriteBatch);
         //    //HealthBar.Draw(spriteBatch);
         //    //HeatBar.Draw(spriteBatch);
-
         }
 
         public bool InsideRotatedRectangle(Rectangle originalRectangle, Vector2 rotationPoint, Vector2 mousePoint, float rotationAngle)
@@ -326,6 +320,16 @@ namespace TowerDefensePrototype
 
             FireDirection.X = (float)Math.Cos(FireRotation);
             FireDirection.Y = (float)Math.Sin(FireRotation);
+        }
+
+        public void DrawBars(GraphicsDevice graphicsDevice, BasicEffect basicEffect)
+        {
+            foreach (EffectPass pass in basicEffect.CurrentTechnique.Passes)
+            {
+                pass.Apply();
+                TimingBar.Draw(graphicsDevice);
+                HealthBar.Draw(graphicsDevice);
+            }
         }
     }
 }

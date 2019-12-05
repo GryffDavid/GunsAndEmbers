@@ -19,7 +19,6 @@ namespace TowerDefensePrototype
         public BoundingBox BoundingBox;
         public TrapType TrapType;
         public List<Emitter> TrapEmitterList = new List<Emitter>();
-        public HorizontalBar TimingBar, HealthBar, DetonateBar;
         public Vector2 Position, FrameSize;
         public Vector2 Scale = new Vector2(1, 1);
         public bool Active, Solid, CanTrigger, Affected;
@@ -27,6 +26,7 @@ namespace TowerDefensePrototype
         public int ResourceCost, DetonateLimit, CurrentDetonateLimit, CurrentFrame;
         public double CurrentFrameDelay;
         public static Random Random = new Random();
+        public UIBar TimingBar, HealthBar;
         
         public virtual void Initialize()
         {
@@ -34,8 +34,8 @@ namespace TowerDefensePrototype
 
             CurrentHP = MaxHP;
 
-            TimingBar = new HorizontalBar(new Vector2(32, 4), (int)DetonateDelay, (int)CurrentDetonateDelay, Color.Green, Color.DarkRed);
-            HealthBar = new HorizontalBar(new Vector2(32, 4), (int)MaxHP, (int)CurrentHP, Color.Green, Color.DarkRed);
+            TimingBar = new UIBar(new Vector2(Position.X, Position.Y + TextureList[0].Height + 4), new Vector2(32, 4), Color.DodgerBlue);
+            HealthBar = new UIBar(new Vector2(Position.X, Position.Y + TextureList[0].Height + 8), new Vector2(32, 4), Color.White); 
 
             CurrentDetonateLimit = DetonateLimit;
             CurrentDetonateDelay = DetonateDelay;
@@ -96,8 +96,8 @@ namespace TowerDefensePrototype
             }
             #endregion
 
-            TimingBar.Update(new Vector2(DestinationRectangle.X, DestinationRectangle.Bottom + 16), (int)CurrentDetonateDelay);
-            HealthBar.Update(new Vector2(DestinationRectangle.X, DestinationRectangle.Bottom + 24), (int)CurrentHP);
+            TimingBar.Update((float)DetonateDelay, (float)CurrentDetonateDelay);
+            HealthBar.Update((float)MaxHP, (float)CurrentHP);
 
             //Handle the animations
             //if (CurrentTrapState != PreviousTrapState)
@@ -134,11 +134,6 @@ namespace TowerDefensePrototype
                 foreach (Emitter emitter in TrapEmitterList)
                 {
                     emitter.Update(gameTime);
-
-                    //if (emitter.DrawDepth != (Bottom / 1080))
-                    //{
-                    //    emitter.DrawDepth = (Bottom / 1080);
-                    //}
                 }
             }
         }
@@ -156,6 +151,18 @@ namespace TowerDefensePrototype
             if (Active == true)
             {
                 spriteBatch.Draw(CurrentTexture, DestinationRectangle, SourceRectangle, Color.White, MathHelper.ToRadians(0), Vector2.Zero, SpriteEffects.None, DrawDepth);
+            }
+        }
+
+        public void DrawBars(GraphicsDevice graphicsDevice, BasicEffect basicEffect)
+        {
+            foreach (EffectPass pass in basicEffect.CurrentTechnique.Passes)
+            {
+                pass.Apply();
+                if (DetonateDelay > 0)
+                    TimingBar.Draw(graphicsDevice);
+                    
+                HealthBar.Draw(graphicsDevice);
             }
         }
     }

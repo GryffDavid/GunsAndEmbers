@@ -19,20 +19,21 @@ namespace TowerDefensePrototype
         public Rectangle DestinationRectangle;
         public Vector2 DamageStringSize;
 
-        public UIInvaderInfo()
+        public UIInvaderInfo(Invader invader)
         {
+            CurrentInvader = invader;
             InvaderHealthBar = new UIBar(new Vector2(1920-390-45, 1080 - 15 - 85 - 15), new Vector2(390, 15), Color.Lerp(Color.White, Color.Transparent, 0.25f), true);
             DestinationRectangle = new Rectangle(1920 - 390 - 45, 1080 - 85 - 15, 390, 85);
         }
 
         public void Update(GameTime gameTime)
         {
-
+            InvaderHealthBar.Update(CurrentInvader.MaxHP, CurrentInvader.CurrentHP);   
         }
 
         public void Draw(SpriteBatch spriteBatch, GraphicsDevice graphicsDevice)
         {
-            spriteBatch.Draw(Texture, DestinationRectangle, Color.Lerp(Color.Black, Color.Transparent, 0.75f));
+            //spriteBatch.Draw(Texture, DestinationRectangle, Color.Lerp(Color.Black, Color.Transparent, 0.75f));
             InvaderHealthBar.Draw(graphicsDevice);
         }
     }

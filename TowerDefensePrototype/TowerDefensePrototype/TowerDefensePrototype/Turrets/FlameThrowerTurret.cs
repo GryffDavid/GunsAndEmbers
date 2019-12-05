@@ -33,7 +33,7 @@ namespace TowerDefensePrototype
                 TotalFrames = 6
             };
 
-            Health = 100;   
+            MaxHealth = 100;   
 
         }
 
