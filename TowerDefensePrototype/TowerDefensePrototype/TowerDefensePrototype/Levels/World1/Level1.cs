@@ -31,21 +31,28 @@ namespace TowerDefensePrototype
             #region Wave1
             Wave Wave1 = new Wave(false, 350, 100,
 
-                    //new RifleMan(new Vector2(2050, 600), new Vector2(700, 850)),
                 //new RifleMan(new Vector2(2050, 600), new Vector2(700, 850)),
                 //new RifleMan(new Vector2(2050, 600), new Vector2(700, 850)),
                 //new RifleMan(new Vector2(2050, 600), new Vector2(700, 850)),
                 //new RifleMan(new Vector2(2050, 600), new Vector2(700, 850)),
-                ////new RifleMan(new Vector2(2050, 600), new Vector2(700, 850)),
-                ////3500,
-                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                new Soldier(new Vector2(2050, 600), new Vector2(700, 850))
+                //new RifleMan(new Vector2(2050, 600), new Vector2(700, 850))
+
+                new JumpMan(new Vector2(2050, 600), new Vector2(700, 850)),
+                //new JumpMan(new Vector2(2050, 600), new Vector2(700, 850)),
+                //new JumpMan(new Vector2(2050, 600), new Vector2(700, 850)),
+                //new JumpMan(new Vector2(2050, 600), new Vector2(700, 850)),
+                //new JumpMan(new Vector2(2050, 600), new Vector2(700, 850))
+
+                //new RifleMan(new Vector2(2050, 600), new Vector2(700, 850)),
+                //3500,
+                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+                //new Soldier(new Vector2(2050, 600), new Vector2(700, 850))
                 //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
                 //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
                 //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
@@ -54,6 +61,10 @@ namespace TowerDefensePrototype
                 //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
                 //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
                 //new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
+
+                new StationaryCannon(new Vector2(2050, 600), new Vector2(700, 850)),
+                new StationaryCannon(new Vector2(2050, 600), new Vector2(700, 850)),
+                new StationaryCannon(new Vector2(2050, 600), new Vector2(700, 850))
 
                 //new HarpoonCannon(new Vector2(2050, 600), new Vector2(700, 850)),
                 //new HarpoonCannon(new Vector2(2050, 600), new Vector2(700, 850)),

@@ -14,7 +14,7 @@ namespace TowerDefensePrototype
         string AssetName;
         public Vector2 Position;
         //public Rectangle DestinationRectangle;
-        public BoundingBox BoundingBox;
+        //public BoundingBox BoundingBox;
 
         public float MaxHP, CurrentHP, Slots;
         public int MaxPowerUnits, CurrentPowerUnits;

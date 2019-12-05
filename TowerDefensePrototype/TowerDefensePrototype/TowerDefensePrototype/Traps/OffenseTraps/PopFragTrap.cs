@@ -20,8 +20,9 @@ namespace TowerDefensePrototype
             : base(position)
         {
             Position = position;
-            Solid = true;
+            Solid = false;
             MaxHP = 100;
+            DetonateDelay = 1500;
             TrapType = TrapType.PopFrag;
             DetonateLimit = -1;
 

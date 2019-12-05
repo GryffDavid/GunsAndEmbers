@@ -203,6 +203,7 @@ namespace TowerDefensePrototype
                 }
 
 
+            #region Handle Rope Behaviour
             switch (HarpoonCannonBehaviour)
             {
                 case SpecificBehaviour.Unattached:
@@ -282,7 +283,7 @@ namespace TowerDefensePrototype
                                 RopeDelay > MaxRopeDelay)
                             {
                                 Rope.Sticks.RemoveAt(0);
-                                
+
                                 if (Rope.Segments > 0)
                                     Rope.Segments = Rope.Sticks.Count - 1;
                                 Rope.Sticks.RemoveAt(Rope.Sticks.Count - 1);
@@ -298,7 +299,8 @@ namespace TowerDefensePrototype
                         }
                     }
                     break;
-            }
+            } 
+            #endregion
                 
 
             BarrelPivot = new Vector2(BarrelAnimation.FrameSize.X / 2, BarrelAnimation.FrameSize.Y / 2);

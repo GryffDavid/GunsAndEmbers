@@ -85,7 +85,7 @@ namespace TowerDefensePrototype
 
         //public bool TrapSolid = true;
         //public bool TowerSolid = true;
-        public bool ShieldSolid;
+        public bool ShieldSolid = true;
         //public bool TurretSolid = true;
 
         public Color CurrentColor;

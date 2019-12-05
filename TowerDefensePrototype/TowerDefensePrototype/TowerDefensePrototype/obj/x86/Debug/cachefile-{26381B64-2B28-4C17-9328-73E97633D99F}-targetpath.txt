@@ -194,6 +194,7 @@ Content\Traps\FlameThrower\FlameThrowerTrapUntriggered.xnb
 Content\Icons\TrapIcons\FlameThrowerTrapIcon.xnb
 Content\Traps\FlameThrower\FlameThrowerTrapTriggering.xnb
 Content\Traps\FlameThrower\FlameThrowerTrapResetting.xnb
+Content\Traps\PopFrag\PopFragTrapUntriggered.xnb
 Content\Icons\TrapIcons\GlueTrapIcon.xnb
 Content\Particles\ToonGlueDrip1.xnb
 Content\Decals\GlueDecal1.xnb
@@ -231,6 +232,8 @@ Content\Traps\Spikes\SpikesTrapUntriggered.xnb
 Content\Turrets\GrappleTurret\GrappleTurretBarrel.xnb
 Content\Turrets\GrappleTurret\GrappleTurretBase.xnb
 Content\Icons\TurretIcons\FelCannonTurretIcon.xnb
+Content\Icons\TrapIcons\PopFragTrapIcon.xnb
+Content\Traps\GlueTrap.xnb
 Content\Sounds\Menu\MenuClick.xnb
 Content\Sounds\FireTrapStart.xnb
 Content\Sounds\Menu\MenuAmbiance.xnb
@@ -267,6 +270,4 @@ Content\Shaders\LightEffect.xnb
 Content\StoryDialogue\Level1Dialogue.xnb
 Content\StoryDialogue\Level2Dialogue.xnb
 Content\StoryDialogue\LoadoutMenuDialogue.xnb
-Content\Icons\TrapIcons\PopFragTrapIcon.xnb
-Content\Traps\PopFrag\PopFragTrapUntriggered.xnb
-Content\Traps\GlueTrap.xnb
+Content\Particles\PaintSplat4.xnb

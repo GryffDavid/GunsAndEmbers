@@ -170,7 +170,7 @@
     <Compile Include="Animations\TurretAnimation.cs" />
     <Compile Include="Basics\Drawable.cs" />
     <Compile Include="Invaders\Airborne\HealerDrone.cs" />
-    <Compile Include="Invaders\LightRanged\JumpMan.cs" />
+    <Compile Include="Invaders\HeavyRanged\JumpMan.cs" />
     <Compile Include="Invaders\LightRanged\Sapper.cs" />
     <Compile Include="ParticleSystem\AmmoBelt.cs" />
     <Compile Include="ParticleSystem\ShellCasing.cs" />

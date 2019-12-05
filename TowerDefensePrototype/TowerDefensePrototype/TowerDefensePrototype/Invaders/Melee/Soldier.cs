@@ -84,10 +84,13 @@ namespace TowerDefensePrototype
                                 {
                                     Direction.X = -1;
 
-                                    if (Slow == true)
-                                        Velocity.X = Direction.X * SlowSpeed;
-                                    else
-                                        Velocity.X = Direction.X * Speed;
+                                    if (InAir == false)
+                                    {
+                                        if (Slow == true)
+                                            Velocity.X = Direction.X * SlowSpeed;
+                                        else
+                                            Velocity.X = Direction.X * Speed;
+                                    }
 
                                     if (OperatingVehicle != null &&
                                         (OperatingVehicle.CurrentMicroBehaviour == MicroBehaviour.Stationary ||
