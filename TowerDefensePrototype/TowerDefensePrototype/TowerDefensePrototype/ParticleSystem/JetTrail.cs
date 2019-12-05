@@ -49,29 +49,52 @@ namespace TowerDefensePrototype
 
         public void Update(GameTime gameTime, Vector2 position, float rotation)
         {
-            Position = position;
+            BlendState = BlendState.Additive;
+            //Position = position;
 
-            EndPosition = new Vector2(Position.X + (float)Math.Cos(MathHelper.ToRadians(Rotation)) * (MinLength),
-                                      Position.Y + (float)Math.Sin(MathHelper.ToRadians(Rotation)) * (MinLength));
+            //EndPosition = new Vector2(Position.X + (float)Math.Cos(MathHelper.ToRadians(Rotation)) * (MinLength),
+            //                          Position.Y + (float)Math.Sin(MathHelper.ToRadians(Rotation)) * (MinLength));
+
+            //trailVertices[0] = new VertexPositionColor()
+            //{
+            //    Position = new Vector3(Position.X - (float)Math.Cos(MathHelper.ToRadians(Rotation - 90)) * 8,
+            //                           Position.Y - (float)Math.Sin(MathHelper.ToRadians(Rotation - 90)) * 8, 0),
+            //    Color = Color.White
+            //};
+
+            //trailVertices[1] = new VertexPositionColor()
+            //{
+            //    Position = new Vector3(Position.X + (float)Math.Cos(MathHelper.ToRadians(Rotation - 90)) * 8,
+            //                           Position.Y + (float)Math.Sin(MathHelper.ToRadians(Rotation - 90)) * 8, 0),
+            //    Color = Color.White
+            //};
+
+            //trailVertices[2] = new VertexPositionColor()
+            //{
+            //    Position = new Vector3(EndPosition.X, EndPosition.Y, 0),
+            //    Color = Color.White
+            //};
+
+            Position = position;
 
             trailVertices[0] = new VertexPositionColor()
             {
-                Position = new Vector3(Position.X - (float)Math.Cos(MathHelper.ToRadians(Rotation - 90)) * 8,
-                                       Position.Y - (float)Math.Sin(MathHelper.ToRadians(Rotation - 90)) * 8, 0),
-                Color = Color.White
+                Position = new Vector3(Position.X - 8,
+                                       Position.Y, 0),
+                Color = Color.LimeGreen * 0.5f
             };
 
             trailVertices[1] = new VertexPositionColor()
             {
-                Position = new Vector3(Position.X + (float)Math.Cos(MathHelper.ToRadians(Rotation - 90)) * 8,
-                                       Position.Y + (float)Math.Sin(MathHelper.ToRadians(Rotation - 90)) * 8, 0),
-                Color = Color.White
+                Position = new Vector3(Position.X + 8,
+                                       Position.Y, 0),
+                Color = Color.LimeGreen * 0.5f
             };
 
             trailVertices[2] = new VertexPositionColor()
             {
-                Position = new Vector3(EndPosition.X, EndPosition.Y, 0),
-                Color = Color.White
+                Position = new Vector3(Position.X, Position.Y + MinLength, 0),
+                Color = Color.LimeGreen * 0.5f
             };
         }
 

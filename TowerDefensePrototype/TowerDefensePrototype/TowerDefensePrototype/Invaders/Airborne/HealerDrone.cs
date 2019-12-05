@@ -17,7 +17,6 @@ namespace TowerDefensePrototype
         public Invader HealTarget;
         public LightningBolt Bolt = new LightningBolt(Vector2.One, Vector2.Zero, Color.Transparent, 1f);
         public List<LightningBolt> BoltList = new List<LightningBolt>();
-        public Texture2D JetSprite;
 
         //MEDBOT
         //Flies above the other invaders and heals them when necessary.
@@ -38,6 +37,7 @@ namespace TowerDefensePrototype
             YRange = new Vector2(100, 350);
             Airborne = true;
             InAir = true;
+            Active = true;
             InvaderAnimationState = AnimationState_Invader.Walk;
 
             AngleRange = new Vector2(170, 190);

@@ -124,7 +124,17 @@ namespace TowerDefensePrototype
                 }
             }
 
+
+
             Depth = (Position.Y / 1080f);
+
+            Invader tetherInvader = Tether as Invader;
+
+            if (tetherInvader != null)
+            {
+                Position = new Vector3(tetherInvader.Center.X, tetherInvader.Center.Y, 15);
+                Depth = tetherInvader.DrawDepth - 0.1f;
+            }
         }
 
         public void Draw(GraphicsDevice graphics, Effect effect)

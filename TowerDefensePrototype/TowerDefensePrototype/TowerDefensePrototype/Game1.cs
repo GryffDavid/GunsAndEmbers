@@ -606,7 +606,7 @@ namespace TowerDefensePrototype
         VertexPositionColorTexture[] Vertices;
         VertexBuffer VertexBuffer;
 
-        BasicEffect BasicEffect, BasicEffect2, ProjectileBasicEffect;
+        BasicEffect BasicEffect, BasicEffect2, ProjectileBasicEffect, JetBasicEffect;
         Effect LightEffect, LightCombinedEffect, ShadowBlurEffect, DepthEffect, EmissiveBlurEffect;
 
         public static BlendState BlendBlack = new BlendState()
@@ -643,6 +643,8 @@ namespace TowerDefensePrototype
         ResourceCounter ResourceCounter;
 
         List<AmmoBelt> AmmoBeltList = new List<AmmoBelt>();
+        List<JetEngine> JetEngineList = new List<JetEngine>();
+
         #endregion
         
         public Game1()
@@ -955,6 +957,7 @@ namespace TowerDefensePrototype
                 VertexBuffer = new VertexBuffer(GraphicsDevice, typeof(VertexPositionColorTexture), Vertices.Length, BufferUsage.None);
                 VertexBuffer.SetData(Vertices);
 
+
                 BasicEffect = new BasicEffect(GraphicsDevice);
                 BasicEffect.Projection = Projection;
                 BasicEffect.TextureEnabled = true;
@@ -964,6 +967,12 @@ namespace TowerDefensePrototype
                 ProjectileBasicEffect.Projection = Projection;
                 ProjectileBasicEffect.TextureEnabled = true;
                 ProjectileBasicEffect.VertexColorEnabled = true;
+
+                JetBasicEffect = new BasicEffect(GraphicsDevice);
+                JetBasicEffect.Projection = Projection;
+                JetBasicEffect.TextureEnabled = true;
+                JetBasicEffect.VertexColorEnabled = true;
+
 
                 LightColorMap = new RenderTarget2D(GraphicsDevice, 1920, 1080, false, SurfaceFormat.Rgba64, DepthFormat.Depth24Stencil8);
                 DepthMap = new RenderTarget2D(GraphicsDevice, 1920, 1080, false, SurfaceFormat.Rgba64, DepthFormat.Depth24Stencil8);
@@ -2026,6 +2035,11 @@ namespace TowerDefensePrototype
                         drawable.Draw(GraphicsDevice, ProjectileBasicEffect, ShadowBlurEffect, spriteBatch);
                     }
 
+                    if (drawable.GetType() == typeof(JetEngine))
+                    {
+                        drawable.Draw(GraphicsDevice, JetBasicEffect, ShadowBlurEffect, spriteBatch);
+                    }
+
                     if (drawable.GetType().BaseType == typeof(Invader) ||
                         drawable.GetType().BaseType == typeof(LightRangedInvader) ||
                         drawable.GetType().BaseType == typeof(HeavyRangedInvader) ||
@@ -2760,6 +2774,11 @@ namespace TowerDefensePrototype
 
                         //    ResourceCounter.AddChange(diff);
                         //}
+
+                        foreach (JetEngine engine in JetEngineList)
+                        {
+                            engine.Update(gameTime);
+                        }
 
                         //Seconds += gameTime.ElapsedGameTime.TotalMilliseconds;
                         ResourceCounter.Update(gameTime);
@@ -9147,11 +9166,33 @@ namespace TowerDefensePrototype
                                     LightRangedInvader lightRangedInvader = nextInvader as LightRangedInvader;
 
 
-                                    //if (nextInvader.InvaderType == InvaderType.HealDrone)
-                                    //{
-                                    //    HealDrone drone = nextInvader as HealDrone;
-                                    //    drone.JetEngine1.JetSprite = JetEngineSprite;
-                                    //}
+                                    if (nextInvader.InvaderType == InvaderType.HealDrone)
+                                    {
+                                        JetEngine newEngine = new JetEngine(JetEngineSprite)
+                                        {
+                                            Tether = nextInvader
+                                        };
+
+                                        Light light = new Light(new Vector3(nextInvader.Center.X, nextInvader.Center.Y, 15), LightTexture)
+                                        {
+                                            Color = Color.LimeGreen,
+                                            Active = true,
+                                            LightDecay = 100,
+                                            Power = 0.25f,
+                                            Radius = 30,
+                                            Range = 30,
+                                            Tether = nextInvader,
+                                            MaxTime = -1,
+                                            Oscillate = true,
+                                            CurrentOscillationTime = 0,
+                                            MaxOscillationTime = 500
+                                        };
+
+                                        LightList.Add(light);
+
+                                        JetEngineList.Add(newEngine);
+                                        AddDrawable(newEngine);
+                                    }
 
                                     //This is here to load the barrel sprite for the heavy ranged invaders
                                     if (heavyRangedInvader != null)

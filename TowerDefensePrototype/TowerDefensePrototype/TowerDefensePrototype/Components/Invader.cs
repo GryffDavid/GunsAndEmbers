@@ -251,6 +251,7 @@ namespace TowerDefensePrototype
 
         public virtual void Initialize()
         {
+            base.Active = true;
             CurrentHP = MaxHP;
             MaxY = Random.Next((int)YRange.X, (int)YRange.Y);
             ResourceValue = Random.Next((int)ResourceMinMax.X, (int)ResourceMinMax.Y);

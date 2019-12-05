@@ -333,7 +333,7 @@ namespace TowerDefensePrototype
             {
                 emitter.Update(gameTime);
             }
-        }               
+        }
 
         public override void Draw(GraphicsDevice graphics, BasicEffect effect, Effect shadowEffect, SpriteBatch spriteBatch)
         {
