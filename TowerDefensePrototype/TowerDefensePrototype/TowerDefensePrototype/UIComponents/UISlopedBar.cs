@@ -156,7 +156,7 @@ namespace TowerDefensePrototype
                     return;
                 }
 
-                CurrentScale += Vector2.One / 20;
+                CurrentScale += Vector2.One / ((float)gameTime.ElapsedGameTime.TotalMilliseconds * 60.0f);
 
                 QuadList[3] = new Quad(
                 new Vector2[] 

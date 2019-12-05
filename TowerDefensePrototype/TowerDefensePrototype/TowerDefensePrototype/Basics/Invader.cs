@@ -39,10 +39,24 @@ namespace TowerDefensePrototype
         public Emitter FireEmitter;
         public InvaderState CurrentInvaderState;
         public InvaderState? PreviousInvaderState = null;
-        public InvaderBehaviour Behaviour = InvaderBehaviour.AttackTraps;
+        public InvaderBehaviour Behaviour;// = InvaderBehaviour.AttackTower;
+
+        private InvaderBehaviour RandomOrientation(params InvaderBehaviour[] Orientations)
+        {
+            List<InvaderBehaviour> OrientationList = new List<InvaderBehaviour>();
+
+            foreach (InvaderBehaviour orientation in Orientations)
+            {
+                OrientationList.Add(orientation);
+            }
+
+            return OrientationList[Random.Next(0, OrientationList.Count)];
+        }
 
         public void Initialize()
         {
+            Behaviour = RandomOrientation(InvaderBehaviour.AttackTower, InvaderBehaviour.AttackTraps);
+
             VulnerableToTurret = true;
             VulnerableToTrap = true;
             Color = Color.White;

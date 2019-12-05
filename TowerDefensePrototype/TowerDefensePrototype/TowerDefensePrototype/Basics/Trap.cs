@@ -46,7 +46,14 @@ namespace TowerDefensePrototype
             CurrentDetonateLimit = DetonateLimit;
             CurrentDetonateDelay = DetonateDelay;
             CurrentAffectedTime = AffectedTime;
-            
+
+            //This is mostly here so that traps can have an effect around them when placed, such as a dust burst
+            if (CurrentAnimation == null && CurrentTexture != null)
+            {
+                FrameSize = new Vector2(CurrentTexture.Width, CurrentTexture.Height);
+                DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, (int)FrameSize.X, (int)FrameSize.Y);
+            }
+
             Affected = false;
         }
 

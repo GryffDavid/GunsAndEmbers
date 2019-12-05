@@ -43,7 +43,7 @@ namespace TowerDefensePrototype
     };
 
     #region Invader damage type structs - DOT, Slow, Freeze
-    public struct DamageOverTimeStruct
+    public class DamageOverTimeStruct
     {
         //Initial damage is the first burst of damage done to the invader on contact
         //Damage is the damage done to the invader every tick after that
@@ -53,12 +53,12 @@ namespace TowerDefensePrototype
         public Color Color;
     };
 
-    public struct SlowStruct
+    public class SlowStruct
     {
         public float Milliseconds, SpeedPercentage;
     };
 
-    public struct FreezeStruct
+    public class FreezeStruct
     {
         public float Milliseconds;
     };
@@ -256,7 +256,7 @@ namespace TowerDefensePrototype
         Button ProfileBackButton, ProfileManagementPlay, ProfileManagementBack,
                OptionsBack, OptionsSFXUp, OptionsSFXDown, OptionsMusicUp, OptionsMusicDown,
                GetNameOK, GetNameBack, SelectTrapRight, SelectTrapLeft, SelectTurretRight, SelectTurretLeft,
-               VictoryReturn, VictoryRetry, VictoryComplete, ProfileManagementUpgrades, UpgradesBack;
+               ProfileManagementUpgrades, UpgradesBack;
         Tower Tower;
         StaticSprite Ground, ForeGround, ProfileMenuTitle, MainMenuBackground, SkyBackground, TextBox, MenuTower;
         AnimatedSprite LoadingAnimation;
@@ -323,7 +323,6 @@ namespace TowerDefensePrototype
         #endregion
 
         List<ShellCasing> VerletShells = new List<ShellCasing>();
-        List<AmmoBelt> AmmoBeltList = new List<AmmoBelt>();
 
         public Game1()
         {
@@ -819,20 +818,6 @@ namespace TowerDefensePrototype
                 }
                 #endregion
 
-                #region Draw victory elements
-                if (GameState == GameState.Victory)
-                {
-                    if (VictoryComplete != null)
-                        VictoryComplete.Draw(spriteBatch);
-
-                    if (VictoryRetry != null)
-                        VictoryRetry.Draw(spriteBatch);
-
-                    if (VictoryReturn != null)
-                        VictoryReturn.Draw(spriteBatch);
-                }
-                #endregion
-
                 #region Draw menu Dialog boxes
                 if (ExitDialog != null)
                 {
@@ -961,12 +946,6 @@ namespace TowerDefensePrototype
                 foreach (ShellCasing shell in VerletShells)
                 {
                     shell.Draw(spriteBatch);
-                }
-
-
-                foreach (AmmoBelt belt in AmmoBeltList)
-                {
-                    belt.Draw(spriteBatch);
                 }
 
                 foreach (Emitter emitter in YSortedEmitterList)
@@ -1219,6 +1198,7 @@ namespace TowerDefensePrototype
             }
 
             spriteBatch.Begin();
+
             #region Draw pause menu Dialog boxes
             //if (GameState != GameState.Playing)
             {
@@ -1239,21 +1219,6 @@ namespace TowerDefensePrototype
             }
             #endregion
 
-            #region Draw Victory Menu
-            if (GameState == GameState.Victory && IsLoading == false)
-            {
-                if (VictoryRetry != null)
-                    VictoryRetry.Draw(spriteBatch);
-
-                if (VictoryComplete != null)
-                    VictoryComplete.Draw(spriteBatch);
-
-                if (VictoryReturn != null)
-                    VictoryReturn.Draw(spriteBatch);
-
-                spriteBatch.DrawString(DefaultFont, "VICTORY", new Vector2(1920 / 2 - DefaultFont.MeasureString("VICTORY").X / 2, 16), Color.White);
-            }
-            #endregion
             spriteBatch.End();
 
 
@@ -1317,7 +1282,6 @@ namespace TowerDefensePrototype
                 }
             }
             #endregion
-
 
             
             GraphicsDevice.SetRenderTarget(null);
@@ -2027,10 +1991,11 @@ namespace TowerDefensePrototype
                     TowerButtonList[i].LoadContent();
                 }
 
+                CooldownButtonList.Clear();
+
                 for (int i = 0; i < 8; i++)
                 {
-                    CooldownButton button = new CooldownButton(new Vector2(565 + (i * 100), 1080 - 80), new Vector2(90, 65), 6, PlaceWeaponList[i].IconTexture);
-                    
+                    CooldownButton button = new CooldownButton(new Vector2(565 + (i * 100), 1080 - 80), new Vector2(90, 65), 6, PlaceWeaponList[i].IconTexture);                    
 
                     if (CurrentProfile.Buttons[i] != null)
                     {
@@ -2369,12 +2334,13 @@ namespace TowerDefensePrototype
                                     var TurretBarrel = this.GetType().GetField(newTurret.TurretType.ToString() + "TurretBarrel").GetValue(this);
                                     newTurret.TurretBase = (Texture2D)TurretBase;
                                     newTurret.TurretBarrel = (Texture2D)TurretBarrel;
+                                    break;
+                            }
 
-                                    if (newTurret.TurretType == TurretType.MachineGun)
-                                    {
-                                        AmmoBelt newBelt = new AmmoBelt(newTurret.Position, MachineBullet);
-                                        AmmoBeltList.Add(newBelt);
-                                    }
+                            switch (newTurret.TurretType)
+                            {
+                                case TurretType.MachineGun:
+                                    newTurret.AmmoBelt = new AmmoBelt(newTurret.Position, MachineBullet);
                                     break;
                             }
 
@@ -3320,84 +3286,7 @@ namespace TowerDefensePrototype
                         }
                     }
                 }
-                #endregion
-
-                #region Handling Victory Menu Button Presses
-                if (GameState == GameState.Victory && DialogVisible == false)
-                {
-                    if (VictoryRetry != null)
-                        VictoryRetry.Update(CursorPosition, gameTime);
-
-                    if (VictoryComplete != null)
-                        VictoryComplete.Update(CursorPosition, gameTime);
-
-                    if (VictoryReturn != null)
-                        VictoryReturn.Update(CursorPosition, gameTime);
-
-                    if (VictoryReturn != null)
-                        if (VictoryReturn.JustClicked == true)
-                        {
-                            IsLoading = false;
-                            StorageDevice.BeginShowSelector(this.SaveProfile, null);
-                            ResetUpgrades();
-                            UnloadGameContent();
-                            MaxWaves = CurrentLevel.WaveList.Count;
-                            CurrentWaveIndex = 0;
-                            GameState = GameState.ProfileManagement;
-                            VictoryTime = 0;
-                            CurrentWaveTime = 0;
-                            CurrentInvaderTime = 0;
-                            VictoryRetry = null;
-                            VictoryReturn = null;
-                            VictoryComplete = null;
-                        }
-
-                    if (VictoryRetry != null)
-                        if (VictoryRetry.JustClicked == true)
-                        {
-                            MenuColor = Color.White;
-                            SelectedTrap = null;
-                            SelectedTurret = null;
-                            LevelNumber = CurrentProfile.LevelNumber;
-                            LoadLevel(LevelNumber);
-                            LoadUpgrades();
-                            //StorageDevice.BeginShowSelector(this.SaveProfile, null);
-                            GameState = GameState.Loading;
-                            LoadingThread = new Thread(LoadGameContent);
-                            LoadingThread.Start();
-                            IsLoading = false;
-                            VictoryTime = 0;
-                            CurrentWaveTime = 0;
-                            CurrentInvaderTime = 0;
-                            Tower.CurrentHP = Tower.MaxHP;
-                            Tower.CurrentShield = Tower.MaxShield;
-                            VictoryRetry = null;
-                            VictoryReturn = null;
-                            VictoryComplete = null;
-                            return;
-                        }
-
-                    if (VictoryComplete != null)
-                        if (VictoryComplete.JustClicked == true)
-                        {
-                            IsLoading = false;
-                            CurrentProfile.LevelNumber++;
-                            UnlockWeapons();
-                            StorageDevice.BeginShowSelector(this.SaveProfile, null);
-                            ResetUpgrades();
-                            UnloadGameContent();
-                            MaxWaves = CurrentLevel.WaveList.Count;
-                            CurrentWaveIndex = 0;
-                            GameState = GameState.ProfileManagement;
-                            VictoryTime = 0;
-                            CurrentWaveTime = 0;
-                            CurrentInvaderTime = 0;
-                            VictoryRetry = null;
-                            VictoryReturn = null;
-                            VictoryComplete = null;
-                        }
-                }
-                #endregion
+                #endregion                
 
                 #region Handling Upgrades Menu Button Presses
                 if (GameState == GameState.Upgrades && DialogVisible == false)
@@ -3833,7 +3722,7 @@ namespace TowerDefensePrototype
                             case InvaderType.Soldier:
                                 switch (invader.Behaviour)
                                 {
-                                    #region Default
+                                    #region Default - If the invader should be attacking the tower or turrets, then only stop if the trap is solid
                                     default:
                                         if (trap.Solid == true)
                                         {
@@ -3847,7 +3736,7 @@ namespace TowerDefensePrototype
                                         break;
                                     #endregion
 
-                                    #region Attack Traps
+                                    #region Attack Traps - stop at the traps regardless of whether they're solid or not
                                     case InvaderBehaviour.AttackTraps:
                                         invader.Velocity.X = 0;
 
@@ -3863,6 +3752,36 @@ namespace TowerDefensePrototype
                         }
                     }
                 }
+
+                #region If an invader is not colliding with a wall trap or the tower, move as normal
+
+                //If the invader is not colliding with the tower
+                if (Vector2.Distance(
+                    PointToVector(invader.DestinationRectangle.Center),
+                    new Vector2(Tower.DestinationRectangle.Right, invader.DestinationRectangle.Center.Y)) > 5)
+                {
+                    //If the invader is not colliding with a trap
+                    if (!TrapList.Any(Trap => Trap.DestinationRectangle.Intersects(invader.DestinationRectangle)))
+                    {
+                        if (invader.Slow == false)
+                            invader.Velocity.X = (float)(invader.Direction.X * invader.Speed);
+                        else
+                            invader.Velocity.X = (float)(invader.Direction.X * invader.SlowSpeed);
+                    }
+                }
+                //if (!TrapList.Any(Trap =>
+                //    Trap.DestinationRectangle.Intersects(invader.DestinationRectangle) &&
+                //    Trap.Solid == true) &&
+                //    Vector2.Distance(
+                //    PointToVector(invader.DestinationRectangle.Center),
+                //    new Vector2(Tower.DestinationRectangle.Right, invader.DestinationRectangle.Center.Y)) > 5)
+                //{
+                //    if (invader.Slow == false)
+                //        invader.Velocity.X = (float)(invader.Direction.X * invader.Speed);
+                //    else
+                //        invader.Velocity.X = (float)(invader.Direction.X * invader.SlowSpeed);
+                //}
+                #endregion
             }
         }
 
@@ -4533,12 +4452,12 @@ namespace TowerDefensePrototype
                 }
             }
 
-            foreach (AmmoBelt belt in AmmoBeltList)
-            {
-                belt.Nodes[0].CurrentPosition = TurretList[0].BarrelCenter + (TurretList[0].FireDirection * belt.ShellTexture.Width / 2);
-                belt.Nodes2[0].CurrentPosition = TurretList[0].BarrelCenter - (TurretList[0].FireDirection * belt.ShellTexture.Width / 2);
-                belt.Update(gameTime);
-            }
+            //foreach (AmmoBelt belt in AmmoBeltList)
+            //{
+            //    belt.Nodes[0].CurrentPosition = TurretList[0].BarrelCenter + (TurretList[0].FireDirection * belt.ShellTexture.Width / 2);
+            //    belt.Nodes2[0].CurrentPosition = TurretList[0].BarrelCenter - (TurretList[0].FireDirection * belt.ShellTexture.Width / 2);
+            //    belt.Update(gameTime);
+            //}
         }
 
         private void TurretShoot()
@@ -4578,25 +4497,17 @@ namespace TowerDefensePrototype
                                     false, new Vector2(0, 1080), true);
                                 YSortedEmitterList.Add(FlashEmitter);
 
-                                Particle NewShellCasing = new Particle(ShellCasing,
-                                    new Vector2(turret.BarrelCenter.X, turret.BarrelCenter.Y),
-                                    turret.Rotation - MathHelper.ToRadians((float)RandomDouble(175, 185)),
-                                    (float)RandomDouble(2, 4), 500, 1f, true, (float)RandomDouble(-10, 10),
-                                    (float)RandomDouble(-6, 6), 0.7f, Color.Orange, Color.Lerp(Color.White, Color.Transparent, 0.25f), 0.35f, true, Random.Next(Tower.DestinationRectangle.Bottom, Tower.DestinationRectangle.Bottom + 32),
-                                    false, 0.998f, true, true, true);
-
-                                //ShellCasingList.Add(NewShellCasing);
                                 VerletShells.Add(new ShellCasing(new Vector2(turret.BarrelCenter.X, turret.BarrelCenter.Y), new Vector2(5, 5), ShellCasing));
 
-                                AmmoBeltList[0].Sticks2.RemoveAt(AmmoBeltList[0].Sticks2.Count - 1);
+                                //turret.AmmoBelt.Sticks2.RemoveAt(turret.AmmoBelt.Sticks2.Count - 1);
 
-                                for (int i = 0; i < (int)(AmmoBeltList[0].Nodes2.Count/2); i++)
+                                for (int i = 0; i < (int)turret.AmmoBelt.Nodes2.Count/2; i++)
                                 {
-                                    AmmoBeltList[0].Nodes2[i].PreviousPosition.X += 8;
-                                    AmmoBeltList[0].Nodes[i].PreviousPosition.X += 8;
+                                    turret.AmmoBelt.Nodes2[i].PreviousPosition.X += 8;
+                                    turret.AmmoBelt.Nodes[i].PreviousPosition.X += 8;
 
-                                    AmmoBeltList[0].Nodes2[i].PreviousPosition.Y -= 8;
-                                    AmmoBeltList[0].Nodes[i].PreviousPosition.Y -= 8;
+                                    turret.AmmoBelt.Nodes2[i].PreviousPosition.Y -= 8;
+                                    turret.AmmoBelt.Nodes[i].PreviousPosition.Y -= 8;
                                 }
 
                                 turret.CurrentHeat += turret.ShotHeat;
@@ -4620,7 +4531,7 @@ namespace TowerDefensePrototype
                                          MathHelper.ToDegrees(-(float)Math.Atan2(Direction.Y, Direction.X)),
                                          MathHelper.ToDegrees(-(float)Math.Atan2(Direction.Y, Direction.X))),
                                          new Vector2(50, 70), new Vector2(1, 3), 0.15f, true, new Vector2(0, 360),
-                                         new Vector2(-1, 1), new Vector2(2, 4), ExplosionColor, ExplosionColor2, 0.0f, 0.05f, 0.5f, 4,
+                                         new Vector2(-1, 1), new Vector2(2, 4), ExplosionColor, ExplosionColor2, 0.0f, 0.05f, 1f, 2,
                                          false, new Vector2(0, 1080), true, 1);
                                 //DrawableList.Add(FlashEmitter);
                                 YSortedEmitterList.Add(FlashEmitter);
@@ -4631,7 +4542,7 @@ namespace TowerDefensePrototype
                                         MathHelper.ToDegrees(-(float)Math.Atan2(Direction.Y, Direction.X)) + 80,
                                         MathHelper.ToDegrees(-(float)Math.Atan2(Direction.Y, Direction.X)) + 90),
                                         new Vector2(10, 15), new Vector2(1, 3), 0.15f, true, new Vector2(0, 360),
-                                        new Vector2(-1, 1), new Vector2(2, 4), ExplosionColor, ExplosionColor2, 0.0f, 0.05f, 0.5f, 4,
+                                        new Vector2(-1, 1), new Vector2(2, 4), ExplosionColor, ExplosionColor2, 0.0f, 0.05f, 1f, 2,
                                         false, new Vector2(0, 1080), true, 1);
                                 //DrawableList.Add(FlashEmitter2);
                                 YSortedEmitterList.Add(FlashEmitter2);
@@ -4642,7 +4553,7 @@ namespace TowerDefensePrototype
                                         MathHelper.ToDegrees(-(float)Math.Atan2(Direction.Y, Direction.X)) - 90,
                                         MathHelper.ToDegrees(-(float)Math.Atan2(Direction.Y, Direction.X)) - 80),
                                         new Vector2(10, 15), new Vector2(1, 3), 0.15f, true, new Vector2(0, 360),
-                                        new Vector2(-1, 1), new Vector2(2, 4), ExplosionColor, ExplosionColor2, 0.0f, 0.05f, 0.5f, 4,
+                                        new Vector2(-1, 1), new Vector2(2, 4), ExplosionColor, ExplosionColor2, 0.0f, 0.05f, 1f, 2,
                                         false, new Vector2(0, 1080), true, 1);
                                 //DrawableList.Add(FlashEmitter3);
                                 YSortedEmitterList.Add(FlashEmitter3);
@@ -5071,7 +4982,7 @@ namespace TowerDefensePrototype
                                 Emitter SparkEmitter = new Emitter(RoundSparkParticle,
                                         new Vector2(heavyProjectile.Position.X, heavyProjectile.MaxY - 20), new Vector2(0, 360),
                                         new Vector2(1, 4), new Vector2(120, 140), 1f, true, new Vector2(0, 360), new Vector2(1, 3),
-                                        new Vector2(0.1f, 0.3f), Color.Orange, Color.OrangeRed, 0.05f, 0.1f, 1, 7, true,
+                                        new Vector2(0.1f, 0.3f), Color.Orange, Color.OrangeRed, 0.05f, 0.1f, 2, 7, true,
                                         new Vector2(heavyProjectile.MaxY + 4, heavyProjectile.MaxY + 16), null, heavyProjectile.MaxY / 1080);
                                 AlphaEmitterList.Add(SparkEmitter);
 
@@ -6416,6 +6327,55 @@ namespace TowerDefensePrototype
                     Resources -= TrapCost(SelectedTrap.Value);
                     Trap newTrap = ApplyTrapUpgrades(SelectedTrap.Value, NewTrapPosition);
                     TrapList.Add(newTrap);
+
+                    //Make sure that the cooldowns are applied only to trap buttons as they're placed
+                    //i.e. not when the button is clicked
+                    for (int i = 0; i < CooldownButtonList.Count; i++)
+                    {
+                        if (CurrentProfile.Buttons[i] != null && CurrentProfile.Buttons[i].CurrentTrap == newTrap.TrapType)
+                        {
+                            CooldownButtonList[i].CoolingDown = true;
+                        }
+                    }
+
+                    #region Effects to create when a trap is placed, e.g. A dust puff when a wall is placed
+                    switch (newTrap.TrapType)
+                    {
+                        #region Wall
+                        case TrapType.Wall:
+                            YSortedEmitterList.Add(new Emitter(SmokeParticle,
+                                new Vector2(newTrap.DestinationRectangle.Center.X, newTrap.DestinationRectangle.Bottom),
+                                new Vector2(160, 200), new Vector2(1, 4), new Vector2(20, 40), 0.25f, true, new Vector2(0, 360),
+                                new Vector2(0, 1.5f), new Vector2(0.1f, 0.5f), DirtColor, DirtColor2, -0.05f, 0.2f, 3, 1, false,
+                                new Vector2(0, 1080), false, 0.9f, null, null, null, null, null, null, 0.05f));
+
+                            YSortedEmitterList.Add(new Emitter(SmokeParticle,
+                                new Vector2(newTrap.DestinationRectangle.Center.X, newTrap.DestinationRectangle.Bottom),
+                                new Vector2(-20, 20), new Vector2(1, 4), new Vector2(20, 40), 0.25f, true, new Vector2(0, 360),
+                                new Vector2(0, 1.5f), new Vector2(0.1f, 0.5f), DirtColor, DirtColor2, -0.05f, 0.1f, 3, 1, false,
+                                new Vector2(0, 1080), false, 0.9f, null, null, null, null, null, null, 0.05f));
+                            break;
+                        #endregion
+
+                        #region Fire
+                        case TrapType.Fire:
+                            AdditiveEmitterList.Add(new Emitter(RoundSparkParticle,
+                                new Vector2(newTrap.DestinationRectangle.Center.X, newTrap.DestinationRectangle.Bottom),
+                                new Vector2(160, 200), new Vector2(1, 4), new Vector2(20, 40), 1f, true, new Vector2(0, 360),
+                                new Vector2(0, 1.5f), new Vector2(0.25f, 0.25f), FireColor, FireColor2, -0.05f, 0.2f, 3, 1, false,
+                                new Vector2(0, 1080), false, 0.9f, null, null, null, null, null, null, 0.05f));
+
+                            AdditiveEmitterList.Add(new Emitter(RoundSparkParticle,
+                                new Vector2(newTrap.DestinationRectangle.Center.X, newTrap.DestinationRectangle.Bottom),
+                                new Vector2(-20, 20), new Vector2(1, 4), new Vector2(20, 40), 1f, true, new Vector2(0, 360),
+                                new Vector2(0, 1.5f), new Vector2(0.25f, 0.25f), FireColor, FireColor2, -0.05f, 0.1f, 3, 1, false,
+                                new Vector2(0, 1080), false, 0.9f, null, null, null, null, null, null, 0.05f));
+                            break;
+
+                            
+                        #endregion
+                    }
+                    #endregion
                 }
             }
         }        
@@ -7231,6 +7191,7 @@ namespace TowerDefensePrototype
             {
                 CurrentWave = CurrentLevel.WaveList[CurrentWaveIndex];
 
+                #region Use the "Start Waves" button to begin the next wave
                 if (StartWaveButton != null)
                 {
                     StartWaveButton.Update(CursorPosition, gameTime);
@@ -7248,8 +7209,9 @@ namespace TowerDefensePrototype
                         StartWaveButton = null;
                     }
                 }
+                #endregion
 
-                //ADD TO THE WAVE TIME
+                #region Add to the time between Waves
                 if (CurrentWaveTime < CurrentWave.TimeToNextWave)
                 {
                     if (StartWave == true)
@@ -7257,20 +7219,21 @@ namespace TowerDefensePrototype
                         CurrentWaveTime += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
                     }
                 }
+                #endregion
 
-                //IF IT'S TIME TO START ADDING INVADERS
                 if (CurrentWaveTime >= CurrentWave.TimeToNextWave)
-                {                    
-                    //ADD TO THE INVADER TIME
+                {
+                    #region Add to the time between Invaders
                     if (CurrentInvaderTime < CurrentWave.TimeToNextInvader)
                         CurrentInvaderTime += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+                    #endregion
 
-                    //START ADDING INVADERS IF IT'S TIME
                     if (CurrentInvaderTime >= CurrentWave.TimeToNextInvader)
                     {
+                        #region If there are still invaders to be added
                         if (CurrentInvaderIndex < CurrentWave.InvaderList.Count)
                         {
-                            //IF IT'S AN ACTUAL INVADER
+                            #region If the element is an invader
                             if (CurrentWave.InvaderList[CurrentInvaderIndex] is Invader)
                             {
                                 Invader nextInvader = (Invader)CurrentWave.InvaderList[CurrentInvaderIndex];
@@ -7301,15 +7264,14 @@ namespace TowerDefensePrototype
 
                                 nextInvader.Initialize();                                
                                 InvaderList.Add(nextInvader);
-                                //DrawableList.Add(nextInvader);
                                 CurrentInvaderTime = 0;
                                 CurrentWave.InvaderList[CurrentInvaderIndex] = null;
                                 CurrentInvaderIndex++;
                                 return;
                             }
-                            //IF IT'S A PAUSE
-                            
+                            #endregion
 
+                            #region If the element is a pause
                             if (CurrentWave.InvaderList[CurrentInvaderIndex] is int)
                             {
                                 if (CurrentWavePauseTime < (int)CurrentWave.InvaderList[CurrentInvaderIndex])
@@ -7324,7 +7286,11 @@ namespace TowerDefensePrototype
                                     return;
                                 }
                             }
+                            #endregion
 
+                            #region This is used to change the delay between invaders at any interval while the wave is being used
+                            //This can be used to reduce the delay between when invaders are added. Speed up the adding process without having
+                            //to create a whole new waves with a different timing value
                             if (CurrentWave.InvaderList[CurrentInvaderIndex] is float)
                             {
                                 CurrentWave.TimeToNextInvader = (float)CurrentWave.InvaderList[CurrentInvaderIndex];
@@ -7333,9 +7299,11 @@ namespace TowerDefensePrototype
                                 CurrentWavePauseTime = 0;
                                 return;
                             }
+                            #endregion
                         }
-                        //RESET THE WAVE AND INVADER TIMERS BECAUSE THE INVADERS FOR THIS LIST HAVE RUN OUT
+                        #endregion
                         else
+                        #region If there are no more invaders to be added from this wave
                         {
                             if (CurrentWave.Overflow == true)
                             {
@@ -7358,6 +7326,7 @@ namespace TowerDefensePrototype
                                 }
                             }
                         }
+                        #endregion
                     }
                 }
             }

@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace TowerDefensePrototype
 {
-    class AmmoBelt : VerletObject
+    public class AmmoBelt : VerletObject
     {
         public Texture2D ShellTexture;
 

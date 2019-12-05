@@ -19,7 +19,7 @@ namespace TowerDefensePrototype
             Position = position;
             Selected = true;
             FireDelay = 8000;            
-            Damage = 21;
+            Damage = 14;
             Animated = false;
             Looping = false;
             MaxHealth = 500;

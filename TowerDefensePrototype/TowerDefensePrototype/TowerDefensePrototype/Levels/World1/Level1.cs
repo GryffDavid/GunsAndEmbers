@@ -16,7 +16,7 @@ namespace TowerDefensePrototype
             WaveList = new List<Wave>();
             WorldType = WorldType.Snowy;
             StartWeather = Weather.Snow;
-            Resources = 1000;
+            Resources = 1300;
 
             Wave Wave1 = new Wave(true, 2050, 3000,
                  new Soldier(new Vector2(2050, 600)),
@@ -29,7 +29,7 @@ namespace TowerDefensePrototype
                  new Soldier(new Vector2(2050, 600)),
                  new Soldier(new Vector2(2050, 600)),
                  new Soldier(new Vector2(2050, 600)),
-                 4000,
+                 4000.0f,
                  new Soldier(new Vector2(2050, 600)),
                  new Soldier(new Vector2(2050, 600)),
                  new Soldier(new Vector2(2050, 600)),
@@ -143,12 +143,12 @@ namespace TowerDefensePrototype
 
             WaveList.Add(Wave1);
             WaveList.Add(Wave3);
-            WaveList.Add(Wave4);
-            WaveList.Add(Wave5);
-            WaveList.Add(Wave6);
-            WaveList.Add(Wave7);
-            WaveList.Add(Wave8);
-            WaveList.Add(Wave9);
+            //WaveList.Add(Wave4);
+            //WaveList.Add(Wave5);
+            //WaveList.Add(Wave6);
+            //WaveList.Add(Wave7);
+            //WaveList.Add(Wave8);
+            //WaveList.Add(Wave9);
         }
 
         public override void LoadContent(ContentManager contentManager)

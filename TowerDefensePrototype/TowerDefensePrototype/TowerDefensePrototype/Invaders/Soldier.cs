@@ -85,8 +85,14 @@ namespace TowerDefensePrototype
                 {
                     default:
                         CurrentHP -= trap.NormalDamage;
+                        
+                        if (trap.InvaderDOT != null)
                         DamageOverTime(trap.InvaderDOT, trap.InvaderDOT.Color);
+
+                        if (trap.InvaderFreeze != null)
                         Freeze(trap.InvaderFreeze, trap.InvaderDOT.Color);
+
+                        if (trap.InvaderSlow != null)
                         MakeSlow(trap.InvaderSlow);
                         break;
                 }

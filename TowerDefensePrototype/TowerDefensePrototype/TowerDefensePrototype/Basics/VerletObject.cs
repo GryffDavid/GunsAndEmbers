@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace TowerDefensePrototype
 {
-    class VerletObject
+    public class VerletObject
     {
         float Bounce = 0.6f;
         float Gravity = 0.03f;
@@ -46,7 +46,7 @@ namespace TowerDefensePrototype
             {
                 UpdateNodes(gameTime);
 
-                for (int i = 0; i < 30; i++)
+                for (int i = 0; i < 20; i++)
                 {
                     ConstrainNodes(gameTime);
                     UpdateSticks(gameTime);
@@ -66,33 +66,67 @@ namespace TowerDefensePrototype
         {
             foreach (Stick stick in Sticks)
             {
-                Vector2 Direction = stick.Point2.CurrentPosition - stick.Point1.CurrentPosition;
-                float Dist = Vector2.Distance(stick.Point1.CurrentPosition, stick.Point2.CurrentPosition);
-                float Diff = stick.Length - Dist;
-                float percent = Diff / Dist / 2;
-                Vector2 Offset = Direction * percent;
+                float currentLength = Vector2.Distance(stick.Point1.CurrentPosition, stick.Point2.CurrentPosition);
 
-                if (stick.Point1.Pinned == false)
-                    stick.Point1.CurrentPosition -= Offset;
+                if (currentLength != stick.Length)
+                {
+                    Vector2 directioon = stick.Point1.CurrentPosition - stick.Point2.CurrentPosition;
+                    directioon.Normalize();
 
-                if (stick.Point2.Pinned == false)
-                    stick.Point2.CurrentPosition += Offset;
+                    if (stick.Point2.Pinned == false)
+                        stick.Point2.CurrentPosition += (directioon * (currentLength - stick.Length) / 2);
+
+                    if (stick.Point1.Pinned == false)
+                        stick.Point1.CurrentPosition -= (directioon * (currentLength - stick.Length) / 2);
+                }
             }
 
             foreach (Stick stick in Sticks2)
             {
-                Vector2 Direction = stick.Point2.CurrentPosition - stick.Point1.CurrentPosition;
-                float Dist = Vector2.Distance(stick.Point1.CurrentPosition, stick.Point2.CurrentPosition);
-                float Diff = stick.Length - Dist;
-                float percent = Diff / Dist / 2;
-                Vector2 Offset = Direction * percent;
+                float currentLength = Vector2.Distance(stick.Point1.CurrentPosition, stick.Point2.CurrentPosition);
 
-                if (stick.Point1.Pinned == false)
-                    stick.Point1.CurrentPosition -= Offset;
+                if (currentLength != stick.Length)
+                {
+                    Vector2 directioon = stick.Point1.CurrentPosition - stick.Point2.CurrentPosition;
+                    directioon.Normalize();
 
-                if (stick.Point2.Pinned == false)
-                    stick.Point2.CurrentPosition += Offset;
+                    if (stick.Point2.Pinned == false)
+                        stick.Point2.CurrentPosition += (directioon * (currentLength - stick.Length) / 2);
+
+                    if (stick.Point1.Pinned == false)
+                        stick.Point1.CurrentPosition -= (directioon * (currentLength - stick.Length) / 2);
+                }
             }
+
+            //foreach (Stick stick in Sticks)
+            //{
+            //    Vector2 Direction = stick.Point2.CurrentPosition - stick.Point1.CurrentPosition;
+            //    float Dist = Vector2.Distance(stick.Point1.CurrentPosition, stick.Point2.CurrentPosition);
+            //    float Diff = stick.Length - Dist;
+            //    float percent = Diff / Dist / 2;
+            //    Vector2 Offset = Direction * percent;
+
+            //    if (stick.Point1.Pinned == false)
+            //        stick.Point1.CurrentPosition -= Offset;
+
+            //    if (stick.Point2.Pinned == false)
+            //        stick.Point2.CurrentPosition += Offset;
+            //}
+
+            //foreach (Stick stick in Sticks2)
+            //{
+            //    Vector2 Direction = stick.Point2.CurrentPosition - stick.Point1.CurrentPosition;
+            //    float Dist = Vector2.Distance(stick.Point1.CurrentPosition, stick.Point2.CurrentPosition);
+            //    float Diff = stick.Length - Dist;
+            //    float percent = Diff / Dist / 2;
+            //    Vector2 Offset = Direction * percent;
+
+            //    if (stick.Point1.Pinned == false)
+            //        stick.Point1.CurrentPosition -= Offset;
+
+            //    if (stick.Point2.Pinned == false)
+            //        stick.Point2.CurrentPosition += Offset;
+            //}
         }
 
         public void ConstrainNodes(GameTime gameTime)

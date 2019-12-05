@@ -345,7 +345,9 @@ namespace TowerDefensePrototype
 
                     if (IntervalTime > Interval && AddMore == true)
                     {
-                        for (int i = 0; i < Burst; i++)
+                        int newBurst = (int)(Burst * (IntervalTime / Interval));
+
+                        for (int i = 0; i < newBurst; i++)
                         {
                             float angle, hp, scale, rotation, speed, startingRotation;
 

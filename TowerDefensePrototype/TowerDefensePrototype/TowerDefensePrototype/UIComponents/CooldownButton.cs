@@ -10,8 +10,8 @@ namespace TowerDefensePrototype
 {
     class CooldownButton
     {
-        public ButtonSpriteState CurrentButtonState, PreviousButtonState;       
-        public Vector2 CurrentPosition, CurrentSize;
+        public ButtonSpriteState CurrentButtonState, PreviousButtonState;
+        public Vector2 CurrentPosition, CurrentSize, IconTextureSizeOffset, IconPosition, IconSize, IconSizeOffset;
         Vector3 IconOffset = Vector3.Zero;
 
         VertexPositionColor[] OutlineVertices = new VertexPositionColor[16];
@@ -34,8 +34,7 @@ namespace TowerDefensePrototype
 
         Texture2D Icon;
 
-        public bool JustClicked;
-        bool CoolingDown;
+        public bool JustClicked, CoolingDown;
 
         public CooldownButton(Vector2 position, Vector2 size, float outlineThickness, Texture2D icon)
         {
@@ -52,6 +51,14 @@ namespace TowerDefensePrototype
             CurrentPosition = position;
             CurrentSize = size;
 
+            if (Icon != null)
+            {
+                IconPosition = CurrentSize / 2;
+                IconSize = new Vector2(Icon.Width, Icon.Height);
+                IconSizeOffset = new Vector2(0, 0);
+                IconTextureSizeOffset = new Vector2(0, 0);
+            }
+
             CurrentCooldownTime = 0;
             MaxCooldownTime = 2000;
             CoolingDown = false;            
@@ -63,41 +70,51 @@ namespace TowerDefensePrototype
             #region Icon vertices
             if (Icon != null)
             {
+                #region First triangle
+                //Top left corner
                 IconVertices[0] = new VertexPositionColorTexture(
-                    new Vector3(CurrentPosition.X + CurrentSize.X / 2 - Icon.Width / 2,
-                                CurrentPosition.Y + CurrentSize.Y / 2 - Icon.Height / 2,
+                    new Vector3(CurrentPosition.X + IconPosition.X - IconSize.X / 2,
+                                CurrentPosition.Y + IconPosition.Y - IconSize.Y / 2,
                                 0) + IconOffset,
                     IconColor, new Vector2(0, 0));
 
+                //Top right corner
                 IconVertices[1] = new VertexPositionColorTexture(
-                    new Vector3(CurrentPosition.X + CurrentSize.X / 2 + Icon.Width / 2,
-                                CurrentPosition.Y + CurrentSize.Y / 2 - Icon.Height / 2,
+                    new Vector3(CurrentPosition.X + IconPosition.X + IconSize.X / 2,
+                                CurrentPosition.Y + IconPosition.Y - IconSize.Y / 2,
                                 0) + IconOffset,
                     IconColor, new Vector2(1, 0));
 
+                //Bottom right corner
                 IconVertices[2] = new VertexPositionColorTexture(
-                    new Vector3(CurrentPosition.X + CurrentSize.X / 2 + Icon.Width / 2,
-                                CurrentPosition.Y + CurrentSize.Y / 2 + Icon.Height / 2,
+                    new Vector3(CurrentPosition.X + IconPosition.X + IconSize.X / 2,
+                                CurrentPosition.Y + IconPosition.Y + IconSize.Y / 2,
                                 0) + IconOffset,
                     IconColor, new Vector2(1, 1));
+                #endregion
 
+                #region Second triangle
+                //Bottom right corner
                 IconVertices[3] = new VertexPositionColorTexture(
-                    new Vector3(CurrentPosition.X + CurrentSize.X / 2 + Icon.Width / 2,
-                                CurrentPosition.Y + CurrentSize.Y / 2 + Icon.Height / 2,
+                    new Vector3(CurrentPosition.X + IconPosition.X + IconSize.X / 2,
+                                CurrentPosition.Y + IconPosition.Y + IconSize.Y / 2,
                                 0) + IconOffset,
                     IconColor, new Vector2(1, 1));
 
+                //Bottom left corner
                 IconVertices[4] = new VertexPositionColorTexture(
-                    new Vector3(CurrentPosition.X + CurrentSize.X / 2 - Icon.Width / 2,
-                                CurrentPosition.Y + CurrentSize.Y / 2 + Icon.Height / 2,
+                    new Vector3(CurrentPosition.X + IconPosition.X - IconSize.X / 2,
+                                CurrentPosition.Y + IconPosition.Y + IconSize.Y / 2,
                                 0) + IconOffset,
                     IconColor, new Vector2(0, 1));
 
+                //Top left corner
                 IconVertices[5] = new VertexPositionColorTexture(
-                    new Vector3(CurrentPosition.X + CurrentSize.X / 2 - Icon.Width / 2,
-                                CurrentPosition.Y + CurrentSize.Y / 2 - Icon.Height / 2,
+                    new Vector3(CurrentPosition.X + IconPosition.X - IconSize.X / 2,
+                                CurrentPosition.Y + IconPosition.Y - IconSize.Y / 2,
                                 0) + IconOffset,
                     IconColor, new Vector2(0, 0));
+                #endregion
             }
             #endregion
 
@@ -275,6 +292,12 @@ namespace TowerDefensePrototype
             if (CoolingDown == true)
             {
                 CurrentCooldownTime += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+
+                float CoolDownPercentage = (100 / MaxCooldownTime * CurrentCooldownTime) / 100;
+                IconSizeOffset.Y = Icon.Height - (Icon.Height * CoolDownPercentage);
+                IconTextureSizeOffset.Y = IconSizeOffset.Y / Icon.Height;
+
+                IconColor = Color.Gray;
             }
 
             if (CurrentCooldownTime > MaxCooldownTime)
@@ -353,7 +376,6 @@ namespace TowerDefensePrototype
                 {
                     if (CoolingDown == false)
                     {
-                        CoolingDown = true;
                         JustClicked = true;
                     }
                 }
@@ -392,35 +414,51 @@ namespace TowerDefensePrototype
                     IconVertices[i].Color = IconColor;
                 }
 
-                IconVertices[0].Position =
-                    new Vector3(CurrentPosition.X + CurrentSize.X / 2 - Icon.Width / 2,
-                                CurrentPosition.Y + CurrentSize.Y / 2 - Icon.Height / 2,
-                                0) + IconOffset;
+                #region First triangle
+                //Top left corner
+                IconVertices[0] = new VertexPositionColorTexture(
+                    new Vector3(CurrentPosition.X + IconPosition.X - IconSize.X / 2,
+                                CurrentPosition.Y + IconPosition.Y - IconSize.Y / 2 + IconSizeOffset.Y,
+                                0) + IconOffset,
+                    IconColor, new Vector2(0, IconTextureSizeOffset.Y));
 
-                IconVertices[1].Position =
-                    new Vector3(CurrentPosition.X + CurrentSize.X / 2 + Icon.Width / 2,
-                                CurrentPosition.Y + CurrentSize.Y / 2 - Icon.Height / 2,
-                                0) + IconOffset;
+                //Top right corner
+                IconVertices[1] = new VertexPositionColorTexture(
+                    new Vector3(CurrentPosition.X + IconPosition.X + IconSize.X / 2,
+                                CurrentPosition.Y + IconPosition.Y - IconSize.Y / 2 + IconSizeOffset.Y,
+                                0) + IconOffset,
+                    IconColor, new Vector2(1, IconTextureSizeOffset.Y));
 
-                IconVertices[2].Position =
-                    new Vector3(CurrentPosition.X + CurrentSize.X / 2 + Icon.Width / 2,
-                                CurrentPosition.Y + CurrentSize.Y / 2 + Icon.Height / 2,
-                                0) + IconOffset;
+                //Bottom right corner
+                IconVertices[2] = new VertexPositionColorTexture(
+                    new Vector3(CurrentPosition.X + IconPosition.X + IconSize.X / 2,
+                                CurrentPosition.Y + IconPosition.Y + IconSize.Y / 2,
+                                0) + IconOffset,
+                    IconColor, new Vector2(1, 1));
+                #endregion
 
-                IconVertices[3].Position =
-                    new Vector3(CurrentPosition.X + CurrentSize.X / 2 + Icon.Width / 2,
-                                CurrentPosition.Y + CurrentSize.Y / 2 + Icon.Height / 2,
-                                0) + IconOffset;
+                #region Second triangle
+                //Bottom right corner
+                IconVertices[3] = new VertexPositionColorTexture(
+                    new Vector3(CurrentPosition.X + IconPosition.X + IconSize.X / 2,
+                                CurrentPosition.Y + IconPosition.Y + IconSize.Y / 2,
+                                0) + IconOffset,
+                    IconColor, new Vector2(1, 1));
 
-                IconVertices[4].Position =
-                    new Vector3(CurrentPosition.X + CurrentSize.X / 2 - Icon.Width / 2,
-                                CurrentPosition.Y + CurrentSize.Y / 2 + Icon.Height / 2,
-                                0) + IconOffset;
+                //Bottom left corner
+                IconVertices[4] = new VertexPositionColorTexture(
+                    new Vector3(CurrentPosition.X + IconPosition.X - IconSize.X / 2,
+                                CurrentPosition.Y + IconPosition.Y + IconSize.Y / 2,
+                                0) + IconOffset,
+                    IconColor, new Vector2(0, 1));
 
-                IconVertices[5].Position =
-                    new Vector3(CurrentPosition.X + CurrentSize.X / 2 - Icon.Width / 2,
-                                CurrentPosition.Y + CurrentSize.Y / 2 - Icon.Height / 2,
-                                0) + IconOffset;
+                //Top left corner
+                IconVertices[5] = new VertexPositionColorTexture(
+                    new Vector3(CurrentPosition.X + IconPosition.X - IconSize.X / 2,
+                                CurrentPosition.Y + IconPosition.Y - IconSize.Y / 2 + IconSizeOffset.Y,
+                                0) + IconOffset,
+                    IconColor, new Vector2(0, IconTextureSizeOffset.Y));
+                #endregion
             }
             #endregion
 

@@ -30,6 +30,7 @@ namespace TowerDefensePrototype
         public List<Emitter> EmitterList = new List<Emitter>();
         public DamageType DamageType;
         public UIBar TimingBar, HealthBar;
+        public AmmoBelt AmmoBelt;
 
         //Chance to Effect - i.e. fire, slow, freeze etc.
         public float ChanceToEffect;
@@ -85,6 +86,16 @@ namespace TowerDefensePrototype
 
         public void Update(GameTime gameTime, Vector2 cursorPosition)
         {
+            if (AmmoBelt != null)
+            {
+                Vector2 direction = new Vector2((float)Math.Cos(Rotation), (float)Math.Sin(Rotation));
+                direction.Normalize();
+
+                AmmoBelt.Nodes[0].CurrentPosition = BarrelCenter + (direction * AmmoBelt.ShellTexture.Width / 2);
+                AmmoBelt.Nodes2[0].CurrentPosition = BarrelCenter - (direction * AmmoBelt.ShellTexture.Width / 2);
+                AmmoBelt.Update(gameTime);
+            }
+
             if (double.IsNaN(Rotation) == true)
                 Rotation = -20;
 
@@ -175,17 +186,22 @@ namespace TowerDefensePrototype
 
             CurrentMouseState = Mouse.GetState();
 
+
+            //If this is causing problems, put it back in the IF ACTIVE check.
+            //It's only here to make sure that the ammo belt behaves correctly
+            /////////////
+            BarrelCenter = new Vector2(BarrelRectangle.X + (float)Math.Cos(Rotation - 90) * (BarrelPivot.Y - BarrelRectangle.Height / 2),
+                                       BarrelRectangle.Y + (float)Math.Sin(Rotation - 90) * (BarrelPivot.Y - BarrelRectangle.Height / 2));
+
+            BarrelEnd = new Vector2(BarrelCenter.X + (float)Math.Cos(Rotation) * (BarrelRectangle.Width - BarrelPivot.X),
+                                    BarrelCenter.Y + (float)Math.Sin(Rotation) * (BarrelRectangle.Width - BarrelPivot.X));
+            /////////////
+
             if (Active == true)
             {
                 if (Selected == true)
                 {
-                    CurrentMouseState = Mouse.GetState();                   
-
-                    BarrelCenter = new Vector2(BarrelRectangle.X + (float)Math.Cos(Rotation - 90) * (BarrelPivot.Y - BarrelRectangle.Height / 2),
-                                             BarrelRectangle.Y + (float)Math.Sin(Rotation - 90) * (BarrelPivot.Y - BarrelRectangle.Height / 2));
-
-                    BarrelEnd = new Vector2(BarrelCenter.X + (float)Math.Cos(Rotation) * (BarrelRectangle.Width - BarrelPivot.X),
-                                            BarrelCenter.Y + (float)Math.Sin(Rotation) * (BarrelRectangle.Width - BarrelPivot.X));
+                    CurrentMouseState = Mouse.GetState();
 
                     if (MousePosition - new Vector2(BarrelCenter.X, BarrelCenter.Y) == Vector2.Zero)
                     {

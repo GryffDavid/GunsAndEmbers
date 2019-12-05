@@ -20,7 +20,7 @@ namespace TowerDefensePrototype
             DetonateDelay = 1500;
             DetonateLimit = 5;
             AffectedTime = 300;
-            ResourceCost = 200;
+            ResourceCost = 120;
 
             NormalDamage = 0;
 
@@ -28,7 +28,7 @@ namespace TowerDefensePrototype
             {
                 InitialDamage = 10,
                 Damage = 1,
-                Milliseconds = 3000,
+                Milliseconds = 3600,
                 Interval = 300,
                 Color = Color.Orange
             };
