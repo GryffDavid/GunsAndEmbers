@@ -3,7 +3,6 @@ Content\Cursors\DefaultCursor.xnb
 Content\Particles\Splodge.xnb
 Content\WhiteBlock.xnb
 Content\Particles\FireParticle.xnb
-Content\Projectiles\CannonBall.xnb
 Content\Projectiles\Arrow.xnb
 Content\Projectiles\AcidProjectileSprite.xnb
 Content\Buttons\ButtonLeft.xnb
@@ -82,6 +81,12 @@ Content\ShieldNormalMap.xnb
 Content\ShieldDistortionMap.xnb
 Content\Icons\TurretIcons\PersistentBeamTurretIcon.xnb
 Content\Icons\TrapIcons\LineTrapIcon.xnb
+Content\Backgrounds\MenuBackground.xnb
+Content\RedBox.xnb
+Content\Icons\TrapIcons\TarTrapIcon.xnb
+Content\Icons\TrapIcons\TriggerTrapIcon.xnb
+Content\Buttons\TriggerSwitch.xnb
+Content\Terrain\Shrub.xnb
 Content\Fonts\DefaultFont.xnb
 Content\Fonts\ButtonFont.xnb
 Content\Fonts\TooltipFont.xnb
@@ -112,7 +117,5 @@ Content\Sounds\TurretOverheat.xnb
 Content\Shaders\HealthBarEffect.xnb
 Content\Shaders\ShockWaveEffect.xnb
 Content\Shaders\ShieldBubbleEffect.xnb
-Content\Shaders\HalfPixelShader.xnb
 Content\Shaders\BackgroundEffect.xnb
 Content\Shaders\ButtonBlurEffect.xnb
-Content\Backgrounds\MenuBackground.xnb

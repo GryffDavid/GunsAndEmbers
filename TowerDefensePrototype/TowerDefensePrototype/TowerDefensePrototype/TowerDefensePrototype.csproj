@@ -122,7 +122,6 @@
     <Compile Include="Basics\Profile.cs" />
     <Compile Include="Basics\HeavyRangedInvader.cs" />
     <Compile Include="Basics\WaveCountDown.cs" />
-    <Compile Include="Basics\WeaponInfoBox.cs" />
     <Compile Include="Basics\NumberChange.cs" />
     <Compile Include="Basics\Light.cs" />
     <Compile Include="Invaders\TestInvader.cs" />
@@ -157,8 +156,6 @@
     <Compile Include="Projectiles\GrenadeProjectile.cs" />
     <Compile Include="Projectiles\LightningProjectile.cs" />
     <Compile Include="Invaders\StationaryCannon.cs" />
-    <Compile Include="Basics\Shadow.cs" />
-    <Compile Include="Traps\TriggerTrap.cs" />
     <Compile Include="Turrets\BeamTurret.cs" />
     <Compile Include="Turrets\BoomerangTurret.cs" />
     <Compile Include="Turrets\PersistentBeamTurret.cs" />

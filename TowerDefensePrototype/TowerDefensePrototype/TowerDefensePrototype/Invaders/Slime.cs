@@ -27,8 +27,7 @@ namespace TowerDefensePrototype
             YRange = new Vector2(700, 900);
 
             CurrentAnimation = new Animation() 
-            { 
-                AssetName = "Invaders/Invader", 
+            {
                 TotalFrames = 1, 
                 FrameDelay = 120 
             };

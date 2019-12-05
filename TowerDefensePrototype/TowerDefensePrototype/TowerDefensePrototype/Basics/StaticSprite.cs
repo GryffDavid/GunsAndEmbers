@@ -70,11 +70,64 @@ namespace TowerDefensePrototype
                 FadeTime = fadeTime.Value;
                 CurrentFadeTime = 0;
             }
-    }
+        }
+
+        public StaticSprite(Texture2D texture, Vector2 position, Vector2? scale = null, Color? color = null,
+                            Vector2? move = null, bool? horizontalLooping = null, bool? verticalLooping = null, double? updateDelay = null, float? rotation = null, float? fadeTime = null)
+        {
+            Texture = texture;
+            Position = position;
+
+            if (horizontalLooping == null)
+                HorizontalLooping = false;
+            else
+                HorizontalLooping = horizontalLooping.Value;
+
+            if (verticalLooping == null)
+                VerticalLooping = false;
+            else
+                VerticalLooping = verticalLooping.Value;
+
+            if (scale == null)
+                Scale = new Vector2(1, 1);
+            else
+                Scale = scale.Value;
+
+            if (color == null)
+                Color = Color.White;
+            else
+                Color = color.Value;
+
+            if (move == null)
+                Move = Vector2.Zero;
+            else
+                Move = move.Value;
+
+            if (updateDelay == null)
+                UpdateDelay = 1;
+            else
+                UpdateDelay = updateDelay.Value;
+
+            if (rotation == null)
+                Rotation = 0;
+            else
+                Rotation = rotation.Value;
+
+            if (fadeTime == null)
+                FadeTime = 0;
+            else
+            {
+                FadeTime = fadeTime.Value;
+                CurrentFadeTime = 0;
+            }
+
+            DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, (int)(Texture.Width * Scale.X), (int)(Texture.Height * Scale.Y));
+        }
 
         public void LoadContent(ContentManager contentManager)
         {
             Texture = contentManager.Load<Texture2D>(AssetName);
+            DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, (int)(Texture.Width * Scale.X), (int)(Texture.Height * Scale.Y));
         }
 
         public void Update(GameTime gameTime)
@@ -114,12 +167,14 @@ namespace TowerDefensePrototype
                 Position += Move;
 
                 CurrentTime = 0;
-            }            
+            }
+
+            DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, (int)(Texture.Width * Scale.X), (int)(Texture.Height * Scale.Y));
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, (int)(Texture.Width * Scale.X), (int)(Texture.Height * Scale.Y));
+            //DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, (int)(Texture.Width * Scale.X), (int)(Texture.Height * Scale.Y));
             BoundingBox = new BoundingBox(new Vector3(Position.X, Position.Y, 0), new Vector3(Position.X + (Texture.Width * Scale.X), Position.Y + (Texture.Width * Scale.Y), 0));
             spriteBatch.Draw(Texture, DestinationRectangle, null, Color, Rotation, Vector2.Zero, SpriteEffects.None, Depth);
         }

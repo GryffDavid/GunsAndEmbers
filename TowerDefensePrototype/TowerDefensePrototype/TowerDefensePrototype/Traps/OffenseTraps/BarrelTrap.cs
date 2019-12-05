@@ -14,7 +14,6 @@ namespace TowerDefensePrototype
         {
             Position = position;
             Solid = true;
-            AssetName = "Traps/Trap";
             MaxHP = 50;
             TrapType = TrapType.Barrel;
             DetonateDelay = 10000;

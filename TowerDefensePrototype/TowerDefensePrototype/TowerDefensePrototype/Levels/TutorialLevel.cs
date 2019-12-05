@@ -13,7 +13,6 @@ namespace TowerDefensePrototype
             Number = 0;
             WorldType = "Basic";
             WaveList = new List<Wave>();
-            StartDelay = 6;
 
             Wave Wave1 = new Wave(false, 200, 6000,
                  new Soldier(new Vector2(2050, 600)),

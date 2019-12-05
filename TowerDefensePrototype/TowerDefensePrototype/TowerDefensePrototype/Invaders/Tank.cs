@@ -29,8 +29,7 @@ namespace TowerDefensePrototype
             Airborne = false;
 
             CurrentAnimation = new Animation() 
-            { 
-                AssetName = "Invaders/BlankTank", 
+            {
                 TotalFrames = 1, 
                 FrameDelay = 120 
             };

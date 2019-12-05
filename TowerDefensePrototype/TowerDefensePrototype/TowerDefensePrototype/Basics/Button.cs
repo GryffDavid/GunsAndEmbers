@@ -33,7 +33,7 @@ namespace TowerDefensePrototype
         public bool ButtonActive;
         public Color CurrentIconColor;
         public bool PlayHover;
-
+        public float DrawDepth;
         string Alignment;
 
         public Button(string assetName, Vector2 position, string iconName = null, Vector2? scale = null, 
@@ -75,6 +75,8 @@ namespace TowerDefensePrototype
             {
                 CanBeRightClicked = canBeRightClicked.Value;
             }
+
+            DrawDepth = 0.99f;
 
             Alignment = alignment;
 
@@ -319,7 +321,7 @@ namespace TowerDefensePrototype
 
             if (ButtonActive == true)
             {                
-                spriteBatch.Draw(ButtonStrip, DestinationRectangle, SourceRectangle, Color, MathHelper.ToRadians(0), Vector2.Zero, SpriteEffects.None, 0.99f);
+                spriteBatch.Draw(ButtonStrip, DestinationRectangle, SourceRectangle, Color, MathHelper.ToRadians(0), Vector2.Zero, SpriteEffects.None, DrawDepth);
 
                 if (IconName != null)
                 {

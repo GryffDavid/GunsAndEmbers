@@ -15,20 +15,19 @@ namespace TowerDefensePrototype
         {
             Active = true;
             TurretType = TurretType.Cannon;
-            BaseAsset = "Turrets/MachineTurretBase";
             Position = position;
             Selected = true;
-            FireDelay = 250;
+            FireDelay = 6000;
             Damage = 30;
             Animated = false;
             Looping = false;
             Health = 500;
             ResourceCost = 600;
             BlastRadius = 200;
+            Health = 200;
 
             CurrentAnimation = new Animation()
             {
-                AssetName = "Turrets/MachineTurretBarrel",
                 TotalFrames = 6
             };       
         }

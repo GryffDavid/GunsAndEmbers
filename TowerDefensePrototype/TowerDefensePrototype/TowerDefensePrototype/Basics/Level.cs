@@ -14,7 +14,6 @@ namespace TowerDefensePrototype
     public class Level
     {
         public int Number;
-        public float StartDelay;
         public string WorldType;
         public List<Wave> WaveList; 
 

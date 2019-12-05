@@ -32,8 +32,7 @@ namespace TowerDefensePrototype
             //                                   new Vector2(-2, 2), new Vector2(0.25f, 0.5f), Color.SaddleBrown, Color.SaddleBrown, 0f, -1, 600, 1, false, new Vector2(0, 720), false);
 
             CurrentAnimation = new Animation() 
-            { 
-                AssetName = "Invaders/Soldier3", 
+            {
                 TotalFrames = 4, 
                 FrameDelay = 150 
             };

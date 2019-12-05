@@ -15,13 +15,13 @@ namespace TowerDefensePrototype
         {
             Position = position;
             Solid = false;
-            AssetName = "Blank";
             MaxHP = 50;
             TrapType = TrapType.Fire;
             DetonateDelay = 1500;
             DetonateLimit = 5;
             AffectedTime = 300;
             ResourceCost = 200;
+            Radius = 3;
             Animated = false;
         }
     }

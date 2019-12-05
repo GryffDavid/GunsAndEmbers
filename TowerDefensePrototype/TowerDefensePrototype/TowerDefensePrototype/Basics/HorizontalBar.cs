@@ -13,18 +13,16 @@ namespace TowerDefensePrototype
     {
         public float MaxHP, CurrentHP;
         public Vector2 Position, MaxSize;
-        Texture2D Box;
+        public Texture2D Box;
         Color FrontColor, BackColor;        
         int CurrentLength;      
         
-        public HorizontalBar(ContentManager contentManager, Vector2 maxSize, float maxHP, float currentHP, Color? frontColor = null, Color? backColor = null)
+        public HorizontalBar(Vector2 maxSize, float maxHP, float currentHP, Color? frontColor = null, Color? backColor = null)
         {
             MaxHP = maxHP;
             CurrentHP = currentHP;
 
             MaxSize = maxSize;
-
-            Box = contentManager.Load<Texture2D>("WhiteBlock");
 
             if (frontColor == null)
                 FrontColor = Color.DarkRed;

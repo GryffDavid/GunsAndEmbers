@@ -15,7 +15,6 @@ namespace TowerDefensePrototype
         {
             Active = true;
             TurretType = TurretType.FlameThrower;
-            BaseAsset = "Turrets/MachineTurretBase";
             Position = position;
             Selected = true;
             FireDelay = 40;
@@ -31,7 +30,6 @@ namespace TowerDefensePrototype
 
             CurrentAnimation = new Animation()
             {
-                AssetName = "Turrets/MachineTurretBarrel",
                 TotalFrames = 6
             };
 

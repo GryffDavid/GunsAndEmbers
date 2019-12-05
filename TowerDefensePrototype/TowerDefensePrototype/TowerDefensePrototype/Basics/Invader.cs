@@ -36,28 +36,17 @@ namespace TowerDefensePrototype
         public Vector2 Scale = new Vector2(1, 1);
         public float Bottom;
         public Animation CurrentAnimation;
-        public Emitter DustEmitter;
         public Emitter FireEmitter;
-        public List<Emitter> EmitterList;
 
-        public void LoadContent(ContentManager contentManager)
+        public void Initialize()
         {
-            Shadow = contentManager.Load<Texture2D>("Shadow");
-            IceBlock = contentManager.Load<Texture2D>("IceBlock");
             VulnerableToTurret = true;
-            VulnerableToTrap = true;
-            CurrentTexture = contentManager.Load<Texture2D>(CurrentAnimation.AssetName);
+            VulnerableToTrap = true;            
             Color = Color.White;
-            //HPBar = new HorizontalBar(contentManager, new Vector2(32, 4), MaxHP, CurrentHP);
             CurrentMoveDelay = MoveDelay;
             CurrentMoveVector = MoveVector;
             MaxY = Random.Next((int)YRange.X, (int)YRange.Y);
             FrameSize = new Vector2(CurrentTexture.Width / CurrentAnimation.TotalFrames, CurrentTexture.Height);
-          
-            if (DustEmitter != null)
-                DustEmitter.LoadContent(contentManager);
-
-            EmitterList = new List<Emitter>();
         }
 
         public virtual void Update(GameTime gameTime)
@@ -75,12 +64,6 @@ namespace TowerDefensePrototype
                 if (CurrentHP <= 0)
                     Active = false;
 
-                //foreach (Emitter emitter in EmitterList)
-                //{
-                //    emitter.Update(gameTime);
-                //    emitter.Position = new Vector2(DestinationRectangle.Center.X, DestinationRectangle.Center.Y);
-                //}
-
                 if (FireEmitter != null)
                 {
                     FireEmitter.Update(gameTime);
@@ -90,21 +73,6 @@ namespace TowerDefensePrototype
                     FireEmitter.Position = new Vector2(DestinationRectangle.Left + 
                         Random.Next(0, CurrentTexture.Width/CurrentAnimation.TotalFrames), 
                         DestinationRectangle.Bottom - Random.Next(0, CurrentTexture.Height));
-                }
-
-                if (DustEmitter != null)
-                {
-                    if (CurrentMoveVector.X == 0)
-                    {
-                        DustEmitter.AddMore = false;
-                    }
-                    else
-                    {
-                        DustEmitter.AddMore = true;
-                    }
-
-                    DustEmitter.Update(gameTime);
-                    DustEmitter.Position = new Vector2(DestinationRectangle.Center.X, DestinationRectangle.Bottom);
                 }
 
                 #region This makes sure that the invader can't take damage if it's off screen (i.e. before it's visible to the player)
@@ -244,18 +212,10 @@ namespace TowerDefensePrototype
             if (Active == true)
             {               
                 spriteBatch.Draw(Shadow, new Rectangle(DestinationRectangle.Left, (int)MaxY-(DestinationRectangle.Height/8), DestinationRectangle.Width, DestinationRectangle.Height / 4), Color.Lerp(Color.White, Color.Transparent, 0.75f));
-                
-                if (DustEmitter != null)
-                    DustEmitter.Draw(spriteBatch);
 
                 if (FireEmitter != null)
                 {
                     FireEmitter.Draw(spriteBatch);
-                }
-
-                foreach (Emitter emitter in EmitterList)
-                {
-                    emitter.Draw(spriteBatch);
                 }
 
                 BoundingBox = new BoundingBox(new Vector3(Position.X, Position.Y, 0), 

@@ -12,7 +12,6 @@ namespace TowerDefensePrototype
     {
         public Texture2D Texture;
         public Rectangle DestinationRectangle, SourceRectangle;
-        public String AssetName;
         public float MaxHP, CurrentHP;
         public Vector2 Scale, FrameSize, Position;
         public bool Active, Solid, CanTrigger, Animated;
@@ -26,16 +25,16 @@ namespace TowerDefensePrototype
         public float AffectedTime, CurrentAffectedTime;
         public float DrawDepth, Bottom;
         public int ElapsedTime, FrameTime, FrameCount, CurrentFrame;
-        public int ResourceCost;       
+        public int ResourceCost;
+        public int Radius;
 
-        public virtual void LoadContent(ContentManager contentManager)
+        public virtual void Initialize(ContentManager contentManager)
         {
-            Active = true;                   
-            TimingBar = new HorizontalBar(contentManager, new Vector2(32, 4), (int)DetonateDelay, (int)CurrentDetonateDelay, Color.Green, Color.DarkRed);
-            HealthBar = new HorizontalBar(contentManager, new Vector2(32, 4), (int)MaxHP, (int)CurrentHP, Color.Green, Color.DarkRed);
-            
-            Texture = contentManager.Load<Texture2D>(AssetName);
-            BoundingBox = new BoundingBox(new Vector3((int)Position.X, (int)Position.Y, 0), new Vector3((int)Position.X + Texture.Width, (int)Position.Y - Texture.Height, 0));
+            Active = true;
+
+            TimingBar = new HorizontalBar(new Vector2(32, 4), (int)DetonateDelay, (int)CurrentDetonateDelay, Color.Green, Color.DarkRed);
+            HealthBar = new HorizontalBar(new Vector2(32, 4), (int)MaxHP, (int)CurrentHP, Color.Green, Color.DarkRed);
+
             CurrentDetonateLimit = DetonateLimit;
             CurrentDetonateDelay = DetonateDelay;
             Affected = false;
@@ -48,6 +47,8 @@ namespace TowerDefensePrototype
             }
 
             FrameSize = new Vector2(Texture.Width / FrameCount, Texture.Height);
+            BoundingBox = new BoundingBox(new Vector3((int)(Position.X - FrameSize.X / 2), (int)(Position.Y - FrameSize.Y), 0), 
+                                          new Vector3((int)(Position.X - FrameSize.X / 2) + FrameSize.X, (int)(Position.Y - FrameSize.Y) + FrameSize.Y, 0));
             ElapsedTime = 0;
             CurrentFrame = 0;
 
@@ -62,6 +63,7 @@ namespace TowerDefensePrototype
 
         public virtual void Update(GameTime gameTime)
         {
+            if (CurrentDetonateDelay < DetonateDelay)
             CurrentDetonateDelay += gameTime.ElapsedGameTime.Milliseconds;
 
             CurrentAffectedTime += gameTime.ElapsedGameTime.Milliseconds;
@@ -83,8 +85,7 @@ namespace TowerDefensePrototype
 
             //DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y - Texture.Height, (int)(Texture.Width), (int)(Texture.Height));
             SourceRectangle = new Rectangle(CurrentFrame * (int)FrameSize.X, 0, (int)FrameSize.X, (int)FrameSize.Y);
-            DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y - (int)FrameSize.Y, (int)FrameSize.X, (int)FrameSize.Y);
-
+            DestinationRectangle = new Rectangle((int)BoundingBox.Min.X, (int)BoundingBox.Min.Y, (int)(BoundingBox.Max.X - BoundingBox.Min.X), (int)(BoundingBox.Max.Y - BoundingBox.Min.Y));
 
             if (CurrentAffectedTime >= AffectedTime)
             {

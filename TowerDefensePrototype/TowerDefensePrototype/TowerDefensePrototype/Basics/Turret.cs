@@ -11,9 +11,7 @@ namespace TowerDefensePrototype
 {
     public abstract class Turret
     {
-        public String TurretAsset, BaseAsset;
-        public Texture2D Rect;
-        public Texture2D TurretBase, TurretBarrel, TurretAnimationTexture;
+        public Texture2D TurretBase, TurretBarrel, Rect;
         public Vector2 Direction, Position, MousePosition, BarrelPivot, BasePivot, 
                        FrameSize, BarrelEnd, BarrelCenter, FireDirection;
         public Rectangle BaseRectangle, BarrelRectangle, SelectBox, SourceRectangle;
@@ -35,13 +33,13 @@ namespace TowerDefensePrototype
         public List<Rectangle> RectList = new List<Rectangle>();
         public SpriteFont Font;
 
-        public void LoadContent(ContentManager contentManager)
+        public void Initialize(ContentManager contentManager)
         {
             CanShoot = false;
 
-            TimingBar = new HorizontalBar(contentManager, new Vector2(32, 4), (int)FireDelay, (int)ElapsedTime, Color.Green, Color.DarkRed);
-            HealthBar = new HorizontalBar(contentManager, new Vector2(32, 4), (int)Health, (int)CurrentHealth, Color.Green, Color.DarkRed);
-            HeatBar = new HorizontalBar(contentManager, new Vector2(32, 4), (int)MaxHeat, (int)CurrentHeat, Color.Blue, Color.Orange);
+            TimingBar = new HorizontalBar(new Vector2(32, 4), (int)FireDelay, (int)ElapsedTime, Color.Green, Color.DarkRed);
+            HealthBar = new HorizontalBar(new Vector2(32, 4), (int)Health, (int)CurrentHealth, Color.Green, Color.DarkRed);
+            HeatBar = new HorizontalBar(new Vector2(32, 4), (int)MaxHeat, (int)CurrentHeat, Color.Blue, Color.Orange);
 
             Color = Color.White;
             BaseRectangle = new Rectangle();
@@ -49,8 +47,6 @@ namespace TowerDefensePrototype
             
             if (Active == true)
             {
-                TurretBase = contentManager.Load<Texture2D>(BaseAsset);
-                TurretBarrel = contentManager.Load<Texture2D>(CurrentAnimation.AssetName);
                 FrameSize = new Vector2(TurretBarrel.Width / CurrentAnimation.TotalFrames, TurretBarrel.Height);
             }
                         
@@ -58,9 +54,6 @@ namespace TowerDefensePrototype
             CurrentHeat = 0;
 
             SelectBox = new Rectangle((int)Position.X - 32, (int)Position.Y - 32, 96, 96);
-
-            Rect = contentManager.Load<Texture2D>("SelectBox");
-            Font = contentManager.Load<SpriteFont>("Fonts/DefaultFont");
         }
 
         public void Update(GameTime gameTime, Vector2 cursorPosition)

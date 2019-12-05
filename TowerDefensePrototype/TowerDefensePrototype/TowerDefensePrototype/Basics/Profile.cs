@@ -19,6 +19,6 @@ namespace TowerDefensePrototype
                     FelCannon, Beam, Freeze, Grenade, Boomerang, PulseGun, Shotgun, PersistentBeam;
 
         //What traps the player has access to
-        public bool Fire, Spikes, Wall, Catapult, SawBlade, Ice, Barrel, Tar, Line;
+        public bool Fire, Spikes, Wall, Catapult, SawBlade, Ice, Barrel, Tar, Line, Trigger;
     }
 }

@@ -10,12 +10,11 @@ namespace TowerDefensePrototype
 {
     class Wall : Trap
     {
-        public Wall(Vector2 position, Vector2? position2)
+        public Wall(Vector2 position)
         {
             Position = position;
             Solid = true;
             MaxHP = 100;
-            AssetName = "Traps/Trap";
             TrapType = TrapType.Wall;
             DetonateLimit = -1;
             Animated = false;

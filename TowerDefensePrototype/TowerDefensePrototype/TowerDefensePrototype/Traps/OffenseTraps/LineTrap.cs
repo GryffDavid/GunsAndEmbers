@@ -14,7 +14,6 @@ namespace TowerDefensePrototype
         {
             Position = position;
             Solid = false;
-            AssetName = "Blank";
             MaxHP = 50;
             TrapType = TrapType.Line;
             DetonateDelay = 1500;
