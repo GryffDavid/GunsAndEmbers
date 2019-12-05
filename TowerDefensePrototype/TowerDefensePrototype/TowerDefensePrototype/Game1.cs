@@ -54,10 +54,7 @@ namespace TowerDefensePrototype
     public enum InvaderState { Walk, Stand, Melee, Shoot };
 
     public enum MacroBehaviour { AttackTower, AttackTraps, AttackTurrets }; //Big picture behaviours
-    public enum MicroBehaviour { AdjustingTrajectory, MovingForwards, MovingBackwards }; //What the invader is doing right now to achieve that goal
-
-    //enum MacroBehaviour - The particular invaders big-picture objective - Attack tower, attack traps, attack turrets
-    //enum MicroBehaviour - What the invader is currently doing to achieve the big-picture objective - i.e. Adjusting trajectory, moving forwards/moving backwards
+    public enum MicroBehaviour { AdjustTrajectory, MovingForwards, MovingBackwards }; //What the invader is doing right now to achieve that goal
 
     public enum TrapState { Untriggered, Triggering, Active, Resetting };
     public enum TurretState { Overheated, ReadyToFire };
@@ -113,6 +110,7 @@ namespace TowerDefensePrototype
     public class SlowStruct
     {
         public float MaxDelay, CurrentDelay, SpeedPercentage;
+        public float PreviousSpeed; //The speed value before the invader was slowed
     };
 
     public class FreezeStruct
@@ -3367,55 +3365,24 @@ namespace TowerDefensePrototype
                     return;
                 }
                 #endregion
-                
-                //Might be able to do a lot of this inside the invader class - Use a property for slow and check when it changes
-                #region If an invader is not colliding with a trap or the tower, isn't frozen, move as normal
-                if (Vector2.Distance(invader.Center, new Vector2(Tower.DestinationRectangle.Right, invader.Center.Y)) > 5 &&
-                    invader.Frozen == false &&
-                    !TrapList.Any(Trap => Trap.BoundingBox.Intersects(invader.BoundingBox)))
+                                
+                #region INVADER movement
+                if (invader.BoundingBox.Intersects(Tower.BoundingBox) || 
+                    TrapList.Any(Trap => Trap.Solid == true && Trap.BoundingBox.Intersects(invader.BoundingBox)))
                 {
-                    #region Melee invader
-                    if (lightRangedInvader == null && heavyRangedInvader == null)
-                    {
-                        if (invader.InAir == false)
-                        {
-                            if (invader.Slow == false)
-                                invader.Velocity.X = (float)(invader.Direction.X * invader.Speed);
-                            else
-                                invader.Velocity.X = (float)(invader.Direction.X * invader.SlowSpeed);
-                        }
-                    }
-                    #endregion
-
-                    #region Light Ranged
-                    if (lightRangedInvader != null)
-                    {
-                        if (lightRangedInvader.RangedDamageStruct.InRange == false && lightRangedInvader.InAir == false)
-                        {
-                            if (lightRangedInvader.Slow == false)
-                                lightRangedInvader.Velocity.X = (float)(invader.Direction.X * invader.Speed);
-                            else
-                                lightRangedInvader.Velocity.X = (float)(invader.Direction.X * invader.SlowSpeed);
-                        }
-                    }
-                    #endregion
-
-                    #region Heavy ranged
-                    if (heavyRangedInvader != null)
-                    {
-                        if (heavyRangedInvader.RangedDamageStruct.InRange == false && heavyRangedInvader.InAir == false)
-                        {
-                            if (heavyRangedInvader.Slow == false)
-                                heavyRangedInvader.Velocity.X = (float)(invader.Direction.X * invader.Speed);
-                            else
-                                heavyRangedInvader.Velocity.X = (float)(invader.Direction.X * invader.SlowSpeed);
-                        }
-                    }
-                    #endregion
+                    invader.Velocity.X = 0;
                 }
-                #endregion
-                
-                #region This controls the gravity and the ground collisions for the invader if they aren't an airborne type
+                else
+                {
+                    if (invader.Frozen == false)
+                    {
+                        if (invader.Slow == true)
+                            invader.Velocity.X = invader.Direction.X * invader.SlowSpeed;
+                        else
+                            invader.Velocity.X = invader.Direction.X * invader.Speed;
+                    }
+                }
+
                 if (invader.Airborne == false)
                 {
                     if ((invader.BoundingBox.Max.Y + invader.Velocity.Y) > invader.MaxY)
@@ -3432,6 +3399,7 @@ namespace TowerDefensePrototype
                     }
                 }
                 #endregion
+
 
                 #region Damage the invaders if they walk into a gas cloud
                 foreach (Emitter emitter in GasEmitterList)
@@ -3472,37 +3440,11 @@ namespace TowerDefensePrototype
 
 
                 #region MELEE attack TRAPS
-                foreach (Trap trap in TrapList.Where(Trap => Trap.BoundingBox.Intersects(invader.BoundingBox)))
-                {
-                    switch (invader.InvaderType)
-                    {
-                        #region Soldier
-                        case InvaderType.Soldier:
-                            //If the invader should be attacking the tower or turrets, then only stop if the trap is solid
-                            if (trap.Solid == true)
-                            {
-                                invader.Velocity.X = 0;
 
-                                if (invader.CanAttack == true)
-                                {
-                                    trap.CurrentHP -= invader.MeleeDamageStruct.Damage;
-                                    NumberChangeList.Add(new NumberChange(RobotoRegular20_0, trap.Position, new Vector2(0, -1), 0 - (int)invader.MeleeDamageStruct.Damage, Color.Aquamarine));
-                                }
-                            }                            
-                            break;
-                        #endregion
-                    }
-                }
                 #endregion
 
                 #region MELEE attack TOWER
-                if (Vector2.Distance(invader.Center, new Vector2(Tower.DestinationRectangle.Right, invader.Center.Y)) <= 5)
-                {
-                    invader.Velocity.X = 0;
 
-                    //if (invader.CanAttack == true)
-                    //    Tower.TakeDamage(invader.TowerAttackPower);
-                }
                 #endregion
 
 
@@ -3520,8 +3462,8 @@ namespace TowerDefensePrototype
                                             -MathHelper.ToRadians(Random.Next((int)(heavyRangedInvader.RangedDamageStruct.AngleRange.X), (int)(heavyRangedInvader.RangedDamageStruct.AngleRange.Y))),
                                             0.2f, heavyRangedInvader.RangedDamageStruct.Damage);
 
-                                heavyProjectile.YRange = new Vector2(invader.Bottom, invader.Bottom);
-                                heavyProjectile.Initialize();
+                                heavyProjectile.YRange = new Vector2(invader.MaxY, invader.MaxY);
+                                //heavyProjectile.Initialize();
                                 AddDrawable(heavyProjectile);
                             }
                             break;
@@ -3536,8 +3478,8 @@ namespace TowerDefensePrototype
                                             -MathHelper.ToRadians(Random.Next((int)(heavyRangedInvader.RangedDamageStruct.AngleRange.X), (int)(heavyRangedInvader.RangedDamageStruct.AngleRange.Y))),
                                             0.2f, heavyRangedInvader.RangedDamageStruct.Damage);
 
-                                heavyProjectile.YRange = new Vector2(invader.Bottom, invader.Bottom);
-                                heavyProjectile.Initialize();
+                                heavyProjectile.YRange = new Vector2(invader.MaxY, invader.MaxY);
+                                //heavyProjectile.Initialize();
                                 AddDrawable(heavyProjectile);
                             }
                             break;
@@ -3552,12 +3494,13 @@ namespace TowerDefensePrototype
                                     //if (Math.Round(MathHelper.ToDegrees(heavyRangedInvader.CurrentAngle), 0) == heavyRangedInvader.FinalAngle)
                                     //{
                                     HeavyProjectile heavyProjectile = new CannonBall(heavyRangedInvader, CannonBallSprite, SmokeParticle,
-                                                new Vector2(heavyRangedInvader.BarrelEnd.X, heavyRangedInvader.BarrelEnd.Y), 18,
+                                                new Vector2(heavyRangedInvader.BarrelEnd.X, heavyRangedInvader.BarrelEnd.Y), 
+                                                Random.Next((int)(heavyRangedInvader.RangedDamageStruct.PowerRange.X), (int)(heavyRangedInvader.RangedDamageStruct.PowerRange.Y)),
                                                 heavyRangedInvader.CurrentAngle - MathHelper.ToRadians(180), 0.2f, heavyRangedInvader.RangedDamageStruct.Damage, 40,
                                                 new Vector2(MathHelper.Clamp(heavyRangedInvader.MaxY + 32, 690, 930), 930));
 
-                                    heavyProjectile.YRange = new Vector2(invader.Bottom, invader.Bottom);
-                                    heavyProjectile.Initialize();
+                                    heavyProjectile.YRange = new Vector2(invader.MaxY, invader.MaxY);
+                                    //heavyProjectile.Initialize();
                                     HeavyProjectileList.Add(heavyProjectile);
                                     heavyRangedInvader.FiredProjectiles.Add(heavyProjectile);
                                     AddDrawable(heavyProjectile);
@@ -5271,6 +5214,8 @@ namespace TowerDefensePrototype
 
                 if (heavyProjectile.Active == true && timedHeavyProjectile == null)
                 {
+                    //Traps should only be hit by projectiles with a similar DrawDepth
+                    //Projectiles needs to have shadows drawn on the ground too, to prevent confusion
                     #region TRAP was hit
                     if (TrapList.Any(Trap => Trap.BoundingBox.Intersects(heavyProjectile.BoundingBox) &&
                         Trap.Solid == true))
@@ -5320,9 +5265,9 @@ namespace TowerDefensePrototype
                     if (heavyProjectile.SourceObject.GetType().BaseType == typeof(Turret))
                     {
                         #region INVADER was hit
-                        if (InvaderList.Any(Invader => Invader.BoundingBox.Intersects(heavyProjectile.BoundingBox)))
+                        if (InvaderList.Any(Invader => Invader.Solid == true && Invader.BoundingBox.Intersects(heavyProjectile.BoundingBox)))
                         {
-                            Invader invader = InvaderList.Find(Invader => Invader.BoundingBox.Intersects(heavyProjectile.BoundingBox));
+                            Invader invader = InvaderList.Find(Invader => Invader.Solid == true && Invader.BoundingBox.Intersects(heavyProjectile.BoundingBox));
                             CreateHeavyProjectileCollision(heavyProjectile, heavyProjectile.SourceObject, invader);
                             return;
                         }
@@ -7096,7 +7041,7 @@ namespace TowerDefensePrototype
 
                 if (heavyProjectile != null)
                 {
-                    heavyProjectile.Initialize();
+                    //heavyProjectile.Initialize();
                     HeavyProjectileList.Add(heavyProjectile);
                 }
             }
@@ -7377,7 +7322,7 @@ namespace TowerDefensePrototype
                                 new Vector2(MathHelper.Clamp(turret.Position.Y + 32, 690, 930), 930));
                         }
 
-                        HeavyProjectile.Initialize();
+                        //HeavyProjectile.Initialize();
                         HeavyProjectileList.Add(HeavyProjectile);
 
                         AddDrawable(HeavyProjectile, FlashEmitter, FlashEmitter2, FlashEmitter3, SmokeEmitter);
@@ -7426,7 +7371,7 @@ namespace TowerDefensePrototype
                            -(MathHelper.ToDegrees((float)Math.Atan2(-HeavyProjectile.Velocity.Y, -HeavyProjectile.Velocity.X))) + 20);
                         }
 
-                        HeavyProjectile.Initialize();
+                        //HeavyProjectile.Initialize();
                         HeavyProjectileList.Add(HeavyProjectile);
                     }
                     break;
@@ -7504,7 +7449,7 @@ namespace TowerDefensePrototype
                         heavyProjectile = new ClusterBombShell(turret, 1000, ClusterBombSprite, SmokeParticle,
                                             new Vector2(turret.BarrelEnd.X, turret.BarrelEnd.Y), 12, turret.Rotation, 0.2f, 5, 0,
                                             new Vector2(MathHelper.Clamp(turret.Position.Y + 32, 690, 930), 930));
-                        heavyProjectile.Initialize();
+                        //heavyProjectile.Initialize();
 
                         AddDrawable(heavyProjectile, FlashEmitter, FlashEmitter2, FlashEmitter3, SmokeEmitter);
 
@@ -7527,7 +7472,7 @@ namespace TowerDefensePrototype
                                 new Vector2(turret.BarrelEnd.X, turret.BarrelEnd.Y), 5, turret.Rotation, 0.01f, turret.Damage, 100,
                                 new Vector2(MathHelper.Clamp(turret.Position.Y + 32, 690, 930), 930));
 
-                        HeavyProjectile.Initialize();
+                        //HeavyProjectile.Initialize();
                         HeavyProjectileList.Add(HeavyProjectile);
                     }
                     break;
@@ -7555,7 +7500,7 @@ namespace TowerDefensePrototype
                         HeavyProjectile = new BoomerangProjectile(turret, BoomerangSprite, SmokeParticle, new Vector2(turret.BarrelEnd.X, turret.BarrelEnd.Y), 12, turret.Rotation, 0.2f, turret.Damage, 100,
                             new Vector2(MathHelper.Clamp(turret.Position.Y + 32, 690, 930), 930));
 
-                        HeavyProjectile.Initialize();
+                        //HeavyProjectile.Initialize();
                         HeavyProjectileList.Add(HeavyProjectile);
                         //AddDrawable(HeavyProjectile);
                     }
@@ -7571,7 +7516,7 @@ namespace TowerDefensePrototype
                             new Vector2(turret.BarrelEnd.X, turret.BarrelEnd.Y), 8, turret.Rotation, 0.1f, 5, 0,
                             new Vector2(MathHelper.Clamp(turret.Position.Y + 32, 690, 930), 930), true);
 
-                        heavyProjectile.Initialize();
+                        //heavyProjectile.Initialize();
                         HeavyProjectileList.Add(heavyProjectile);
                         AddDrawable(heavyProjectile);
 
@@ -7589,7 +7534,7 @@ namespace TowerDefensePrototype
                             new Vector2(turret.BarrelEnd.X, turret.BarrelEnd.Y), 16, turret.Rotation, 0.3f, 5, 0,
                             new Vector2(MathHelper.Clamp(turret.Position.Y + 32, 690, 930), 930), true);
 
-                        heavyProjectile.Initialize();
+                        //heavyProjectile./Initialize();
 
                         HeavyProjectileList.Add(heavyProjectile);
                         AddDrawable(heavyProjectile);
@@ -7935,6 +7880,7 @@ namespace TowerDefensePrototype
         {
             Trap HitTrap = e.Trap;
             Invader invader = e.Invader;
+
             if (HitTrap.Active == true)
             {
                 invader.TrapDamage(HitTrap);
@@ -8441,7 +8387,7 @@ namespace TowerDefensePrototype
                         if (airStrike.CurrentTime > airStrike.TimeInterval)
                         {
                             TimerHeavyProjectile AirStrikeProjectile = new ClusterBombShell(CurrentSpecialAbility, 1000, ClusterBombSprite, SmokeParticle, airStrike.CurrentPosition, 10, 0, 0.2f, 5, 0, new Vector2(690, 930));
-                            AirStrikeProjectile.Initialize();
+                            //AirStrikeProjectile.Initialize();
                             AddDrawable(AirStrikeProjectile);
                             airStrike.CurrentTime = 0;
                         }
@@ -9101,14 +9047,15 @@ namespace TowerDefensePrototype
                                     break;
                             }
 
-                            //This makes sure that the property changes triggers
+                            //This makes sure that the property change triggers
                             nextInvader.InvaderState = nextInvader.InvaderState;
 
                             nextInvader.IceBlock = IceBlock;
                             nextInvader.Shadow = Shadow;
 
-
-                            nextInvader.Direction.X *= Multiplier;
+                            //This gives the invaders a speed variation
+                            //nextInvader.Direction.X *= Multiplier;
+                            nextInvader.Speed *= Multiplier;
 
                             if (InvaderList.Find(Invader => Invader.MaxY == nextInvader.MaxY) != null)
                             {
@@ -9119,7 +9066,7 @@ namespace TowerDefensePrototype
                             nextInvader.Update(gameTime, CursorPosition);
                             nextInvader.InvaderOutline = new UIOutline(nextInvader.Position,
                                                             new Vector2(nextInvader.CurrentAnimation.GetFrameSize().X,
-                                                                       nextInvader.CurrentAnimation.GetFrameSize().Y),
+                                                                        nextInvader.CurrentAnimation.GetFrameSize().Y),
                                                                        null, null, nextInvader);
                             nextInvader.InvaderOutline.OutlineTexture = TurretSelectBox;
                             InvaderList.Add(nextInvader);

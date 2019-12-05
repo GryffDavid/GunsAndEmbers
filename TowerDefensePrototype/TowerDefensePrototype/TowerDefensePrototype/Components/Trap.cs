@@ -18,6 +18,7 @@ namespace TowerDefensePrototype
         public Vector2 Position, ShadowPosition, Center;
         public Vector2 Scale = new Vector2(1, 1);
         public bool Solid, CanTrigger;
+        public bool OnGround = false; //Whether the trap is drawn on the ground layer on if it's sorted by depth as usual
         public float MaxHP, CurrentHP, DetonateDelay, CurrentDetonateDelay, Bottom;
         public int ResourceCost, DetonateLimit, CurrentDetonateLimit, CurrentFrame, PowerCost;
         public double CurrentFrameDelay;

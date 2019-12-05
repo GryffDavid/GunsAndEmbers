@@ -16,8 +16,8 @@ namespace TowerDefensePrototype
         {
             Speed = 1.5f;
             Position = position;
-            CurrentHP = 600;
-            MaxHP = 600;
+            CurrentHP = 200;
+            MaxHP = 200;
             ResourceMinMax = new Vector2(8, 20);
             YRange = new Vector2(700, 900);
             InvaderType = InvaderType.StationaryCannon;            
@@ -30,7 +30,8 @@ namespace TowerDefensePrototype
                 Damage = 10,
                 MaxFireDelay = 750,
                 CurrentFireDelay = 0,
-                DistanceRange = new Vector2(800, 900)
+                DistanceRange = new Vector2(850, 950),
+                PowerRange = new Vector2(10, 15)
             };
         }
 

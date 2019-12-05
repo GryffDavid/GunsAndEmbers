@@ -16,6 +16,14 @@ namespace TowerDefensePrototype
         //public float DistToTower = 1920;
         //public bool InRange = false;
 
+        public override void Initialize()
+        {
+            RangedDamageStruct.MinDistance = Random.Next((int)RangedDamageStruct.DistanceRange.X, 
+                                                         (int)RangedDamageStruct.DistanceRange.Y);
+
+            base.Initialize();
+        }
+
         public override void Update(GameTime gameTime, Vector2 cursorPosition)
         {
             UpdateFireDelay(gameTime);

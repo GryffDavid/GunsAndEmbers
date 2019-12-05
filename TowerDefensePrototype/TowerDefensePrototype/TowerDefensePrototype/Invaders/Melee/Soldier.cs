@@ -19,8 +19,9 @@ namespace TowerDefensePrototype
             ResourceMinMax = new Vector2(8, 20);
             YRange = new Vector2(700, 900);
             InvaderType = InvaderType.Soldier;
-
             InvaderState = InvaderState.Walk;
+            CurrentMacroBehaviour = MacroBehaviour.AttackTower;
+            CurrentMicroBehaviour = MicroBehaviour.MovingForwards;
 
             MeleeDamageStruct = new InvaderMeleeStruct()
             {

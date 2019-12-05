@@ -28,10 +28,11 @@ namespace TowerDefensePrototype
         }
         
         public Texture2D Texture;
-        public List<Emitter> EmitterList;
-        public Vector2 Velocity, Position, YRange, Scale, Origin, Center;
+        public List<Emitter> EmitterList = new List<Emitter>();
+        public Vector2 Velocity, Position, YRange, Origin, Center;
+        public Vector2 Scale = Vector2.One;
 
-        public float Angle, Speed, CurrentRotation, CurrentTransparency, MaxY, Damage, BlastRadius, Gravity;
+        public float Angle, Speed, CurrentRotation, MaxY, Damage, BlastRadius, Gravity;
         float Bounce = 0.7f;        
         float Friction = 1.0f;
 
@@ -56,8 +57,8 @@ namespace TowerDefensePrototype
         {
             //Initialise all the regular variables
             SourceObject = source;
-
             Active = true;
+            Shadow = true;
             Texture = texture;
             Angle = angle;
             Speed = speed;
@@ -65,19 +66,18 @@ namespace TowerDefensePrototype
             Position = position;
             Damage = damage;
 
-            MaxY = 890;
+            
 
-            Velocity.X = (float)(Math.Cos(angle) * speed);
-            Velocity.Y = (float)(Math.Sin(angle) * speed);
+            Velocity = new Vector2((float)Math.Cos(angle) * speed, (float)Math.Sin(angle) * speed);
+            Origin = new Vector2(Texture.Width / 2, Texture.Height / 2);
 
-            if (yrange == null)
-            {
+            if (!yrange.HasValue)
                 YRange = new Vector2(500, 600);
-            }
             else
-            {
                 YRange = yrange.Value;
-            }
+
+            MaxY = Random.Next((int)YRange.X, (int)YRange.Y);
+            DrawDepth = MaxY / 1080;
 
             if (blastRadius.HasValue)
                 BlastRadius = blastRadius.Value;
@@ -85,7 +85,7 @@ namespace TowerDefensePrototype
             Verlet = verlet.Value;
                         
             //Set up special values based on whether the projectile is Verlet based or not
-            if (Verlet == true)
+            if (verlet.Value == true)
             {
                 Node1 = new Node()
                 {
@@ -110,21 +110,7 @@ namespace TowerDefensePrototype
                     Point1 = Node2,
                     Point2 = Node1
                 };
-            }
-        }
 
-        public void Initialize()
-        {
-            Active = true;
-            CurrentTransparency = 0;
-            MaxY = Random.Next((int)YRange.X, (int)YRange.Y);            
-            Scale = new Vector2(1, 1);
-            Origin = new Vector2(Texture.Width / 2, Texture.Height / 2);
-            Shadow = true;
-            DrawDepth = MaxY / 1080;
-
-            if (Verlet == true)
-            {
                 Constraints = new Rectangle(0, 0, 1920, (int)MaxY);
             }
         }

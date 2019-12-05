@@ -18,7 +18,7 @@ namespace TowerDefensePrototype
         public bool DrawMarker, Pulsing;
 
         public float CurrentPulseTime, MaxPulseTime, TopXOffset, BottomXOffset;
-        public Vector2 CurrentScale;
+        public Vector2 CurrentScale = new Vector2(1, 1);
 
         public UIBar(Vector2 position, Vector2 maxSize, Color Color, bool? drawMarker = false)
         {
@@ -26,7 +26,10 @@ namespace TowerDefensePrototype
             MaxSize = maxSize;          
             BarColor = Color;
             DrawMarker = drawMarker.Value;
-            CurrentScale = new Vector2(0, 0);
+
+            //This was set to 0, 0. Not sure why.
+            //CurrentScale = new Vector2(1, 1);
+
             Pulsing = false;
 
             MaxPulseTime = 1000;

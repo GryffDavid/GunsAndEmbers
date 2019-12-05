@@ -37,25 +37,8 @@ namespace TowerDefensePrototype
             }
         }
 
-        public InvaderType InvaderType;
-        public InvaderAnimation CurrentAnimation;
-        public List<InvaderAnimation> AnimationList;
-
-        public DamageType DamageVulnerability;
-        public UIOutline InvaderOutline;
-        public UIBar HealthBar;
-        public SoundEffectInstance MoveLoop;
-        public SpriteEffects Orientation = SpriteEffects.None;
-
-        public Texture2D Shadow, IceBlock;
-        public Rectangle DestinationRectangle;
-        public Vector2 Position, ResourceMinMax, Velocity, YRange, Center, ShadowPosition, CursorPosition;
-        public Vector2 Direction = new Vector2(-1f, 0);
-        public Vector2 Scale = new Vector2(1, 1);
-        public Color BurnColor, FrozenColor, AcidColor, ShadowColor;
-
         private Color _Color;
-        public Color Color 
+        public Color Color
         {
             get { return _Color; }
             set
@@ -69,29 +52,6 @@ namespace TowerDefensePrototype
             }
         }
 
-        public InvaderMeleeStruct MeleeDamageStruct;
-
-        public float MaxHP, CurrentHP, PreviousHP, MaxY, Gravity, Bottom,
-                     Speed, SlowSpeed, ShadowHeight, ShadowHeightMod;
-        public float Rotation = 0;
-        public int ResourceValue;
-        public static Random Random = new Random();
-        public double BeamDelay, CurrentBeamDelay,
-                      HealDelay, CurrentHealDelay;
-
-        public DamageOverTimeStruct CurrentDOT;
-        public SlowStruct CurrentSlow;
-        public FreezeStruct CurrentFreeze;
-
-        public bool VulnerableToTurret = true;
-        public bool VulnerableToTrap = true;
-        public bool IsBeingHealed = false;
-        public bool IsTargeted = false;        
-        public bool Airborne = false;
-        public new bool Active = true;
-
-        public bool CanAttack, Burning, Frozen, Slow, InAir;
-
         private MacroBehaviour _CurrentMacroBehaviour;
         public MacroBehaviour CurrentMacroBehaviour
         {
@@ -103,8 +63,24 @@ namespace TowerDefensePrototype
         public MicroBehaviour CurrentMicroBehaviour
         {
             get { return _CurrentMicroBehaviour; }
-            set { _CurrentMicroBehaviour = value; }
+            set 
+            { 
+                _CurrentMicroBehaviour = value;
+
+                //switch (_CurrentMicroBehaviour)
+                //{
+                //    case MicroBehaviour.MovingBackwards:
+                //        Direction.X = 1;
+                //        break;
+
+                //    case MicroBehaviour.MovingForwards:
+                //        Direction.X = -1;
+                //        break;
+                //}
+            }
         }
+
+        int Intelligence;
 
         private InvaderState _InvaderState;
         public InvaderState InvaderState
@@ -125,33 +101,60 @@ namespace TowerDefensePrototype
                 }
             }
         }
+        
+
+        public InvaderType InvaderType;
+        public InvaderAnimation CurrentAnimation;
+        public List<InvaderAnimation> AnimationList;
+
+        public DamageType DamageVulnerability;
+        public UIOutline InvaderOutline;
+        public UIBar HealthBar;
+        public SoundEffectInstance MoveLoop;        
+
+        public Texture2D Shadow, IceBlock;
+        public Rectangle DestinationRectangle;
+        public Vector2 ResourceMinMax, YRange, Center, ShadowPosition;
+
+        public Color DOTColor, FrozenColor, ShadowColor;
+
+        public InvaderMeleeStruct MeleeDamageStruct;
+
+        public float MaxHP, CurrentHP, PreviousHP, MaxY, Gravity, ShadowHeight, ShadowHeightMod;
+        public int ResourceValue;
+        public static Random Random = new Random();
+
+        //Could be handled by structs - like damage, slow, freeze etc.
+        public double BeamDelay, CurrentBeamDelay, 
+                      HealDelay, CurrentHealDelay;
+
+        public DamageOverTimeStruct CurrentDOT;
+
+        public bool VulnerableToTurret = true;
+        public bool VulnerableToTrap = true;
+        public bool IsBeingHealed = false;
+        public bool IsTargeted = false;
+        public bool Airborne = false;
+        public bool Solid = false; //Whether this invader stops heavy projectiles or not
+        public new bool Active = true;
+
+        public bool CanAttack, Burning, Frozen, Slow, InAir;
 
 
+        //Movement related variables
+        public SlowStruct CurrentSlow;
+        public FreezeStruct CurrentFreeze;
+        public float Speed, SlowSpeed;
+        public Vector2 Direction = new Vector2(-1f, 0);
+        public Vector2 Position, Velocity;
+        public SpriteEffects Orientation = SpriteEffects.None;
+        
 
-        public void Initialize()
-        {         
-            IsBeingHealed = false;
-            
+        public virtual void Initialize()
+        {
             MaxY = Random.Next((int)YRange.X, (int)YRange.Y);
             ResourceValue = Random.Next((int)ResourceMinMax.X, (int)ResourceMinMax.Y);
-
-            switch (this.GetType().BaseType.Name)
-            {
-                case "HeavyRangedInvader":
-                    {
-                        HeavyRangedInvader rangedInvader = this as HeavyRangedInvader;
-                        rangedInvader.RangedDamageStruct.MinDistance = Random.Next((int)rangedInvader.RangedDamageStruct.DistanceRange.X, (int)rangedInvader.RangedDamageStruct.DistanceRange.Y);
-                    }
-                    break;
-
-                case "LightRangedInvader":
-                    {
-                        LightRangedInvader rangedInvader = this as LightRangedInvader;
-                        rangedInvader.RangedDamageStruct.MinDistance = Random.Next((int)rangedInvader.RangedDamageStruct.DistanceRange.X, (int)rangedInvader.RangedDamageStruct.DistanceRange.Y);
-                    }
-                    break;
-            }
-
+            
             if (Airborne == true)
             {
                 Position.Y = MaxY;
@@ -160,8 +163,11 @@ namespace TowerDefensePrototype
             Velocity = Direction * Speed;
 
             HealthBar = new UIBar(new Vector2(100, 100), new Vector2(32, 4), Color.DarkRed, false);
-            HealthBar.CurrentScale = new Vector2(1, 1);
-            
+
+            Color = Color.White;
+
+            #region Set up Vertices
+            #region Sprite Vertices
             invaderVertices[0] = new VertexPositionColorTexture()
             {
                 Position = new Vector3(DestinationRectangle.Left, DestinationRectangle.Top, 0),
@@ -196,24 +202,52 @@ namespace TowerDefensePrototype
             invaderIndices[3] = 2;
             invaderIndices[4] = 3;
             invaderIndices[5] = 0;
+            #endregion
 
-            Color = Color.White;
+            #region Normal Vertices
+            normalVertices[0] = new VertexPositionColorTexture()
+            {
+                Position = new Vector3(DestinationRectangle.Left, DestinationRectangle.Top, 0),
+                TextureCoordinate = CurrentAnimation.nTopLeftTexCooord,
+                Color = Color.White
+            };
+
+            normalVertices[1] = new VertexPositionColorTexture()
+            {
+                Position = new Vector3(DestinationRectangle.Left + DestinationRectangle.Width, DestinationRectangle.Top, 0),
+                TextureCoordinate = CurrentAnimation.nTopRightTexCoord,
+                Color = Color.White
+            };
+
+            normalVertices[2] = new VertexPositionColorTexture()
+            {
+                Position = new Vector3(DestinationRectangle.Left + DestinationRectangle.Width, DestinationRectangle.Top + DestinationRectangle.Height, 0),
+                TextureCoordinate = CurrentAnimation.nBottomRightTexCoord,
+                Color = Color.White
+            };
+
+            normalVertices[3] = new VertexPositionColorTexture()
+            {
+                Position = new Vector3(DestinationRectangle.Left, DestinationRectangle.Top + DestinationRectangle.Height, 0),
+                TextureCoordinate = CurrentAnimation.nBottomLeftTexCoord,
+                Color = Color.White
+            };
+
+            normalIndices[0] = 0;
+            normalIndices[1] = 1;
+            normalIndices[2] = 2;
+            normalIndices[3] = 2;
+            normalIndices[4] = 3;
+            normalIndices[5] = 0;
+            #endregion
+            #endregion
         }
 
         public virtual void Update(GameTime gameTime, Vector2 cursorPosition)
         {
             if (Active == true)
             {
-                if (MoveLoop != null)
-                {
-                    if (MoveLoop.State != SoundState.Playing)
-                    {
-                        MoveLoop.Play();
-                        MoveLoop.IsLooped = true;
-                    }
-                }
-
-                CursorPosition = cursorPosition;
+                Velocity.Y += Gravity * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
 
                 if (Velocity != Vector2.Zero)
                 {
@@ -223,33 +257,13 @@ namespace TowerDefensePrototype
                     invaderVertices[1].Position = new Vector3(DestinationRectangle.Left + DestinationRectangle.Width, DestinationRectangle.Top, 0);
                     invaderVertices[2].Position = new Vector3(DestinationRectangle.Left + DestinationRectangle.Width, DestinationRectangle.Top + DestinationRectangle.Height, 0);
                     invaderVertices[3].Position = new Vector3(DestinationRectangle.Left, DestinationRectangle.Top + DestinationRectangle.Height, 0);
+
+                    normalVertices[0].Position = invaderVertices[0].Position;
+                    normalVertices[1].Position = invaderVertices[1].Position;
+                    normalVertices[2].Position = invaderVertices[2].Position;
+                    normalVertices[3].Position = invaderVertices[3].Position;
                 }
-
-                Velocity.Y += Gravity * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);
-
-                if (MeleeDamageStruct != null)
-                {
-                    MeleeDamageStruct.CurrentAttackDelay += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
-
-                    if (MeleeDamageStruct.CurrentAttackDelay >= MeleeDamageStruct.MaxAttackDelay)
-                    {
-                        CanAttack = true;
-                        MeleeDamageStruct.CurrentAttackDelay = 0;
-                    }
-                    else
-                    {
-                        CanAttack = false;
-                    }
-                }
-
-                VulnerableToTurret = true;
-
-                if (CurrentHP <= 0)
-                    Active = false;
-
-                if (CurrentAnimation != null)
-                HealthBar.Update(MaxHP, CurrentHP, gameTime, new Vector2(Position.X + (CurrentAnimation.FrameSize.X - HealthBar.MaxSize.X) / 2 + Velocity.X, Position.Y - 8));
-
+                
                 if (Velocity.X != 0 && InvaderState != InvaderState.Walk)
                 {
                     InvaderState = InvaderState.Walk;
@@ -257,56 +271,13 @@ namespace TowerDefensePrototype
 
                 if (Velocity.X == 0 && InvaderState != InvaderState.Stand && Frozen == false)
                 {
-                    InvaderState = InvaderState.Stand;                    
+                    InvaderState = InvaderState.Stand;
                 }
-                
-                #region This makes sure that the invader can't take damage if it's off screen (i.e. before it's visible to the player)
-                if (Position.X > 1920)
+
+                if (Frozen == false && Burning == false && HitByBeam == false)
                 {
-                    VulnerableToTurret = false;
-                    VulnerableToTrap = false;
+                    Color = Color.White;
                 }
-                else
-                {
-                    VulnerableToTurret = true;
-                    VulnerableToTrap = true;
-                }
-                #endregion
-
-                #region This makes sure that the invader only attacks when every 1.5 seconds (Or other delay) - Set in the specific class
-                
-                #endregion
-
-
-                #region This controls how the invader takes damage when it's burning
-                if (CurrentDOT != null)
-                {
-                    if (Burning == true)
-                    {
-                        CurrentDOT.CurrentDelay += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
-                        CurrentDOT.CurrentInterval += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
-                    }
-
-                    if (CurrentDOT.CurrentInterval > CurrentDOT.MaxInterval)
-                    {
-                        CurrentHP -= (int)CurrentDOT.Damage;
-                        CurrentDOT.CurrentInterval = 0;
-                    }
-
-                    if (Burning == true && CurrentDOT.CurrentDelay > CurrentDOT.MaxDelay)
-                    {
-                        Burning = false;
-                        CurrentDOT.CurrentInterval = 0;
-                        CurrentDOT.CurrentDelay = 0;
-                        CurrentDOT = null;
-                    }
-
-                    if (Burning == true)
-                    {
-                        Color = BurnColor;
-                    }
-                }
-                #endregion
 
                 #region This controls how the invader behaves when it's frozen
                 if (CurrentFreeze != null)
@@ -332,6 +303,7 @@ namespace TowerDefensePrototype
                 #region This controls how the invader behaves when it's slow
                 if (CurrentSlow != null)
                 {
+                    
                     if (Slow == true)
                     {
                         CurrentSlow.CurrentDelay += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
@@ -347,11 +319,84 @@ namespace TowerDefensePrototype
                 }
                 #endregion
                 
-                if (Frozen == false && Burning == false && HitByBeam == false)
+
+
+                
+
+                if (CurrentAnimation != null)
                 {
-                    Color = Color.White;
+                    HealthBar.Update(MaxHP, CurrentHP, gameTime, new Vector2(Position.X + (CurrentAnimation.FrameSize.X - HealthBar.MaxSize.X) / 2 + Velocity.X, Position.Y - 8));
+
+                    DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y,
+                                                         (int)(CurrentAnimation.FrameSize.X),
+                                                         (int)(CurrentAnimation.FrameSize.Y));
+
+                    BoundingBox = new BoundingBox(new Vector3(Position.X + 6, Position.Y + 6, 0),
+                                                  new Vector3(Position.X + ((CurrentAnimation.FrameSize.X - 6)),
+                                                              Position.Y + 6 + ((CurrentAnimation.FrameSize.Y - 6)), 0));
+
+                    Center = new Vector2(DestinationRectangle.Center.X, DestinationRectangle.Center.Y + 6);
                 }
 
+                #region Melee Attack
+                if (MeleeDamageStruct != null)
+                {
+                    MeleeDamageStruct.CurrentAttackDelay += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+
+                    if (MeleeDamageStruct.CurrentAttackDelay >= MeleeDamageStruct.MaxAttackDelay)
+                    {
+                        CanAttack = true;
+                        MeleeDamageStruct.CurrentAttackDelay = 0;
+                    }
+                    else
+                    {
+                        CanAttack = false;
+                    }
+                }
+                #endregion
+                
+                #region This makes sure that the invader can't take damage if it's off screen (i.e. before it's visible to the player)
+                if (Position.X > 1920)
+                {
+                    VulnerableToTurret = false;
+                    VulnerableToTrap = false;
+                }
+                else
+                {
+                    VulnerableToTurret = true;
+                    VulnerableToTrap = true;
+                }
+                #endregion
+                
+                #region This controls how the invader takes damage when it's burning
+                if (CurrentDOT != null)
+                {
+                    if (Burning == true)
+                    {
+                        CurrentDOT.CurrentDelay += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+                        CurrentDOT.CurrentInterval += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+                    }
+
+                    if (CurrentDOT.CurrentInterval > CurrentDOT.MaxInterval)
+                    {
+                        CurrentHP -= (int)CurrentDOT.Damage;
+                        CurrentDOT.CurrentInterval = 0;
+                    }
+
+                    if (Burning == true && CurrentDOT.CurrentDelay > CurrentDOT.MaxDelay)
+                    {
+                        Burning = false;
+                        CurrentDOT.CurrentInterval = 0;
+                        CurrentDOT.CurrentDelay = 0;
+                        CurrentDOT = null;
+                    }
+
+                    if (Burning == true)
+                    {
+                        Color = DOTColor;
+                    }
+                }
+                #endregion
 
                 #region This animates the invader, but only if it's not frozen
                 if (Frozen == false)
@@ -362,6 +407,11 @@ namespace TowerDefensePrototype
                     invaderVertices[1].TextureCoordinate = CurrentAnimation.dTopRightTexCoord;
                     invaderVertices[2].TextureCoordinate = CurrentAnimation.dBottomRightTexCoord;
                     invaderVertices[3].TextureCoordinate = CurrentAnimation.dBottomLeftTexCoord;
+
+                    normalVertices[0].TextureCoordinate = CurrentAnimation.nTopLeftTexCooord;
+                    normalVertices[1].TextureCoordinate = CurrentAnimation.nTopRightTexCoord;
+                    normalVertices[2].TextureCoordinate = CurrentAnimation.nBottomRightTexCoord;
+                    normalVertices[3].TextureCoordinate = CurrentAnimation.nBottomLeftTexCoord;
                 }
                 #endregion
 
@@ -381,18 +431,16 @@ namespace TowerDefensePrototype
                 }
                 #endregion
 
-                if (CurrentAnimation != null)
+                #region Play movement sound loop
+                if (MoveLoop != null)
                 {
-                    DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y,
-                                                         (int)(CurrentAnimation.FrameSize.X * Scale.X),
-                                                         (int)(CurrentAnimation.FrameSize.Y * Scale.Y));
-
-                    BoundingBox = new BoundingBox(new Vector3(Position.X + 6, Position.Y + 6, 0),
-                                                  new Vector3(Position.X + ((CurrentAnimation.FrameSize.X - 6) * Scale.X),
-                                                              Position.Y + 6 + ((CurrentAnimation.FrameSize.Y - 6) * Scale.Y), 0));
-
-                    Center = new Vector2(DestinationRectangle.Center.X, DestinationRectangle.Center.Y + 6);
+                    if (MoveLoop.State != SoundState.Playing)
+                    {
+                        MoveLoop.Play();
+                        MoveLoop.IsLooped = true;
+                    }
                 }
+                #endregion
 
                 if (HitByBeam == true)
                 {
@@ -411,8 +459,7 @@ namespace TowerDefensePrototype
 
                 ShadowPosition = new Vector2(Position.X, Position.Y + CurrentAnimation.FrameSize.Y - 2);
 
-                Bottom = DestinationRectangle.Bottom;
-                DrawDepth = Bottom / 1080.0f;
+                DrawDepth = MaxY / 1080.0f;
             }
         }
 
@@ -502,7 +549,7 @@ namespace TowerDefensePrototype
                     #region Draw invader shadows
                     foreach (Light light in lightList)
                     {
-                        float lightDistance = Vector2.Distance(new Vector2(Center.X, Bottom), new Vector2(light.Position.X, light.Position.Y));
+                        float lightDistance = Vector2.Distance(new Vector2(Center.X, DestinationRectangle.Bottom), new Vector2(light.Position.X, light.Position.Y));
 
                         if (lightDistance < light.Range)
                         {
@@ -581,41 +628,6 @@ namespace TowerDefensePrototype
                 }
 
                 #region Draw invader sprite
-                //invaderVertices[0] = new VertexPositionColorTexture()
-                //{
-                //    Position = new Vector3(DestinationRectangle.Left, DestinationRectangle.Top, 0),
-                //    TextureCoordinate = CurrentAnimation.dTopLeftTexCooord,
-                //    Color = Color
-                //};
-
-                //invaderVertices[1] = new VertexPositionColorTexture()
-                //{
-                //    Position = new Vector3(DestinationRectangle.Left + DestinationRectangle.Width, DestinationRectangle.Top, 0),
-                //    TextureCoordinate = CurrentAnimation.dTopRightTexCoord,
-                //    Color = Color
-                //};
-
-                //invaderVertices[2] = new VertexPositionColorTexture()
-                //{
-                //    Position = new Vector3(DestinationRectangle.Left + DestinationRectangle.Width, DestinationRectangle.Top + DestinationRectangle.Height, 0),
-                //    TextureCoordinate = CurrentAnimation.dBottomRightTexCoord,
-                //    Color = Color
-                //};
-
-                //invaderVertices[3] = new VertexPositionColorTexture()
-                //{
-                //    Position = new Vector3(DestinationRectangle.Left, DestinationRectangle.Top + DestinationRectangle.Height, 0),
-                //    TextureCoordinate = CurrentAnimation.dBottomLeftTexCoord,
-                //    Color = Color
-                //};
-
-                //invaderIndices[0] = 0;
-                //invaderIndices[1] = 1;
-                //invaderIndices[2] = 2;
-                //invaderIndices[3] = 2;
-                //invaderIndices[4] = 3;
-                //invaderIndices[5] = 0;
-
                 foreach (EffectPass pass in effect.CurrentTechnique.Passes)
                 {
                     pass.Apply();
@@ -656,41 +668,6 @@ namespace TowerDefensePrototype
                     effect.TextureEnabled = true;
                     effect.VertexColorEnabled = true;
                     effect.Texture = CurrentAnimation.Texture;
-
-                    normalVertices[0] = new VertexPositionColorTexture()
-                    {
-                        Position = new Vector3(DestinationRectangle.Left, DestinationRectangle.Top, 0),
-                        TextureCoordinate = CurrentAnimation.nTopLeftTexCooord,
-                        Color = Color.White
-                    };
-
-                    normalVertices[1] = new VertexPositionColorTexture()
-                    {
-                        Position = new Vector3(DestinationRectangle.Left + DestinationRectangle.Width, DestinationRectangle.Top, 0),
-                        TextureCoordinate = CurrentAnimation.nTopRightTexCoord,
-                        Color = Color.White
-                    };
-
-                    normalVertices[2] = new VertexPositionColorTexture()
-                    {
-                        Position = new Vector3(DestinationRectangle.Left + DestinationRectangle.Width, DestinationRectangle.Top + DestinationRectangle.Height, 0),
-                        TextureCoordinate = CurrentAnimation.nBottomRightTexCoord,
-                        Color = Color.White
-                    };
-
-                    normalVertices[3] = new VertexPositionColorTexture()
-                    {
-                        Position = new Vector3(DestinationRectangle.Left, DestinationRectangle.Top + DestinationRectangle.Height, 0),
-                        TextureCoordinate = CurrentAnimation.nBottomLeftTexCoord,
-                        Color = Color.White
-                    };
-
-                    normalIndices[0] = 0;
-                    normalIndices[1] = 1;
-                    normalIndices[2] = 2;
-                    normalIndices[3] = 2;
-                    normalIndices[4] = 3;
-                    normalIndices[5] = 0;
 
                     foreach (EffectPass pass in effect.CurrentTechnique.Passes)
                     {
@@ -754,7 +731,7 @@ namespace TowerDefensePrototype
                 Burning = true;
                 CurrentHP -= dotStruct.InitialDamage;
                 CurrentDOT = dotStruct;
-                BurnColor = color;
+                DOTColor = color;
             }
         }        
 
