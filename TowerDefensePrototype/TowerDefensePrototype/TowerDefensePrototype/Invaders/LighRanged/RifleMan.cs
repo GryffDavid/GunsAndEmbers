@@ -20,7 +20,7 @@ namespace TowerDefensePrototype
             ResourceMinMax = new Vector2(8, 20);
             InvaderType = InvaderType.RifleMan;
             YRange = new Vector2(700, 900);            
-            InvaderState = InvaderState.Walk;
+            InvaderState = AnimationState_Invader.Walk;
 
             RangedDamageStruct = new InvaderRangedStruct()
             {

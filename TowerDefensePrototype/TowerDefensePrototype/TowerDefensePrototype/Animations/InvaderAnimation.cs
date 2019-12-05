@@ -7,6 +7,6 @@ namespace TowerDefensePrototype
 {
     public class InvaderAnimation : Animation
     {
-        public InvaderState CurrentInvaderState;
+        public AnimationState_Invader CurrentInvaderState;
     }
 }

@@ -16,13 +16,10 @@ namespace TowerDefensePrototype
         public VertexPositionColorTexture[] barrelVertices = new VertexPositionColorTexture[4];        
         public Rectangle BarrelDestinationRectangle;
         public Vector2 BarrelPivot, BasePivot, BarrelEnd;
-        public float CurrentAngle;
+        public float CurrentAngle = 0;
+        public float EndAngle; //EndAngle - the angle the invader needs to be at before launching
         public int[] barrelIndices = new int[6];
-
-        //public object HitObject;
-        //public float DistToTower = 1920;
-        //public float MinDistance;
-
+        
         public List<HeavyProjectile> FiredProjectiles = new List<HeavyProjectile>();//List of projectiles the invader has fired and are still active
 
         public override void Initialize()
@@ -38,6 +35,13 @@ namespace TowerDefensePrototype
             {
                 Velocity.X = 0;
                 RangedDamageStruct.InRange = true;
+            }
+
+            if (CurrentAngle != EndAngle)
+            {
+                //If it isn't finished adjusting, change the angle and prevent it from shooting
+                CurrentAngle = MathHelper.Lerp(CurrentAngle, EndAngle, 0.2f);
+                CanAttack = false;                
             }
 
             if (BarrelAnimation != null)
@@ -139,6 +143,18 @@ namespace TowerDefensePrototype
                     CanAttack = false;
                 }
             }
+        }
+
+        public void ChangeTrajectory(string ObjectName)
+        {
+            //Change the invader trajectory based on the input
+            if (HitObject.GetType() == typeof(Shield) && 
+                CurrentMacroBehaviour == MacroBehaviour.AttackTraps)
+            {
+                EndAngle -= Random.Next(10, 25);
+            }
+
+            CanAttack = false;
         }
     }
 }

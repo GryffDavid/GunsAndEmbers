@@ -51,7 +51,7 @@ namespace TowerDefensePrototype
     public enum ProfileState { Standard, Upgrades, Stats };
     public enum ProfileManagementState { Loadout, Upgrades, Stats };
 
-    public enum InvaderState { Walk, Stand, Melee, Shoot };
+    
 
     public enum MacroBehaviour { AttackTower, AttackTraps, AttackTurrets }; //Big picture behaviours
     public enum MicroBehaviour { AdjustTrajectory, MovingForwards, MovingBackwards }; //What the invader is doing right now to achieve that goal
@@ -128,7 +128,6 @@ namespace TowerDefensePrototype
         public bool InRange = false;
         public float DistToTower = 1920;
         public float MinDistance;
-        public object HitObject;
         public float Damage; //How much damage the projectile does
         public float Speed; //How fast the heavy projectile is travelling when launched
         public float CurrentFireDelay, MaxFireDelay; //How many milliseconds between shots
@@ -711,17 +710,14 @@ namespace TowerDefensePrototype
             {
                 PreferredDepthStencilFormat = DepthFormat.Depth24Stencil8
             };
-
-            graphics.SynchronizeWithVerticalRetrace = false;
-
-            SetUpGameWindow();
-
+            
             //Could allow the player to toggle this setting on or off with a special setting.
             //e.g. pressing Ctrl+i in the options menu might bring up a special box that allows them to change it
+            graphics.SynchronizeWithVerticalRetrace = false;
+            SetUpGameWindow();
             IsFixedTimeStep = false;
+            TargetElapsedTime = TimeSpan.FromMilliseconds(1000/60);
 
-            //IsFixedTimeStep = true;
-            //TargetElapsedTime = TimeSpan.FromMilliseconds(8);
             Content.RootDirectory = "Content";
 
         }
@@ -1327,7 +1323,7 @@ namespace TowerDefensePrototype
             {
                 new InvaderAnimation() 
                 { 
-                    CurrentInvaderState = InvaderState.Walk,
+                    CurrentInvaderState = AnimationState_Invader.Walk,
                     Texture = Content.Load<Texture2D>("Invaders/Soldier/SoldierWalk"),
                     AnimationType = AnimationType.Normal,
                     Animated = true,
@@ -1339,7 +1335,7 @@ namespace TowerDefensePrototype
 
                 new InvaderAnimation() 
                 {
-                    CurrentInvaderState = InvaderState.Melee,
+                    CurrentInvaderState = AnimationState_Invader.Melee,
                     Texture = Content.Load<Texture2D>("Invaders/Soldier/SoldierMelee"),
                     AnimationType = AnimationType.Normal,
                     Animated = true,
@@ -1351,7 +1347,7 @@ namespace TowerDefensePrototype
 
                 new InvaderAnimation() 
                 {
-                    CurrentInvaderState = InvaderState.Stand,
+                    CurrentInvaderState = AnimationState_Invader.Stand,
                     Texture = Content.Load<Texture2D>("Invaders/Soldier/SoldierStand"),
                     AnimationType = AnimationType.Normal,
                     Animated = true,
@@ -1373,7 +1369,7 @@ namespace TowerDefensePrototype
             {
                 new InvaderAnimation() 
                 { 
-                    CurrentInvaderState = InvaderState.Walk,
+                    CurrentInvaderState = AnimationState_Invader.Walk,
                     Texture = Content.Load<Texture2D>("Invaders/Soldier/SoldierWalk"),
                     AnimationType = AnimationType.Normal,
                     Animated = true,
@@ -1385,7 +1381,7 @@ namespace TowerDefensePrototype
 
                 new InvaderAnimation() 
                 {
-                    CurrentInvaderState = InvaderState.Melee,
+                    CurrentInvaderState = AnimationState_Invader.Melee,
                     Texture = Content.Load<Texture2D>("Invaders/Soldier/SoldierMelee"),
                     AnimationType = AnimationType.Normal,
                     Animated = true,
@@ -1397,7 +1393,7 @@ namespace TowerDefensePrototype
 
                 new InvaderAnimation() 
                 {
-                    CurrentInvaderState = InvaderState.Stand,
+                    CurrentInvaderState = AnimationState_Invader.Stand,
                     Texture = Content.Load<Texture2D>("Invaders/Soldier/SoldierStand"),
                     AnimationType = AnimationType.Normal,
                     Animated = true,
@@ -1419,7 +1415,7 @@ namespace TowerDefensePrototype
             {
                 new InvaderAnimation() 
                 { 
-                    CurrentInvaderState = InvaderState.Walk,
+                    CurrentInvaderState = AnimationState_Invader.Walk,
                     Texture = Content.Load<Texture2D>("Invaders/RifleMan/RifleManWalk"),
                     AnimationType = AnimationType.Normal,
                     Animated = true,
@@ -1431,7 +1427,7 @@ namespace TowerDefensePrototype
 
                 new InvaderAnimation() 
                 {
-                    CurrentInvaderState = InvaderState.Shoot,
+                    CurrentInvaderState = AnimationState_Invader.Shoot,
                     Texture = Content.Load<Texture2D>("Invaders/RifleMan/RifleManShoot"),
                     AnimationType = AnimationType.Normal,
                     Animated = true,
@@ -1443,7 +1439,7 @@ namespace TowerDefensePrototype
 
                 new InvaderAnimation() 
                 {
-                    CurrentInvaderState = InvaderState.Stand,
+                    CurrentInvaderState = AnimationState_Invader.Stand,
                     Texture = Content.Load<Texture2D>("Invaders/RifleMan/RifleManStand"),
                     AnimationType = AnimationType.Normal,
                     Animated = true,
@@ -1465,7 +1461,7 @@ namespace TowerDefensePrototype
             {
                 new InvaderAnimation() 
                 { 
-                    CurrentInvaderState = InvaderState.Walk,
+                    CurrentInvaderState = AnimationState_Invader.Walk,
                     Texture = Content.Load<Texture2D>("Invaders/StationaryCannon/StationaryCannonBase"),
                     AnimationType = AnimationType.Regular,
                     Animated = true,
@@ -1477,7 +1473,7 @@ namespace TowerDefensePrototype
 
                 new InvaderAnimation() 
                 { 
-                    CurrentInvaderState = InvaderState.Stand,
+                    CurrentInvaderState = AnimationState_Invader.Stand,
                     Texture = Content.Load<Texture2D>("Invaders/StationaryCannon/StationaryCannonBase"),
                     AnimationType = AnimationType.Regular,
                     Animated = true,
@@ -1511,7 +1507,7 @@ namespace TowerDefensePrototype
             {
                 new InvaderAnimation() 
                 { 
-                    CurrentInvaderState = InvaderState.Walk,
+                    CurrentInvaderState = AnimationState_Invader.Walk,
                     Texture = Content.Load<Texture2D>("Invaders/HealDrone/HealDrone"),
                     AnimationType = AnimationType.Regular,
                     Animated = true,
@@ -1523,7 +1519,7 @@ namespace TowerDefensePrototype
 
                 new InvaderAnimation() 
                 { 
-                    CurrentInvaderState = InvaderState.Stand,
+                    CurrentInvaderState = AnimationState_Invader.Stand,
                     Texture = Content.Load<Texture2D>("Invaders/HealDrone/HealDrone"),
                     AnimationType = AnimationType.Regular,
                     Animated = true,
@@ -3716,17 +3712,12 @@ namespace TowerDefensePrototype
                     #region Stationary Cannon
                     case InvaderType.StationaryCannon:
                         {
-                            if (heavyRangedInvader.RangedDamageStruct.HitObject != null)
+                            if (heavyRangedInvader.HitObject != null)
                             {
-                                if (heavyRangedInvader.RangedDamageStruct.HitObject.GetType() == typeof(Shield))
+                                if (heavyRangedInvader.HitObject.GetType() == typeof(Shield))
                                 {
 
                                     break;
-                                }
-
-                                if ((Rectangle)heavyRangedInvader.RangedDamageStruct.HitObject == ScreenRectangle)
-                                {
-
                                 }
                             }
                         }
@@ -5603,7 +5594,7 @@ namespace TowerDefensePrototype
         {
             HeavyProjectile heavyProjectile = e.Projectile;
 
-            HeavyRangedInvader SourceInvader = (source as HeavyRangedInvader);
+            HeavyRangedInvader sourceInvader = (source as HeavyRangedInvader);
 
             Trap collisionTrap = e.collisionObject as Trap;
             Invader collisionInvader = e.collisionObject as Invader;
@@ -5795,7 +5786,7 @@ namespace TowerDefensePrototype
             #endregion
 
             #region INVADER spawned the projectile
-            if (SourceInvader != null)
+            if (sourceInvader != null)
             {
                 #region TRAP was hit
                 if (collisionTrap != null)
@@ -5880,6 +5871,7 @@ namespace TowerDefensePrototype
                         #endregion
                     }
 
+                    sourceInvader.HitObject = Ground;
                     DeactivateProjectile(heavyProjectile);
                     return;
                 }
@@ -5942,9 +5934,9 @@ namespace TowerDefensePrototype
                 #region SHIELD was hit
                 if (collisionShield != null)
                 {
-                    SourceInvader.RangedDamageStruct.HitObject = Tower.Shield;
+                    sourceInvader.HitObject = Tower.Shield;
 
-                    switch (SourceInvader.InvaderType)
+                    switch (sourceInvader.InvaderType)
                     {
                         #region Stationary Cannon
                         case InvaderType.StationaryCannon:
@@ -5971,7 +5963,7 @@ namespace TowerDefensePrototype
                 #region Projectile Outside Bounds
                 if ((Rectangle)e.collisionObject == ScreenRectangle)
                 {
-                    SourceInvader.RangedDamageStruct.HitObject = ScreenRectangle;
+                    sourceInvader.HitObject = ScreenRectangle;
                     DeactivateProjectile(heavyProjectile);
                 }
                 #endregion
@@ -6577,7 +6569,7 @@ namespace TowerDefensePrototype
                         {
                             CreateEffect(sourcePosition, CollisionEnd, CurrentProjectile.LightProjectileType);
                             GroundEffect(sourcePosition, CollisionEnd, CurrentProjectile.LightProjectileType);
-                            sourceInvader.RangedDamageStruct.HitObject = Ground;
+                            sourceInvader.HitObject = Ground;
                         } 
                         #endregion
 
@@ -6585,7 +6577,7 @@ namespace TowerDefensePrototype
                         if (DistanceList.Min() == DistToShield)
                         {
                             CreateEffect(sourcePosition, CollisionEnd, CurrentProjectile.LightProjectileType);
-                            sourceInvader.RangedDamageStruct.HitObject = Tower.Shield;
+                            sourceInvader.HitObject = Tower.Shield;
                         } 
                         #endregion
 
@@ -6593,7 +6585,7 @@ namespace TowerDefensePrototype
                         if (DistanceList.Min() == DistToTower)
                         {
                             CreateEffect(sourcePosition, CollisionEnd, CurrentProjectile.LightProjectileType);
-                            sourceInvader.RangedDamageStruct.HitObject = Tower;
+                            sourceInvader.HitObject = Tower;
                         }
                         #endregion
 
@@ -6605,7 +6597,7 @@ namespace TowerDefensePrototype
 
                             CreateEffect(sourcePosition, CollisionEnd, CurrentProjectile.LightProjectileType);
 
-                            sourceInvader.RangedDamageStruct.HitObject = null;
+                            sourceInvader.HitObject = null;
                         }
                         #endregion
                     }
@@ -6625,7 +6617,7 @@ namespace TowerDefensePrototype
                         TrapEffect(CollisionEnd, projectileSource, HitTrap);
 
                         if (sourceInvader != null)
-                            sourceInvader.RangedDamageStruct.HitObject = HitTrap;
+                            sourceInvader.HitObject = HitTrap;
                     }
                     #endregion
 
@@ -6646,9 +6638,8 @@ namespace TowerDefensePrototype
                             CollisionEnd = new Vector2(sourcePosition.X + (CurrentProjectile.Ray.Direction.X * (float)DistToShield),
                                                        sourcePosition.Y + (CurrentProjectile.Ray.Direction.Y * (float)DistToShield));
 
-                            ShieldEffect(CollisionEnd, source)
-                                ;
-                            sourceInvader.RangedDamageStruct.HitObject = HitTurret;
+                            ShieldEffect(CollisionEnd, source);
+                            sourceInvader.HitObject = HitTurret;
                         }
                         else
                         {
@@ -6664,7 +6655,7 @@ namespace TowerDefensePrototype
                     {
                         CreateEffect(sourcePosition, CollisionEnd, CurrentProjectile.LightProjectileType);
 
-                        sourceInvader.RangedDamageStruct.HitObject = HitPowerupDelivery;
+                        sourceInvader.HitObject = HitPowerupDelivery;
                     }
                     #endregion
                 }

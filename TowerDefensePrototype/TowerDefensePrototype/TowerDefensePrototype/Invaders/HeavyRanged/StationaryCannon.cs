@@ -10,8 +10,6 @@ namespace TowerDefensePrototype
 {
     class StationaryCannon : HeavyRangedInvader
     {
-        //AnimatedSprite Barrel;
-
         public StationaryCannon(Vector2 position)
         {
             Speed = 1.5f;
@@ -21,9 +19,10 @@ namespace TowerDefensePrototype
             ResourceMinMax = new Vector2(8, 20);
             YRange = new Vector2(700, 900);
             InvaderType = InvaderType.StationaryCannon;            
-            InvaderState = InvaderState.Stand;
-            CurrentAngle = 45;
-            
+            InvaderState = AnimationState_Invader.Stand;
+            CurrentMacroBehaviour = MacroBehaviour.AttackTower;
+            CurrentMicroBehaviour = MicroBehaviour.MovingForwards;
+
             RangedDamageStruct = new InvaderRangedStruct()
             {
                 AngleRange = new Vector2(170, 190),

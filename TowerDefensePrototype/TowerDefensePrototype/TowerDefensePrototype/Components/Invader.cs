@@ -9,6 +9,8 @@ using Microsoft.Xna.Framework.Audio;
 
 namespace TowerDefensePrototype
 {
+    public enum AnimationState_Invader { Walk, Stand, Melee, Shoot };
+
     public abstract class Invader : Drawable
     {
         #region Vertex declarations
@@ -82,8 +84,8 @@ namespace TowerDefensePrototype
 
         int Intelligence;
 
-        private InvaderState _InvaderState;
-        public InvaderState InvaderState
+        private AnimationState_Invader _InvaderState;
+        public AnimationState_Invader InvaderState
         {
             get { return _InvaderState; }
             set
@@ -94,7 +96,7 @@ namespace TowerDefensePrototype
                 {
                     CurrentAnimation = AnimationList.Find(Animation => Animation.CurrentInvaderState == value);
 
-                    if (CurrentAnimation.CurrentInvaderState == InvaderState.Stand)
+                    if (CurrentAnimation.CurrentInvaderState == AnimationState_Invader.Stand)
                         CurrentAnimation.CurrentFrame = 0;// Random.Next(0, CurrentAnimation.TotalFrames);
 
                     CurrentAnimation.CurrentFrameDelay = 0;
@@ -148,8 +150,17 @@ namespace TowerDefensePrototype
         public Vector2 Direction = new Vector2(-1f, 0);
         public Vector2 Position, Velocity;
         public SpriteEffects Orientation = SpriteEffects.None;
-        
 
+        private object _HitObject;
+        public object HitObject
+        {
+            get { return _HitObject; }
+            set
+            {
+                _HitObject = value;
+            }
+        }
+        
         public virtual void Initialize()
         {
             MaxY = Random.Next((int)YRange.X, (int)YRange.Y);
@@ -264,14 +275,14 @@ namespace TowerDefensePrototype
                     normalVertices[3].Position = invaderVertices[3].Position;
                 }
                 
-                if (Velocity.X != 0 && InvaderState != InvaderState.Walk)
+                if (Velocity.X != 0 && InvaderState != AnimationState_Invader.Walk)
                 {
-                    InvaderState = InvaderState.Walk;
+                    InvaderState = AnimationState_Invader.Walk;
                 }
 
-                if (Velocity.X == 0 && InvaderState != InvaderState.Stand && Frozen == false)
+                if (Velocity.X == 0 && InvaderState != AnimationState_Invader.Stand && Frozen == false)
                 {
-                    InvaderState = InvaderState.Stand;
+                    InvaderState = AnimationState_Invader.Stand;
                 }
 
                 if (Frozen == false && Burning == false && HitByBeam == false)

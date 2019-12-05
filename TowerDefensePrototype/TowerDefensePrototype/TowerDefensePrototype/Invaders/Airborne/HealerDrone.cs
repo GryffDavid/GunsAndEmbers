@@ -37,7 +37,7 @@ namespace TowerDefensePrototype
             YRange = new Vector2(100, 350);
             Airborne = true;
             InAir = true;
-            InvaderState = InvaderState.Walk;
+            InvaderState = AnimationState_Invader.Walk;
 
             RangedDamageStruct = new InvaderRangedStruct()
             {
