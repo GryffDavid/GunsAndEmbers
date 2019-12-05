@@ -12,15 +12,21 @@ namespace TowerDefensePrototype
 {    
     class BasicTurret : Turret
     {      
-        public BasicTurret(string turretName, string baseName, Vector2 position)
+        public BasicTurret(Vector2 position)
         {
             Active = true;
-            TurretAsset = turretName;
-            BaseAsset = baseName;
+            TurretType = TurretType.Basic;
+            TurretAsset = "BasicTurret";
+            BaseAsset = "BasicTurretBase";
             Position = position;
             Selected = true;
             FireDelay = 200;
-            Damage = 20;
+            Damage = 2;
+        }
+
+        public override Projectile Shoot()
+        {
+            return new LightProjectile(new Vector2(TurretBarrel.Bounds.X, TurretBarrel.Bounds.Y), Direction);
         }
 
         public override void Draw(SpriteBatch spriteBatch)

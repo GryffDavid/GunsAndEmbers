@@ -10,7 +10,6 @@ Content\Tower.xnb
 Content\UI.xnb
 Content\Button.xnb
 Content\Wall.xnb
-Content\WallIcon.xnb
 Content\SpikeTrap.xnb
 Content\TrapButton.xnb
 Content\Ground.xnb
@@ -24,4 +23,6 @@ Content\MountainsBackground.xnb
 Content\shell.xnb
 Content\TestHUD1.xnb
 Content\FireIcon.xnb
+Content\WallIcon.xnb
 Content\SpikesIcon.xnb
+Content\CannonBall.xnb

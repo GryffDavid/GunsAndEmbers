@@ -9,18 +9,18 @@ using Microsoft.Xna.Framework.Input;
 
 namespace TowerDefensePrototype
 {
-    class CannonTurret : Turret
+    class FlameThrowerTurret : Turret
     {
-        public CannonTurret(Vector2 position)
+        public FlameThrowerTurret(Vector2 position)
         {
             Active = true;
-            TurretType = TurretType.Cannon;
+            TurretType = TurretType.FlameThrower;
             TurretAsset = "BasicTurret";
             BaseAsset = "BasicTurretBase";
             Position = position;
             Selected = true;
-            FireDelay = 800;
-            Damage = 20;          
+            FireDelay = 50;
+            Damage = 20;
         }
 
         public override Projectile Shoot()
@@ -37,11 +37,11 @@ namespace TowerDefensePrototype
 
                 BaseRectangle = new Rectangle((int)Position.X - 12, (int)Position.Y - 16 - 6, TurretBase.Width, TurretBase.Height);
                 BarrelRectangle = new Rectangle((int)Position.X + 8, (int)Position.Y - 6, TurretBarrel.Width, TurretBarrel.Height);
-                Color = Color.Green;
+                Color = Color.Orange;
                 spriteBatch.Draw(TurretBarrel, BarrelRectangle, null, Color, Rotation, new Vector2(24, TurretBarrel.Height / 2), SpriteEffects.None, 1f);
 
                 spriteBatch.Draw(TurretBase, BaseRectangle, Color);
             }
-        }        
+        }
     }
 }

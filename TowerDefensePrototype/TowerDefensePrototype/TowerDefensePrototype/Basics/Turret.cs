@@ -24,6 +24,8 @@ namespace TowerDefensePrototype
         public Random Random;
         public Vector2 FireDirection;
         public float FireRotation;
+        public Projectile Projectile;
+        public TurretType TurretType;
 
         public double ElapsedTime = 0;
 
@@ -89,12 +91,12 @@ namespace TowerDefensePrototype
                     JustClicked = false;
                 }            
             
-                if (Selected == true)
-                {
-                    Color = Color.Red;
-                }
-                else
-                    Color = Color.White;
+                //if (Selected == true)
+                //{
+                //    Color = Color.Red;
+                //}
+                //else
+                //    Color = Color.White;
             #endregion
 
                 Random = new Random();
@@ -127,6 +129,11 @@ namespace TowerDefensePrototype
         public virtual void Draw(SpriteBatch spriteBatch)
         {
 
+        }
+
+        public virtual Projectile Shoot()
+        {
+            return Projectile;
         }
     }
 }
