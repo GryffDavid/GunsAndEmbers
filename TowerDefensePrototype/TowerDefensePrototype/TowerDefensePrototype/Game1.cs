@@ -29,7 +29,7 @@ namespace TowerDefensePrototype
     public enum LightProjectileType { MachineGun, Freeze, Lightning, Beam, Pulse, Shotgun, PersistentBeam };
     public enum GameState { Menu, Loading, Playing, Paused, ProfileSelect, Options, ProfileManagement, GettingName, Victory, Upgrades };
     public enum ProfileState { Standard, Upgrades, Stats };
-
+    
     public struct StackedUpgrade
     {
         public float GatlingSpeed, GatlingDamage, GatlingAccuracy;
@@ -43,14 +43,15 @@ namespace TowerDefensePrototype
         GraphicsDeviceManager graphics;
         ContentManager SecondaryContent;
         SpriteBatch spriteBatch, targetBatch;
-        RenderTarget2D GameRenderTarget, MenuRenderTarget, UIRenderTarget, BackgroundRenderTarget;
+        RenderTarget2D GameRenderTarget, MenuRenderTarget, UIRenderTarget;
         RenderTarget2D ShaderTarget1, ShaderTarget2;
-        Texture2D ScreenTex, MenuTex;
-
+        Texture2D ScreenTex;
+        
         string Error = "";
 
         #region XNA Declarations
         static Random Random = new Random();
+        BinaryFormatter formatter = new BinaryFormatter();
 
         //Sprites
         #region Particle sprites
@@ -86,8 +87,8 @@ namespace TowerDefensePrototype
         #endregion
 
         #region Trap sprites
-        Texture2D BarrelTrapSprite, CatapultTrapSprite, IceTrapSprite, TarTrapSprite, WallSprite,
-                  LineTrapSprite, SawBladeTrapSprite, SpikeTrapSprite, FireTrapSprite;
+        List<Texture2D> WallSprite, BarrelTrapSprite, CatapultTrapSprite, IceTrapSprite, TarTrapSprite,
+                        LineTrapSprite, SawBladeTrapSprite, SpikeTrapSprite, FireTrapSprite;
         #endregion
 
         #region Turret sprites
@@ -113,9 +114,6 @@ namespace TowerDefensePrototype
         Texture2D WhiteBlock;
         #endregion
 
-        Texture2D TerrainShrub1, TerrainRock1;
-        Texture2D TooltipBox;
-
         #region Colour declarations
         public Color HalfWhite = Color.Lerp(Color.White, Color.Transparent, 0.5f);
         public Color FireColor = new Color(Color.White.R, Color.White.G, Color.White.B, 255);
@@ -126,9 +124,9 @@ namespace TowerDefensePrototype
         public Color SmokeColor1 = Color.Lerp(Color.DarkGray, Color.Transparent, 0.25f);
         public Color SmokeColor2 = Color.Lerp(Color.Gray, Color.Transparent, 0.25f);
         public Color MenuColor = Color.White;
-        #endregion
+        #endregion        
 
-        
+        Texture2D TerrainShrub1, TooltipBox;
 
         Vector2 CursorPosition, ActualResolution;
         Rectangle ScreenRectangle;
@@ -151,17 +149,13 @@ namespace TowerDefensePrototype
         bool Tutorial = false;
         bool StartWave = false;
 
-        float MenuSFXVolume, MenuMusicVolume, VictoryTime, CurrentInvaderTime, CurrentWaveTime, CurrentWavePauseTime, HealthValue;
+        float MenuSFXVolume, MenuMusicVolume, VictoryTime, CurrentInvaderTime, CurrentWaveTime, CurrentWavePauseTime;
 
         double Seconds, ResolutionOffsetRatio;
-
         
-
-        BinaryFormatter formatter = new BinaryFormatter();
-
         Effect HealthBarEffect, ShockWaveEffect, ShieldBubbleEffect, BackgroundEffect, ButtonBlurEffect;
         Color CursorColor = Color.White;
-        Matrix Projection, MouseTransform;
+        Matrix Projection, MouseTransform, QuadProjection;
         #endregion
 
         #region Sound effects
@@ -246,6 +240,19 @@ namespace TowerDefensePrototype
         float CannonTurretBlastRadius = 0;
         #endregion
 
+        UIBar HealthBar, ShieldBar;
+        BasicEffect QuadEffect;
+
+        RasterizerState MultiSamplingState = new RasterizerState()
+        {
+            MultiSampleAntiAlias = true,
+            CullMode = CullMode.CullCounterClockwiseFace,
+            FillMode = FillMode.Solid,
+            ScissorTestEnable = false,
+            DepthBias = 0,
+            SlopeScaleDepthBias = 0
+        };
+                
         #endregion
 
         public Game1()
@@ -256,20 +263,21 @@ namespace TowerDefensePrototype
                 SFXVolume = 1.0f,
                 MusicVolume = 1.1f,
                 TimesPlayed = 0,
-                ResWidth = 1920,
-                ResHeight = 1080
+                ResWidth = 1280,
+                ResHeight = 720
             };
 
             LoadSettings();
             CurrentSettings.TimesPlayed++;
             SaveSettings();
 
-            graphics = new GraphicsDeviceManager(this);
-            graphics.SynchronizeWithVerticalRetrace = false;
+            graphics = new GraphicsDeviceManager(this) 
+            { 
+                PreferredDepthStencilFormat = DepthFormat.Depth24Stencil8 
+            };
 
-            //this.TargetElapsedTime = TimeSpan.FromSeconds(1.0f / 60.0f);
+            graphics.SynchronizeWithVerticalRetrace = false;
             IsFixedTimeStep = false;
-            //this.IsMouseVisible = true;
 
             Content.RootDirectory = "Content";
 
@@ -319,6 +327,16 @@ namespace TowerDefensePrototype
 
             DefaultFont = SecondaryContent.Load<SpriteFont>("Fonts/DefaultFont");
             TooltipFont = SecondaryContent.Load<SpriteFont>("Fonts/TooltipFont");
+
+            QuadProjection = Matrix.CreateOrthographicOffCenter(0,
+                                    1920,
+                                    1080,
+                                    0, 0, 1) * 
+                                    Matrix.CreateRotationZ(MathHelper.ToRadians(5.5f));
+
+            QuadEffect = new BasicEffect(graphics.GraphicsDevice);
+            QuadEffect.Projection = QuadProjection;
+            QuadEffect.VertexColorEnabled = true;
 
             #region Load button sprites
             DialogBox = SecondaryContent.Load<Texture2D>("DialogBox");
@@ -497,7 +515,7 @@ namespace TowerDefensePrototype
                 UpgradeButtonList[i].NextScale = new Vector2(0.5f, 0.5f);
                 UpgradeButtonList[i].LoadContent();
             }
-            #endregion
+            #endregion            
 
             LoadingAnimation = new AnimatedSprite("LoadingAnimation", new Vector2(1920 / 2 - 65, 1080 / 2 - 65), new Vector2(131, 131), 17, 30, HalfWhite, Vector2.One, true);
             LoadingAnimation.LoadContent(SecondaryContent);
@@ -530,27 +548,19 @@ namespace TowerDefensePrototype
 
             GraphicsDevice.SetRenderTarget(GameRenderTarget);
             GraphicsDevice.Clear(Color.White);
-            //STUFF DRAWN BETWEEN TARGET1 AND TARGET2 CAN HAVE LIGHTS APPLIED TO IT
-
             #region Draw things in game that SHOULD be shaken - Non-diegetic elements
             if (GameState == GameState.Playing || GameState == GameState.Paused || GameState == GameState.Victory && IsLoading == false)
             {
                 spriteBatch.Begin(SpriteSortMode.Deferred,
-                            BlendState.AlphaBlend,
-                            null,
-                            null,
-                            null,
-                            null,
-                            Camera.Transformation(GraphicsDevice));
+                                  BlendState.AlphaBlend,
+                                  null, null, null, null,
+                                  Camera.Transformation(GraphicsDevice));
 
                 SkyBackground.Draw(spriteBatch);
-
                 Ground.Draw(spriteBatch);
-
                 Tower.Draw(spriteBatch);
 
                 #region Draw Traps
-
                 foreach (Trap Trap in TrapList)
                 {
                     if (Trap.DetonateDelay > 0)
@@ -563,7 +573,6 @@ namespace TowerDefensePrototype
                         Trap.HealthBar.Draw(spriteBatch);
                     }
                 }
-
                 #endregion
 
                 foreach (Emitter emitter in EmitterList2)
@@ -584,12 +593,9 @@ namespace TowerDefensePrototype
             if (GameState == GameState.Playing || GameState == GameState.Paused || GameState == GameState.Victory && IsLoading == false)
             {
                 spriteBatch.Begin(SpriteSortMode.Immediate,
-                BlendState.Additive,
-                null,
-                null,
-                null,
-                null,
-                Camera.Transformation(GraphicsDevice));
+                                  BlendState.Additive,
+                                  null, null, null, null,
+                                  Camera.Transformation(GraphicsDevice));
 
                 foreach (Emitter emitter in AlphaEmitterList)
                 {
@@ -602,27 +608,26 @@ namespace TowerDefensePrototype
             #region Draw things sorted according to their Y value - To create depth illusion... Also can be shaken
             //This second spritebatch sorts everthing Back to Front, 
             //to make sure that the invaders are drawn correctly according to their Y value
-
             if (GameState == GameState.Playing || GameState == GameState.Paused || GameState == GameState.Victory && IsLoading == false)
             {
-                spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend, null, null, null, null, Camera.Transformation(GraphicsDevice));
+                spriteBatch.Begin(SpriteSortMode.FrontToBack, 
+                                  BlendState.AlphaBlend, 
+                                  null, null, null, null, 
+                                  Camera.Transformation(GraphicsDevice));
 
                 //This draws the timing bar for the turrets, but also makes 
                 //sure that it doesn't draw for the blank turrets, which
                 //would make the timing bar appear in the top right corner
                 foreach (Turret turret in TurretList)
                 {
-                    if (turret != null)
-                        if (turret.Active == true)
-                            turret.Draw(spriteBatch);
+                    if (turret != null && turret.Active == true)
+                        turret.Draw(spriteBatch);
                 }
-
 
                 foreach (StaticSprite terrainSprite in TerrainSpriteList)
                 {
                     terrainSprite.Draw(spriteBatch);
                 }
-
 
                 foreach (Invader invader in InvaderList)
                 {
@@ -706,29 +711,17 @@ namespace TowerDefensePrototype
                 spriteBatch.End();
             }
             #endregion
-
-
-            GraphicsDevice.SetRenderTarget(BackgroundRenderTarget);
-            GraphicsDevice.Clear(Color.Transparent);
-
-            //Draw the menu background on a separate render target
-            #region Draw background
-            if (MainMenuBackground != null && GameState != GameState.Playing && GameState != GameState.Paused)
-            {
-                spriteBatch.Begin(SpriteSortMode.Immediate, null, null, null, null, null);
-                //BackgroundEffect.CurrentTechnique.Passes[0].Apply();
-                MainMenuBackground.Draw(spriteBatch);
-                spriteBatch.End();
-            }
-            #endregion
-
+            
+            
             GraphicsDevice.SetRenderTarget(MenuRenderTarget);
             GraphicsDevice.Clear(Color.Transparent);
-            //STUFF DRAWN AFTER HERE CANNOT HAVE LIGHT APPLIED TO IT
             #region Draw menus
             spriteBatch.Begin();
             if (GameState != GameState.Playing)
             {
+                if (GameState != GameState.Paused)
+                    MainMenuBackground.Draw(spriteBatch);
+
                 #region Draw Profile Select Menu
                 if (GameState == GameState.ProfileSelect)
                 {
@@ -962,51 +955,44 @@ namespace TowerDefensePrototype
                 //spriteBatch.Draw(MenuFade, ScreenRectangle, MenuColor);
             }
 
+            #region Draw pause menu buttons
+            if (GameState == GameState.Paused)
+            {
+                foreach (Button button in PauseButtonList)
+                {
+                    button.Draw(spriteBatch);
+                }
+            }
+            #endregion
+
             spriteBatch.End();
             #endregion
+            
 
             GraphicsDevice.SetRenderTarget(UIRenderTarget);
             GraphicsDevice.Clear(Color.Transparent);
-            //Draw in-game UI elements on a separate render target
             #region Draw the UI elements
             if (GameState == GameState.Playing || GameState == GameState.Paused && IsLoading == false)
             {
-                #region Draw round health bar
-                HealthValue = (float)((double)Tower.CurrentHP / (double)Tower.MaxHP);
-                HealthBarEffect.Parameters["meterValue"].SetValue(HealthValue);
+                spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, MultiSamplingState);
+                //Draw antialiased quads 
+                foreach (EffectPass pass in QuadEffect.CurrentTechnique.Passes)
+                {
+                    pass.Apply();                    
 
-                spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.NonPremultiplied, SamplerState.LinearWrap,
-                                  DepthStencilState.None, RasterizerState.CullCounterClockwise, HealthBarEffect);
-                spriteBatch.Draw(HealthBarSprite, new Vector2(80, 80), null, Color.White, MathHelper.ToRadians(-90),
-                                 new Vector2(HealthBarSprite.Width / 2, HealthBarSprite.Height / 2), 1f, SpriteEffects.None, 0);
+                    foreach (Quad quad in HealthBar.QuadList)
+                    {
+                        GraphicsDevice.DrawUserPrimitives<VertexPositionColor>(PrimitiveType.TriangleStrip, quad.Vertices, 0, 2, VertexPositionColor.VertexDeclaration);
+                    }
+
+                    foreach (Quad quad in ShieldBar.QuadList)
+                    {
+                        GraphicsDevice.DrawUserPrimitives<VertexPositionColor>(PrimitiveType.TriangleStrip, quad.Vertices, 0, 2, VertexPositionColor.VertexDeclaration);
+                    }
+                }
                 spriteBatch.End();
-                #endregion
 
                 spriteBatch.Begin();
-                #region Draw UI numbers - health, sheield, resources etc.
-                int PercentageHP = (int)MathHelper.Clamp((float)((100d / (double)Tower.MaxHP) * (double)Tower.CurrentHP), 0, 100);
-                int PercentageShield = (int)MathHelper.Clamp((float)((100d / (double)Tower.MaxShield) * (double)Tower.CurrentShield), 0, 100);
-
-                spriteBatch.DrawString(DefaultFont, PercentageHP.ToString() + "%", new Vector2(1920 / 2 + 1, 12), Color.Black);
-                spriteBatch.DrawString(DefaultFont, PercentageHP.ToString() + "%", new Vector2(1920 / 2, 11), Color.LightGray);
-
-                spriteBatch.DrawString(DefaultFont, PercentageShield.ToString() + "%", new Vector2(1920 / 2 + 1, 34), Color.Black);
-                spriteBatch.DrawString(DefaultFont, PercentageShield.ToString() + "%", new Vector2(1920 / 2, 33), Color.LightGray);
-
-                spriteBatch.DrawString(DefaultFont, Resources.ToString(), new Vector2(48, 48), Color.Black);
-
-                foreach (NumberChange numChange in NumberChangeList)
-                {
-                    numChange.Draw(spriteBatch);
-                }
-
-                if (WaveCountDown != null && WaveCountDown.CurrentSeconds > -1 && WaveCountDown.Text != null)
-                    WaveCountDown.Draw(spriteBatch);
-
-                if (ResourceCost > 0)
-                    spriteBatch.DrawString(DefaultFont, ResourceCost.ToString(), new Vector2(550, 950), Color.White);
-                #endregion
-
                 #region Drawing buttons
                 if (StartWaveButton != null)
                     StartWaveButton.Draw(spriteBatch);
@@ -1019,7 +1005,6 @@ namespace TowerDefensePrototype
                 //Draw tooltips for the buttons
                 if (InGameInformation != null)
                     InGameInformation.Draw(spriteBatch);
-
                 #endregion
 
                 #region Draw diagnostics
@@ -1048,35 +1033,6 @@ namespace TowerDefensePrototype
                     spriteBatch.DrawString(DefaultFont, "InvaderTime:" + CurrentInvaderTime.ToString(), new Vector2(0, 248 + 16), Color.Lime);
                     spriteBatch.DrawString(DefaultFont, "WaveTime:" + CurrentWaveTime.ToString(), new Vector2(0, 248 + 32), Color.Lime);
                     spriteBatch.DrawString(DefaultFont, "PauseTime:" + CurrentWavePauseTime, new Vector2(0, 248 + 32 + 16), Color.Lime);
-                }
-                #endregion
-
-                #region Draw turret UI stuff
-                foreach (Turret turret in TurretList)
-                {
-                    if (turret != null)
-                    {
-                        turret.TimingBar.Draw(spriteBatch);
-                        turret.HealthBar.Draw(spriteBatch);
-                        turret.HeatBar.Draw(spriteBatch);
-
-                        if (turret.SelectBox.Contains(new Point((int)CursorPosition.X, (int)CursorPosition.Y))
-                            && turret.Selected == false
-                            && GameState == GameState.Playing)
-                        {
-                            spriteBatch.Draw(turret.Rect, turret.SelectBox, Color.White);
-                        }
-                    }
-                }
-                #endregion
-
-                #region Draw pause menu buttons
-                if (GameState == GameState.Paused)
-                {
-                    foreach (Button button in PauseButtonList)
-                    {
-                        button.Draw(spriteBatch);
-                    }
                 }
                 #endregion
                 spriteBatch.End();
@@ -1111,40 +1067,23 @@ namespace TowerDefensePrototype
                 }
             }
             #endregion
+
+            #region Draw Victory Menu
+            if (GameState == GameState.Victory && IsLoading == false)
+            {
+                if (VictoryRetry != null)
+                    VictoryRetry.Draw(spriteBatch);
+
+                if (VictoryComplete != null)
+                    VictoryComplete.Draw(spriteBatch);
+
+                if (VictoryReturn != null)
+                    VictoryReturn.Draw(spriteBatch);
+
+                spriteBatch.DrawString(DefaultFont, "VICTORY", new Vector2(1920 / 2 - DefaultFont.MeasureString("VICTORY").X / 2, 16), Color.White);
+            }
+            #endregion
             spriteBatch.End();
-
-
-            //spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive);
-            //#region Draw Victory Menu
-            //if (GameState == GameState.Victory && IsLoading == false)
-            //{
-            //    if (VictoryRetry != null)
-            //        VictoryRetry.Draw(spriteBatch);
-
-            //    if (VictoryComplete != null)
-            //        VictoryComplete.Draw(spriteBatch);
-
-            //    if (VictoryReturn != null)
-            //        VictoryReturn.Draw(spriteBatch);
-
-            //    spriteBatch.DrawString(DefaultFont, "VICTORY", new Vector2(1920 / 2 - DefaultFont.MeasureString("VICTORY").X / 2, 16), Color.White);
-            //}
-            //#endregion
-
-            //#region Draw Pause Menu
-            //if (GameState == GameState.Paused)
-            //{
-            //    foreach (Button button in PauseButtonList)
-            //    {
-            //        button.Draw(spriteBatch);
-            //    }
-            //}
-            //#endregion
-
-            //#region Draw Dialog Boxes
-
-            //#endregion
-            //spriteBatch.End();
 
 
             #region Draw the cursor on top of EVERYTHING
@@ -1154,30 +1093,23 @@ namespace TowerDefensePrototype
             #endregion
             #endregion
 
-            #region Handle render target stuff
-            #region Layer up all the shaders that need to be applied to the game world - Not including the interface
+
+            #region Apply pixel shaders to game world
+            //Layer up all the shaders that need to be applied to the game world - Not including the interface
             if (GameState == GameState.Playing || GameState == GameState.Paused)
             {
                 ShieldBubbleEffect.Parameters["ScreenTexture"].SetValue(GameRenderTarget);
                 ShockWaveEffect.Parameters["ScreenTexture"].SetValue(GameRenderTarget);
-                ScreenTex = HandleShaders(GameRenderTarget,
-                                          ShockWaveEffect.CurrentTechnique.Passes[0],
-                                          ShieldBubbleEffect.CurrentTechnique.Passes[0]
+                ScreenTex = HandleShaders(GameRenderTarget//,
+                                          //ShockWaveEffect.CurrentTechnique.Passes[0],
+                                          //ShieldBubbleEffect.CurrentTechnique.Passes[0]
                                           );
             }
             #endregion
 
-            #region Layer up the h and v blurs for the menu
-            if (GameState != GameState.Playing && GameState != GameState.Paused)
-            {
-                ButtonBlurEffect.Parameters["ScreenTexture"].SetValue(BackgroundRenderTarget);
-                MenuTex = HandleShaders(MenuRenderTarget);
-            }
-            #endregion
-
+            //Start drawing to the backbuffer
             GraphicsDevice.SetRenderTarget(null);
             GraphicsDevice.Clear(Color.Black);
-
             #region DRAW ACTUAL GAME
             if (GameState == GameState.Playing || GameState == GameState.Paused)
             {
@@ -1193,24 +1125,14 @@ namespace TowerDefensePrototype
             }
             #endregion
 
-            #region DRAW THE MENU BACKGROUND AND MENU ITEMS
+            #region DRAW THE MENU ITEMS
+            //Check loading screen animation state
             if (GameState != GameState.Playing)
             {
-                if (MainMenuBackground != null &&
-                    BackgroundRenderTarget != null)
-                {
-                    targetBatch.Begin();
-                    targetBatch.Draw(BackgroundRenderTarget, new Rectangle(0, (int)(ActualResolution.Y - CurrentSettings.ResHeight) / 2,
-                                     CurrentSettings.ResWidth, CurrentSettings.ResHeight), null, Color.White, 0, Vector2.Zero,
-                                     SpriteEffects.None, 0);
-                    targetBatch.DrawString(DefaultFont, Error, new Vector2(100, 100), Color.Red);
-                    targetBatch.End();
-                }
-
                 if (MenuRenderTarget != null)
                 {
                     targetBatch.Begin();
-                    targetBatch.Draw(MenuTex, new Rectangle(0, (int)(ActualResolution.Y - CurrentSettings.ResHeight) / 2,
+                    targetBatch.Draw(MenuRenderTarget, new Rectangle(0, (int)(ActualResolution.Y - CurrentSettings.ResHeight) / 2,
                                      CurrentSettings.ResWidth, CurrentSettings.ResHeight), null, Color.White, 0, Vector2.Zero,
                                      SpriteEffects.None, 0);
                     targetBatch.DrawString(DefaultFont, Error, new Vector2(100, 100), Color.Red);
@@ -1232,7 +1154,7 @@ namespace TowerDefensePrototype
                 targetBatch.End();
             }
             #endregion
-            #endregion
+
             base.Draw(gameTime);
         }
 
@@ -1479,7 +1401,7 @@ namespace TowerDefensePrototype
 
                 for (int i = 0; i < HeavyProjectileList.Count; i++)
                 {
-                    if (HeavyProjectileList[i].Active == false && HeavyProjectileList[i].EmitterList.All(Emitter => Emitter.ParticleList.Count == 0))
+                    if (HeavyProjectileList[i].Active == false && HeavyProjectileList[i].EmitterList.All(Emitter => Emitter.ParticleList.Count == 0 && Emitter.AddMore == false))
                         HeavyProjectileList.RemoveAt(i);
                 }
 
@@ -1601,8 +1523,7 @@ namespace TowerDefensePrototype
 
                 if (InGameInformation != null)
                     InGameInformation.Update(CursorPosition, gameTime);
-
-
+                
                 for (int i = 0; i < ExplosionList.Count; i++)
                 {
                     if (ExplosionList[i].Active == false)
@@ -1616,6 +1537,9 @@ namespace TowerDefensePrototype
                         explosion.Active = false;
                     }
                 }
+
+                HealthBar.Update(Tower.MaxHP, Tower.CurrentHP);
+                ShieldBar.Update(Tower.MaxShield, Tower.CurrentShield);
 
                 EnemyExplosionsUpdate(gameTime);
             }
@@ -1640,8 +1564,7 @@ namespace TowerDefensePrototype
             targetBatch = new SpriteBatch(GraphicsDevice);
             GameRenderTarget = new RenderTarget2D(GraphicsDevice, 1920, 1080);
             MenuRenderTarget = new RenderTarget2D(GraphicsDevice, 1920, 1080);
-            UIRenderTarget = new RenderTarget2D(GraphicsDevice, 1920, 1080);
-            BackgroundRenderTarget = new RenderTarget2D(GraphicsDevice, 1920, 1080);
+            UIRenderTarget = new RenderTarget2D(GraphicsDevice, 1920, 1080, false, SurfaceFormat.Rgba64, DepthFormat.Depth24Stencil8, 16, RenderTargetUsage.DiscardContents);
 
             ShaderTarget1 = new RenderTarget2D(GraphicsDevice, 1920, 1080);
             ShaderTarget2 = new RenderTarget2D(GraphicsDevice, 1920, 1080);
@@ -1868,7 +1791,7 @@ namespace TowerDefensePrototype
                 MaxWaves = CurrentLevel.WaveList.Count;
                 CurrentWaveIndex = 0;
 
-                StartWaveButton = new Button(ButtonLeftSprite, new Vector2(1000, 200));
+                StartWaveButton = new Button(ButtonRightSprite, new Vector2(1920-(ButtonRightSprite.Width/3), 200), null, null, null, "Start Waves", DefaultFont, "Right");
                 StartWaveButton.LoadContent();
 
                 Lightning.LoadContent(Content);
@@ -1901,11 +1824,27 @@ namespace TowerDefensePrototype
                     TerrainSpriteList.Add(terrainSprite);
                 }
 
+                //These are/were for testing if all the emitter parameters are functioning correctly - fade, shrink, color shift etc.
+                //EmitterList.Add(new Emitter(SmokeParticle, new Vector2(500, 400), new Vector2(0, 0), new Vector2(1, 1),
+                //    new Vector2(500, 500), 1f, false, new Vector2(90, 90), new Vector2(0, 0), new Vector2(1f, 1f), 
+                //    Color.Green, Color.Red, 0f, -1f, 500, 1, false, new Vector2(1080, 1080), false));
+
+                //EmitterList.Add(new Emitter(SmokeParticle, new Vector2(500, 500), new Vector2(0, 0), new Vector2(1, 1),
+                //    new Vector2(500, 500), 1f, false, new Vector2(90, 90), new Vector2(0, 0), new Vector2(1f, 1f),
+                //    Color.Red, Color.Red, 0f, -1f, 500, 1, false, new Vector2(1080, 1080), true));
+
+                //EmitterList.Add(new Emitter(SmokeParticle, new Vector2(500, 600), new Vector2(0, 0), new Vector2(1, 1),
+                //    new Vector2(500, 500), 1f, true, new Vector2(90, 90), new Vector2(0, 0), new Vector2(1f, 1f),
+                //    Color.Red, Color.Red, 0f, -1f, 500, 1, false, new Vector2(1080, 1080), false));
+
                 WhiteBlock = Content.Load<Texture2D>("WhiteBlock");
 
                 LoadInvaderSprites();
                 LoadTurretSprites();
                 LoadTrapSprites();
+
+                HealthBar = new UIBar(new Vector2(100, 920), new Vector2(260, 28), Color.DarkRed);
+                ShieldBar = new UIBar(new Vector2(100, 950), new Vector2(200, 20), Color.DodgerBlue);
 
                 IsLoading = false;
 
@@ -1926,7 +1865,7 @@ namespace TowerDefensePrototype
             LightningSound = Content.Load<SoundEffect>("Sounds/LightningSound");
             CannonExplosion = Content.Load<SoundEffect>("Sounds/CannonExplosion");
             CannonFire = Content.Load<SoundEffect>("Sounds/CannonFire");
-            MachineShot1 = Content.Load<SoundEffect>("Sounds/Shot3");
+            MachineShot1 = Content.Load<SoundEffect>("Sounds/Shot11");
             PlaceTrap = Content.Load<SoundEffect>("Sounds/PlaceTrap");
             GroundImpact = Content.Load<SoundEffect>("Sounds/Shot12");
             Ricochet1 = Content.Load<SoundEffect>("Sounds/Ricochet1");
@@ -1943,10 +1882,17 @@ namespace TowerDefensePrototype
             IceBlock = Content.Load<Texture2D>("IceBlock");
             Shadow = Content.Load<Texture2D>("Shadow");
 
-            SoldierSprite = new List<Texture2D>(4);
-            SoldierSprite.Add(Content.Load<Texture2D>("Invaders/Soldier/SoldierWalk"));
-            SoldierSprite.Add(Content.Load<Texture2D>("Invaders/Soldier/SoldierStand"));
-            SoldierSprite.Add(Content.Load<Texture2D>("Invaders/Soldier/SoldierMelee"));
+            //SoldierSprite = new List<Texture2D>(4);
+            //SoldierSprite.Add(Content.Load<Texture2D>("Invaders/Soldier/SoldierWalk"));
+            //SoldierSprite.Add(Content.Load<Texture2D>("Invaders/Soldier/SoldierStand"));
+            //SoldierSprite.Add(Content.Load<Texture2D>("Invaders/Soldier/SoldierMelee"));
+
+            SoldierSprite = new List<Texture2D>(3) 
+            {
+                Content.Load<Texture2D>("Invaders/Soldier/SoldierWalk"),
+                Content.Load<Texture2D>("Invaders/Soldier/SoldierStand"),
+                Content.Load<Texture2D>("Invaders/Soldier/SoldierMelee")
+            };
 
 
             //SoldierSprite = Content.Load<Texture2D>("Invaders/Soldier3");
@@ -1963,15 +1909,50 @@ namespace TowerDefensePrototype
 
         private void LoadTrapSprites()
         {
-            BarrelTrapSprite = Content.Load<Texture2D>("Traps/Trap");
-            CatapultTrapSprite = Content.Load<Texture2D>("Traps/Trap");
-            IceTrapSprite = Content.Load<Texture2D>("Traps/Trap");
-            TarTrapSprite = Content.Load<Texture2D>("Traps/TarTrap");
-            WallSprite = Content.Load<Texture2D>("Traps/Trap");
-            LineTrapSprite = Content.Load<Texture2D>("Traps/Trap");
-            SawBladeTrapSprite = Content.Load<Texture2D>("Traps/Trap");
-            SpikeTrapSprite = Content.Load<Texture2D>("Traps/SpikeTrap");
-            FireTrapSprite = Content.Load<Texture2D>("Traps/Trap");
+            WallSprite = new List<Texture2D>(1)
+            {
+                Content.Load<Texture2D>("Traps/Trap")
+            };
+
+            BarrelTrapSprite = new List<Texture2D>(1)
+            {
+                Content.Load<Texture2D>("Traps/Trap")
+            };
+
+            CatapultTrapSprite = new List<Texture2D>(1)
+            {
+                Content.Load<Texture2D>("Traps/Trap")
+            };
+
+            IceTrapSprite = new List<Texture2D>(1)
+            {
+                Content.Load<Texture2D>("Traps/Trap")
+            };
+
+            TarTrapSprite = new List<Texture2D>(1)
+            {
+                Content.Load<Texture2D>("Traps/Trap")
+            };
+
+            LineTrapSprite = new List<Texture2D>(1)
+            {
+                Content.Load<Texture2D>("Traps/Trap")
+            };
+
+            SawBladeTrapSprite = new List<Texture2D>(1)
+            {
+                Content.Load<Texture2D>("Traps/Trap")
+            };
+
+            SpikeTrapSprite = new List<Texture2D>(1)
+            {
+                Content.Load<Texture2D>("Traps/Trap")
+            };
+
+            FireTrapSprite = new List<Texture2D>(1)
+            {
+                Content.Load<Texture2D>("Traps/Trap")
+            };
         }
 
         private void LoadTurretSprites()
@@ -3285,13 +3266,19 @@ namespace TowerDefensePrototype
                     {
                         case InvaderType.Soldier:
                             {
-                                EmitterList2.Add(new Emitter(SplodgeParticle, new Vector2(invader.DestinationRectangle.Center.X, invader.DestinationRectangle.Center.Y),
-                                new Vector2(0, 360), new Vector2(1, 2), new Vector2(50, 100), 0.5f, true, new Vector2(0, 360), new Vector2(1, 3),
-                                new Vector2(0.02f, 0.06f), RandomColor(Color.Red, Color.DarkRed, Color.DarkRed), RandomColor(Color.Red, Color.DarkRed, Color.DarkRed), 0.1f, 0.2f, 20, 10, true, new Vector2(invader.MaxY, invader.MaxY), false, null, true, false));
+                                EmitterList2.Add(new Emitter(SplodgeParticle, 
+                                new Vector2(invader.DestinationRectangle.Center.X, invader.DestinationRectangle.Center.Y),
+                                new Vector2(0, 360), new Vector2(1, 2), new Vector2(50, 100), 0.5f, true, new Vector2(0, 360), 
+                                new Vector2(1, 3), new Vector2(0.02f, 0.06f), RandomColor(Color.Red, Color.DarkRed, Color.DarkRed), 
+                                RandomColor(Color.Red, Color.DarkRed, Color.DarkRed), 0.1f, 0.2f, 20, 10, true,
+                                new Vector2(invader.MaxY, invader.MaxY), false, null, true, false, null, null, null, null, null, true, true));
 
-                                EmitterList2.Add(new Emitter(SmokeParticle, new Vector2(invader.DestinationRectangle.Center.X, invader.DestinationRectangle.Center.Y),
-                                new Vector2(0, 360), new Vector2(0.25f, 0.75f), new Vector2(20, 60), 1f, true, new Vector2(0, 360), new Vector2(0.5f, 2f),
-                                new Vector2(0.2f, 0.6f), RandomColor(Color.Red, Color.DarkRed, Color.DarkRed), RandomColor(Color.Red, Color.DarkRed, Color.DarkRed), 0.01f, 0.2f, 10, 1, true, new Vector2(invader.MaxY, invader.MaxY), false, null, true, false));
+                                EmitterList2.Add(new Emitter(SmokeParticle, 
+                                new Vector2(invader.DestinationRectangle.Center.X, invader.DestinationRectangle.Center.Y),
+                                new Vector2(0, 360), new Vector2(0.25f, 0.75f), new Vector2(20, 60), 1f, true, new Vector2(0, 360), 
+                                new Vector2(0.5f, 2f), new Vector2(0.2f, 0.6f), RandomColor(Color.Red, Color.DarkRed, Color.DarkRed), 
+                                RandomColor(Color.Red, Color.DarkRed, Color.DarkRed), 0.01f, 0.2f, 10, 1, true, 
+                                new Vector2(invader.MaxY, invader.MaxY), false, null, true, false, null, null, null, null, null, true, true));
 
                                 Decal NewDecal = new Decal("BloodDecal", new Vector2(invader.DestinationRectangle.Center.X, invader.DestinationRectangle.Bottom),
                                                           (float)RandomDouble(0, 0), invader.YRange, invader.MaxY, 0.1f);
@@ -3303,25 +3290,31 @@ namespace TowerDefensePrototype
                             break;
 
                         case InvaderType.SuicideBomber:
-                            EmitterList2.Add(new Emitter(SplodgeParticle, new Vector2(invader.DestinationRectangle.Center.X, invader.DestinationRectangle.Center.Y),
-                            new Vector2(0, 360), new Vector2(0.25f, 0.5f), new Vector2(25, 50), 0.5f, true, new Vector2(0, 360), new Vector2(1, 3),
-                            new Vector2(0.02f, 0.06f), Color.DarkRed, Color.Red, 0.2f, 0.2f, 20, 10, true, new Vector2(invader.MaxY, invader.MaxY)));
+                            EmitterList2.Add(new Emitter(SplodgeParticle, 
+                            new Vector2(invader.DestinationRectangle.Center.X, invader.DestinationRectangle.Center.Y),
+                            new Vector2(0, 360), new Vector2(0.25f, 0.5f), new Vector2(25, 50), 0.5f, true, 
+                            new Vector2(0, 360), new Vector2(1, 3), new Vector2(0.02f, 0.06f), Color.DarkRed, Color.Red, 
+                            0.2f, 0.2f, 20, 10, true, new Vector2(invader.MaxY, invader.MaxY)));
 
                             EnemyExplosionList.Add(new Explosion(new Vector2(invader.DestinationRectangle.Center.X, invader.DestinationRectangle.Center.Y), 100, invader.AttackPower));
                             break;
 
                         case InvaderType.Spider:
-                            EmitterList2.Add(new Emitter(SplodgeParticle, new Vector2(invader.DestinationRectangle.Center.X, invader.DestinationRectangle.Center.Y),
-                            new Vector2(0, 360), new Vector2(1, 2), new Vector2(50, 100), 0.5f, true, new Vector2(0, 360), new Vector2(1, 3),
-                            new Vector2(0.02f, 0.06f), Color.Green, Color.Lime, 0.1f, 0.2f, 20, 10, true, new Vector2(invader.MaxY, invader.MaxY)));
+                            EmitterList2.Add(new Emitter(SplodgeParticle, 
+                            new Vector2(invader.DestinationRectangle.Center.X, invader.DestinationRectangle.Center.Y),
+                            new Vector2(0, 360), new Vector2(1, 2), new Vector2(50, 100), 0.5f, true, new Vector2(0, 360), 
+                            new Vector2(1, 3), new Vector2(0.02f, 0.06f), Color.Green, Color.Lime, 0.1f, 0.2f, 20, 10, true, 
+                            new Vector2(invader.MaxY, invader.MaxY)));
                             break;
 
                         case InvaderType.Tank:
                             EnemyExplosionList.Add(new Explosion(new Vector2(invader.DestinationRectangle.Center.X, invader.DestinationRectangle.Center.Y), 200, invader.AttackPower));
 
-                            Emitter ExplosionEmitter2 = new Emitter(SplodgeParticle, new Vector2(invader.DestinationRectangle.Center.X, invader.MaxY),
-                            new Vector2(0, 180), new Vector2(1, 4), new Vector2(20, 50), 2f, true, new Vector2(0, 360), new Vector2(1, 3),
-                            new Vector2(0.02f, 0.06f), Color.DarkSlateGray, Color.SaddleBrown, 0.2f, 0.2f, 20, 10, true, new Vector2(invader.MaxY + 8, invader.MaxY + 8));
+                            Emitter ExplosionEmitter2 = new Emitter(SplodgeParticle, 
+                                    new Vector2(invader.DestinationRectangle.Center.X, invader.MaxY), new Vector2(0, 180), new Vector2(1, 4), 
+                                    new Vector2(20, 50), 2f, true, new Vector2(0, 360), new Vector2(1, 3), new Vector2(0.02f, 0.06f), 
+                                    Color.DarkSlateGray, Color.SaddleBrown, 0.2f, 0.2f, 20, 10, true, 
+                                    new Vector2(invader.MaxY + 8, invader.MaxY + 8));
 
                             EmitterList.Add(ExplosionEmitter2);
 
@@ -3333,8 +3326,8 @@ namespace TowerDefensePrototype
 
                             EmitterList.Add(ExplosionEmitter);
 
-                            Color SmokeColor1 = Color.Lerp(Color.DarkGray, Color.Transparent, 0.5f);
-                            Color SmokeColor2 = Color.Lerp(Color.Gray, Color.Transparent, 0.5f);
+                            //Color SmokeColor1 = Color.Lerp(Color.DarkGray, Color.Transparent, 0.5f);
+                            //Color SmokeColor2 = Color.Lerp(Color.Gray, Color.Transparent, 0.5f);
 
                             Emitter newEmitter2 = new Emitter(SmokeParticle,
                                     new Vector2(invader.DestinationRectangle.Center.X, invader.MaxY),
@@ -3346,15 +3339,19 @@ namespace TowerDefensePrototype
                             break;
 
                         case InvaderType.Airship:
-                            EmitterList2.Add(new Emitter(SplodgeParticle, new Vector2(invader.DestinationRectangle.Center.X, invader.DestinationRectangle.Center.Y),
-                            new Vector2(0, 360), new Vector2(1, 2), new Vector2(50, 100), 0.5f, true, new Vector2(0, 360), new Vector2(1, 3),
-                            new Vector2(0.02f, 0.06f), Color.DarkRed, Color.Red, 0.1f, 0.2f, 20, 10, true, new Vector2(525, 630)));
+                            EmitterList2.Add(new Emitter(SplodgeParticle, 
+                                new Vector2(invader.DestinationRectangle.Center.X, invader.DestinationRectangle.Center.Y),
+                                new Vector2(0, 360), new Vector2(1, 2), new Vector2(50, 100), 0.5f, true, new Vector2(0, 360), 
+                                new Vector2(1, 3), new Vector2(0.02f, 0.06f), Color.DarkRed, Color.Red, 
+                                0.1f, 0.2f, 20, 10, true, new Vector2(525, 630)));
                             break;
 
                         case InvaderType.Slime:
-                            EmitterList2.Add(new Emitter(SplodgeParticle, new Vector2(invader.DestinationRectangle.Center.X, invader.DestinationRectangle.Center.Y),
-                            new Vector2(0, 360), new Vector2(1, 2), new Vector2(50, 100), 0.5f, true, new Vector2(0, 360), new Vector2(1, 3),
-                            new Vector2(0.02f, 0.06f), Color.HotPink, Color.LightPink, 0.1f, 0.2f, 20, 10, true, new Vector2(invader.MaxY, invader.MaxY)));
+                            EmitterList2.Add(new Emitter(SplodgeParticle, 
+                                new Vector2(invader.DestinationRectangle.Center.X, invader.DestinationRectangle.Center.Y),
+                                new Vector2(0, 360), new Vector2(1, 2), new Vector2(50, 100), 0.5f, true, new Vector2(0, 360), 
+                                new Vector2(1, 3), new Vector2(0.02f, 0.06f), Color.HotPink, Color.LightPink, 0.1f, 0.2f, 
+                                20, 10, true, new Vector2(invader.MaxY, invader.MaxY)));
                             break;
                     }
 
@@ -4115,7 +4112,7 @@ namespace TowerDefensePrototype
                         #region Machine Gun
                         case TurretType.MachineGun:
                             {
-                                //MachineShot1.Play();
+                                MachineShot1.Play();
 
                                 CurrentProfile.ShotsFired++;
 
@@ -4126,7 +4123,7 @@ namespace TowerDefensePrototype
                                     new Vector2(
                                     MathHelper.ToDegrees(-(float)Math.Atan2(Direction.Y, Direction.X)),
                                     MathHelper.ToDegrees(-(float)Math.Atan2(Direction.Y, Direction.X))),
-                                    new Vector2(15, 30), new Vector2(1, 3), 0.01f, true, new Vector2(0, 360),
+                                    new Vector2(15, 30), new Vector2(1, 3), 1f, true, new Vector2(0, 360),
                                     new Vector2(-1, 1), new Vector2(1, 3), FireColor, FireColor2, 0.0f, 0.05f, 0.5f, 1,
                                     false, new Vector2(0, 1080), true, 1);
                                 EmitterList.Add(FlashEmitter);
@@ -4160,10 +4157,40 @@ namespace TowerDefensePrototype
                                         new Vector2(
                                         MathHelper.ToDegrees(-(float)Math.Atan2(Direction.Y, Direction.X)),
                                         MathHelper.ToDegrees(-(float)Math.Atan2(Direction.Y, Direction.X))),
-                                        new Vector2(20, 35), new Vector2(1, 3), 0.01f, true, new Vector2(0, 360),
-                                        new Vector2(-1, 1), new Vector2(2, 4), FireColor, FireColor2, 0.0f, 0.05f, 0.5f, 1,
+                                        new Vector2(50, 70), new Vector2(1, 3), 0.15f, true, new Vector2(0, 360),
+                                        new Vector2(-1, 1), new Vector2(2, 4), FireColor, FireColor2, 0.0f, 0.05f, 0.5f, 4,
                                         false, new Vector2(0, 1080), true, 1);
                                 EmitterList.Add(FlashEmitter);
+
+                                Emitter FlashEmitter2 = new Emitter(FireParticle,
+                                        new Vector2(turret.BarrelEnd.X, turret.BarrelEnd.Y),
+                                        new Vector2(
+                                        MathHelper.ToDegrees(-(float)Math.Atan2(Direction.Y, Direction.X)) + 80,
+                                        MathHelper.ToDegrees(-(float)Math.Atan2(Direction.Y, Direction.X)) + 90),
+                                        new Vector2(10, 15), new Vector2(1, 3), 0.15f, true, new Vector2(0, 360),
+                                        new Vector2(-1, 1), new Vector2(2, 4), FireColor, FireColor2, 0.0f, 0.05f, 0.5f, 4,
+                                        false, new Vector2(0, 1080), true, 1);
+                                EmitterList.Add(FlashEmitter2);
+
+                                Emitter FlashEmitter3 = new Emitter(FireParticle,
+                                        new Vector2(turret.BarrelEnd.X, turret.BarrelEnd.Y),
+                                        new Vector2(
+                                        MathHelper.ToDegrees(-(float)Math.Atan2(Direction.Y, Direction.X)) - 90,
+                                        MathHelper.ToDegrees(-(float)Math.Atan2(Direction.Y, Direction.X)) - 80),
+                                        new Vector2(10, 15), new Vector2(1, 3), 0.15f, true, new Vector2(0, 360),
+                                        new Vector2(-1, 1), new Vector2(2, 4), FireColor, FireColor2, 0.0f, 0.05f, 0.5f, 4,
+                                        false, new Vector2(0, 1080), true, 1);
+                                EmitterList.Add(FlashEmitter3);
+
+                                Emitter SmokeEmitter = new Emitter(SmokeParticle,
+                                        new Vector2(turret.BarrelEnd.X, turret.BarrelEnd.Y),
+                                        new Vector2(
+                                        MathHelper.ToDegrees(-(float)Math.Atan2(Direction.Y, Direction.X)),
+                                        MathHelper.ToDegrees(-(float)Math.Atan2(Direction.Y, Direction.X))), new Vector2(4, 8), 
+                                        new Vector2(30, 40), 0.2f, true, new Vector2(0, 360), new Vector2(0, 0), 
+                                        new Vector2(0.8f, 1.2f), SmokeColor1, SmokeColor2, 0f, 0.05f, 1, 1, false,
+                                        new Vector2(0, 1080), true, null, null, null, null, null, null, null, 0.08f, true, true);
+                                EmitterList.Add(SmokeEmitter);
 
                                 //HeavyProjectile = new CannonBall(new Vector2(turret.BarrelEnd.X, turret.BarrelEnd.Y), 16, turret.FireRotation, 0.2f, turret.Damage, turret.BlastRadius,
                                 //    new Vector2(MathHelper.Clamp(turret.Position.Y + 32, 690, 930), 930));
@@ -4214,7 +4241,8 @@ namespace TowerDefensePrototype
                                     turret.Rotation - MathHelper.ToRadians((float)RandomDouble(175, 185)),
                                     (float)RandomDouble(1, 3), 500, 1f, true, (float)RandomDouble(-10, 10),
                                     (float)RandomDouble(-6, 6), 1f, Color.Orange, Color.Lerp(Color.White, Color.Transparent, 0.25f), 0.35f, true, Random.Next(Tower.DestinationRectangle.Bottom, Tower.DestinationRectangle.Bottom + 32),
-                                    false, null, true, true, true));
+                                    false, null, true, true, true, false, 0, SpriteEffects.None, 4000
+                                    ));
                             }
                             break;
                         #endregion
@@ -4413,15 +4441,15 @@ namespace TowerDefensePrototype
 
                 switch (heavyProjectile.HeavyProjectileType)
                 {
-                    default:
-                        //This makes sure that the trails from the projectiles appear correctly oriented while falling
-                        foreach (Emitter emitter in heavyProjectile.EmitterList)
-                        {
-                            emitter.AngleRange = new Vector2(
-                                -(MathHelper.ToDegrees((float)Math.Atan2(-heavyProjectile.Velocity.Y, -heavyProjectile.Velocity.X))) - 20,
-                                -(MathHelper.ToDegrees((float)Math.Atan2(-heavyProjectile.Velocity.Y, -heavyProjectile.Velocity.X))) + 20);
-                        }
-                        break;
+                    //default:
+                    //    //This makes sure that the trails from the projectiles appear correctly oriented while falling
+                    //    foreach (Emitter emitter in heavyProjectile.EmitterList)
+                    //    {
+                    //        emitter.AngleRange = new Vector2(
+                    //            -(MathHelper.ToDegrees((float)Math.Atan2(-heavyProjectile.Velocity.Y, -heavyProjectile.Velocity.X))) - 20,
+                    //            -(MathHelper.ToDegrees((float)Math.Atan2(-heavyProjectile.Velocity.Y, -heavyProjectile.Velocity.X))) + 20);
+                    //    }
+                    //    break;
 
                     case HeavyProjectileType.Boomerang:
                         {
@@ -4480,7 +4508,7 @@ namespace TowerDefensePrototype
                             {
                                 Emitter ExplosionEmitter = new Emitter(FireParticle,
                                         new Vector2(heavyProjectile.Position.X, heavyProjectile.MaxY),
-                                        new Vector2(20, 160), new Vector2(3, 8), new Vector2(5, 40), 0.01f, true, new Vector2(0, 360),
+                                        new Vector2(20, 160), new Vector2(6, 14), new Vector2(5, 7), 1f, true, new Vector2(0, 360),
                                         new Vector2(0, 0), new Vector2(3, 4), Color.Lerp(FireColor, Color.Transparent, 0.5f),
                                         Color.Lerp(FireColor2, Color.Transparent, 0.5f), 0.0f, 0.1f, 1, 1, false,
                                         new Vector2(0, 1080), true);
@@ -4488,7 +4516,7 @@ namespace TowerDefensePrototype
 
                                 Emitter ExplosionEmitter2 = new Emitter(FireParticle,
                                         new Vector2(heavyProjectile.Position.X, heavyProjectile.MaxY),
-                                        new Vector2(70, 110), new Vector2(4, 10), new Vector2(20, 60), 0.01f, true, new Vector2(0, 360),
+                                        new Vector2(70, 110), new Vector2(6, 12), new Vector2(7, 18), 1f, true, new Vector2(0, 360),
                                         new Vector2(0, 0), new Vector2(3, 4), Color.Lerp(FireColor, Color.Transparent, 0.5f),
                                         Color.Lerp(FireColor2, Color.Transparent, 0.5f), 0.0f, 0.15f, 10, 1, false,
                                         new Vector2(0, 1080), true);
@@ -4496,29 +4524,29 @@ namespace TowerDefensePrototype
 
                                 Emitter SmokeEmitter = new Emitter(SmokeParticle,
                                         new Vector2(heavyProjectile.Position.X, heavyProjectile.MaxY - 30),
-                                        new Vector2(0, 0), new Vector2(0f, 1f), new Vector2(30, 40), 0.01f, true, new Vector2(0, 360),
+                                        new Vector2(0, 0), new Vector2(0f, 1f), new Vector2(30, 40), 0.8f, true, new Vector2(0, 360),
                                         new Vector2(0, 0), new Vector2(0.8f, 1.2f), SmokeColor1, SmokeColor2, -0.1f, 0.4f, 20, 1, false,
-                                        new Vector2(0, 1080), false);
+                                        new Vector2(0, 1080), false, null, null, null, null, null, null, null, null, true, true);
                                 EmitterList.Add(SmokeEmitter);
 
-                                Emitter DebrisEmitter = new Emitter(SplodgeParticle, 
+                                Emitter DebrisEmitter = new Emitter(SplodgeParticle,
                                         new Vector2(heavyProjectile.Position.X, heavyProjectile.MaxY),
-                                        new Vector2(70, 110), new Vector2(5, 7), new Vector2(30, 110), 2f, true, new Vector2(0, 360), 
-                                        new Vector2(1, 3), new Vector2(0.007f, 0.05f), Color.DarkSlateGray, Color.SaddleBrown, 
+                                        new Vector2(70, 110), new Vector2(5, 7), new Vector2(30, 110), 1f, true, new Vector2(0, 360),
+                                        new Vector2(1, 3), new Vector2(0.007f, 0.05f), Color.DarkSlateGray, Color.SaddleBrown,
                                         0.2f, 0.2f, 5, 1, true, new Vector2(heavyProjectile.MaxY + 8, heavyProjectile.MaxY + 8));
                                 EmitterList.Add(DebrisEmitter);
 
-                                Emitter DebrisEmitter2 = new Emitter(SplodgeParticle, 
-                                        new Vector2(heavyProjectile.Position.X, heavyProjectile.MaxY), new Vector2(80, 100), 
-                                        new Vector2(2, 8), new Vector2(80, 150), 2f, true, new Vector2(0, 360), new Vector2(1, 3),
-                                        new Vector2(0.01f, 0.02f), Color.Gray, Color.SaddleBrown, 0.2f, 0.3f, 10, 5, true, 
+                                Emitter DebrisEmitter2 = new Emitter(SplodgeParticle,
+                                        new Vector2(heavyProjectile.Position.X, heavyProjectile.MaxY), new Vector2(80, 100),
+                                        new Vector2(2, 8), new Vector2(80, 150), 1f, true, new Vector2(0, 360), new Vector2(1, 3),
+                                        new Vector2(0.01f, 0.02f), Color.Gray, Color.SaddleBrown, 0.2f, 0.3f, 10, 5, true,
                                         new Vector2(heavyProjectile.MaxY + 8, heavyProjectile.MaxY + 8));
                                 EmitterList.Add(DebrisEmitter2);
 
-                                Emitter SparkEmitter = new Emitter(RoundSparkParticle, 
-                                        new Vector2(heavyProjectile.Position.X, heavyProjectile.MaxY - 20), new Vector2(0, 360), 
-                                        new Vector2(1, 4), new Vector2(120, 140), 100f, true, new Vector2(0, 360), new Vector2(1, 3),
-                                        new Vector2(0.1f, 0.3f), Color.Orange, Color.OrangeRed, 0.05f, 0.1f, 1, 10, true, 
+                                Emitter SparkEmitter = new Emitter(RoundSparkParticle,
+                                        new Vector2(heavyProjectile.Position.X, heavyProjectile.MaxY - 20), new Vector2(0, 360),
+                                        new Vector2(1, 4), new Vector2(120, 140), 1f, true, new Vector2(0, 360), new Vector2(1, 3),
+                                        new Vector2(0.1f, 0.3f), Color.Orange, Color.OrangeRed, 0.05f, 0.1f, 1, 10, true,
                                         new Vector2(heavyProjectile.MaxY + 8, heavyProjectile.MaxY + 8));
                                 AlphaEmitterList.Add(SparkEmitter);
 
@@ -5218,22 +5246,32 @@ namespace TowerDefensePrototype
                     #region MachineGun
                     case LightProjectileType.MachineGun:
                         Emitter DebrisEmitter = new Emitter(SplodgeParticle, new Vector2(CollisionEnd.X, CollisionEnd.Y),
-                        new Vector2(60, 120), new Vector2(2, 4), new Vector2(20, 40), 2f, true, new Vector2(0, 360), new Vector2(1, 3),
-                        new Vector2(0.01f, 0.03f), Color.DarkSlateGray, Color.SaddleBrown, 0.2f, 0.1f, 2, 2, true, new Vector2(CollisionEnd.Y + 8, CollisionEnd.Y + 8));
+                                                            new Vector2(60, 120), new Vector2(2, 4), new Vector2(20, 40), 2f, true, 
+                                                            new Vector2(0, 360), new Vector2(1, 3),
+                                                            new Vector2(0.02f, 0.04f), Color.DarkSlateGray, Color.SaddleBrown, 0.2f, 
+                                                            0.1f, 5, 1, true, new Vector2(CollisionEnd.Y + 8, CollisionEnd.Y + 8));
                         EmitterList.Add(DebrisEmitter);
 
+                        Emitter DebrisEmitter2 = new Emitter(SplodgeParticle, new Vector2(CollisionEnd.X, CollisionEnd.Y),
+                                                            new Vector2(80, 100), new Vector2(3, 5), new Vector2(20, 40), 2f, true, 
+                                                            new Vector2(0, 360), new Vector2(1, 3),
+                                                            new Vector2(0.01f, 0.03f), Color.DarkSlateGray, Color.SaddleBrown, 0.2f, 
+                                                            0.1f, 2, 3, true, new Vector2(CollisionEnd.Y + 8, CollisionEnd.Y + 8));
+                        EmitterList.Add(DebrisEmitter2);
+
                         Emitter SmokeEmitter = new Emitter(SmokeParticle, new Vector2(CollisionEnd.X, CollisionEnd.Y - 4),
-                        new Vector2(90, 90), new Vector2(0.5f, 1f), new Vector2(20, 30), 1f, true, new Vector2(0, 0),
-                        new Vector2(-2, 2), new Vector2(0.5f, 1f), DirtColor, DirtColor2, 0f, 0.02f, 10, 1, false, new Vector2(0, 1080), false);
+                                                           new Vector2(90, 90), new Vector2(0.5f, 1f), new Vector2(20, 30), 1f, true, 
+                                                           new Vector2(0, 0), new Vector2(-2, 2), new Vector2(0.5f, 1f), DirtColor, DirtColor2, 
+                                                           0f, 0.02f, 5, 1, false, new Vector2(0, 1080), false);
                         EmitterList.Add(SmokeEmitter);
 
-                        Emitter SparkEmitter = new Emitter(RoundSparkParticle, new Vector2(CollisionEnd.X, CollisionEnd.Y),
-                        new Vector2(0, 180),
-                        new Vector2(8,10), new Vector2(2, 15), 0.5f, true, new Vector2(0, 360),
-                        new Vector2(1, 1), new Vector2(0.01f, 0.5f), Color.Orange, Color.OrangeRed,
-                        -0.0f, 0.1f, 10, 1, true, new Vector2(CollisionEnd.Y + 8, CollisionEnd.Y + 8), false, 1, true, true, null, null, null, true);
-
-                        AlphaEmitterList.Add(SparkEmitter);
+                        //Emitter SparkEmitter = new Emitter(RoundSparkParticle, new Vector2(CollisionEnd.X, CollisionEnd.Y),
+                        //                                   new Vector2(0, 180), new Vector2(8,10), new Vector2(2, 15), 0.5f, true, 
+                        //                                   new Vector2(0, 360), new Vector2(1, 1), new Vector2(0.01f, 0.5f), 
+                        //                                   Color.Orange, Color.OrangeRed, -0.0f, 0.1f, 10, 1, true, 
+                        //                                   new Vector2(CollisionEnd.Y + 8, CollisionEnd.Y + 8), false, 
+                        //                                   1, true, true, null, null, null, true);
+                        //AlphaEmitterList.Add(SparkEmitter);
 
                         Decal NewDecal = new Decal("Decal", new Vector2(CollisionEnd.X, CollisionEnd.Y),
                                                    (float)RandomDouble(0, 0), new Vector2(690, 930), CollisionEnd.Y, 0.2f);
@@ -5493,7 +5531,7 @@ namespace TowerDefensePrototype
                         case TrapType.Wall:
                             {
                                 NewTrap = new Wall(NewTrapPosition);
-                                NewTrap.CurrentTexture = WallSprite;
+                                NewTrap.TextureList = WallSprite;
                                 TrapList.Add(NewTrap);
 
                                 ReadyToPlace = false;
@@ -5507,7 +5545,7 @@ namespace TowerDefensePrototype
                                 FireTrapStart.Play();
 
                                 NewTrap = new FireTrap(NewTrapPosition);
-                                NewTrap.CurrentTexture = FireTrapSprite;
+                                NewTrap.TextureList = FireTrapSprite;
                                 TrapList.Add(NewTrap);
 
                                 Color SmokeColor = Color.DarkGray;
@@ -5542,7 +5580,7 @@ namespace TowerDefensePrototype
                         case TrapType.Spikes:
                             {
                                 NewTrap = new SpikeTrap(NewTrapPosition);
-                                NewTrap.CurrentTexture = SpikeTrapSprite;
+                                NewTrap.TextureList = SpikeTrapSprite;
                                 TrapList.Add(NewTrap);
 
                                 ReadyToPlace = false;
@@ -5553,7 +5591,7 @@ namespace TowerDefensePrototype
                         case TrapType.Catapult:
                             {
                                 NewTrap = new CatapultTrap(NewTrapPosition);
-                                NewTrap.CurrentTexture = CatapultTrapSprite;
+                                NewTrap.TextureList = CatapultTrapSprite;
                                 TrapList.Add(NewTrap);
 
                                 ReadyToPlace = false;
@@ -5564,7 +5602,7 @@ namespace TowerDefensePrototype
                         case TrapType.Ice:
                             {
                                 NewTrap = new IceTrap(NewTrapPosition);
-                                NewTrap.CurrentTexture = IceTrapSprite;
+                                NewTrap.TextureList = IceTrapSprite;
                                 TrapList.Add(NewTrap);
 
                                 ReadyToPlace = false;
@@ -5575,7 +5613,7 @@ namespace TowerDefensePrototype
                         case TrapType.Tar:
                             {
                                 NewTrap = new TarTrap(NewTrapPosition);
-                                NewTrap.CurrentTexture = TarTrapSprite;
+                                NewTrap.TextureList = TarTrapSprite;
                                 TrapList.Add(NewTrap);
 
                                 ReadyToPlace = false;
@@ -5586,7 +5624,7 @@ namespace TowerDefensePrototype
                         case TrapType.Barrel:
                             {
                                 NewTrap = new BarrelTrap(NewTrapPosition);
-                                NewTrap.CurrentTexture = BarrelTrapSprite;
+                                NewTrap.TextureList = BarrelTrapSprite;
                                 TrapList.Add(NewTrap);
 
                                 ReadyToPlace = false;
@@ -5598,7 +5636,7 @@ namespace TowerDefensePrototype
                         case TrapType.SawBlade:
                             {
                                 NewTrap = new SawBladeTrap(NewTrapPosition);
-                                NewTrap.CurrentTexture = SawBladeTrapSprite;
+                                NewTrap.TextureList = SawBladeTrapSprite;
                                 TrapList.Add(NewTrap);
 
                                 ReadyToPlace = false;
@@ -5609,7 +5647,7 @@ namespace TowerDefensePrototype
                         case TrapType.Line:
                             {
                                 NewTrap = new LineTrap(NewTrapPosition);
-                                NewTrap.CurrentTexture = LineTrapSprite;
+                                NewTrap.TextureList = LineTrapSprite;
                                 TrapList.Add(NewTrap);
 
                                 Emitter FireEmitter = new Emitter(FireParticle, new Vector2(NewTrap.Position.X, NewTrap.Position.Y),
@@ -6257,7 +6295,109 @@ namespace TowerDefensePrototype
         }
         #endregion
 
+        #region Handle Settings
+        public void LoadSettings()
+        {
+            if (!System.IO.Directory.Exists("Content\\Settings"))
+                System.IO.Directory.CreateDirectory("Content\\Settings");
 
+            XmlSerializer serializer = new XmlSerializer(typeof(Settings));
+
+            if (File.Exists("Content\\Settings\\Settings.xml"))
+            {
+                Stream stream = new FileStream("Content\\Settings\\Settings.xml", FileMode.Open);
+                CurrentSettings = (Settings)serializer.Deserialize(stream);
+                stream.Close();
+                ApplySettings();
+            }
+            else
+            {
+                Stream stream = new FileStream("Content\\Settings\\Settings.xml", FileMode.Create);
+                CurrentSettings = DefaultSettings;
+                serializer.Serialize(stream, CurrentSettings);
+                stream.Close();
+                ApplySettings();
+            }
+        }
+
+        public void DeleteSettings()
+        {
+            if (System.IO.Directory.Exists("Content\\Settings"))
+                System.IO.Directory.Delete("Content\\Settings", true);
+        }
+
+        public void SaveSettings()
+        {
+            if (!System.IO.Directory.Exists("Content\\Settings"))
+                System.IO.Directory.CreateDirectory("Content\\Settings");
+
+            XmlSerializer serializer = new XmlSerializer(typeof(Settings));
+
+            if (File.Exists("Content\\Settings\\Settings.xml"))
+            {
+                Stream stream = new FileStream("Content\\Settings\\Settings.xml", FileMode.Create);
+                serializer.Serialize(stream, CurrentSettings);
+                stream.Close();
+            }
+        }
+
+        public void ApplySettings()
+        {
+            //Apply the current settings to the game, making sure the changes are applied
+            SoundEffect.MasterVolume = CurrentSettings.SFXVolume;
+            MediaPlayer.Volume = CurrentSettings.MusicVolume;
+        }
+        #endregion
+
+        #region Handle upgrades
+        public Turret ApplyUpgrades(Turret turret)
+        {
+            Turret UpgradedTurret = turret;
+
+            switch (turret.TurretType)
+            {
+                case TurretType.MachineGun:
+                    UpgradedTurret.FireDelay = (int)PercentageChange(turret.FireDelay, -MachineGunTurretSpeed);
+                    UpgradedTurret.Damage = (int)PercentageChange(turret.Damage, MachineGunTurretDamage);
+                    UpgradedTurret.AngleOffset = (int)PercentageChange(turret.AngleOffset, -MachineGunTurretAccuracy);
+                    break;
+
+                case TurretType.Cannon:
+                    UpgradedTurret.FireDelay = (int)PercentageChange(turret.FireDelay, -CannonTurretSpeed);
+                    UpgradedTurret.Damage = (int)PercentageChange(turret.Damage, CannonTurretDamage);
+                    UpgradedTurret.BlastRadius = (int)PercentageChange(turret.BlastRadius, CannonTurretBlastRadius);
+                    break;
+            }
+
+            return UpgradedTurret;
+        }
+
+        public void LoadUpgrades()
+        {
+            foreach (Upgrade upgrade in CurrentProfile.UpgradesList)
+            {
+                StackedUpgrade.GatlingSpeed += upgrade.GatlingSpeed;
+                StackedUpgrade.GatlingDamage += upgrade.GatlingDamage;
+                StackedUpgrade.GatlingAccuracy += upgrade.GatlingAccuracy;
+            }
+
+            MachineGunTurretSpeed += StackedUpgrade.GatlingSpeed;
+            MachineGunTurretAccuracy += StackedUpgrade.GatlingAccuracy;
+            MachineGunTurretDamage += StackedUpgrade.GatlingDamage;
+
+        }
+
+        public void ResetUpgrades()
+        {
+            StackedUpgrade = new StackedUpgrade();
+            MachineGunTurretSpeed = 0;
+            CannonTurretSpeed = 0;
+            CannonTurretDamage = 0;
+            CannonTurretBlastRadius = 0;
+        }
+        #endregion
+
+        
         public void HandleWaves(GameTime gameTime)
         {
             //------------------------------
@@ -6407,7 +6547,6 @@ namespace TowerDefensePrototype
             }
         }
 
-        //Handle levels
         public void LoadLevel(int number)
         {
             //CurrentLevel = Content.Load<Level>("Levels/Level" + number);
@@ -6428,127 +6567,6 @@ namespace TowerDefensePrototype
             StartWave = false;
 
             Resources = CurrentLevel.Resources;
-        }
-
-
-        #region Handle Settings
-        public void LoadSettings()
-        {
-            if (!System.IO.Directory.Exists("Content\\Settings"))
-                System.IO.Directory.CreateDirectory("Content\\Settings");
-
-            XmlSerializer serializer = new XmlSerializer(typeof(Settings));
-
-            if (File.Exists("Content\\Settings\\Settings.xml"))
-            {
-                Stream stream = new FileStream("Content\\Settings\\Settings.xml", FileMode.Open);
-                CurrentSettings = (Settings)serializer.Deserialize(stream);
-                stream.Close();
-                ApplySettings();
-            }
-            else
-            {
-                Stream stream = new FileStream("Content\\Settings\\Settings.xml", FileMode.Create);
-                CurrentSettings = DefaultSettings;
-                serializer.Serialize(stream, CurrentSettings);
-                stream.Close();
-                ApplySettings();
-            }
-        }
-
-        public void DeleteSettings()
-        {
-            if (System.IO.Directory.Exists("Content\\Settings"))
-                System.IO.Directory.Delete("Content\\Settings", true);
-        }
-
-        public void SaveSettings()
-        {
-            if (!System.IO.Directory.Exists("Content\\Settings"))
-                System.IO.Directory.CreateDirectory("Content\\Settings");
-
-            XmlSerializer serializer = new XmlSerializer(typeof(Settings));
-
-            if (File.Exists("Content\\Settings\\Settings.xml"))
-            {
-                Stream stream = new FileStream("Content\\Settings\\Settings.xml", FileMode.Create);
-                serializer.Serialize(stream, CurrentSettings);
-                stream.Close();
-            }
-        }
-
-        public void ApplySettings()
-        {
-            //Apply the current settings to the game, making sure the changes are applied
-            SoundEffect.MasterVolume = CurrentSettings.SFXVolume;
-            MediaPlayer.Volume = CurrentSettings.MusicVolume;
-        }
-        #endregion
-
-        //Handle upgrades
-        public Turret ApplyUpgrades(Turret turret)
-        {
-            Turret UpgradedTurret = turret;
-
-            switch (turret.TurretType)
-            {
-                case TurretType.MachineGun:
-                    UpgradedTurret.FireDelay = (int)PercentageChange(turret.FireDelay, -MachineGunTurretSpeed);
-                    UpgradedTurret.Damage = (int)PercentageChange(turret.Damage, MachineGunTurretDamage);
-                    UpgradedTurret.AngleOffset = (int)PercentageChange(turret.AngleOffset, -MachineGunTurretAccuracy);
-                    break;
-
-                case TurretType.Cannon:
-                    UpgradedTurret.FireDelay = (int)PercentageChange(turret.FireDelay, -CannonTurretSpeed);
-                    UpgradedTurret.Damage = (int)PercentageChange(turret.Damage, CannonTurretDamage);
-                    UpgradedTurret.BlastRadius = (int)PercentageChange(turret.BlastRadius, CannonTurretBlastRadius);
-                    break;
-            }
-
-            return UpgradedTurret;
-        }
-
-        public void LoadUpgrades()
-        {
-            foreach (Upgrade upgrade in CurrentProfile.UpgradesList)
-            {
-                StackedUpgrade.GatlingSpeed += upgrade.GatlingSpeed;
-                StackedUpgrade.GatlingDamage += upgrade.GatlingDamage;
-                StackedUpgrade.GatlingAccuracy += upgrade.GatlingAccuracy;
-            }
-
-            MachineGunTurretSpeed += StackedUpgrade.GatlingSpeed;
-            MachineGunTurretAccuracy += StackedUpgrade.GatlingAccuracy;
-            MachineGunTurretDamage += StackedUpgrade.GatlingDamage;
-
-        }
-
-        public void ResetUpgrades()
-        {
-            StackedUpgrade = new StackedUpgrade();
-            MachineGunTurretSpeed = 0;
-            CannonTurretSpeed = 0;
-            CannonTurretDamage = 0;
-            CannonTurretBlastRadius = 0;
-        }
-
-
-        //Some math functions
-        public double RandomDouble(double a, double b)
-        {
-            return a + Random.NextDouble() * (b - a);
-        }
-
-        public double PercentageChange(double number, double percentage) //Changes a number by a percentage. i.e. PercentageChange(100, 25) returns 125
-        {
-            double newNumber = number;
-            newNumber = newNumber + ((newNumber / 100) * percentage);
-            return newNumber;
-        }
-
-        public Vector2 PointToVector(Point point)
-        {
-            return new Vector2(point.X, point.Y);
         }
 
         //Draw the correct cursor
@@ -6651,6 +6669,46 @@ namespace TowerDefensePrototype
         }
 
 
+        #region Some cool functions
+        public double RandomDouble(double a, double b)
+        {
+            return a + Random.NextDouble() * (b - a);
+        }
+
+        public double PercentageChange(double number, double percentage) //Changes a number by a percentage. i.e. PercentageChange(100, 25) returns 125
+        {
+            double newNumber = number;
+            newNumber = newNumber + ((newNumber / 100) * percentage);
+            return newNumber;
+        }
+
+        public Vector2 PointToVector(Point point)
+        {
+            return new Vector2(point.X, point.Y);
+        }
+
+        private bool RandomBool()
+        {
+            if ((float)Random.NextDouble() > 0.5f)
+                return true;
+            else
+                return false;
+        }
+
+        private Color RandomColor(params Color[] colors)
+        {
+            List<Color> ColorList = new List<Color>();
+
+            foreach (Color color in colors)
+            {
+                ColorList.Add(color);
+            }
+
+            return ColorList[Random.Next(0, ColorList.Count)];
+        }
+        #endregion
+
+
         #region Various functions to clear current selections
         private void ClearTurretSelect()
         {
@@ -6689,26 +6747,6 @@ namespace TowerDefensePrototype
             ReadyToPlace = false;
         }
         #endregion
-
-        private bool RandomBool()
-        {
-            if ((float)Random.NextDouble() > 0.5f)
-                return true;
-            else
-                return false;
-        }
-
-        private Color RandomColor(params Color[] colors)
-        {
-            List<Color> ColorList = new List<Color>();
-
-            foreach (Color color in colors)
-            {
-                ColorList.Add(color);
-            }
-
-            return ColorList[Random.Next(0, ColorList.Count)];
-        }
 
 
         private void HandlePlacedIcons()

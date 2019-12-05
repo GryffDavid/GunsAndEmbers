@@ -51,7 +51,7 @@ namespace TowerDefensePrototype
 
             if (ShieldOn == false && CurrentShieldTime >= ShieldTime)
             {
-                CurrentShield += 0.05f;
+                CurrentShield += 0.05f * (float)(gameTime.ElapsedGameTime.TotalSeconds * 60);
                 CurrentShield = MathHelper.Clamp(CurrentShield, 0, MaxShield);
             }
 

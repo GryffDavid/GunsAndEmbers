@@ -21,8 +21,6 @@ namespace TowerDefensePrototype
             DetonateLimit = 5;
             AffectedTime = 300;
             ResourceCost = 200;
-            Radius = 3;
-            Animated = false;
         }
     }
 }

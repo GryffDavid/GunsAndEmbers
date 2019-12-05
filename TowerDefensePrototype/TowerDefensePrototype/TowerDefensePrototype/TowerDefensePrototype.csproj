@@ -121,6 +121,8 @@
     <Compile Include="Basics\LightningBolt.cs" />
     <Compile Include="Basics\Profile.cs" />
     <Compile Include="Basics\HeavyRangedInvader.cs" />
+    <Compile Include="Basics\Quad.cs" />
+    <Compile Include="Basics\UIBar.cs" />
     <Compile Include="Basics\WaveCountDown.cs" />
     <Compile Include="Basics\NumberChange.cs" />
     <Compile Include="Basics\Light.cs" />

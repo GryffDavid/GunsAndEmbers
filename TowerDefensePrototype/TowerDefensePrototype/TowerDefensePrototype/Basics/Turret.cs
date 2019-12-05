@@ -120,7 +120,7 @@ namespace TowerDefensePrototype
 
                 if (CurrentHeat < MaxHeat && CurrentHeat > 0)
                 {
-                    CurrentHeat -= CoolValue;
+                    CurrentHeat -= CoolValue * (float)(gameTime.ElapsedGameTime.TotalSeconds * 60);
                 }
 
                 if (CurrentHeat >= MaxHeat)
@@ -172,9 +172,9 @@ namespace TowerDefensePrototype
                     Direction.Normalize();
 
                     if (Overheated == false)
-                        Rotation = MathHelper.Lerp(Rotation, (float)Math.Atan2((double)Direction.Y, (double)Direction.X), 0.1f);
+                        Rotation = MathHelper.Lerp(Rotation, (float)Math.Atan2((double)Direction.Y, (double)Direction.X), 0.1f * (float)(gameTime.ElapsedGameTime.TotalSeconds * 60));
                     else
-                        Rotation = MathHelper.Lerp(Rotation, MathHelper.ToRadians(40), 0.1f);
+                        Rotation = MathHelper.Lerp(Rotation, MathHelper.ToRadians(40), 0.1f * (float)(gameTime.ElapsedGameTime.TotalSeconds * 60));
                     
                     if (double.IsNaN(Rotation) == true)
                         Rotation = -20;
@@ -184,9 +184,9 @@ namespace TowerDefensePrototype
                 else
                 {
                     if (Overheated == false)
-                        Rotation = MathHelper.Lerp(Rotation, MathHelper.ToRadians(-20), 0.1f);
+                        Rotation = MathHelper.Lerp(Rotation, MathHelper.ToRadians(-20), 0.1f * (float)(gameTime.ElapsedGameTime.TotalSeconds * 60));
                     else
-                        Rotation = MathHelper.Lerp(Rotation, MathHelper.ToRadians(40), 0.1f);
+                        Rotation = MathHelper.Lerp(Rotation, MathHelper.ToRadians(40), 0.1f * (float)(gameTime.ElapsedGameTime.TotalSeconds * 60));
 
                     if (double.IsNaN(Rotation) == true)
                         Rotation = -20;

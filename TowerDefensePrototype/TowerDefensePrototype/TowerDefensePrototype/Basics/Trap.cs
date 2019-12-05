@@ -14,75 +14,48 @@ namespace TowerDefensePrototype
     {
         public Texture2D CurrentTexture;
         public List<Texture2D> TextureList;
+        public Animation CurrentAnimation;
         public Rectangle DestinationRectangle, SourceRectangle;
         public BoundingBox BoundingBox;
         public TrapType TrapType;
         public List<Emitter> TrapEmitterList = new List<Emitter>();
         public HorizontalBar TimingBar, HealthBar, DetonateBar;
-        public Vector2 Scale, FrameSize, Position;
-        public Animation CurrentAnimation;
-        public bool Active, Solid, CanTrigger, Animated, Affected;
-        public float MaxHP, CurrentHP, DetonateDelay, CurrentDetonateDelay, AffectedTime, CurrentAffectedTime, DrawDepth, Bottom;        
-        public int ElapsedTime, FrameTime, FrameCount, CurrentFrame, ResourceCost, Radius, DetonateLimit, CurrentDetonateLimit;
-
+        public Vector2 Position, FrameSize;
+        public Vector2 Scale = new Vector2(1, 1);
+        public bool Active, Solid, CanTrigger, Affected;
+        public float MaxHP, CurrentHP, DetonateDelay, CurrentDetonateDelay, AffectedTime, CurrentAffectedTime, DrawDepth, Bottom;
+        public int ResourceCost, DetonateLimit, CurrentDetonateLimit, CurrentFrame;
+        public double CurrentFrameDelay;
+        public TrapState CurrentTrapState, PreviousTrapState;
+        public static Random Random = new Random();
+        
         public virtual void Initialize()
         {
             Active = true;
+
+            CurrentHP = MaxHP;
 
             TimingBar = new HorizontalBar(new Vector2(32, 4), (int)DetonateDelay, (int)CurrentDetonateDelay, Color.Green, Color.DarkRed);
             HealthBar = new HorizontalBar(new Vector2(32, 4), (int)MaxHP, (int)CurrentHP, Color.Green, Color.DarkRed);
 
             CurrentDetonateLimit = DetonateLimit;
             CurrentDetonateDelay = DetonateDelay;
-            Affected = false;
             CurrentAffectedTime = AffectedTime;
-            CurrentHP = MaxHP;
-
-            if (Animated == false)
-            {
-                FrameCount = 1;
-            }
-
-            FrameSize = new Vector2(CurrentTexture.Width / FrameCount, CurrentTexture.Height);
-            BoundingBox = new BoundingBox(new Vector3((int)(Position.X - FrameSize.X / 2), (int)(Position.Y - FrameSize.Y), 0), 
-                                          new Vector3((int)(Position.X - FrameSize.X / 2) + FrameSize.X, (int)(Position.Y - FrameSize.Y) + FrameSize.Y, 0));
-            ElapsedTime = 0;
-            CurrentFrame = 0;
+            
+            Affected = false;            
 
             Bottom = BoundingBox.Max.Y;
             DrawDepth = Bottom / 1080;
-
-            foreach (Emitter emitter in TrapEmitterList)
-            {
-                emitter.DrawDepth = Bottom / 1080;
-            }
         }
 
         public virtual void Update(GameTime gameTime)
         {
-            if (CurrentDetonateDelay < DetonateDelay)
-            CurrentDetonateDelay += gameTime.ElapsedGameTime.Milliseconds;
+            if (CurrentHP <= 0)
+                Active = false;
 
-            CurrentAffectedTime += gameTime.ElapsedGameTime.Milliseconds;
-
-            if (Animated == true)
-            {
-                ElapsedTime += (int)gameTime.ElapsedGameTime.TotalMilliseconds;
-
-                if (ElapsedTime > FrameTime)
-                {
-                    CurrentFrame++;
-
-                    if (CurrentFrame == FrameCount)
-                        CurrentFrame = 0;
-
-                    ElapsedTime = 0;
-                }
-            }
-
-            //DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y - Texture.Height, (int)(Texture.Width), (int)(Texture.Height));
-            SourceRectangle = new Rectangle(CurrentFrame * (int)FrameSize.X, 0, (int)FrameSize.X, (int)FrameSize.Y);
-            DestinationRectangle = new Rectangle((int)BoundingBox.Min.X, (int)BoundingBox.Min.Y, (int)(BoundingBox.Max.X - BoundingBox.Min.X), (int)(BoundingBox.Max.Y - BoundingBox.Min.Y));
+            #region Handle how long the trap stays affected by outside stimulus for
+            if (CurrentAffectedTime < AffectedTime)
+                CurrentAffectedTime += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
 
             if (CurrentAffectedTime >= AffectedTime)
             {
@@ -92,6 +65,11 @@ namespace TowerDefensePrototype
             {
                 Affected = true;
             }
+            #endregion
+
+            #region Handle the timing between detonations and detonate limits
+            if (CurrentDetonateDelay < DetonateDelay)
+                CurrentDetonateDelay += gameTime.ElapsedGameTime.Milliseconds;
 
             if (CurrentDetonateDelay >= DetonateDelay)
             {
@@ -99,9 +77,9 @@ namespace TowerDefensePrototype
             }  
             else
             {
-                CanTrigger = false;               
+                CanTrigger = false;
             }
-
+           
             if (CurrentDetonateLimit == 0)
             {
                 if (TrapEmitterList.Count > 0)
@@ -115,28 +93,50 @@ namespace TowerDefensePrototype
                 }
             }
 
+            //The trap has no limit on it's detonations
             if (CurrentDetonateLimit == -1)
             {
                 Active = true;
             }
+            #endregion
 
             TimingBar.Update(new Vector2(DestinationRectangle.X, DestinationRectangle.Bottom + 16), (int)CurrentDetonateDelay);
-            HealthBar.Update(new Vector2(DestinationRectangle.X, DestinationRectangle.Bottom + 24), (int)CurrentHP); 
+            HealthBar.Update(new Vector2(DestinationRectangle.X, DestinationRectangle.Bottom + 24), (int)CurrentHP);
+
+            //Handle the animations
+            if (CurrentTrapState != PreviousTrapState)
+            {
+                CurrentFrameDelay = 0;
+                CurrentFrame = Random.Next(0, CurrentAnimation.TotalFrames);
+            }
+
+            FrameSize = new Vector2(CurrentTexture.Width / CurrentAnimation.TotalFrames, CurrentTexture.Height);
+
+            SourceRectangle = new Rectangle((int)(CurrentFrame * FrameSize.X), 0, (int)FrameSize.X, (int)FrameSize.Y);
+            DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y,
+                                                 (int)(FrameSize.X * Scale.X), (int)(FrameSize.Y * Scale.Y));
+
+            BoundingBox = new BoundingBox(new Vector3(Position.X, Position.Y, 0),
+                                          new Vector3(Position.X + FrameSize.X, Position.Y + FrameSize.Y, 0));
+            //--------------------------------//
+
 
             if (TrapEmitterList.Count > 0)
             {
                 foreach (Emitter emitter in TrapEmitterList)
                 {
                     emitter.Update(gameTime);
+
+                    if (emitter.DrawDepth != (Bottom / 1080))
+                    {
+                        emitter.DrawDepth = (Bottom / 1080);
+                    }
                 }
             }
         }
 
         public virtual void Draw(SpriteBatch spriteBatch)
         {
-            if (CurrentHP <= 0)
-                Active = false;
-            
             if (TrapEmitterList.Count > 0)
             {
                 foreach (Emitter emitter in TrapEmitterList)

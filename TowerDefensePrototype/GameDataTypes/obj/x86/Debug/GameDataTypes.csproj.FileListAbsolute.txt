@@ -16,9 +16,21 @@ D:\Google Drive\Tower Defense Backups\TowerDefensePrototype 65 (Decouple attempt
 D:\Google Drive\Tower Defense Backups\TowerDefensePrototype 65 (Decouple attempt 2)\GameDataTypes\obj\x86\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
 D:\Google Drive\Tower Defense Backups\TowerDefensePrototype 65 (Decouple attempt 2)\GameDataTypes\obj\x86\Debug\GameDataTypes.dll
 D:\Google Drive\Tower Defense Backups\TowerDefensePrototype 65 (Decouple attempt 2)\GameDataTypes\obj\x86\Debug\GameDataTypes.pdb
-D:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 67 (Decouple attempt 2)\GameDataTypes\bin\x86\Debug\GameDataTypes.dll
-D:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 67 (Decouple attempt 2)\GameDataTypes\bin\x86\Debug\GameDataTypes.pdb
-D:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 67 (Decouple attempt 2)\GameDataTypes\obj\x86\Debug\GameDataTypes.csprojResolveAssemblyReference.cache
-D:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 67 (Decouple attempt 2)\GameDataTypes\obj\x86\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
-D:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 67 (Decouple attempt 2)\GameDataTypes\obj\x86\Debug\GameDataTypes.dll
-D:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 67 (Decouple attempt 2)\GameDataTypes\obj\x86\Debug\GameDataTypes.pdb
+D:\Google Drive\Tower Defense Backups\TowerDefensePrototype 67 (Decouple attempt 2)\GameDataTypes\bin\x86\Debug\GameDataTypes.dll
+D:\Google Drive\Tower Defense Backups\TowerDefensePrototype 67 (Decouple attempt 2)\GameDataTypes\bin\x86\Debug\GameDataTypes.pdb
+D:\Google Drive\Tower Defense Backups\TowerDefensePrototype 67 (Decouple attempt 2)\GameDataTypes\obj\x86\Debug\GameDataTypes.csprojResolveAssemblyReference.cache
+D:\Google Drive\Tower Defense Backups\TowerDefensePrototype 67 (Decouple attempt 2)\GameDataTypes\obj\x86\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
+D:\Google Drive\Tower Defense Backups\TowerDefensePrototype 67 (Decouple attempt 2)\GameDataTypes\obj\x86\Debug\GameDataTypes.dll
+D:\Google Drive\Tower Defense Backups\TowerDefensePrototype 67 (Decouple attempt 2)\GameDataTypes\obj\x86\Debug\GameDataTypes.pdb
+D:\Google Drive\Tower Defense Backups\TowerDefensePrototype 67\GameDataTypes\bin\x86\Debug\GameDataTypes.dll
+D:\Google Drive\Tower Defense Backups\TowerDefensePrototype 67\GameDataTypes\bin\x86\Debug\GameDataTypes.pdb
+D:\Google Drive\Tower Defense Backups\TowerDefensePrototype 67\GameDataTypes\obj\x86\Debug\GameDataTypes.csprojResolveAssemblyReference.cache
+D:\Google Drive\Tower Defense Backups\TowerDefensePrototype 67\GameDataTypes\obj\x86\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
+D:\Google Drive\Tower Defense Backups\TowerDefensePrototype 67\GameDataTypes\obj\x86\Debug\GameDataTypes.dll
+D:\Google Drive\Tower Defense Backups\TowerDefensePrototype 67\GameDataTypes\obj\x86\Debug\GameDataTypes.pdb
+D:\Google Drive\Tower Defense Backups\TowerDefensePrototype 68\GameDataTypes\bin\x86\Debug\GameDataTypes.dll
+D:\Google Drive\Tower Defense Backups\TowerDefensePrototype 68\GameDataTypes\bin\x86\Debug\GameDataTypes.pdb
+D:\Google Drive\Tower Defense Backups\TowerDefensePrototype 68\GameDataTypes\obj\x86\Debug\GameDataTypes.csprojResolveAssemblyReference.cache
+D:\Google Drive\Tower Defense Backups\TowerDefensePrototype 68\GameDataTypes\obj\x86\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
+D:\Google Drive\Tower Defense Backups\TowerDefensePrototype 68\GameDataTypes\obj\x86\Debug\GameDataTypes.dll
+D:\Google Drive\Tower Defense Backups\TowerDefensePrototype 68\GameDataTypes\obj\x86\Debug\GameDataTypes.pdb

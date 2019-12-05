@@ -15,7 +15,8 @@ namespace TowerDefensePrototype
         public float Rotation, MaxY;
         public string TextureName;
         float TransparencyPercentage, CurrentTime, MaxTime;
-
+        float CurrentFadeDelay, FadeDelay;
+        
         public Decal(string textureName, Vector2 position, float rotation, Vector2 maxV, float maxY, float imageScale)
         {
             Position = position;
@@ -25,6 +26,7 @@ namespace TowerDefensePrototype
             MaxY = maxY;
             TransparencyPercentage = 100;
             MaxTime = 100;
+            FadeDelay = 4000;
 
             //float PercentY = (100 / (maxV.Y - maxV.X)) * (maxV.Y - maxY);
             //float thing = (100 - PercentY) / 100;
@@ -37,9 +39,15 @@ namespace TowerDefensePrototype
 
         public void Update(GameTime gameTime)
         {
-            CurrentTime += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+            if (CurrentFadeDelay < FadeDelay)
+                CurrentFadeDelay += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
 
-            if (CurrentTime > MaxTime)
+            if (CurrentFadeDelay >= FadeDelay)
+            {
+                CurrentTime += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+            }
+
+            if (CurrentTime >= MaxTime)
             {
                 TransparencyPercentage--;
                 CurrentTime = 0;
@@ -56,8 +64,6 @@ namespace TowerDefensePrototype
             spriteBatch.Draw(Texture, new Rectangle((int)Position.X, (int)Position.Y, (int)(Texture.Width*Scale.X), 
                             (int)(Texture.Height*Scale.Y)), null, Color.Lerp(Color.Transparent, Color.White, (0.5f)*TransparencyPercentage/100), Rotation, new Vector2(Texture.Width / 2, Texture.Height / 2), 
                             SpriteEffects.None, 0);
-
-            
         }
     }
 }
