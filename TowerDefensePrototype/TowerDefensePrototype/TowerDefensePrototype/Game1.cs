@@ -11,16 +11,14 @@ using Microsoft.Xna.Framework.Media;
 
 namespace TowerDefensePrototype
 {
+    public enum TrapType { Blank, Wall, Spikes, Catapult, Fire };
+    public enum TurretType { Blank };
+
     public class Game1 : Microsoft.Xna.Framework.Game
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        Tower Tower;
         UserInterface UserInterface;
-        StaticSprite Ground;
-        TrapButtons TrapButtons;
-        SpriteFont ResourceFont;
-        int Resources;
 
         public Game1()
         {
@@ -28,16 +26,13 @@ namespace TowerDefensePrototype
             graphics.PreferredBackBufferWidth = 1280;
             graphics.PreferredBackBufferHeight = 720;
             IsMouseVisible = true;
+            //graphics.IsFullScreen = true;
             Content.RootDirectory = "Content";
         }
 
         protected override void Initialize()
         {
-            Resources = 100;
-            Tower = new Tower("Tower", "TowerButton", new Vector2(32, 720-160-256-30), 100, 1);
-            UserInterface = new UserInterface("UI", new Vector2(0,720-160));
-            Ground = new StaticSprite("Ground", new Vector2(0, 720-160-48));
-            TrapButtons = new TrapButtons("TrapButton", new Vector2(0, 720 - 160-32),2);
+            UserInterface = new UserInterface(6, 3, 120, Content);           
             base.Initialize();
         }
 
@@ -45,11 +40,7 @@ namespace TowerDefensePrototype
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            Tower.LoadContent(Content);
             UserInterface.LoadContent(Content);
-            Ground.LoadContent(Content);
-            TrapButtons.LoadContent(Content);
-            ResourceFont = Content.Load<SpriteFont>("ResourceFont");
         }
 
         protected override void UnloadContent()
@@ -59,21 +50,15 @@ namespace TowerDefensePrototype
 
         protected override void Update(GameTime gameTime)
         {
-            Tower.Update(gameTime);
             UserInterface.Update(gameTime);
-            TrapButtons.Update(gameTime);
             base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
-            spriteBatch.Begin();
-                spriteBatch.DrawString(ResourceFont, "Resources: " + Resources.ToString(), new Vector2(32, 32), Color.White);
-                Tower.Draw(spriteBatch);
-                Ground.Draw(spriteBatch);
+            spriteBatch.Begin();                
                 UserInterface.Draw(spriteBatch);
-                TrapButtons.Draw(spriteBatch);
             spriteBatch.End();
 
             base.Draw(gameTime);

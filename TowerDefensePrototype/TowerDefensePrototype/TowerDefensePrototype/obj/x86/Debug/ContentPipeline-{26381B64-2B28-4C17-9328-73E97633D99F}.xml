@@ -7,7 +7,7 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>G:\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\Tower.xnb</Output>
+      <Output>G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 2\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\Tower.xnb</Output>
       <Time>2013-07-21T18:31:14+02:00</Time>
     </Item>
     <Item>
@@ -16,7 +16,7 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>G:\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\UI.xnb</Output>
+      <Output>G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 2\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\UI.xnb</Output>
       <Time>2013-07-21T20:32:24+02:00</Time>
     </Item>
     <Item>
@@ -25,7 +25,7 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>G:\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\Button.xnb</Output>
+      <Output>G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 2\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\Button.xnb</Output>
       <Time>2013-07-21T19:43:40+02:00</Time>
     </Item>
     <Item>
@@ -34,7 +34,7 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>G:\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\Ground.xnb</Output>
+      <Output>G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 2\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\Ground.xnb</Output>
       <Time>2013-07-21T20:47:38+02:00</Time>
     </Item>
     <Item>
@@ -43,7 +43,7 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>G:\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\TowerButton.xnb</Output>
+      <Output>G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 2\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\TowerButton.xnb</Output>
       <Time>2013-07-21T20:58:39+02:00</Time>
     </Item>
     <Item>
@@ -52,7 +52,7 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>G:\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\TrapButton.xnb</Output>
+      <Output>G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 2\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\TrapButton.xnb</Output>
       <Time>2013-07-21T21:21:24+02:00</Time>
     </Item>
     <Item>
@@ -61,8 +61,44 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>G:\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\BarricadeButton.xnb</Output>
+      <Output>G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 2\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\BarricadeButton.xnb</Output>
       <Time>2013-07-21T22:27:34+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Blank.png</Source>
+      <Name>Blank</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 2\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\Blank.xnb</Output>
+      <Time>2013-07-25T13:01:17+02:00</Time>
+    </Item>
+    <Item>
+      <Source>KnightInvader.png</Source>
+      <Name>KnightInvader</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 2\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\KnightInvader.xnb</Output>
+      <Time>2013-07-25T15:55:17+02:00</Time>
+    </Item>
+    <Item>
+      <Source>OrcMinion.png</Source>
+      <Name>OrcMinion</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 2\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\OrcMinion.xnb</Output>
+      <Time>2013-07-25T15:55:17+02:00</Time>
+    </Item>
+    <Item>
+      <Source>SpikeTrap.png</Source>
+      <Name>SpikeTrap</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 2\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\SpikeTrap.xnb</Output>
+      <Time>2013-07-26T17:22:53+02:00</Time>
     </Item>
     <Item>
       <Source>Wall.png</Source>
@@ -70,8 +106,44 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>G:\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\Wall.xnb</Output>
-      <Time>2013-07-25T11:59:39+02:00</Time>
+      <Output>G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 2\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\Wall.xnb</Output>
+      <Time>2013-07-28T14:44:54+02:00</Time>
+    </Item>
+    <Item>
+      <Source>FireTrap.png</Source>
+      <Name>FireTrap</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 2\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\FireTrap.xnb</Output>
+      <Time>2013-07-28T15:16:11+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Soldier.png</Source>
+      <Name>Soldier</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 2\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\Soldier.xnb</Output>
+      <Time>2013-07-28T21:07:55+02:00</Time>
+    </Item>
+    <Item>
+      <Source>BasicTurret.png</Source>
+      <Name>BasicTurret</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 2\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\BasicTurret.xnb</Output>
+      <Time>2013-07-30T13:15:49+02:00</Time>
+    </Item>
+    <Item>
+      <Source>BasicTurretBase.png</Source>
+      <Name>BasicTurretBase</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 2\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\BasicTurretBase.xnb</Output>
+      <Time>2013-07-30T13:15:49+02:00</Time>
     </Item>
     <Item>
       <Source>ResourceFont.spritefont</Source>
@@ -79,7 +151,7 @@
       <Importer>FontDescriptionImporter</Importer>
       <Processor>FontDescriptionProcessor</Processor>
       <Options>None</Options>
-      <Output>G:\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\ResourceFont.xnb</Output>
+      <Output>G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 2\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\ResourceFont.xnb</Output>
       <Time>2013-07-25T10:13:13+02:00</Time>
     </Item>
     <BuildSuccessful>true</BuildSuccessful>
@@ -89,10 +161,10 @@
       <TargetProfile>HiDef</TargetProfile>
       <BuildConfiguration>Debug</BuildConfiguration>
       <CompressContent>false</CompressContent>
-      <RootDirectory>G:\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototypeContent\</RootDirectory>
-      <LoggerRootDirectory>G:\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\</LoggerRootDirectory>
-      <IntermediateDirectory>G:\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\obj\x86\Debug\</IntermediateDirectory>
-      <OutputDirectory>G:\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\</OutputDirectory>
+      <RootDirectory>G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 2\TowerDefensePrototype\TowerDefensePrototypeContent\</RootDirectory>
+      <LoggerRootDirectory>G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 2\TowerDefensePrototype\TowerDefensePrototype\</LoggerRootDirectory>
+      <IntermediateDirectory>G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 2\TowerDefensePrototype\TowerDefensePrototype\obj\x86\Debug\</IntermediateDirectory>
+      <OutputDirectory>G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 2\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Debug\Content\</OutputDirectory>
     </Settings>
     <Assemblies>
       <Assembly>
@@ -121,7 +193,7 @@
       </Assembly>
       <Assembly>
         <Key>C:\Windows\Microsoft.Net\assembly\GAC_32\Microsoft.Xna.Framework.Content.Pipeline\v4.0_4.0.0.0__842cf8be1de50553\Microsoft.Xna.Framework.Content.Pipeline.dll</Key>
-        <Value>2019-08-06T19:41:21.9894906+02:00</Value>
+        <Value>2015-08-25T13:25:23.3416409+02:00</Value>
       </Assembly>
     </Assemblies>
   </Asset>

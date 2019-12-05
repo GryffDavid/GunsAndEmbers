@@ -5,5 +5,13 @@ Content\Ground.xnb
 Content\TowerButton.xnb
 Content\TrapButton.xnb
 Content\BarricadeButton.xnb
+Content\Blank.xnb
+Content\KnightInvader.xnb
+Content\OrcMinion.xnb
+Content\SpikeTrap.xnb
 Content\Wall.xnb
+Content\FireTrap.xnb
+Content\Soldier.xnb
+Content\BasicTurret.xnb
+Content\BasicTurretBase.xnb
 Content\ResourceFont.xnb

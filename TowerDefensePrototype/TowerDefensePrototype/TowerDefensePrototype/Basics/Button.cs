@@ -14,24 +14,30 @@ namespace TowerDefensePrototype
 
     class Button
     {
-        string AssetName;
+        string AssetName, IconName;
         public Vector2 FrameSize, Scale, Position, CursorPosition;
+        Vector2 IconPosition;
         Color Color;
-        Texture2D ButtonStrip;
+        Texture2D ButtonStrip, IconTexture;
         Rectangle DestinationRectangle, SourceRectangle;
+        Rectangle IconRectangle;
 
         MouseState CurrentMouseState, PreviousMouseState;
         MousePosition CurrentMousePosition, PreviousMousePosition;
         ButtonSpriteState CurrentButtonState;
 
         int CurrentFrame;
-        bool Active;
-        public bool JustClicked;
+        public bool Active, JustClicked;
+        public bool ButtonActive;//, CanBeClicked;
 
-        public Button(string assetName, Vector2 position, Vector2? scale = null, Color? color = null)
+        public Button(string assetName, Vector2 position, string iconName = null, Vector2? scale = null, Color? color = null)
         {
+            ButtonActive = true;
+
             AssetName = assetName;
             Position = position;
+
+            IconName = iconName;
 
             if (scale == null)
                 Scale = new Vector2(1, 1);
@@ -48,99 +54,118 @@ namespace TowerDefensePrototype
 
         public void LoadContent(ContentManager contentManager)
         {
-            ButtonStrip = contentManager.Load<Texture2D>(AssetName);
-            FrameSize= new Vector2((int)(ButtonStrip.Width / 3f),ButtonStrip.Height);
-            DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, (int)(FrameSize.X * Scale.X), (int)(FrameSize.Y * Scale.Y));
+            if (ButtonActive == true)
+            {
+                ButtonStrip = contentManager.Load<Texture2D>(AssetName);
+
+                FrameSize = new Vector2((int)(ButtonStrip.Width / 3f), ButtonStrip.Height);
+                DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, (int)(FrameSize.X * Scale.X), (int)(FrameSize.Y * Scale.Y));
+                
+                if (IconName != null)
+                {
+                    IconTexture = contentManager.Load<Texture2D>(IconName);
+                    IconPosition = new Vector2(Position.X + (DestinationRectangle.Width - IconTexture.Width) / 2, Position.Y + (DestinationRectangle.Height - IconTexture.Height) / 2);
+                    IconRectangle = new Rectangle((int)IconPosition.X, (int)IconPosition.Y, IconTexture.Width, IconTexture.Height);
+                }                
+            }
         }
 
         public void Update(GameTime gameTime)
         {
-            CurrentMouseState = Mouse.GetState();
+                CurrentMouseState = Mouse.GetState();
 
-            CursorPosition = new Vector2(CurrentMouseState.X, CurrentMouseState.Y);
+                CursorPosition = new Vector2(CurrentMouseState.X, CurrentMouseState.Y);
 
-            switch (CurrentButtonState)
-            {
-                case ButtonSpriteState.Released:
-                    CurrentFrame = 0;
-                    break;
+                switch (CurrentButtonState)
+                {
+                    case ButtonSpriteState.Released:
+                        CurrentFrame = 0;
+                        break;
 
-                case ButtonSpriteState.Hover:
-                    CurrentFrame = 1;
-                    break;
+                    case ButtonSpriteState.Hover:
+                        CurrentFrame = 1;
+                        break;
 
-                case ButtonSpriteState.Pressed:
-                    CurrentFrame = 2;
-                    break;
-            }
+                    case ButtonSpriteState.Pressed:
+                        CurrentFrame = 2;
+                        break;
+                }
 
-            SourceRectangle = new Rectangle(CurrentFrame * (int)FrameSize.X, 0, (int)FrameSize.X, (int)FrameSize.Y);           
+                SourceRectangle = new Rectangle(CurrentFrame * (int)FrameSize.X, 0, (int)FrameSize.X, (int)FrameSize.Y);
 
-            if (DestinationRectangle.Contains(new Point((int)CursorPosition.X, (int)CursorPosition.Y)))
-            {
-                CurrentMousePosition = MousePosition.Inside;
-            }
+                if (DestinationRectangle.Contains(new Point((int)CursorPosition.X, (int)CursorPosition.Y)))
+                {
+                    CurrentMousePosition = MousePosition.Inside;
+                }
 
-            if (!DestinationRectangle.Contains(new Point((int)CursorPosition.X, (int)CursorPosition.Y)))
-            {
-                CurrentMousePosition = MousePosition.Outside;
-            }
+                if (!DestinationRectangle.Contains(new Point((int)CursorPosition.X, (int)CursorPosition.Y)))
+                {
+                    CurrentMousePosition = MousePosition.Outside;
+                }
 
-            if (PreviousMousePosition == MousePosition.Outside && CurrentMousePosition == MousePosition.Inside && CurrentMouseState.LeftButton == ButtonState.Pressed && PreviousMouseState.LeftButton == ButtonState.Pressed)
-            {
-                Active = false;
-            }
+                if (PreviousMousePosition == MousePosition.Outside && CurrentMousePosition == MousePosition.Inside && CurrentMouseState.LeftButton == ButtonState.Pressed && PreviousMouseState.LeftButton == ButtonState.Pressed)
+                {
+                    Active = false;
+                }
 
-            if (PreviousMousePosition == MousePosition.Inside && CurrentMousePosition == MousePosition.Inside && CurrentMouseState.LeftButton == ButtonState.Pressed && PreviousMouseState.LeftButton == ButtonState.Released)
-            {
-                Active = true;
-            }
-          
-            if (PreviousMousePosition == MousePosition.Inside && CurrentMousePosition == MousePosition.Outside)
-            {
-                Active = false;
-            }
+                if (PreviousMousePosition == MousePosition.Inside && CurrentMousePosition == MousePosition.Inside && CurrentMouseState.LeftButton == ButtonState.Pressed && PreviousMouseState.LeftButton == ButtonState.Released)
+                {
+                    Active = true;
+                }
 
-            if (Active == true)
-            {
-                if (DestinationRectangle.Contains(new Point((int)CursorPosition.X, (int)CursorPosition.Y)) &&
+                if (PreviousMousePosition == MousePosition.Inside && CurrentMousePosition == MousePosition.Outside)
+                {
+                    Active = false;
+                }
+
+                if (Active == true)
+                {
+                    if (DestinationRectangle.Contains(new Point((int)CursorPosition.X, (int)CursorPosition.Y)) &&
                     CurrentMouseState.LeftButton == ButtonState.Released &&
-                    PreviousMouseState.LeftButton == ButtonState.Pressed
-                    )
-                {
-                    JustClicked = true;
-                }
-            }
+                    PreviousMouseState.LeftButton == ButtonState.Pressed)
+                    {
+                        if (ButtonActive == true)
+                            JustClicked = true;
+                        }
+                    }
 
-            if (PreviousMouseState.LeftButton == ButtonState.Released && CurrentMouseState.LeftButton == ButtonState.Released)
-            {
-                JustClicked = false;
-            }
-
-            if (DestinationRectangle.Contains(new Point((int)CursorPosition.X, (int)CursorPosition.Y)))
-            {
-                if (CurrentMouseState.LeftButton == ButtonState.Pressed && PreviousMouseState.LeftButton == ButtonState.Released)
+                if (PreviousMouseState.LeftButton == ButtonState.Released && CurrentMouseState.LeftButton == ButtonState.Released)
                 {
-                    CurrentButtonState = ButtonSpriteState.Pressed;
+                    JustClicked = false;
                 }
-        
-                if (CurrentMouseState.LeftButton == ButtonState.Released)
-                {
-                    CurrentButtonState = ButtonSpriteState.Hover;
-                }
-            }
-            else
-            {
-                CurrentButtonState = ButtonSpriteState.Released;
-            }
 
-            PreviousMousePosition = CurrentMousePosition;
-            PreviousMouseState = CurrentMouseState;
+                if (DestinationRectangle.Contains(new Point((int)CursorPosition.X, (int)CursorPosition.Y)))
+                {
+                    if (CurrentMouseState.LeftButton == ButtonState.Pressed && PreviousMouseState.LeftButton == ButtonState.Released)
+                    {
+                        CurrentButtonState = ButtonSpriteState.Pressed;
+                    }
+
+                    if (CurrentMouseState.LeftButton == ButtonState.Released)
+                    {
+                        CurrentButtonState = ButtonSpriteState.Hover;
+                    }
+                }
+                else
+                {
+                    CurrentButtonState = ButtonSpriteState.Released;
+                }
+
+                PreviousMousePosition = CurrentMousePosition;
+                PreviousMouseState = CurrentMouseState;
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(ButtonStrip, DestinationRectangle, SourceRectangle, Color);
+            if (ButtonActive == true)
+            {
+
+                spriteBatch.Draw(ButtonStrip, DestinationRectangle, SourceRectangle, Color);
+                if (IconName != null)
+                {
+                    spriteBatch.Draw(IconTexture, IconRectangle, Color.White);
+                }
+            }
         }
     }
 }
