@@ -1103,6 +1103,9 @@ namespace TowerDefensePrototype
 
                 CrepEffect.Parameters["Projection"].SetValue(Projection);
                 BlurEffect.Parameters["Projection"].SetValue(Projection);
+
+                NoBlackEffect = Content.Load<Effect>("Shaders/NoBlack");
+                NoBlackEffect.Parameters["Projection"].SetValue(Projection);
                 #endregion
 
                 #region Loading particles
@@ -2513,7 +2516,7 @@ namespace TowerDefensePrototype
             if (GameState == GameState.Playing || GameState == GameState.Paused || GameState == GameState.Victory && IsLoading == false)
             {
                 #region Draw actual game
-                
+
                 #region Emissive
                 #region Draw to Emissive Map
                 GraphicsDevice.SetRenderTarget(EmissiveMap);
@@ -2599,11 +2602,25 @@ namespace TowerDefensePrototype
                 spriteBatch.End();
                 #endregion
 
+                GraphicsDevice.SetRenderTarget(SpecMap);
+                GraphicsDevice.Clear(Color.Transparent);
+                spriteBatch.Begin();
+
+                NoBlackEffect.Parameters["InputTexture"].SetValue(EmissiveMap);
+                NoBlackEffect.CurrentTechnique = NoBlackEffect.Techniques["Technique1"];
+
+                foreach (EffectPass pass in NoBlackEffect.CurrentTechnique.Passes)
+                {
+                    pass.Apply();
+                    GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, EmissiveVertices, 0, 2);
+                }
+                spriteBatch.End();
+
                 #region Blur
                 GraphicsDevice.SetRenderTarget(BlurMap);
                 GraphicsDevice.Clear(Color.Transparent);
 
-                BlurEffect.Parameters["InputTexture"].SetValue(EmissiveMap);
+                BlurEffect.Parameters["InputTexture"].SetValue(SpecMap);
                 BlurEffect.CurrentTechnique = BlurEffect.Techniques["Technique1"];
 
                 foreach (EffectPass pass in BlurEffect.CurrentTechnique.Passes)
@@ -2819,13 +2836,13 @@ namespace TowerDefensePrototype
                 spriteBatch.End();
                 #endregion
 
-                #region Draw to SpecMap
-                GraphicsDevice.SetRenderTarget(SpecMap);
-                GraphicsDevice.Clear(Color.Black);
-                spriteBatch.Begin();
+                //#region Draw to SpecMap
+                //GraphicsDevice.SetRenderTarget(SpecMap);
+                //GraphicsDevice.Clear(Color.Black);
+                //spriteBatch.Begin();
 
-                spriteBatch.End();
-                #endregion
+                //spriteBatch.End();
+                //#endregion
 
                 #region Draw to DepthMap
                 GraphicsDevice.SetRenderTarget(DepthMap);
@@ -3792,7 +3809,6 @@ namespace TowerDefensePrototype
             #region Draw everything to the backbuffer
             GraphicsDevice.SetRenderTarget(null);
             GraphicsDevice.Clear(Color.Black);
-
             
             #region DRAW ACTUAL GAME
             if (GameState == GameState.Playing || GameState == GameState.Paused || GameState == GameState.Victory && IsLoading == false)
@@ -7131,6 +7147,7 @@ namespace TowerDefensePrototype
                                         -0.005f, 0.4f, 50, 10, false, new Vector2(0, 720), true, (collisionTrap.BoundingBox.Max.Y + 1f) / 1080f,
                                         null, null, null, null, null, false, null, null, null,
                                         null, null, null, true, null);
+                                        Emitter2.Emissive = true;
 
                                         Emitter Emitter = new Emitter(ToonSmoke3,
                                         new Vector2(heavyProjectile.Position.X, heavyProjectile.BoundingBox.Max.Y), new Vector2(angle - 30, angle + 30), new Vector2(1, 1),
@@ -7138,6 +7155,7 @@ namespace TowerDefensePrototype
                                         -0.005f, 0.4f, 50, 10, false, new Vector2(0, 720), true, (collisionTrap.BoundingBox.Max.Y + 1f) / 1080f,
                                         null, null, null, null, null, false, null, null, null,
                                         null, null, null, true, null);
+                                        Emitter.Emissive = true;
 
                                         YSortedEmitterList.Add(Emitter);
                                         YSortedEmitterList.Add(Emitter2);
@@ -7170,6 +7188,8 @@ namespace TowerDefensePrototype
                                         new Color(255, 255, 255, 255), 0f, 0.05f, 50f, 7, false, new Vector2(0f, 1080), true,
                                         (collisionTrap.BoundingBox.Max.Y + 3f) / 1080f, false, false, null, null, 0f, true, new Vector2(0.11f, 0.11f), false, false, 0f,
                                         false, false, false, null);
+
+                                        HitEffect1.Emissive = true;
                                         ExplosionEmitter.Emissive = true;
                                         YSortedEmitterList.Add(HitEffect1);
 
