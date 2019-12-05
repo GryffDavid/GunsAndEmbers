@@ -10,7 +10,7 @@ namespace TowerDefensePrototype
 {
     public enum InvaderState { Walking, Standing, Melee, Ranged };
 
-    public abstract class Invader
+    public abstract class Invader : Drawable
     {
         //public string AssetName;
         public Texture2D CurrentTexture, Shadow, IceBlock;
@@ -20,7 +20,7 @@ namespace TowerDefensePrototype
         public Color Color, BurnColor, FrozenColor, AcidColor;
         public BoundingBox BoundingBox;
         public Double AttackDelay, CurrentAttackDelay;
-        public float MaxHP, CurrentHP, PreviousHP, MaxY, Gravity, DrawDepth, Bottom, BurnDamage, Speed, SlowSpeed;
+        public float MaxHP, CurrentHP, PreviousHP, MaxY, Gravity, Bottom, BurnDamage, Speed, SlowSpeed;
         public int ResourceValue, AttackPower, CurrentFrame;
         public abstract void TrapDamage(TrapType trapType);
         public static Random Random = new Random();
@@ -199,23 +199,19 @@ namespace TowerDefensePrototype
                                               new Vector3(Position.X + FrameSize.X, Position.Y + FrameSize.Y, 0));
 
                 Bottom = DestinationRectangle.Bottom;
-                DrawDepth = Bottom / 1080;
+                base.DrawDepth = Bottom / 1080;
 
                 PreviousInvaderState = CurrentInvaderState;
             }
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public override void Draw(SpriteBatch spriteBatch)
         {
             if (Active == true)
             {
                 spriteBatch.Draw(Shadow, new Rectangle(DestinationRectangle.Left, (int)MaxY - (DestinationRectangle.Height / 8), DestinationRectangle.Width, DestinationRectangle.Height / 4), Color.Lerp(Color.White, Color.Transparent, 0.75f));
 
-                if (FireEmitter != null)
-                {
-                    FireEmitter.Draw(spriteBatch);
-                }
-
+                
                 BoundingBox = new BoundingBox(new Vector3(Position.X, Position.Y, 0),
                               new Vector3(Position.X + (FrameSize.X * Scale.X), Position.Y + (FrameSize.Y * Scale.Y), 0));
 
@@ -223,10 +219,21 @@ namespace TowerDefensePrototype
                 spriteBatch.Draw(CurrentTexture, DestinationRectangle, SourceRectangle, Color, MathHelper.ToRadians(0),
                                  Vector2.Zero, SpriteEffects.None, DrawDepth);
 
+                if (FireEmitter != null)
+                {
+                    FireEmitter.Draw(spriteBatch);
+                }
+
                 if (Frozen == true)
                 {
                     double IceTransparency = ((75 / FreezeDelay) * CurrentFreezeDelay) / 100;
-                    spriteBatch.Draw(IceBlock, new Rectangle((int)Position.X, DestinationRectangle.Bottom - IceBlock.Height + 8, IceBlock.Width, IceBlock.Height), null, Color.Lerp(Color.White, Color.Transparent, (float)IceTransparency), 0, Vector2.Zero, SpriteEffects.None, DrawDepth + 0.0001f);
+                    spriteBatch.Draw(IceBlock, 
+                        new Rectangle(
+                            (int)Position.X, 
+                            DestinationRectangle.Bottom - IceBlock.Height + 8, 
+                            IceBlock.Width, IceBlock.Height), 
+                        null, Color.Lerp(Color.White, Color.Transparent, (float)IceTransparency), 0, 
+                        Vector2.Zero, SpriteEffects.None, DrawDepth + 0.0001f);
                 }
             }
         }

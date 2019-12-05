@@ -7,13 +7,13 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace TowerDefensePrototype
 {
-    public class Particle
+    public class Particle : Drawable
     {
         public Texture2D Texture;
         public Vector2 CurrentPosition, Direction, Velocity, YRange, Origin, StartingPosition;
         public Rectangle DestinationRectangle;
         public float Angle, Speed, CurrentHP, MaxHP, CurrentTransparency, MaxTransparency, CurrentScale, MaxScale, MaxY;
-        public float RotationIncrement, CurrentRotation, Gravity, DrawDepth, Friction, FadeDelay, CurrentFadeDelay;
+        public float RotationIncrement, CurrentRotation, Gravity, Friction, FadeDelay, CurrentFadeDelay;
         public Color CurrentColor, EndColor, StartColor;
         public bool Active, Fade, BouncedOnGround, CanBounce, Shrink, StopBounce, HardBounce, Shadow, RotateVelocity;
         static Random Random = new Random();
@@ -85,8 +85,6 @@ namespace TowerDefensePrototype
                 Friction = 0;     
 
             Origin = new Vector2(Texture.Width / 2, Texture.Height / 2);
-
-            
         }
 
         public void Update(GameTime gameTime)
@@ -245,19 +243,13 @@ namespace TowerDefensePrototype
             CurrentColor = Color.Lerp(EndColor, StartColor, PercentageHP/100);            
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public override void Draw(SpriteBatch spriteBatch)
         {
             if (Active == true)
             {
                 spriteBatch.Draw(Texture, DestinationRectangle, null, Color.Lerp(Color.Transparent, CurrentColor, CurrentTransparency),
                                  MathHelper.ToRadians(CurrentRotation), Origin, Orientation, DrawDepth);
-            }
-        }
 
-        public void DrawShadow(SpriteBatch spriteBatch)
-        {
-            if (Active == true)
-            {
                 if (Shadow == true)
                 {
                     float PercentToGround = (100 / (500 - MaxY)) * (CurrentPosition.Y - MaxY);

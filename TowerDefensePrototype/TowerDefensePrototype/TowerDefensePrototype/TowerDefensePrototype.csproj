@@ -127,6 +127,7 @@
     <Compile Include="Basics\WaveCountDown.cs" />
     <Compile Include="Basics\NumberChange.cs" />
     <Compile Include="Basics\Light.cs" />
+    <Compile Include="Basics\Drawable.cs" />
     <Compile Include="Invaders\TestInvader.cs" />
     <Compile Include="Levels\TutorialLevel.cs" />
     <Compile Include="Traps\OffenseTraps\LineTrap.cs" />

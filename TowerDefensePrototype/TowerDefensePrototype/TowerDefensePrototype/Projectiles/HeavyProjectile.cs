@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Content;
 
 namespace TowerDefensePrototype
 {
-    public abstract class HeavyProjectile
+    public abstract class HeavyProjectile : Drawable
     {
         public Texture2D Texture;
         public string TextureName;
@@ -37,6 +37,7 @@ namespace TowerDefensePrototype
             Scale = new Vector2(1, 1);
             Origin = new Vector2(Texture.Width / 2, Texture.Height / 2);
             Shadow = true;
+            DrawDepth = MaxY / 1080;
         }
 
         public virtual void Update(GameTime gameTime)
@@ -148,7 +149,7 @@ namespace TowerDefensePrototype
             }
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public override void Draw(SpriteBatch spriteBatch)
         {           
             if (Active == true)
             {
@@ -156,19 +157,8 @@ namespace TowerDefensePrototype
                 DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, Texture.Width*(int)Scale.X, Texture.Height*(int)Scale.Y);
                 CollisionRectangle = new Rectangle(DestinationRectangle.X, DestinationRectangle.Y, DestinationRectangle.Width / 2, DestinationRectangle.Height / 2);
                 spriteBatch.Draw(Texture, DestinationRectangle, null, CurrentColor, CurrentRotation,
-                    new Vector2(Origin.X, Origin.Y), SpriteEffects.None, MaxY / 1080);
-            }
+                    new Vector2(Origin.X, Origin.Y), SpriteEffects.None, DrawDepth);                
 
-            foreach (Emitter emitter in EmitterList)
-            {
-                emitter.Draw(spriteBatch);
-            }
-        }
-
-        public void DrawShadow(SpriteBatch spriteBatch)
-        {
-            if (Active == true)
-            {
                 if (Shadow == true)
                 {
                     //This makes the scale change depending on distance to ground
@@ -186,11 +176,11 @@ namespace TowerDefensePrototype
                     Color ShadowColor = Color.Lerp(Color.Transparent, Color.Black, 0.02f);
 
                     spriteBatch.Draw(Texture,
-                        new Rectangle((int)Position.X, (int)MaxY + 4, (int)(Texture.Width * ShadowScale.X/2), (int)(Texture.Height * ShadowScale.Y/2)),
+                        new Rectangle((int)Position.X, (int)MaxY + 4, (int)(Texture.Width * ShadowScale.X / 2), (int)(Texture.Height * ShadowScale.Y / 2)),
                         null, ShadowColor, CurrentRotation, Origin, SpriteEffects.None, (DestinationRectangle.Bottom / 1080));
 
                     spriteBatch.Draw(Texture,
-                       new Rectangle((int)Position.X, (int)MaxY + 4, (int)(Texture.Width * ShadowScale.X/1.7f), (int)(Texture.Height * ShadowScale.Y/1.7f)),
+                       new Rectangle((int)Position.X, (int)MaxY + 4, (int)(Texture.Width * ShadowScale.X / 1.7f), (int)(Texture.Height * ShadowScale.Y / 1.7f)),
                        null, ShadowColor, CurrentRotation, Origin, SpriteEffects.None, (DestinationRectangle.Bottom / 1080));
 
                     spriteBatch.Draw(Texture,
@@ -206,6 +196,11 @@ namespace TowerDefensePrototype
                        null, ShadowColor, CurrentRotation, Origin, SpriteEffects.None, (DestinationRectangle.Bottom / 1080));
                 }
             }
-        }
+
+            foreach (Emitter emitter in EmitterList)
+            {
+                emitter.Draw(spriteBatch);
+            }
+        }       
     }
 }

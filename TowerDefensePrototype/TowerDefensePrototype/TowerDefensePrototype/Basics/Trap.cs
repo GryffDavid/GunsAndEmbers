@@ -10,7 +10,7 @@ namespace TowerDefensePrototype
 {
     public enum TrapState { Untriggered, Triggering, Active, Resetting };
 
-    public abstract class Trap
+    public abstract class Trap : Drawable
     {
         public Texture2D CurrentTexture;
         public List<Texture2D> TextureList;
@@ -23,7 +23,7 @@ namespace TowerDefensePrototype
         public Vector2 Position, FrameSize;
         public Vector2 Scale = new Vector2(1, 1);
         public bool Active, Solid, CanTrigger, Affected;
-        public float MaxHP, CurrentHP, DetonateDelay, CurrentDetonateDelay, AffectedTime, CurrentAffectedTime, DrawDepth, Bottom;
+        public float MaxHP, CurrentHP, DetonateDelay, CurrentDetonateDelay, AffectedTime, CurrentAffectedTime, Bottom;
         public int ResourceCost, DetonateLimit, CurrentDetonateLimit, CurrentFrame;
         public double CurrentFrameDelay;
         public static Random Random = new Random();
@@ -41,9 +41,7 @@ namespace TowerDefensePrototype
             CurrentDetonateDelay = DetonateDelay;
             CurrentAffectedTime = AffectedTime;
             
-            Affected = false;            
-
-            
+            Affected = false;
         }
 
         public virtual void Update(GameTime gameTime)
@@ -125,7 +123,7 @@ namespace TowerDefensePrototype
                                           new Vector3(Position.X + FrameSize.X, Position.Y + FrameSize.Y, 0));
 
             Bottom = BoundingBox.Max.Y;
-            DrawDepth = (Bottom / 1080);
+            base.DrawDepth = (Bottom / 1080);
 
             //Bottom = BoundingBox.Max.Y;
             //--------------------------------//
@@ -145,7 +143,7 @@ namespace TowerDefensePrototype
             }
         }
 
-        public virtual void Draw(SpriteBatch spriteBatch)
+        public override void Draw(SpriteBatch spriteBatch)
         {
             if (TrapEmitterList.Count > 0)
             {

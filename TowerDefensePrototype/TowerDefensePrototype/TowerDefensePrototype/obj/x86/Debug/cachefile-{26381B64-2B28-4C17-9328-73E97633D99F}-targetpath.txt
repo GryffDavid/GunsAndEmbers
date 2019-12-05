@@ -92,8 +92,9 @@ Content\Particles\RoundSpark.xnb
 Content\Invaders\Soldier\SoldierStand.xnb
 Content\Invaders\Soldier\SoldierMelee.xnb
 Content\Traps\FireTrap.xnb
-Content\Particles\FireParticle.xnb
+Content\Particles\FireParticle2.xnb
 Content\Traps\WallTrap.xnb
+Content\Particles\FireParticle.xnb
 Content\Fonts\DefaultFont.xnb
 Content\Fonts\ButtonFont.xnb
 Content\Fonts\TooltipFont.xnb

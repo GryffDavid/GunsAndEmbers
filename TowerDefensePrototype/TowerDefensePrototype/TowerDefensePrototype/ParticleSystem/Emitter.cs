@@ -8,13 +8,13 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace TowerDefensePrototype
 {
-    public class Emitter
+    public class Emitter : Drawable
     {
         public Vector2 Position, AngleRange;
         public List<Particle> ParticleList;
         public Texture2D Texture;
         public Vector2 ScaleRange, HPRange, RotationIncrementRange, SpeedRange, StartingRotationRange, EmitterDirection, EmitterVelocity;
-        public float Transparency, Gravity, ActiveSeconds, Interval, MaxY, DrawDepth, EmitterSpeed,
+        public float Transparency, Gravity, ActiveSeconds, Interval, MaxY, EmitterSpeed,
                      EmitterAngle, EmitterGravity, Friction, FadeDelay;
         public Color StartColor, EndColor;
         public bool Active, Fade, CanBounce, AddMore, Shrink, StopBounce, HardBounce, BouncedOnGround, RotateVelocity, FlipHor, FlipVer;
@@ -151,7 +151,7 @@ namespace TowerDefensePrototype
             Interval = interval;
             IntervalTime = Interval;
             Burst = burst;
-            CanBounce = canBounce;
+            CanBounce = canBounce;            
             
             if (shrink == null)
                 Shrink = false;
@@ -217,7 +217,17 @@ namespace TowerDefensePrototype
             else
                 RotateVelocity = false;
 
-            MaxY = Random.Next((int)yrange.X, (int)yrange.Y);
+            if (flipHor == null)
+                FlipHor = false;
+            else
+                FlipHor = flipHor.Value;
+
+            if (flipVer == null)
+                FlipVer = false;
+            else
+                FlipVer = flipVer.Value;
+
+                MaxY = Random.Next((int)yrange.X, (int)yrange.Y);
             AddMore = true;
         }
 
@@ -364,7 +374,7 @@ namespace TowerDefensePrototype
             }
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public override void Draw(SpriteBatch spriteBatch)
         {
             foreach (Particle particle in ParticleList)
             {

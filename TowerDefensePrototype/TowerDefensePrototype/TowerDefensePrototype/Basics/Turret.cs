@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace TowerDefensePrototype
 {
-    public abstract class Turret
+    public abstract class Turret : Drawable
     {
         public Texture2D TurretBase, TurretBarrel, Rect;
         public Vector2 Direction, Position, MousePosition, BarrelPivot, BasePivot, 
@@ -218,7 +218,7 @@ namespace TowerDefensePrototype
             PreviousMouseState = CurrentMouseState;
         }
 
-        public virtual void Draw(SpriteBatch spriteBatch)
+        public override void Draw(SpriteBatch spriteBatch)
         {
 
             ///
