@@ -23,7 +23,10 @@ namespace TowerDefensePrototype
         public void LoadContent(ContentManager contentManager)
         {            
             Texture = contentManager.Load<Texture2D>(TextureName);
+
+            if (Emitter != null)
             Emitter.LoadContent(contentManager);
+
             CurrentTransparency = 0;            
         }
 
@@ -34,12 +37,14 @@ namespace TowerDefensePrototype
                 Position += Velocity;
                 Velocity.Y += Gravity;
 
+                if (Emitter != null)
                 Emitter.Position = new Vector2(Position.X, Position.Y);                                
             }
 
             if (Rotate == true)
                 Rotation = (float)Math.Atan2(Velocity.Y, Velocity.X);
 
+            if (Emitter != null)
             Emitter.Update(gameTime);
 
             if (Fade == true)
@@ -59,6 +64,7 @@ namespace TowerDefensePrototype
                     new Vector2(Texture.Width/2, Texture.Height/2), SpriteEffects.None, 1f);
             }
 
+            if (Emitter != null)
             Emitter.Draw(spriteBatch);
         }
     }

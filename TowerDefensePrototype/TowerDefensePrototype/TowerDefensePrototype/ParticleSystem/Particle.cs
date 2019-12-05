@@ -15,8 +15,7 @@ namespace TowerDefensePrototype
         public float Angle, Speed, CurrentHP, MaxHP, CurrentTransparency, Scale;
         public float RotationIncrement, CurrentRotation, Gravity;
         public Color CurrentColor, EndColor;
-        public bool Active, Fade, BouncedOnGround, CanBounce, Shrink;
-        float PercentageHP;        
+        public bool Active, Fade, BouncedOnGround, CanBounce, Shrink;       
 
         public Particle(Texture2D texture, Vector2 position, float angle, float speed, float maxHP,
             float startingTransparency, bool fade, float startingRotation, float rotationChange,

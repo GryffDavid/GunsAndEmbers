@@ -6,23 +6,20 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 
-
 namespace TowerDefensePrototype
 {
-    class FireTrap : Trap
+    class TarTrap : Trap
     {
-        public FireTrap(Vector2 position)
+        public TarTrap(Vector2 position)
         {
             Position = position;
             Solid = false;
-            AssetName = "FireTrap";
+            AssetName = "IceTrap";
             MaxHP = 50;
-            TrapType = TrapType.Fire;
-            DetonateDelay = 1000;
-            DetonateLimit = 5;
-            AffectedTime = 300;
-        }
+            TrapType = TrapType.Tar;
+            DetonateDelay = 3000;
+            DetonateLimit = 4;
+            AffectedTime = 0;
+        }    
     }
 }
-
-

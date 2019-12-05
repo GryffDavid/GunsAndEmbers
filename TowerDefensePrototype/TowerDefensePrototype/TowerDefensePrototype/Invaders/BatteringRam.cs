@@ -47,7 +47,7 @@ namespace TowerDefensePrototype
 
                     case TrapType.Catapult:
                         Trajectory(new Vector2(5, -10));
-                        break;
+                        break;                    
                 }
             }
         }

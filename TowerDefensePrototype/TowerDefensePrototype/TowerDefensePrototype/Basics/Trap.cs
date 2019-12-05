@@ -70,8 +70,15 @@ namespace TowerDefensePrototype
 
             if (CurrentDetonateLimit == 0)
             {
-                foreach (Emitter emitter in TrapEmitterList)
-                    emitter.AddMore = false;                     
+                if (TrapEmitterList.Count > 0)
+                {
+                    foreach (Emitter emitter in TrapEmitterList)
+                        emitter.AddMore = false;
+                }
+                else
+                {
+                    Active = false;
+                }
             }
 
             if (CurrentDetonateLimit == -1)

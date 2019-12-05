@@ -110,6 +110,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BarrelTrap.cs" />
     <Compile Include="Basics\AnimatedSprite.cs" />
     <Compile Include="Basics\Boss.cs" />
     <Compile Include="Basics\Button.cs" />
@@ -117,6 +118,7 @@
     <Compile Include="Basics\Invader.cs" />
     <Compile Include="Basics\HorizontalBar.cs" />
     <Compile Include="Basics\Camera.cs" />
+    <Compile Include="DefenseTraps\IceTrap.cs" />
     <Compile Include="Invaders\Airship.cs" />
     <Compile Include="Basics\Profile.cs" />
     <Compile Include="Projectiles\Arrow.cs" />
@@ -127,6 +129,8 @@
     <Compile Include="Invaders\BatteringRam.cs" />
     <Compile Include="Projectiles\LightProjectile.cs" />
     <Compile Include="ParticleSystem\Particle.cs" />
+    <Compile Include="DefenseTraps\TarTrap.cs" />
+    <Compile Include="Tank.cs" />
     <Compile Include="Turrets\BasicTurret.cs" />
     <Compile Include="Turrets\BlankTurret.cs" />
     <Compile Include="DefenseTraps\CatapultTrap.cs" />
@@ -144,6 +148,7 @@
     <Compile Include="Basics\VerticalBar.cs" />
     <Compile Include="Turrets\CannonTurret.cs" />
     <Compile Include="Turrets\FlameThrowerTurret.cs" />
+    <Compile Include="Basics\Wave.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Service References\aOtherStuff\Game.ico" />

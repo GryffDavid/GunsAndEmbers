@@ -1,5 +1,6 @@
 Content\ResourceFont.xnb
 Content\MenuFont.xnb
+Content\ProfileFont.xnb
 Content\Blank.xnb
 Content\FireTrap.xnb
 Content\Soldier.xnb
@@ -49,3 +50,13 @@ Content\DeleteIcon.xnb
 Content\Airship.xnb
 Content\Arrow.xnb
 Content\SoldierStrip3342.xnb
+Content\TestPixelSoldier.xnb
+Content\PixelTestStrip.xnb
+Content\IceTrap.xnb
+Content\BarrelTrap.xnb
+Content\Troll.xnb
+Content\SnowFlakeIcon.xnb
+Content\BombIcon.xnb
+Content\BasicTurretIcon2.xnb
+Content\CannonTurretIcon.xnb
+Content\FlameThrowerTurretIcon.xnb

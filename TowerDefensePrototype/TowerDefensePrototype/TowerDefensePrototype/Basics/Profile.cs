@@ -9,8 +9,13 @@ namespace TowerDefensePrototype
     [Serializable]
     public class Profile
     {
-        public int ProfileNumber;
         public string Name;
-        public int LevelNumber;        
+        public int LevelNumber;
+        public int Points;
+        //What turrets the player has access to
+        public bool FlameThrower, MachineGun, Cannon;
+
+        //What traps the player has access to
+        public bool Fire, Spikes, Wall, Catapult;
     }
 }

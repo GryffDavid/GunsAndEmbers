@@ -20,7 +20,7 @@ namespace TowerDefensePrototype
             Position = position;
             Selected = true;
             FireDelay = 200;
-            Damage = 5;            
+            Damage = 7;            
         }
 
         public override void Draw(SpriteBatch spriteBatch)

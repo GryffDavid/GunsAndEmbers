@@ -1,39 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Text;  
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 
 namespace TowerDefensePrototype
 {
-    class Soldier : Invader
-    {      
-        public Soldier(Vector2 position)
+    class Tank : Invader
+    {
+        public Tank(Vector2 position)
         {
             Active = true;
             CanMove = true;
             MoveVector = new Vector2(-1, 0);
             Position = position;
-            AssetName = "PixelTestStrip";
-            CurrentHP = 50;
-            MaxHP = 50;
-            MoveDelay = 5;
-            ResourceMinMax = new Vector2(1, 5);
+            AssetName = "Troll";
+            CurrentHP = 500;
+            MaxHP = 500;
+            MoveDelay = 40;
+            ResourceMinMax = new Vector2(20, 90);
             CurrentAttackDelay = 0;
             AttackDelay = 1500;
-            AttackPower = 4;
-            FrameSize = new Vector2(30, 60);
+            AttackPower = 30;
+            FrameSize = new Vector2(64, 64);
             FrameDelay = 120;
-            TotalFrames = 9;
+            TotalFrames = 1;
             CurrentFrame = 0;
-            InvaderType = InvaderType.Soldier;
-        }
-
-        public override void Update(GameTime gameTime)
-        {
-            base.Update(gameTime);
+            InvaderType = InvaderType.Tank;
+            Scale = new Vector2(1.5f, 1.5f);
         }
 
         public override void TrapDamage(TrapType trapType)
@@ -43,24 +39,23 @@ namespace TowerDefensePrototype
                 switch (trapType)
                 {
                     case TrapType.Fire:
-                        CurrentHP -= 10;
-                        Burn(3000, 2, 300);
+
                         break;
 
                     case TrapType.Spikes:
-                        CurrentHP -= 10;
+
                         break;
 
                     case TrapType.Catapult:
-                        Trajectory(new Vector2(5, -10));
+
                         break;
 
                     case TrapType.Ice:
-                        Freeze(4000);
+
                         break;
 
                     case TrapType.Tar:
-                        MakeSlow(4000, 80);
+
                         break;
                 }
             }
