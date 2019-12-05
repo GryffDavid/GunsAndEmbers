@@ -21,12 +21,6 @@ namespace TowerDefensePrototype
         public float Damage, BlastRadius;
         static Random Random = new Random();
 
-        //This is the constructor without the texture and particletexture built in
-        //public HeavyProjectile(Vector2 position, float speed, float angle, float gravity, float damage, Vector2? yrange = null)
-        //{
-
-        //}
-
         public HeavyProjectile(Texture2D texture, Vector2 position, float speed, float angle, float gravity, float damage,
                                Vector2? yrange = null, float? blastRadius = null)
         {
@@ -51,15 +45,6 @@ namespace TowerDefensePrototype
             {
                 YRange = yrange.Value;
             }
-
-            //if (rotate == null)
-            //{
-            //    Rotate = true;
-            //}
-            //else
-            //{
-            //    Rotate = rotate.Value;
-            //}
 
             if (blastRadius.HasValue)
                 BlastRadius = blastRadius.Value;

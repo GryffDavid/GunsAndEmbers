@@ -23,8 +23,13 @@ namespace TowerDefensePrototype
             //A float in the middle of the list changes the delay between invaders
             //An in in the middle of the list creates a pause without changing the timing
 
-            Wave Wave1 = new Wave(true, 1000, 100,
-                 new Soldier(new Vector2(2050, 600))
+            Wave Wave1 = new Wave(true, 1000, 100
+                 , new Soldier(new Vector2(2050, 600))
+                 , new Soldier(new Vector2(2050, 600))
+                 , new Soldier(new Vector2(2050, 600))
+                 , new Soldier(new Vector2(2050, 600))
+                 , new Soldier(new Vector2(2050, 600))
+                 , new Soldier(new Vector2(2050, 600))
                  //2500,
                  //new HealDrone(new Vector2(2050, 100)),
                  //new HealDrone(new Vector2(2050, 100)),

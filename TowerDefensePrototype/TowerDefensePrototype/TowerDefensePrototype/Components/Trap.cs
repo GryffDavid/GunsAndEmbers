@@ -16,7 +16,7 @@ namespace TowerDefensePrototype
         public BoundingBox BoundingBox;
         public TrapType TrapType;
         //public List<Emitter> TrapEmitterList = new List<Emitter>();
-        public Vector2 Position, ShadowPosition;
+        public Vector2 Position, ShadowPosition, Center;
         public Vector2 Scale = new Vector2(1, 1);
         public bool Solid, CanTrigger, Affected;
         public float MaxHP, CurrentHP, DetonateDelay, CurrentDetonateDelay, AffectedTime, CurrentAffectedTime, Bottom;
@@ -142,7 +142,9 @@ namespace TowerDefensePrototype
             BoundingBox = new BoundingBox(new Vector3(Position.X, Position.Y, 0),
                                           new Vector3(Position.X + CurrentAnimation.FrameSize.X, Position.Y + CurrentAnimation.FrameSize.Y, 0));
 
-            ShadowPosition = new Vector2(Position.X, Position.Y + CurrentAnimation.FrameSize.Y);
+            ShadowPosition = new Vector2(Position.X + CurrentAnimation.FrameSize.X/2, Position.Y + CurrentAnimation.FrameSize.Y);
+
+            Center = new Vector2(DestinationRectangle.Center.X, DestinationRectangle.Y);
 
             Bottom = BoundingBox.Max.Y;
             DrawDepth = (Bottom / 1080);
@@ -172,7 +174,7 @@ namespace TowerDefensePrototype
                 {
                     float lightDistance = Vector2.Distance(ShadowPosition, new Vector2(light.Position.X, light.Position.Y));
 
-                    if (lightDistance < light.Radius)
+                    if (lightDistance < light.LightDecay)
                     {
                         Vector2 direction = ShadowPosition - new Vector2(light.Position.X, light.Position.Y);
                         direction.Normalize();
@@ -189,28 +191,28 @@ namespace TowerDefensePrototype
 
                         shadowVertices[0] = new VertexPositionColorTexture()
                         {
-                            Position = new Vector3(ShadowPosition.X, ShadowPosition.Y, 0),
+                            Position = new Vector3(ShadowPosition.X - CurrentAnimation.FrameSize.X/2, ShadowPosition.Y, 0),
                             TextureCoordinate = CurrentAnimation.dBottomLeftTexCoord,
                             Color = shadowColor
                         };
 
                         shadowVertices[1] = new VertexPositionColorTexture()
                         {
-                            Position = new Vector3(ShadowPosition.X + CurrentAnimation.FrameSize.X, ShadowPosition.Y, 0),
+                            Position = new Vector3(ShadowPosition.X + CurrentAnimation.FrameSize.X/2, ShadowPosition.Y, 0),
                             TextureCoordinate = CurrentAnimation.dBottomRightTexCoord,
                             Color = shadowColor
                         };
 
                         shadowVertices[2] = new VertexPositionColorTexture()
                         {
-                            Position = new Vector3(ShadowPosition.X + CurrentAnimation.FrameSize.X + (direction.X * width), ShadowPosition.Y + (direction.Y * height), 0),
+                            Position = new Vector3(ShadowPosition.X + CurrentAnimation.FrameSize.X/2 + (direction.X * width), ShadowPosition.Y + (direction.Y * height), 0),
                             TextureCoordinate = CurrentAnimation.dTopRightTexCoord,
                             Color = Color.Lerp(shadowColor, Color.Transparent, 0.85f)
                         };
 
                         shadowVertices[3] = new VertexPositionColorTexture()
                         {
-                            Position = new Vector3(ShadowPosition.X + (direction.X * width), ShadowPosition.Y + (direction.Y * height), 0),
+                            Position = new Vector3(ShadowPosition.X - CurrentAnimation.FrameSize.X / 2 + (direction.X * width), ShadowPosition.Y + (direction.Y * height), 0),
                             TextureCoordinate = CurrentAnimation.dTopLeftTexCooord,
                             Color = Color.Lerp(shadowColor, Color.Transparent, 0.85f)
                         };
@@ -286,7 +288,7 @@ namespace TowerDefensePrototype
                 foreach (EffectPass pass in effect.CurrentTechnique.Passes)
                 {
                     pass.Apply();
-                    graphics.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, trapVertices, 0, 4, trapIndices, 0, 2, VertexPositionColorTexture.VertexDeclaration);
+                    graphics.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, trapVertices, 0, 4, trapIndices, 0, 2, VertexPositionColorTexture.VertexDeclaration);                    
                 }
                 #endregion
             }

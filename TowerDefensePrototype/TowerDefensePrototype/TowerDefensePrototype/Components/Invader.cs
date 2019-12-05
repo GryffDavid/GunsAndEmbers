@@ -16,11 +16,11 @@ namespace TowerDefensePrototype
         public Rectangle DestinationRectangle;
         public Vector2 Position, Direction, ResourceMinMax, Velocity, YRange, Center, ShadowPosition;
         public Vector2 Scale = new Vector2(1, 1);
-        public Color Color, BurnColor, FrozenColor, AcidColor;
+        public Color Color, BurnColor, FrozenColor, AcidColor, ShadowColor;
         public BoundingBox BoundingBox;
         public Double AttackDelay, CurrentAttackDelay;
         public float MaxHP, CurrentHP, PreviousHP, MaxY, Gravity, Bottom, BurnDamage, Speed, SlowSpeed,
-                     TrapAttackPower, TowerAttackPower, TurretAttackPower;
+                     TrapAttackPower, TowerAttackPower, TurretAttackPower, ShadowHeight, ShadowHeightMod;
         public int ResourceValue, CurrentFrame;
         public abstract void TrapDamage(Trap trap);
         public static Random Random = new Random();
@@ -36,7 +36,6 @@ namespace TowerDefensePrototype
         public InvaderType InvaderType;
         public InvaderAnimation CurrentAnimation;
         public List<InvaderAnimation> AnimationList;
-        public Emitter FireEmitter, HealthEmitter;
         public InvaderBehaviour Behaviour;
         public DamageType DamageVulnerability;
         public UIOutline InvaderOutline;
@@ -58,7 +57,7 @@ namespace TowerDefensePrototype
                     CurrentAnimation = AnimationList.Find(Animation => Animation.CurrentInvaderState == value);   
                  
                     if (CurrentAnimation.CurrentInvaderState == InvaderState.Stand)
-                        CurrentAnimation.CurrentFrame = Random.Next(0, CurrentAnimation.TotalFrames);
+                        CurrentAnimation.CurrentFrame = 1;// Random.Next(0, CurrentAnimation.TotalFrames);
 
                     CurrentAnimation.CurrentFrameDelay = 0;
                 }
@@ -75,10 +74,7 @@ namespace TowerDefensePrototype
         public VertexPositionColorTexture[] normalVertices = new VertexPositionColorTexture[4];
         public int[] normalIndices = new int[6];
         #endregion
-
-        Color shadowColor;
-        float height, heightMod;
-
+        
         private InvaderBehaviour RandomOrientation(params InvaderBehaviour[] Orientations)
         {
             List<InvaderBehaviour> OrientationList = new List<InvaderBehaviour>();
@@ -156,41 +152,11 @@ namespace TowerDefensePrototype
                     InvaderState = InvaderState.Walk;
                 }
 
-                if (Velocity.X == 0 && InvaderState != InvaderState.Stand)
+                if (Velocity.X == 0 && InvaderState != InvaderState.Stand && Frozen == false)
                 {
-                    InvaderState = InvaderState.Stand;
+                    InvaderState = InvaderState.Stand;                    
                 }
-
-                #region Update Fire Emitter
-                if (FireEmitter != null)
-                {
-                    FireEmitter.Update(gameTime);
-                    FireEmitter.Position = new Vector2(DestinationRectangle.Left +
-                                                       Random.Next(0, (int)CurrentAnimation.FrameSize.X / CurrentAnimation.TotalFrames),
-                                                       DestinationRectangle.Bottom - Random.Next(0, (int)CurrentAnimation.FrameSize.Y));
-
-                    if (FireEmitter.ParticleList.Count == 0 && FireEmitter.AddMore == false)
-                    {
-                        FireEmitter = null;
-                    }
-                }
-                #endregion
-
-                #region Update Health Emitter
-                //if (HealthEmitter != null)
-                //{
-                //    HealthEmitter.Update(gameTime);
-                //    HealthEmitter.Position = new Vector2(DestinationRectangle.Left +
-                //                                       Random.Next(0, CurrentTexture.Width / CurrentAnimation.TotalFrames),
-                //                                       DestinationRectangle.Bottom - Random.Next(0, CurrentTexture.Height));
-
-                //    if (HealthEmitter.ParticleList.Count == 0 && HealthEmitter.AddMore == false)
-                //    {
-                //        HealthEmitter = null;
-                //    }
-                //}
-                #endregion
-
+                
                 #region This makes sure that the invader can't take damage if it's off screen (i.e. before it's visible to the player)
                 if (Position.X > 1920)
                 {
@@ -234,9 +200,6 @@ namespace TowerDefensePrototype
                     Burning = false;
                     CurrentBurnInterval = 0;
                     CurrentBurnDelay = 0;
-
-                    if (FireEmitter != null)
-                        FireEmitter.AddMore = false;
                 }
 
                 if (Burning == true)
@@ -346,7 +309,7 @@ namespace TowerDefensePrototype
             }
         }
 
-        
+
         public override void Draw(GraphicsDevice graphics, BasicEffect effect, Effect shadowEffect, List<Light> lightList)
         {
             if (Active == true)
@@ -365,42 +328,42 @@ namespace TowerDefensePrototype
                         Vector2 direction = ShadowPosition - new Vector2(light.Position.X, light.Position.Y);
                         direction.Normalize();
 
-                        heightMod = lightDistance / (light.Range / 10);
-                        height = MathHelper.Clamp(CurrentAnimation.FrameSize.Y * heightMod, 16, 64);
-                        float width = MathHelper.Clamp(CurrentAnimation.FrameSize.Y * heightMod, 16, 92);
+                        ShadowHeightMod = lightDistance / (light.Range / 10);
+                        ShadowHeight = MathHelper.Clamp(CurrentAnimation.FrameSize.Y * ShadowHeightMod, 16, 64);
+                        float width = MathHelper.Clamp(CurrentAnimation.FrameSize.Y * ShadowHeightMod, 16, 92);
 
-                        shadowColor = Color.Lerp(Color.Lerp(Color.Black, Color.Transparent, 0f), Color.Transparent, lightDistance / light.Radius);
+                        ShadowColor = Color.Lerp(Color.Lerp(Color.Black, Color.Transparent, 0f), Color.Transparent, lightDistance / light.Radius);
                         foreach (Light light3 in lightList.FindAll(Light2 => Vector2.Distance(ShadowPosition, new Vector2(Light2.Position.X, Light2.Position.Y)) < light.Radius && Light2 != light).ToList())
                         {
-                            shadowColor *= MathHelper.Clamp(Vector2.Distance(new Vector2(light3.Position.X, light3.Position.Y), ShadowPosition) / light3.Radius, 0.8f, 1f);
+                            ShadowColor *= MathHelper.Clamp(Vector2.Distance(new Vector2(light3.Position.X, light3.Position.Y), ShadowPosition) / light3.Radius, 0.8f, 1f);
                         }
 
                         shadowVertices[0] = new VertexPositionColorTexture()
                         {
                             Position = new Vector3(ShadowPosition.X, ShadowPosition.Y, 0),
                             TextureCoordinate = CurrentAnimation.dBottomLeftTexCoord,
-                            Color = shadowColor
+                            Color = ShadowColor
                         };
 
                         shadowVertices[1] = new VertexPositionColorTexture()
                         {
                             Position = new Vector3(ShadowPosition.X + CurrentAnimation.FrameSize.X, ShadowPosition.Y, 0),
                             TextureCoordinate = CurrentAnimation.dBottomRightTexCoord,
-                            Color = shadowColor
+                            Color = ShadowColor
                         };
 
                         shadowVertices[2] = new VertexPositionColorTexture()
                         {
-                            Position = new Vector3(ShadowPosition.X + CurrentAnimation.FrameSize.X + (direction.X * width), ShadowPosition.Y + (direction.Y * height), 0),
+                            Position = new Vector3(ShadowPosition.X + CurrentAnimation.FrameSize.X + (direction.X * width), ShadowPosition.Y + (direction.Y * ShadowHeight), 0),
                             TextureCoordinate = CurrentAnimation.dTopRightTexCoord,
-                            Color = Color.Lerp(shadowColor, Color.Transparent, 0.85f)
+                            Color = Color.Lerp(ShadowColor, Color.Transparent, 0.85f)
                         };
 
                         shadowVertices[3] = new VertexPositionColorTexture()
                         {
-                            Position = new Vector3(ShadowPosition.X + (direction.X * width), ShadowPosition.Y + (direction.Y * height), 0),
+                            Position = new Vector3(ShadowPosition.X + (direction.X * width), ShadowPosition.Y + (direction.Y * ShadowHeight), 0),
                             TextureCoordinate = CurrentAnimation.dTopLeftTexCooord,
-                            Color = Color.Lerp(shadowColor, Color.Transparent, 0.85f)
+                            Color = Color.Lerp(ShadowColor, Color.Transparent, 0.85f)
                         };
 
                         //This stops backface culling when the shadow flips vertically
@@ -436,6 +399,12 @@ namespace TowerDefensePrototype
                 #endregion
 
                 #region Draw invader sprite
+
+                if (Frozen == true)
+                {
+                    int thing = 0;
+                }
+
                 invaderVertices[0] = new VertexPositionColorTexture()
                 {
                     Position = new Vector3(DestinationRectangle.Left, DestinationRectangle.Top, 0),
@@ -477,6 +446,10 @@ namespace TowerDefensePrototype
                     graphics.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, invaderVertices, 0, 4, invaderIndices, 0, 2, VertexPositionColorTexture.VertexDeclaration);
                 }
                 #endregion
+
+                #region Draw ice block around the invader
+
+                #endregion
             }
         }
 
@@ -500,6 +473,8 @@ namespace TowerDefensePrototype
         {
             //Draw the lower half of the sprite with a basic effect applied
             if (Active == true)
+            {
+                #region Draw the sprite normal map
                 if (CurrentAnimation.AnimationType == AnimationType.Normal || CurrentAnimation.AnimationType == AnimationType.Emissive)
                 {
                     effect.TextureEnabled = true;
@@ -547,9 +522,15 @@ namespace TowerDefensePrototype
                         graphics.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, normalVertices, 0, 4, normalIndices, 0, 2, VertexPositionColorTexture.VertexDeclaration);
                     }
                 }
+                #endregion
+
+                #region Draw the ice block normal map 
+
+                #endregion
+            }
         }
 
-
+        
         public void TurretDamage(int change)
         {
             if (Active == true)
@@ -565,6 +546,27 @@ namespace TowerDefensePrototype
             {
                 CurrentHP += change;
             }
+        }
+
+        public void DamageOverTime(DamageOverTimeStruct dotStruct, Color color)
+        {
+            if (Burning == false)
+            {
+                Burning = true;
+                CurrentHP -= dotStruct.InitialDamage;
+                BurnDelay = dotStruct.Milliseconds;
+                BurnDamage = dotStruct.Damage;
+                BurnInterval = dotStruct.Interval;
+                BurnColor = color;
+            }
+        }
+        
+
+        public void MakeSlow(SlowStruct slowStruct)
+        {
+            Slow = true;
+            SlowDelay = slowStruct.Milliseconds;
+            SlowSpeed = slowStruct.SpeedPercentage;
         }
 
         public void Trajectory(Vector2 velocity)
@@ -585,24 +587,10 @@ namespace TowerDefensePrototype
             }
         }
 
-        public void DamageOverTime(DamageOverTimeStruct dotStruct, Color color)
+        public void Stun()
         {
-            if (Burning == false)
-            {
-                Burning = true;
-                CurrentHP -= dotStruct.InitialDamage;
-                BurnDelay = dotStruct.Milliseconds;
-                BurnDamage = dotStruct.Damage;
-                BurnInterval = dotStruct.Interval;
-                BurnColor = color;
-            }
+
         }
 
-        public void MakeSlow(SlowStruct slowStruct)
-        {
-            Slow = true;
-            SlowDelay = slowStruct.Milliseconds;
-            SlowSpeed = slowStruct.SpeedPercentage;
-        }
     }
 }

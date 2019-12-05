@@ -15,6 +15,7 @@ namespace TowerDefensePrototype
         public float Thickness, Alpha, AlphaMultiplier, FadeOutRate, Angle, ThicknessScale;
         public Color Color = Color.White;
         Vector2 MiddleScale, MiddleOrigin, CapOrigin;
+        public Turret SourceTurret;
 
         public BulletTrail(Vector2 source, Vector2 destination, float thickness = 1f)
         {

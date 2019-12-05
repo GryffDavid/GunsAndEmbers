@@ -36,6 +36,8 @@ namespace TowerDefensePrototype
         public bool Tethered;
         public Invader SourceInvader, DestinationInvader;
 
+        public Turret SourceTurret;
+
         public LightningBolt(Vector2 source, Vector2 destination, Color color, float fadeRate, float? sway = null, bool? vibrate = false)
         {
             Tethered = false;

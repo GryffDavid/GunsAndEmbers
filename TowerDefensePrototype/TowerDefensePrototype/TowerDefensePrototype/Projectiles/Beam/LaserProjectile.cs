@@ -7,12 +7,12 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace TowerDefensePrototype
 {
-    class BeamProjectile : LightProjectile
+    class LaserProjectile : LightProjectile
     {
-        public BeamProjectile(Vector2 position, Vector2 direction, float? damage = null)
+        public LaserProjectile(Vector2 position, Vector2 direction, float? damage = null)
             : base(position, direction, damage)
         {
-            LightProjectileType = LightProjectileType.Beam;
+            LightProjectileType = LightProjectileType.Laser;
         }
     }
 }

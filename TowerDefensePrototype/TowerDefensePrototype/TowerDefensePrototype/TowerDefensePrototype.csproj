@@ -120,6 +120,7 @@
     <Compile Include="Components\BulletTrail.cs" />
     <Compile Include="Components\Gibs.cs" />
     <Compile Include="Basics\Powerup.cs" />
+    <Compile Include="Projectiles\BeamProjectile.cs" />
     <Compile Include="UIComponents\StoryDialogueBox.cs" />
     <Compile Include="Animations\TrapAnimation.cs" />
     <Compile Include="Animations\TurretAnimation.cs" />
@@ -175,7 +176,7 @@
     <Compile Include="Components\Level.cs" />
     <Compile Include="Levels\World1\Level2.cs" />
     <Compile Include="Levels\World1\Level1.cs" />
-    <Compile Include="Projectiles\Beam\BeamProjectile.cs" />
+    <Compile Include="Projectiles\Beam\LaserProjectile.cs" />
     <Compile Include="Projectiles\Heavy\BoomerangProjectile..cs" />
     <Compile Include="Projectiles\Heavy\FelProjectile.cs" />
     <Compile Include="Projectiles\Grenades\GrenadeProjectile.cs" />

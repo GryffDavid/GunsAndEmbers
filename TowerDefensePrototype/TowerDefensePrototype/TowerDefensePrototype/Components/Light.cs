@@ -14,27 +14,81 @@ namespace TowerDefensePrototype
         public float Range;
         public float Radius;
 
-        public Vector3 Position;
+        public Vector3 Position, StartPosition;
         public Color Color;
         public float Power;
         public int LightDecay;
-        public bool Active;
-        public float Depth, CurrentTime, MaxTime;
+        public bool Active, Oscillate;
+        public float Depth,
+                     CurrentTime, MaxTime,
+                     CurrentOscillationTime, MaxOscillationTime,
+                     CurrentFlickerTime, MaxFlickerTime;
         public object Tether;
 
         public VertexPositionColorTexture[] lightVertices = new VertexPositionColorTexture[4];
         public int[] lightIndices = new int[6];
+        public static Random Random = new Random();
 
-        public Light()
+        public Light(Vector3 position)
         {
             //Range = 500;
             //Radius = 250;
-
-
+            StartPosition = position;
+            Position = position;
+            MaxFlickerTime = 60;
         }
 
-        public void Update()
+        public void Update(GameTime gameTime)
         {
+            if (MaxTime > 0)
+            {
+                CurrentTime += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+
+                float Percentage = CurrentTime / MaxTime;
+                //LightDecay = (int)(Radius * Math.Sin(Math.PI * Percentage));
+                LightDecay = (int)(Radius - (Radius * Percentage));
+                //LightDecay = (int)(Radius * Percentage);
+                Position.Z = 8 * Percentage;
+                //Position.Y -= 0.25f * Percentage;
+                Power = 0.15f * Percentage;
+
+
+                if (CurrentTime >= MaxTime)
+                {
+                    Active = false;
+                    CurrentTime = 0;
+                }
+            }
+
+            if (Oscillate == true)
+            {
+                CurrentOscillationTime += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+                CurrentFlickerTime += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+
+                float Percentage = (CurrentOscillationTime / MaxOscillationTime);
+                LightDecay = (int)(Radius + (2 * Math.Sin(Math.PI * Percentage)));
+
+                //LightDecay = (int)(Radius + (10  * Math.Sin(Math.PI * Percentage + (Random.Next(10, 25))));
+                //Position.Z = 8 * Percentage;
+                //Power = 0.15f * Percentage;
+                //Position.Z = MathHelper.Clamp(Position.Z + (float)RandomDouble(-1, 1), 14, 16);
+
+                if (CurrentFlickerTime >= MaxFlickerTime)
+                {
+                    Position.Y = MathHelper.Clamp(Position.Y + (float)RandomDouble(-1, 1), StartPosition.Y - 2, StartPosition.Y + 2);
+                    Position.X = MathHelper.Clamp(Position.X + (float)RandomDouble(-1, 1), StartPosition.X - 2, StartPosition.X + 2);
+                    Position.Z = MathHelper.Clamp(Position.Z + (float)RandomDouble(-1, 1), StartPosition.Z - 1, StartPosition.Z + 1);
+                    CurrentFlickerTime = 0;
+                }
+
+                if (CurrentOscillationTime >= MaxOscillationTime)
+                {
+                    CurrentOscillationTime = 0;
+                    //MaxOscillationTime
+                    MaxOscillationTime = MathHelper.Clamp(MaxOscillationTime + (float)RandomDouble(-50, 50), 400, 600);                    
+                }
+            }
+
             lightVertices[0] = new VertexPositionColorTexture()
             {
                 Color = Color.White,
@@ -84,6 +138,11 @@ namespace TowerDefensePrototype
                 pass.Apply();
                 graphics.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, lightVertices, 0, 4, lightIndices, 0, 2, VertexPositionColorTexture.VertexDeclaration);
             }
+        }
+
+        public double RandomDouble(double a, double b)
+        {
+            return a + Random.NextDouble() * (b - a);
         }
     }
 }
