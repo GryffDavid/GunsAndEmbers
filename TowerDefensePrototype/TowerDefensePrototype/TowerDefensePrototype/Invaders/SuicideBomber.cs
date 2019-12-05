@@ -25,7 +25,7 @@ namespace TowerDefensePrototype
             AttackPower = 200;
             CurrentFrame = 0;
             InvaderType = InvaderType.SuicideBomber;
-            YRange = new Vector2(525, 630);
+            YRange = new Vector2(700, 900);
             Airborne = false;
 
             CurrentAnimation = new Animation()

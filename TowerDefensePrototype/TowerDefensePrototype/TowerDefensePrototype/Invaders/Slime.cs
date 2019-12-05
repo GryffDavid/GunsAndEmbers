@@ -24,7 +24,7 @@ namespace TowerDefensePrototype
             AttackPower = 4;            
             CurrentFrame = 0;
             InvaderType = InvaderType.Slime;
-            YRange = new Vector2(525, 630);
+            YRange = new Vector2(700, 900);
 
             CurrentAnimation = new Animation() 
             { 

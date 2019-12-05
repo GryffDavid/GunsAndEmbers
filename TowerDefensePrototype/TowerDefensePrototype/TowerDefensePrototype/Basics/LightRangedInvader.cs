@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace TowerDefensePrototype
 {
-    abstract class RangedInvader : Invader
+    abstract class LightRangedInvader : Invader
     {
         public int RangedAttackPower;
         public Vector2 AngleRange, Range, PowerRange;

@@ -161,7 +161,7 @@ namespace TowerDefensePrototype
                     Direction.Normalize();
 
                     if (Overheated == false)
-                        Rotation = (float)Math.Atan2((double)Direction.Y, (double)Direction.X);
+                        Rotation = MathHelper.Lerp(Rotation, (float)Math.Atan2((double)Direction.Y, (double)Direction.X), 0.1f);
                     else
                         Rotation = MathHelper.Lerp(Rotation, MathHelper.ToRadians(40), 0.1f);
 

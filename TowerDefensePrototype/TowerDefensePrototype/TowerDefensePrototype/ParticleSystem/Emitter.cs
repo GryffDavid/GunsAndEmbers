@@ -178,8 +178,9 @@ namespace TowerDefensePrototype
 
                     if (IntervalTime > Interval && AddMore == true)
                     {
-                        ParticleList.Add(new Particle(Texture, Position, angle, speed, hp, Transparency, Fade, startingRotation,
-                            rotation, scale, StartColor, EndColor, Gravity, CanBounce, MaxY, Shrink, DrawDepth, StopBounce, HardBounce));
+                        Particle NewParticle = new Particle(Texture, Position, angle, speed, hp, Transparency, Fade, startingRotation,
+                            rotation, scale, StartColor, EndColor, Gravity, CanBounce, MaxY, Shrink, DrawDepth, StopBounce, HardBounce);
+                        ParticleList.Add(NewParticle);
                         IntervalTime = 0;
                     }
                 }

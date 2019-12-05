@@ -25,7 +25,7 @@ namespace TowerDefensePrototype
             CurrentFrame = 0;
             InvaderType = InvaderType.Tank;
             Scale = new Vector2(1f, 1f);
-            YRange = new Vector2(525, 630);
+            YRange = new Vector2(700, 900);
             Airborne = false;
 
             CurrentAnimation = new Animation() 

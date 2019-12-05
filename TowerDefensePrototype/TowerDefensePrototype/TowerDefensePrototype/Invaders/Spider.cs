@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace TowerDefensePrototype
 {
-    class Spider : RangedInvader
+    class Spider : HeavyRangedInvader
     {
         public Spider(Vector2 position)
          {
@@ -24,7 +24,7 @@ namespace TowerDefensePrototype
             AttackPower = 1;            
             CurrentFrame = 0;
             InvaderType = InvaderType.Spider;
-            YRange = new Vector2(525, 630);
+            YRange = new Vector2(700, 900);
             RangedAttackPower = 7;
             Range = new Vector2(200, 600); 
             AngleRange = new Vector2(110, 160);

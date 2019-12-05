@@ -8,16 +8,14 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace TowerDefensePrototype
 {
-    class StationaryCannon : HeavyRangedInvader
+    abstract class HeavyRangedInvader : Invader
     {
-        public StationaryCannon()
+        public int RangedAttackPower;
+        public Vector2 AngleRange, Range, PowerRange;
+
+        public override void TrapDamage(TrapType trapType)
         {
-
-        }
-
-        public override void Update(GameTime gameTime)
-        {
-
+            throw new NotImplementedException();
         }
     }
 }

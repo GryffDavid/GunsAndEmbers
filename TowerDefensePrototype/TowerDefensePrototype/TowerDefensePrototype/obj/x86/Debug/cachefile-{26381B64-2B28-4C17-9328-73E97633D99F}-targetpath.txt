@@ -100,3 +100,5 @@ Content\Sounds\MenuMusic1.xnb
 Content\Sounds\Implosion.xnb
 Content\Sounds\Implosion2.xnb
 Content\Sounds\TurretOverheat.xnb
+Content\Particles\Smoke2.xnb
+Content\GaussianBlurEffect.xnb

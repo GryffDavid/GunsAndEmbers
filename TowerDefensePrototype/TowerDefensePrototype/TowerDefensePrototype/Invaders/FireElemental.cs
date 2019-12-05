@@ -25,7 +25,7 @@ namespace TowerDefensePrototype
             AttackPower = 1;
             CurrentFrame = 0;
             InvaderType = InvaderType.FireElemental;
-            YRange = new Vector2(525, 630);
+            YRange = new Vector2(700, 900);
 
             CurrentAnimation = new Animation()
             {

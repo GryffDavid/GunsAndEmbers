@@ -33,7 +33,7 @@ namespace TowerDefensePrototype
 
             if (yrange == null)
             {
-                YRange = new Vector2(520, 630);
+                YRange = new Vector2(690, 930);
             }
             else
             {

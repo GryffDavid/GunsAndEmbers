@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Content;
 
 namespace TowerDefensePrototype
 {
-    class Airship : RangedInvader
+    class Airship : HeavyRangedInvader
     {
         public Airship(Vector2 position)
         {

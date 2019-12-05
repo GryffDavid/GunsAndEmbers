@@ -10,21 +10,22 @@ namespace TowerDefensePrototype
     public class Particle
     {
         public Texture2D Texture;
-        public Vector2 CurrentPosition, Direction, Velocity, YRange, Origin;
+        public Vector2 CurrentPosition, Direction, Velocity, YRange, Origin, StartingPosition;
         public Rectangle DestinationRectangle;
         public float Angle, Speed, CurrentHP, MaxHP, CurrentTransparency, Scale, MaxY;
         public float RotationIncrement, CurrentRotation, Gravity, DrawDepth;
         public Color CurrentColor, EndColor, StartColor;
-        public bool Active, Fade, BouncedOnGround, CanBounce, Shrink, StopBounce, HardBounce;
+        public bool Active, Fade, BouncedOnGround, CanBounce, Shrink, StopBounce, HardBounce, Shadow;
         static Random Random = new Random();
 
         public Particle(Texture2D texture, Vector2 position, float angle, float speed, float maxHP,
             float startingTransparency, bool fade, float startingRotation, float rotationChange,
-            float scale, Color startColor, Color endColor, float gravity, bool canBounce, float maxY, bool shrink, float? drawDepth = null, bool? stopBounce = false, bool? hardBounce = true)
+            float scale, Color startColor, Color endColor, float gravity, bool canBounce, float maxY, bool shrink, float? drawDepth = null, bool? stopBounce = false, bool? hardBounce = true, bool? shadow = false)
         {
             Active = true;
             Texture = texture;
             CurrentPosition = position;
+            StartingPosition = position;
             Angle = angle;
             Speed = speed;
             MaxHP = maxHP;
@@ -62,6 +63,8 @@ namespace TowerDefensePrototype
             StopBounce = stopBounce.Value;
 
             HardBounce = hardBounce.Value;
+
+            Shadow = shadow.Value;
 
             Origin = new Vector2(Texture.Width / 2, Texture.Height / 2);
         }
@@ -182,13 +185,32 @@ namespace TowerDefensePrototype
             }
 
             CurrentColor = Color.Lerp(CurrentColor, EndColor, PercentageHP / (CurrentHP * 0.5f));
-            //CurrentColor = Color.Lerp(StartColor, EndColor, ((MaxHP/100)*CurrentHP)/100);            
+            //double PercentHP = (100 / MaxHP) * CurrentHP;
+            //CurrentColor = Color.Lerp(StartColor, EndColor, PercentageHP/100);            
         }
 
         public void Draw(SpriteBatch spriteBatch)
         { 
             if (Active == true)
-            {         
+            {
+                if (Shadow == true)
+                {
+                    float YDist = CurrentPosition.Y - MaxY;
+                    float YDist2 = 500 - MaxY;
+                    float PercentToGround = (100 / YDist2) * YDist;
+
+                    float Thing = (PercentToGround) / 100;
+                    Thing = MathHelper.Clamp(Thing, 1f, 1.5f);
+                    Vector2 ShadowScale = new Vector2(Thing * Scale, Thing * Scale);
+
+                    Color ShadowColor = Color.Lerp(Color.Transparent, Color.Black, 0.1f);
+
+                    spriteBatch.Draw(Texture,
+                        new Rectangle((int)CurrentPosition.X, (int)MaxY + 4, (int)(Texture.Width * ShadowScale.X), (int)(Texture.Height * ShadowScale.Y)),
+                        null, Color.Lerp(Color.Transparent, ShadowColor, CurrentTransparency),
+                        MathHelper.ToRadians(CurrentRotation), Origin, SpriteEffects.None, (DestinationRectangle.Bottom / 1080));
+                }
+
                 spriteBatch.Draw(Texture, DestinationRectangle, null, Color.Lerp(Color.Transparent, CurrentColor, CurrentTransparency),
                     MathHelper.ToRadians(CurrentRotation), Origin, SpriteEffects.None, DrawDepth);
             }
