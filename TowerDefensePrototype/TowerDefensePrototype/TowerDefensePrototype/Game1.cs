@@ -273,8 +273,10 @@ namespace TowerDefensePrototype
         Texture2D LockIcon, HealthIcon, OverHeatIcon, CurrencyIcon, PowerUnitIcon, RightClickIcon;
 
         //Turret icons
+        //NEW_TURRET E **turret icon declarations**
         public Texture2D BeamTurretIcon, BoomerangTurretIcon, CannonTurretIcon, ClusterTurretIcon, FelCannonTurretIcon, FlameThrowerTurretIcon,
-                         FreezeTurretIcon, GrenadeTurretIcon, GasGrenadeTurretIcon, LightningTurretIcon, MachineGunTurretIcon, PersistentBeamTurretIcon, ShotgunTurretIcon;
+                         FreezeTurretIcon, GrenadeTurretIcon, GasGrenadeTurretIcon, LightningTurretIcon, MachineGunTurretIcon,
+                         PersistentBeamTurretIcon, ShotgunTurretIcon, HarpoonTurretIcon, StickyMineTurretIcon;
 
         //Trap Icons
         public Texture2D CatapultTrapIcon, IceTrapIcon, TarTrapIcon, WallTrapIcon, BarrelTrapIcon, FireTrapIcon, LineTrapIcon, SawBladeTrapIcon,
@@ -289,13 +291,14 @@ namespace TowerDefensePrototype
         #endregion
 
         #region Cursor sprites
+        //NEW_TURRET G **turret cursor declarations**
         Texture2D CurrentCursorTexture, PrimaryCursorTexture, DefaultCursor, CrosshairCursor;
 
         //Turret Cursors        
         public Texture2D MachineGunTurretCursor, CannonTurretCursor, FlameThrowerTurretCursor, LightningTurretCursor, ClusterTurretCursor,
                          FelCannonTurretCursor, BeamTurretCursor, FreezeTurretCursor, BoomerangTurretCursor, GrenadeTurretCursor, GasGrenadeTurretCursor,
                          ShotgunTurretCursor,
-                         PersistentBeamTurretCursor;
+                         PersistentBeamTurretCursor, HarpoonTurretCursor, StickyMineTurretCursor;
 
         //Trap Cursors
         public Texture2D WallTrapCursor, SpikesTrapCursor, CatapultTrapCursor, FireTrapCursor, IceTrapCursor, TarTrapCursor, BarrelTrapCursor,
@@ -304,9 +307,9 @@ namespace TowerDefensePrototype
 
         #region Trap sprites
         //NEW_TRAP B **trap animations list declarations here**
-        public List<TrapAnimation> WallAnimations, BarrelTrapAnimations, CatapultTrapAnimations, IceTrapAnimations, TarTrapAnimations,
+        public List<TrapAnimation> WallTrapAnimations, BarrelTrapAnimations, CatapultTrapAnimations, IceTrapAnimations, TarTrapAnimations,
                                    LineTrapAnimations, SawBladeTrapAnimations, SpikeTrapAnimations, FireTrapAnimations, LandMineTrapAnimations,
-                                   FlameThrowerAnimations, GlueTrapAnimations;
+                                   FlameThrowerTrapAnimations, GlueTrapAnimations;
 
         public Texture2D WallAmbShadow;
         #endregion
@@ -327,6 +330,9 @@ namespace TowerDefensePrototype
         public Texture2D FelCannonTurretBase, FelCannonTurretBarrel;
         public Texture2D FreezeTurretBase, FreezeTurretBarrel;
         public Texture2D BoomerangTurretBase, BoomerangTurretBarrel;
+        public Texture2D HarpoonTurretBase, HarpoonTurretBarrel;
+        public Texture2D StickyMineTurretBase, StickyMineTurretBarrel;
+
         #endregion
 
         #region Enemy sprites
@@ -1605,7 +1611,7 @@ namespace TowerDefensePrototype
 
             #region Wall animations
             WallAmbShadow = Content.Load<Texture2D>("Traps/Wall/WallShadow");
-            WallAnimations = new List<TrapAnimation>()
+            WallTrapAnimations = new List<TrapAnimation>()
             {
                 new TrapAnimation()
                 {
@@ -1618,16 +1624,11 @@ namespace TowerDefensePrototype
                     AnimationType = AnimationType.Normal
                 },
             };
-
-            foreach (TrapAnimation animation in WallAnimations)
-            {
-                animation.GetFrameSize();
-            }
             #endregion
 
             #region FlameThrower animations
             //WallAmbShadow = Content.Load<Texture2D>("Traps/Wall/WallShadow");
-            FlameThrowerAnimations = new List<TrapAnimation>()
+            FlameThrowerTrapAnimations = new List<TrapAnimation>()
             {
                 new TrapAnimation()
                 {
@@ -1676,11 +1677,6 @@ namespace TowerDefensePrototype
                     AnimationType = AnimationType.Regular
                 },
             };
-
-            foreach (TrapAnimation animation in FlameThrowerAnimations)
-            {
-                animation.GetFrameSize();
-            }
             #endregion
 
             #region Fire trap animations
@@ -1696,10 +1692,6 @@ namespace TowerDefensePrototype
                     AnimationType = AnimationType.Regular
                 },
             };
-            foreach (TrapAnimation animation in FireTrapAnimations)
-            {
-                animation.GetFrameSize();
-            }
             #endregion
 
             #region Catapult trap animations
@@ -1715,11 +1707,6 @@ namespace TowerDefensePrototype
                     AnimationType = AnimationType.Regular
                 },
             };
-
-            foreach (TrapAnimation animation in CatapultTrapAnimations)
-            {
-                animation.GetFrameSize();
-            }
             #endregion
 
             #region Land Mine trap animations
@@ -1735,11 +1722,6 @@ namespace TowerDefensePrototype
                     AnimationType = AnimationType.Regular
                 }
             };
-
-            foreach (TrapAnimation animation in LandMineTrapAnimations)
-            {
-                animation.GetFrameSize();
-            }
             #endregion
 
             #region Barrel Trap Animations
@@ -1755,11 +1737,6 @@ namespace TowerDefensePrototype
                     AnimationType = AnimationType.Regular
                 }
             };
-
-            foreach (TrapAnimation animation in BarrelTrapAnimations)
-            {
-                animation.GetFrameSize();
-            }
             #endregion
 
             #region Glue Trap Animations
@@ -1775,11 +1752,6 @@ namespace TowerDefensePrototype
                     AnimationType = AnimationType.Regular
                 }
             };
-
-            foreach (TrapAnimation animation in GlueTrapAnimations)
-            {
-                animation.GetFrameSize();
-            }
             #endregion
 
             //NEW_TRAP D **if traps aren't showing up, make sure you added this**
@@ -1788,6 +1760,25 @@ namespace TowerDefensePrototype
             //    animation.GetFrameSize();
             //}
 
+            foreach (TrapType trapType in Enum.GetValues(typeof(TrapType)))
+            {
+                string TrapAnimationsName = trapType.ToString() + "TrapAnimations";
+
+                var foo = this.GetType().GetField(TrapAnimationsName);//.GetValue(this);
+
+                if (foo != null)
+                {
+                    var anims = foo.GetValue(this);
+
+                    if (anims != null)
+                    {
+                        foreach (TrapAnimation anim in (List<TrapAnimation>)anims)
+                        {
+                            anim.GetFrameSize();
+                        }
+                    }
+                }
+            }
         }
 
         private void LoadProjectileSprites()
@@ -1812,45 +1803,80 @@ namespace TowerDefensePrototype
             
             TurretSelectBox = Content.Load<Texture2D>("SelectBox");
 
-            MachineGunTurretBase = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBase");
-            MachineGunTurretBarrel = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBarrel");
-            MachineGunTurretBarrelGib = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBarrelGib");
+            foreach (TurretType turretType in Enum.GetValues(typeof(TurretType)))
+            {
+                string TurretBaseName = "Turrets\\" + turretType.ToString() + "Turret\\" + turretType.ToString() + "TurretBase";
+                string TurretBarrelName = "Turrets\\" + turretType.ToString() + "Turret\\" + turretType.ToString() + "TurretBarrel"; ;
 
-            CannonTurretBase = Content.Load<Texture2D>("Turrets/CannonTurret/CannonTurretBase");
-            CannonTurretBarrel = Content.Load<Texture2D>("Turrets/CannonTurret/CannonTurretBarrel");
+                string TurretBaseTextureName = turretType.ToString() + "TurretBase";
+                string TurretBarrelTextureName = turretType.ToString() + "TurretBarrel";
 
-            LightningTurretBase = Content.Load<Texture2D>("Turrets/LightningTurret/LightningTurretBase");
-            LightningTurretBarrel = Content.Load<Texture2D>("Turrets/LightningTurret/LightningTurretBarrel");
+                var baseTexture = this.GetType().GetField(TurretBaseTextureName);
+                var barrelTexture = this.GetType().GetField(TurretBarrelTextureName);
 
-            BeamTurretBase = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBase");
-            BeamTurretBarrel = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBarrel");
+                string pat = Directory.GetCurrentDirectory() + "\\Content\\" + TurretBaseName + ".xnb";
 
-            ClusterTurretBase = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBase");
-            ClusterTurretBarrel = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBarrel");
+                if (File.Exists(pat))
+                {
+                    baseTexture.SetValue(this, Content.Load<Texture2D>(TurretBaseName));
+                    barrelTexture.SetValue(this, Content.Load<Texture2D>(TurretBarrelName));
+                }
+                else
+                {
+                    baseTexture.SetValue(this, Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineGunTurretBase"));
+                    barrelTexture.SetValue(this, Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineGunTurretBarrel"));
+                }
 
-            GrenadeTurretBase = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBase");
-            GrenadeTurretBarrel = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBarrel");
+                //thing.SetValue(this, SecondaryContent.Load<Texture2D>(TurretIconName));
+            }
 
-            GasGrenadeTurretBase = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBase");
-            GasGrenadeTurretBarrel = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBarrel");
 
-            ShotgunTurretBase = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBase");
-            ShotgunTurretBarrel = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBarrel");
+            //MachineGunTurretBase = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBase");
+            //MachineGunTurretBarrel = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBarrel");
 
-            FlameThrowerTurretBase = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBase");
-            FlameThrowerTurretBarrel = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBarrel");
+            //MachineGunTurretBarrelGib = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBarrelGib");
 
-            PersistentBeamTurretBase = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBase");
-            PersistentBeamTurretBarrel = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBarrel");
+            //CannonTurretBase = Content.Load<Texture2D>("Turrets/CannonTurret/CannonTurretBase");
+            //CannonTurretBarrel = Content.Load<Texture2D>("Turrets/CannonTurret/CannonTurretBarrel");
 
-            FelCannonTurretBase = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBase");
-            FelCannonTurretBarrel = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBarrel");
+            //LightningTurretBase = Content.Load<Texture2D>("Turrets/LightningTurret/LightningTurretBase");
+            //LightningTurretBarrel = Content.Load<Texture2D>("Turrets/LightningTurret/LightningTurretBarrel");
 
-            BoomerangTurretBase = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBase");
-            BoomerangTurretBarrel = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBarrel");
+            //BeamTurretBase = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBase");
+            //BeamTurretBarrel = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBarrel");
 
-            FreezeTurretBase = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBase");
-            FreezeTurretBarrel = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBarrel");
+            //ClusterTurretBase = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBase");
+            //ClusterTurretBarrel = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBarrel");
+
+            //GrenadeTurretBase = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBase");
+            //GrenadeTurretBarrel = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBarrel");
+
+            //GasGrenadeTurretBase = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBase");
+            //GasGrenadeTurretBarrel = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBarrel");
+
+            //ShotgunTurretBase = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBase");
+            //ShotgunTurretBarrel = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBarrel");
+
+            //FlameThrowerTurretBase = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBase");
+            //FlameThrowerTurretBarrel = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBarrel");
+
+            //PersistentBeamTurretBase = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBase");
+            //PersistentBeamTurretBarrel = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBarrel");
+
+            //FelCannonTurretBase = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBase");
+            //FelCannonTurretBarrel = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBarrel");
+
+            //BoomerangTurretBase = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBase");
+            //BoomerangTurretBarrel = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBarrel");
+
+            //FreezeTurretBase = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBase");
+            //FreezeTurretBarrel = Content.Load<Texture2D>("Turrets/MachineGunTurret/MachineTurretBarrel");
+
+            //HarpoonTurretBase = Content.Load<Texture2D>("Turrets/HarpoonTurret/HarpoonTurretBase");
+            //HarpoonTurretBarrel = Content.Load<Texture2D>("Turrets/HarpoonTurret/HarpoonTurretBarrel");
+
+            //StickyMineTurretBase = Content.Load<Texture2D>("Turrets/StickyMineTurret/StickyMineTurretBase");
+            //StickyMineTurretBarrel = Content.Load<Texture2D>("Turrets/StickyMineTurret/StickyMineTurretBarrel");
         }
 
         private void LoadWeatherSprites()
@@ -1883,6 +1909,7 @@ namespace TowerDefensePrototype
         private void LoadIcons()
         {
             #region Turret Icons
+            //NEW_TURRET F **Icons need to be added to corresponding folder**
             foreach (TurretType turretType in Enum.GetValues(typeof(TurretType)))
             {
                 string TurretIconName = "Icons/TurretIcons/" + turretType.ToString() + "TurretIcon";
@@ -4626,8 +4653,8 @@ namespace TowerDefensePrototype
 
                                             Points = 0,
 
-                                            Fire = true,
-                                            MachineGun = true,
+                                            //Fire = true,
+                                            //MachineGun = true,
 
                                             Credits = 0,
 
@@ -4786,9 +4813,12 @@ namespace TowerDefensePrototype
                                                 if (turretBox.Visible == true)
                                                 {
                                                     string WeaponName = turretBox.ContainsTurret.ToString();
-                                                    var Available = CurrentProfile.GetType().GetField(WeaponName).GetValue(CurrentProfile);
+                                                    //var Available = CurrentProfile.GetType().GetField(WeaponName).GetValue(CurrentProfile);
 
-                                                    if ((bool)Available == true)
+                                                    bool Available;
+                                                    CurrentProfile.TurretDictionary.TryGetValue(turretBox.ContainsTurret.Value, out Available);
+
+                                                    if (Available == true)
                                                         SelectedTurret = turretBox.ContainsTurret;
                                                 }
                                             }
@@ -4803,9 +4833,12 @@ namespace TowerDefensePrototype
                                                 if (trapBox.Visible == true)
                                                 {
                                                     string WeaponName = trapBox.ContainsTrap.ToString();
-                                                    var Available = CurrentProfile.GetType().GetField(WeaponName).GetValue(CurrentProfile);
+                                                    //var Available = CurrentProfile.GetType().GetField(WeaponName).GetValue(CurrentProfile);
+                                                    bool Available;
+                                                    CurrentProfile.TrapDictionary.TryGetValue(trapBox.ContainsTrap.Value, out Available);
 
-                                                    if ((bool)Available == true)
+
+                                                    if (Available == true)
                                                         SelectedTrap = trapBox.ContainsTrap;
                                                 }
                                             }
@@ -8957,7 +8990,7 @@ namespace TowerDefensePrototype
                     case TrapType.Wall:
                         {
                             NewTrap = trap;
-                            NewTrap.AnimationList = WallAnimations;
+                            NewTrap.AnimationList = WallTrapAnimations;
                             NewTrap.TrapState = NewTrap.TrapState;
                             NewTrap.AmbientShadowTexture = WallAmbShadow;
                             NewTrap.Position = trapPosition;
@@ -8974,10 +9007,10 @@ namespace TowerDefensePrototype
                             NewTrap = trap;
                             NewTrap.AnimationList = new List<TrapAnimation>();
 
-                            for (int i = 0; i < FlameThrowerAnimations.Count; i++)
+                            for (int i = 0; i < FlameThrowerTrapAnimations.Count; i++)
                             {
                                 TrapAnimation animation = new TrapAnimation();
-                                animation = FlameThrowerAnimations[i].ShallowCopy();
+                                animation = FlameThrowerTrapAnimations[i].ShallowCopy();
                                 NewTrap.AnimationList.Add(animation);
                             }
 
@@ -9956,9 +9989,12 @@ namespace TowerDefensePrototype
 
                     default:
                         string WeaponName = turretBox.ContainsTurret.ToString();
-                        var Available = CurrentProfile.GetType().GetField(WeaponName).GetValue(CurrentProfile);
+                        //var Available = CurrentProfile.GetType().GetField(WeaponName).GetValue(CurrentProfile);
 
-                        if ((bool)Available == true)
+                        bool Available;
+                        CurrentProfile.TurretDictionary.TryGetValue(turretBox.ContainsTurret.Value, out Available);
+
+                        if (Available == true)
                         {
                             turretBox.Locked = false;
                         }
@@ -9980,11 +10016,13 @@ namespace TowerDefensePrototype
                         break;
 
                     default:
-
                         string WeaponName = trapBox.ContainsTrap.ToString();
-                        var Available = CurrentProfile.GetType().GetField(WeaponName).GetValue(CurrentProfile);
+                        //var Available = CurrentProfile.GetType().GetField(WeaponName).GetValue(CurrentProfile);
 
-                        if ((bool)Available == true)
+                        bool Available;
+                        CurrentProfile.TrapDictionary.TryGetValue(trapBox.ContainsTrap.Value, out Available);
+
+                        if (Available == true)
                         {
                             trapBox.Locked = false;
                         }
@@ -9993,6 +10031,19 @@ namespace TowerDefensePrototype
                             trapBox.Locked = true;
                             trapBox.WeaponName = "Locked";
                         }
+
+                        //string WeaponName = trapBox.ContainsTrap.ToString();
+                        //var Available = CurrentProfile.GetType().GetField(WeaponName).GetValue(CurrentProfile);
+
+                        //if ((bool)Available == true)
+                        //{
+                        //    trapBox.Locked = false;
+                        //}
+                        //else
+                        //{
+                        //    trapBox.Locked = true;
+                        //    trapBox.WeaponName = "Locked";
+                        //}
                         break;
                 }
             }
@@ -10060,7 +10111,7 @@ namespace TowerDefensePrototype
                     break;
 
                 case 2:
-                    CurrentProfile.Cannon = true;
+                    //CurrentProfile.Cannon = true;
                     break;
             }
 
@@ -10615,6 +10666,7 @@ namespace TowerDefensePrototype
                 TempList.Add(null);
             }
 
+            //CurrentProfile = new Profile();
             CurrentProfile = new Profile()
             {
                 Name = NameInput.RealString,
@@ -10625,24 +10677,37 @@ namespace TowerDefensePrototype
                 ShotsFired = 0
             };
 
-            #region Make all TRAPS available
-            foreach (TrapType trapType in Enum.GetValues(typeof(TrapType)))
-            {
-                string TrapName = trapType.ToString();
+            //foreach (TurretType turretType in Enum.GetValues(typeof(TurretType)))
+            //{
+            //    bool myThing = true;
+            //    CurrentProfile.TurretDictionary.TryGetValue(turretType, out myThing);
+            //}
 
-                var thing = CurrentProfile.GetType().GetField(TrapName);
-                thing.SetValue(CurrentProfile, true);
-            }
+            //foreach (TrapType trapType in Enum.GetValues(typeof(TurretType)))
+            //{
+            //    bool myThing = true;
+            //    CurrentProfile.TrapDictionary.TryGetValue(trapType, out myThing);
+            //}
+
+
+            #region Make all TRAPS available
+            //foreach (TrapType trapType in Enum.GetValues(typeof(TrapType)))
+            //{
+            //    string TrapName = trapType.ToString();
+
+            //    var thing = CurrentProfile.GetType().GetField(TrapName);
+            //    thing.SetValue(CurrentProfile, true);
+            //}
             #endregion
 
             #region Make all TURRETS available
-            foreach (TurretType turretType in Enum.GetValues(typeof(TurretType)))
-            {
-                string TurretName = turretType.ToString();
+            //foreach (TurretType turretType in Enum.GetValues(typeof(TurretType)))
+            //{
+            //    string TurretName = turretType.ToString();
 
-                var thing = CurrentProfile.GetType().GetField(TurretName);
-                thing.SetValue(CurrentProfile, true);
-            }
+            //    var thing = CurrentProfile.GetType().GetField(TurretName);
+            //    thing.SetValue(CurrentProfile, true);
+            //}
             #endregion
 
             StorageDevice.BeginShowSelector(this.NewProfile, null);

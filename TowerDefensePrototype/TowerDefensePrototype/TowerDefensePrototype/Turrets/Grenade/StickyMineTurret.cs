@@ -8,18 +8,18 @@ using Microsoft.Xna.Framework.Content;
 
 namespace TowerDefensePrototype
 {
-    class HarpoonTurret : Turret
+    class StickyMineTurret : Turret
     {
-        private static int _ResourceCost = 600;
+        private static int _ResourceCost = 200;
         public static new int ResourceCost
         {
             get { return _ResourceCost; }
         }
 
-        public HarpoonTurret(Vector2 position)
+        public StickyMineTurret(Vector2 position)
         {
             Active = true;
-            TurretType = TurretType.Harpoon; //Remove "Turret" from the TurretType enum name
+            TurretType = TurretType.StickyMine; //Remove "Turret" from the TurretType enum name
             Position = position;
             Selected = true;
             FireDelay = 200;
@@ -27,12 +27,13 @@ namespace TowerDefensePrototype
             AngleOffset = 2.5f;
             Animated = false;
             Looping = false;
+            //ResourceCost = 200;
             MaxHeat = 100;
             ShotHeat = 5;
             MaxHeatTime = 4000;
             CoolValue = 0.15f;
             Range = 500;
-            TurretFireType = TurretFireType.SemiAuto;
+            TurretFireType = TurretFireType.FullAuto;
 
             CurrentAnimation = new TurretAnimation()
             {

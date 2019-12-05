@@ -26,7 +26,8 @@ namespace TowerDefensePrototype
         GasGrenade,
         Shotgun,
         PersistentBeam,
-        Harpoon
+        Harpoon,
+        StickyMine
     };
     public enum TurretAnimationState { Overheated, ReadyToFire, Stunned };
     public enum TurretFireType { FullAuto, SemiAuto, Single, Beam };
@@ -46,6 +47,12 @@ namespace TowerDefensePrototype
                 TurretClickHappened(this, null);
         }
 
+        private static int _ResourceCost = 200;
+        public static int ResourceCost
+        {
+            get { return _ResourceCost; }
+        }
+
         public bool InOut, PrevInOut;
         public Texture2D TurretBase, TurretBarrel;
         public Vector2 Direction, Position, MousePosition, BarrelPivot, BasePivot, 
@@ -59,7 +66,7 @@ namespace TowerDefensePrototype
         public double FireDelay, CurrentFrameTime;
         public double ElapsedTime = 0;
         public int Damage, CurrentFrame;
-        public static int ResourceCost;        
+        //public static int ResourceCost;        
         static Random Random = new Random();
         public TurretType TurretType;
         public Color Color;

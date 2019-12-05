@@ -27,8 +27,6 @@ Content\Projectiles\ClusterBomb.xnb
 Content\Projectiles\ClusterBombShell.xnb
 Content\Particles\Coin.xnb
 Content\Shadow.xnb
-Content\Turrets\MachineGunTurret\MachineTurretBarrel.xnb
-Content\Turrets\MachineGunTurret\MachineTurretBase.xnb
 Content\Particles\MachineShell.xnb
 Content\HealthBar\Outline.xnb
 Content\HealthBar\HealthBarForeground.xnb
@@ -153,7 +151,6 @@ Content\Icons\MouseMiddleClickIcon.xnb
 Content\Icons\MouseRightClickIcon.xnb
 Content\CircularBar.xnb
 Content\ThinkingAnimation.xnb
-Content\Turrets\MachineGunTurret\MachineTurretBarrelGib.xnb
 Content\JetSprite.xnb
 Content\ExplosionRingSprite.xnb
 Content\Traps\LandMine.xnb
@@ -234,3 +231,12 @@ Content\Fonts\SpriteFont1.xnb
 Content\ParticleEffect.xnb
 Content\ShadowBlur.xnb
 Content\Shaders\HealthBarEffect.xnb
+Content\Icons\TurretIcons\HarpoonTurretIcon.xnb
+Content\Turrets\HarpoonTurret\HarpoonTurretBarrel.xnb
+Content\Turrets\HarpoonTurret\HarpoonTurretBase.xnb
+Content\Turrets\StickyMineTurret\StickyMineTurretBarrel.xnb
+Content\Turrets\StickyMineTurret\StickyMineTurretBase.xnb
+Content\Icons\TurretIcons\StickyMineTurretIcon.xnb
+Content\Turrets\MachineGunTurret\MachineGunTurretBarrel.xnb
+Content\Turrets\MachineGunTurret\MachineGunTurretBase.xnb
+Content\Turrets\MachineGunTurret\MachineGunTurretBarrelGib.xnb

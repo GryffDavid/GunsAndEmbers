@@ -135,6 +135,7 @@
     <Compile Include="Traps\OffenseTraps\FlameThrowerTrap.cs" />
     <Compile Include="Traps\OffenseTraps\LandMineTrap.cs" />
     <Compile Include="Traps\TriggerTrap.cs" />
+    <Compile Include="Turrets\Grenade\StickyMineTurret.cs" />
     <Compile Include="Turrets\HarpoonTurret.cs" />
     <Compile Include="Turrets\Light\SniperTurret.cs" />
     <Compile Include="UIComponents\CheckBox.cs" />
