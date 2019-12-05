@@ -41,7 +41,8 @@ namespace TowerDefensePrototype
     {
         AttackTower,
         AttackTraps,
-        AttackTurrets
+        AttackTurrets,
+        OperateVehicle
     }; 
     #endregion
 
@@ -123,7 +124,14 @@ namespace TowerDefensePrototype
         public float Speed, SlowSpeed;
         public Vector2 Direction = new Vector2(-1f, 0);
         public Vector2 Position, Velocity;
-        public SpriteEffects Orientation = SpriteEffects.None;
+        //public SpriteEffects Orientation = SpriteEffects.None;
+
+        private SpriteEffects _Orientation;
+        public SpriteEffects Orientation 
+        {
+            get { return _Orientation; }
+            set { _Orientation = value; }
+        }
         #endregion
 
         #region Boolean variables
@@ -286,7 +294,19 @@ namespace TowerDefensePrototype
         public int CurrentOperators = 0;
         public int NeededOperators = 2;
         public List<Invader> OperatorList = new List<Invader>();
+
+        public bool ShowDiagnostics = false;
         #endregion
+
+        public Invader(Vector2 position, Vector2? yRange = null)
+        {
+            Position = position;
+
+            if (yRange != null)
+            {
+                YRange = yRange.Value;
+            }
+        }
 
         public virtual void Initialize()
         {
@@ -556,15 +576,36 @@ namespace TowerDefensePrototype
                 {
                     CurrentAnimation.Update(gameTime);
 
-                    invaderVertices[0].TextureCoordinate = CurrentAnimation.dTopLeftTexCooord;
-                    invaderVertices[1].TextureCoordinate = CurrentAnimation.dTopRightTexCoord;
-                    invaderVertices[2].TextureCoordinate = CurrentAnimation.dBottomRightTexCoord;
-                    invaderVertices[3].TextureCoordinate = CurrentAnimation.dBottomLeftTexCoord;
+                    switch (_Orientation)
+                    {
+                        case SpriteEffects.None:
+                            {
+                                invaderVertices[0].TextureCoordinate = CurrentAnimation.dTopLeftTexCooord;
+                                invaderVertices[1].TextureCoordinate = CurrentAnimation.dTopRightTexCoord;
+                                invaderVertices[2].TextureCoordinate = CurrentAnimation.dBottomRightTexCoord;
+                                invaderVertices[3].TextureCoordinate = CurrentAnimation.dBottomLeftTexCoord;
 
-                    normalVertices[0].TextureCoordinate = CurrentAnimation.nTopLeftTexCooord;
-                    normalVertices[1].TextureCoordinate = CurrentAnimation.nTopRightTexCoord;
-                    normalVertices[2].TextureCoordinate = CurrentAnimation.nBottomRightTexCoord;
-                    normalVertices[3].TextureCoordinate = CurrentAnimation.nBottomLeftTexCoord;
+                                normalVertices[0].TextureCoordinate = CurrentAnimation.nTopLeftTexCooord;
+                                normalVertices[1].TextureCoordinate = CurrentAnimation.nTopRightTexCoord;
+                                normalVertices[2].TextureCoordinate = CurrentAnimation.nBottomRightTexCoord;
+                                normalVertices[3].TextureCoordinate = CurrentAnimation.nBottomLeftTexCoord;
+                            }
+                            break;
+
+                        case SpriteEffects.FlipHorizontally:
+                            {
+                                invaderVertices[0].TextureCoordinate = CurrentAnimation.dTopRightTexCoord;
+                                invaderVertices[1].TextureCoordinate = CurrentAnimation.dTopLeftTexCooord;
+                                invaderVertices[2].TextureCoordinate = CurrentAnimation.dBottomLeftTexCoord;
+                                invaderVertices[3].TextureCoordinate = CurrentAnimation.dBottomRightTexCoord;
+                                                                
+                                normalVertices[0].TextureCoordinate = CurrentAnimation.nTopRightTexCoord;
+                                normalVertices[1].TextureCoordinate = CurrentAnimation.nTopLeftTexCooord;
+                                normalVertices[2].TextureCoordinate = CurrentAnimation.nBottomLeftTexCoord;
+                                normalVertices[3].TextureCoordinate = CurrentAnimation.nBottomRightTexCoord;                                
+                            }
+                            break;
+                    }
                 }
                 #endregion
 

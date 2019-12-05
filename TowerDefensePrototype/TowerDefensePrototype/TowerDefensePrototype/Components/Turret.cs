@@ -59,8 +59,8 @@ namespace TowerDefensePrototype
         public int Damage, CurrentFrame, ResourceCost;        
         static Random Random = new Random();
         public TurretType TurretType;
-        public Color Color;        
-        public InvaderAnimation CurrentAnimation;
+        public Color Color;
+        public TurretAnimation CurrentAnimation;
         public List<Emitter> EmitterList = new List<Emitter>();
         public UIBar TimingBar, HealthBar;
         public AmmoBelt AmmoBelt;

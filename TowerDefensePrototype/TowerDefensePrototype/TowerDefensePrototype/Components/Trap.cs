@@ -87,6 +87,11 @@ namespace TowerDefensePrototype
         Color shadowColor;
         float height, heightMod;
 
+        public Trap(Vector2 position)
+        {
+            Position = position;
+        }
+
         public virtual void Initialize()
         {
             Active = true;

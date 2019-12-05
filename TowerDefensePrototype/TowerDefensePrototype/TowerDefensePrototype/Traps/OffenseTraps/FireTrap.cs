@@ -11,8 +11,8 @@ namespace TowerDefensePrototype
     class FireTrap : Trap
     {
         public FireTrap(Vector2 position)
+            : base(position)
         {
-            Position = position;
             Solid = false;
             MaxHP = 50;
             TrapType = TrapType.Fire;
@@ -37,6 +37,12 @@ namespace TowerDefensePrototype
             //{
             //    Milliseconds = 3000,
             //    SpeedPercentage = 0.5f
+            //};
+
+            //InvaderFreeze = new FreezeStruct()
+            //{
+            //    CurrentDelay = 0,
+            //    MaxDelay = 2000
             //};
         }
     }

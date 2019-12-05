@@ -11,8 +11,8 @@ namespace TowerDefensePrototype
     class LandMineTrap : Trap
     {
         public LandMineTrap(Vector2 position)
+            : base(position)
         {
-            Position = position;
             Solid = false;
             MaxHP = 50;
             TrapType = TrapType.LandMine;

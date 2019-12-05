@@ -11,8 +11,8 @@ namespace TowerDefensePrototype
     class LineTrap : Trap
     {
         public LineTrap(Vector2 position)
+            : base(position)
         {
-            Position = position;
             Solid = false;
             MaxHP = 50;
             TrapType = TrapType.Line;

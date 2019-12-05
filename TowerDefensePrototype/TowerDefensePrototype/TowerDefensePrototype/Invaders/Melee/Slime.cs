@@ -10,9 +10,9 @@ namespace TowerDefensePrototype
 {
     class Slime : Invader
     {
-        public Slime(Vector2 position)
+        public Slime(Vector2 position, Vector2? yRange = null)
+            : base(position, yRange)
         {
-            Position = position;
             CurrentHP = 100;
             MaxHP = 100;
             ResourceMinMax = new Vector2(1, 5);

@@ -11,9 +11,9 @@ namespace TowerDefensePrototype
 {
     class RifleMan : LightRangedInvader
     {
-        public RifleMan(Vector2 position)
-        {
-            Position = position;            
+        public RifleMan(Vector2 position, Vector2? yRange = null)
+            : base(position, yRange)
+        {         
             Speed = 0.68f;            
             CurrentHP = 20;
             MaxHP = 20;

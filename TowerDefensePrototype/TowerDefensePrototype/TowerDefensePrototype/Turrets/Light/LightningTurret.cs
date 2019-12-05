@@ -29,7 +29,7 @@ namespace TowerDefensePrototype
             Range = 500;
             TurretFireType = TurretFireType.FullAuto;
 
-            CurrentAnimation = new InvaderAnimation()
+            CurrentAnimation = new TurretAnimation()
             {
                 TotalFrames = 1
             };

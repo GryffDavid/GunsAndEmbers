@@ -33,9 +33,9 @@ namespace TowerDefensePrototype
 
         //What happens when the player removes the trap that is currently targetted? The invader needs to react to that too
 
-        public StationaryCannon(Vector2 position)
+        public StationaryCannon(Vector2 position, Vector2? yRange = null)
+            : base(position, yRange)
         {
-            Position = position;
             Speed = 0.59f;
             MaxHP = 200;
             ResourceMinMax = new Vector2(8, 20);

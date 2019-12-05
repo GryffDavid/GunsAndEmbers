@@ -10,9 +10,9 @@ namespace TowerDefensePrototype
 {
     class Spider : HeavyRangedInvader
     {
-        public Spider(Vector2 position)
+        public Spider(Vector2 position, Vector2? yRange = null)
+            : base(position, yRange)
          {
-            Position = position;
             CurrentHP = 40;
             MaxHP = 40;            
             ResourceMinMax = new Vector2(1, 5);

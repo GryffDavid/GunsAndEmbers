@@ -10,9 +10,9 @@ namespace TowerDefensePrototype
 {
     class Archer : HeavyRangedInvader
     {
-        public Archer(Vector2 position)
+        public Archer(Vector2 position, Vector2? yRange = null)
+            : base(position, yRange)
         {
-            Position = position;
             CurrentHP = 50;
             MaxHP = 50;            
             ResourceMinMax = new Vector2(1, 5);

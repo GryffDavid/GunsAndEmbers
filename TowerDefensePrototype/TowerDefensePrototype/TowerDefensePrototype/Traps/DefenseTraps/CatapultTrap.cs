@@ -12,8 +12,8 @@ namespace TowerDefensePrototype
     {
         //Maybe make invaders take extra turret damage when in the sky after using the catapult trap
         public CatapultTrap(Vector2 position)
+            : base(position)
         {
-            Position = position;
             Solid = false;
             MaxHP = 50;
             TrapType = TrapType.Catapult;

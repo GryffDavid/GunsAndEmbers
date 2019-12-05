@@ -10,13 +10,13 @@ namespace TowerDefensePrototype
 {
     class Soldier : Invader
     {
-        public Soldier(Vector2 position)
+        public Soldier(Vector2 position, Vector2? yRange = null)
+            : base(position, yRange)
         {
             Speed = 0.65f;
-            Position = position;
             MaxHP = 20;
             ResourceMinMax = new Vector2(8, 20);
-            YRange = new Vector2(700, 900);
+            //YRange = new Vector2(700, 900);
 
             InvaderType = InvaderType.Soldier;
 
@@ -95,6 +95,40 @@ namespace TowerDefensePrototype
                     }
                     break;
                 #endregion
+            }
+
+            switch (CurrentMacroBehaviour)
+            {
+                case MacroBehaviour.OperateVehicle:
+                    {
+                        Vector2 diff = Position - OperatingVehicle.Position;
+                        diff.Normalize();
+
+                        //Move towards the point where it'll be able to operate the vehicle
+                        if (Vector2.Distance(Position, OperatingVehicle.Position) >= 48)
+                        {
+                            if (diff.X > 0)
+                            {
+                                CurrentMicroBehaviour = MicroBehaviour.MovingForwards;
+                            }
+                            else
+                            {
+                                CurrentMicroBehaviour = MicroBehaviour.MovingBackwards;
+                            }
+
+                            if (diff.Y > 0)
+                            {
+                                Velocity.Y -= 0.5f;
+                                MaxY -= 0.5f;
+                            }
+                            else
+                            {
+                                Velocity.Y += 0.5f;
+                                MaxY += 0.5f;
+                            }
+                        }
+                    }
+                    break;
             }
             
             base.Update(gameTime, cursorPosition);

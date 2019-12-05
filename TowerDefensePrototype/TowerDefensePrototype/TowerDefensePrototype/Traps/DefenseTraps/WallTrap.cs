@@ -11,8 +11,8 @@ namespace TowerDefensePrototype
     class WallTrap : Trap
     {
         public WallTrap(Vector2 position)
+            : base(position)
         {
-            Position = position;
             Solid = true;
             MaxHP = 100;
             TrapType = TrapType.Wall;

@@ -10,9 +10,9 @@ namespace TowerDefensePrototype
 {
     class Tank : Invader
     {
-        public Tank(Vector2 position)
+        public Tank(Vector2 position, Vector2? yRange = null)
+            : base(position, yRange)
         {
-            Position = position;
             CurrentHP = 800;
             MaxHP = 800;
             ResourceMinMax = new Vector2(5, 20);

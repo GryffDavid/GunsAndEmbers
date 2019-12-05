@@ -22,7 +22,7 @@ namespace TowerDefensePrototype
             Animated = false;
             Looping = false;
 
-            CurrentAnimation = new InvaderAnimation()
+            CurrentAnimation = new TurretAnimation()
             {
                 TotalFrames = 6
             };

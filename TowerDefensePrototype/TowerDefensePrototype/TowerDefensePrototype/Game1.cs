@@ -1788,7 +1788,7 @@ namespace TowerDefensePrototype
         {
             DefaultFont = SecondaryContent.Load<SpriteFont>("Fonts/RobotoRegular20_2");
             //ButtonFont = SecondaryContent.Load<SpriteFont>("Fonts/RobotoRegular20_2");
-            TooltipFont = SecondaryContent.Load<SpriteFont>("Fonts/RobotoRegular20_0");
+            TooltipFont = SecondaryContent.Load<SpriteFont>("Fonts/SpriteFont1");
             BigUIFont = SecondaryContent.Load<SpriteFont>("Fonts/RobotoRegular40_2");
             ResourceFont = Content.Load<SpriteFont>("Fonts/RobotoRegular20_2");
 
@@ -1863,8 +1863,6 @@ namespace TowerDefensePrototype
 
         protected override void Draw(GameTime gameTime)
         {
-
-            
             #region Draw menus
             if (GameState != GameState.Playing)
             {
@@ -2397,41 +2395,89 @@ namespace TowerDefensePrototype
                 #region Draw diagnostics
                 if (Diagnostics == true)
                 {
-                    spriteBatch.DrawString(DefaultFont, Slow.ToString(), Vector2.Zero, Color.Red);
-                    spriteBatch.DrawString(DefaultFont, CurrentProfile.LevelNumber.ToString(), new Vector2(100, 200), Color.Purple);
-                    spriteBatch.DrawString(DefaultFont, "Seconds:" + Seconds.ToString(), new Vector2(0, 16), Color.Lime);
-                    spriteBatch.DrawString(DefaultFont, "Resources:" + Resources.ToString(), new Vector2(0, 32), Color.Lime);
-                    spriteBatch.DrawString(DefaultFont, "CurrentWaveIndex:" + (CurrentWaveIndex + 1).ToString() + "/" + MaxWaves, new Vector2(0, 48), Color.Lime);
-                    spriteBatch.DrawString(DefaultFont, "ShieldOn:" + Tower.Shield.ShieldOn.ToString(), new Vector2(0, 64), Color.Lime);
-                    spriteBatch.DrawString(DefaultFont, "CurrentShieldTime:" + Tower.Shield.CurrentShieldTime.ToString(), new Vector2(0, 80), Color.Lime);
-                    spriteBatch.DrawString(DefaultFont, "CurrentWaveTime:" + CurrentWaveTime.ToString(), new Vector2(0, 96), Color.Lime);
-                    spriteBatch.DrawString(DefaultFont, "HeavyProjectiles:" + HeavyProjectileList.Count.ToString(), new Vector2(0, 112), Color.Lime);
-                    spriteBatch.DrawString(DefaultFont, "Drawables:" + DrawableList.Count.ToString(), new Vector2(0, 124), Color.Lime);
-                    spriteBatch.DrawString(DefaultFont, "TrailList:" + TrailList.Count.ToString(), new Vector2(0, 136), Color.Lime);
-                    spriteBatch.DrawString(DefaultFont, "Emitter1:" + YSortedEmitterList.Count.ToString(), new Vector2(0, 148), Color.Lime);
-                    //spriteBatch.DrawString(DefaultFont, "Emitter2:" + EmitterList2.Count.ToString(), new Vector2(0, 160), Color.Lime);
-                    //spriteBatch.DrawString(DefaultFont, "InvaderHeavy:" + InvaderHeavyProjectileList.Count.ToString(), new Vector2(0, 172), Color.Lime);
-                    spriteBatch.DrawString(DefaultFont, "Invaders:" + InvaderList.Count.ToString(), new Vector2(0, 184), Color.Lime);
-                    spriteBatch.DrawString(DefaultFont, "Particles:" + TotalParticles.ToString(), new Vector2(0, 200), Color.Lime);
-                    //spriteBatch.DrawString(DefaultFont, "Shells:" + ShellCasingList.Count.ToString(), new Vector2(0, 216), Color.Lime);
-                    spriteBatch.DrawString(DefaultFont, "Lightning:" + LightningList.Count.ToString(), new Vector2(0, 232), Color.Lime);
-                    spriteBatch.DrawString(DefaultFont, gameTime.ElapsedGameTime.ToString(), new Vector2(1100, 0), Color.Red);
-                    spriteBatch.DrawString(DefaultFont, CurrentSettings.TimesPlayed.ToString(), new Vector2(0, 248), Tower.Color);
-                    spriteBatch.DrawString(DefaultFont, "InvaderTime:" + CurrentInvaderTime.ToString(), new Vector2(0, 248 + 16), Color.Lime);
-                    spriteBatch.DrawString(DefaultFont, "WaveTime:" + CurrentWaveTime.ToString(), new Vector2(0, 248 + 32), Color.Lime);
-                    spriteBatch.DrawString(DefaultFont, "PauseTime:" + CurrentWavePauseTime, new Vector2(0, 248 + 32 + 16), Color.Lime);
-                    //spriteBatch.DrawString(DefaultFont, "UIQuickInfo:" + UITrapQuickInfoList.Count.ToString(), new Vector2(0, 248 + 64), Color.Lime);
-                    //spriteBatch.DrawString(DefaultFont, "UITrapOutlines:" + UITrapOutlineList.Count.ToString(), new Vector2(0, 248 + 64 + 16), Color.Lime);
-                    //spriteBatch.DrawString(DefaultFont, "UITurretOutlines:" + UITurretOutlineList.Count.ToString(), new Vector2(0, 248 + 64 + 32), Color.Lime);
-                    spriteBatch.DrawString(DefaultFont, "WeatherSprites:" + WeatherSpriteList.Count.ToString(), new Vector2(0, 248 + 64 + 32 + 16), Color.Lime);                    
-                    spriteBatch.DrawString(DefaultFont, "CurrentPowerUnits:" + Tower.CurrentPowerUnits.ToString(), new Vector2(0, 248 + 64 + 32 + 32), Color.Lime);
+                    int yPos = 0;
+                    int yInc = 10;
+
+                    //spriteBatch.DrawString(TooltipFont, CurrentProfile.LevelNumber.ToString(), new Vector2(100, 200), Color.Purple);
+                    //spriteBatch.DrawString(TooltipFont, gameTime.ElapsedGameTime.ToString(), new Vector2(1100, 0), Color.Red);
+                    //spriteBatch.DrawString(TooltipFont, CurrentSettings.TimesPlayed.ToString(), new Vector2(0, yPos), Tower.Color);
+
+                    spriteBatch.DrawString(TooltipFont, Slow.ToString(), Vector2.Zero, Color.Red);
+                    yPos += yInc;
+
+                    spriteBatch.DrawString(TooltipFont, "Seconds:" + Seconds.ToString(), new Vector2(0, yPos), Color.Lime);
+                    yPos += yInc;
+
+                    spriteBatch.DrawString(TooltipFont, "Resources:" + Resources.ToString(), new Vector2(0, yPos), Color.Lime);
+                    yPos += yInc;
+
+                    spriteBatch.DrawString(TooltipFont, "CurrentWaveIndex:" + (CurrentWaveIndex + 1).ToString() + "/" + MaxWaves, new Vector2(0, yPos), Color.Lime);
+                    yPos += yInc;
+
+                    spriteBatch.DrawString(TooltipFont, "ShieldOn:" + Tower.Shield.ShieldOn.ToString(), new Vector2(0, yPos), Color.Lime);
+                    yPos += yInc;
+
+                    spriteBatch.DrawString(TooltipFont, "CurrentShieldTime:" + Tower.Shield.CurrentShieldTime.ToString(), new Vector2(0, yPos), Color.Lime);
+                    yPos += yInc;
+
+                    spriteBatch.DrawString(TooltipFont, "CurrentWaveTime:" + CurrentWaveTime.ToString(), new Vector2(0, yPos), Color.Lime);
+                    yPos += yInc;
+
+                    spriteBatch.DrawString(TooltipFont, "HeavyProjectiles:" + HeavyProjectileList.Count.ToString(), new Vector2(0, yPos), Color.Lime);
+                    yPos += yInc;
+
+                    spriteBatch.DrawString(TooltipFont, "Drawables:" + DrawableList.Count.ToString(), new Vector2(0, yPos), Color.Lime);
+                    yPos += yInc;
+
+                    spriteBatch.DrawString(TooltipFont, "TrailList:" + TrailList.Count.ToString(), new Vector2(0, yPos), Color.Lime);
+                    yPos += yInc;
+
+                    spriteBatch.DrawString(TooltipFont, "Emitter1:" + YSortedEmitterList.Count.ToString(), new Vector2(0, yPos), Color.Lime);
+                    yPos += yInc;
+
+                    spriteBatch.DrawString(TooltipFont, "Invaders:" + InvaderList.Count.ToString(), new Vector2(0, yPos), Color.Lime);
+                    yPos += yInc;
+
+                    spriteBatch.DrawString(TooltipFont, "Particles:" + TotalParticles.ToString(), new Vector2(0, yPos), Color.Lime);
+                    yPos += yInc;
+
+                    spriteBatch.DrawString(TooltipFont, "Lightning:" + LightningList.Count.ToString(), new Vector2(0, yPos), Color.Lime);
+                    yPos += yInc;
+                                        
+                    spriteBatch.DrawString(TooltipFont, "InvaderTime:" + CurrentInvaderTime.ToString(), new Vector2(0, yPos), Color.Lime);
+                    yPos += yInc;
+
+                    spriteBatch.DrawString(TooltipFont, "WaveTime:" + CurrentWaveTime.ToString(), new Vector2(0, yPos), Color.Lime);
+                    yPos += yInc;
+
+                    spriteBatch.DrawString(TooltipFont, "PauseTime:" + CurrentWavePauseTime, new Vector2(0, yPos), Color.Lime);
+                    yPos += yInc;
+
+                    spriteBatch.DrawString(TooltipFont, "WeatherSprites:" + WeatherSpriteList.Count.ToString(), new Vector2(0, yPos), Color.Lime);
+                    yPos += yInc;
+
+                    spriteBatch.DrawString(TooltipFont, "CurrentPowerUnits:" + Tower.CurrentPowerUnits.ToString(), new Vector2(0, yPos), Color.Lime);
+                    yPos += yInc;
 
                     foreach (Invader invader in InvaderList)
                     {
-                        spriteBatch.DrawString(RobotoRegular20_0, invader.InvaderAnimationState.ToString(), invader.Position, Color.White, 0, Vector2.Zero, 0.85f, SpriteEffects.None, 0);
-                        spriteBatch.DrawString(RobotoRegular20_0, "Micro:" + invader.CurrentMicroBehaviour.ToString(), invader.Position + new Vector2(0, 16), Color.White, 0, Vector2.Zero, 0.85f, SpriteEffects.None, 0);
-                        spriteBatch.DrawString(RobotoRegular20_0, "Macro:" + invader.CurrentMacroBehaviour.ToString(), invader.Position + new Vector2(0, 32), Color.White, 0, Vector2.Zero, 0.85f, SpriteEffects.None, 0);
-                        spriteBatch.DrawString(RobotoRegular20_0, "Int:" + invader.Intelligence.ToString(), invader.Position + new Vector2(0, 48), Color.White);
+                        int yPos2 = 0;
+                        int yInc2 = 10;
+
+                        spriteBatch.DrawString(TooltipFont, invader.InvaderAnimationState.ToString(), invader.Position, Color.White, 0, Vector2.Zero, 0.85f, SpriteEffects.None, 0);
+                        yPos2 += yInc2;
+
+                        spriteBatch.DrawString(TooltipFont, "Micro:" + invader.CurrentMicroBehaviour.ToString(), invader.Position + new Vector2(0, yPos2), Color.White, 0, Vector2.Zero, 0.85f, SpriteEffects.None, 0);
+                        yPos2 += yInc2;
+
+                        spriteBatch.DrawString(TooltipFont, "Macro:" + invader.CurrentMacroBehaviour.ToString(), invader.Position + new Vector2(0, yPos2), Color.White, 0, Vector2.Zero, 0.85f, SpriteEffects.None, 0);
+                        yPos2 += yInc2;
+
+                        spriteBatch.DrawString(TooltipFont, "Int:" + invader.Intelligence.ToString(), invader.Position + new Vector2(0, yPos2), Color.White);
+                        yPos2 += yInc2;
+
+                        spriteBatch.DrawString(TooltipFont, "MaxY:" + invader.DrawDepth.ToString(), invader.Position + new Vector2(0, yPos2), Color.White);
+                        yPos2 += yInc2;
                     }
 
                     foreach (Turret turret in TurretList.Where(Turret => Turret != null))
@@ -2446,6 +2492,32 @@ namespace TowerDefensePrototype
 
                     spriteBatch.DrawString(DefaultFont, (gameTime.ElapsedGameTime.TotalMilliseconds).ToString(), new Vector2(1920 - 50, 0), Color.Red);
                     FPSCounter.Draw(spriteBatch);
+                }
+                else
+                {                    
+                    foreach (Invader invader in InvaderList)
+                    {
+                        if (invader.ShowDiagnostics == true)
+                        {
+                            int yPos = 0;
+                            int yInc = 10;
+
+                            spriteBatch.DrawString(TooltipFont, invader.InvaderAnimationState.ToString(), invader.Position, Color.White, 0, Vector2.Zero, 0.85f, SpriteEffects.None, 0);
+                            yPos += yInc;
+
+                            spriteBatch.DrawString(TooltipFont, "Micro:" + invader.CurrentMicroBehaviour.ToString(), invader.Position + new Vector2(0, yPos), Color.White, 0, Vector2.Zero, 0.85f, SpriteEffects.None, 0);
+                            yPos += yInc;
+
+                            spriteBatch.DrawString(TooltipFont, "Macro:" + invader.CurrentMacroBehaviour.ToString(), invader.Position + new Vector2(0, yPos), Color.White, 0, Vector2.Zero, 0.85f, SpriteEffects.None, 0);
+                            yPos += yInc;
+
+                            spriteBatch.DrawString(TooltipFont, "Int:" + invader.Intelligence.ToString(), invader.Position + new Vector2(0, yPos), Color.White);
+                            yPos += yInc;
+
+                            spriteBatch.DrawString(TooltipFont, "MaxY:" + invader.DrawDepth.ToString(), invader.Position + new Vector2(0, yPos), Color.White);
+                            yPos += yInc;
+                        }
+                    }
                 }
                 #endregion
 
@@ -2863,6 +2935,27 @@ namespace TowerDefensePrototype
                                 case true:
                                     BoundingBoxes = false;
                                     break;
+                            }
+                        }
+
+                        //Hold left control and click on an invader to show its diagnostics
+                        foreach (Invader invader in InvaderList)
+                        {
+                            if (CurrentMouseState.LeftButton == ButtonState.Released &&
+                                PreviousMouseState.LeftButton == ButtonState.Pressed &&
+                                CurrentKeyboardState.IsKeyDown(Keys.LeftControl) &&
+                                invader.DestinationRectangle.Contains(VectorToPoint(CursorPosition)))
+                            {
+                                switch (invader.ShowDiagnostics)
+                                {
+                                    case true:
+                                        invader.ShowDiagnostics = false;
+                                        break;
+
+                                    case false:
+                                        invader.ShowDiagnostics = true;
+                                        break;
+                                }
                             }
                         }
                         #endregion
@@ -4963,6 +5056,16 @@ namespace TowerDefensePrototype
                     if (invader.OperatingVehicle != null)
                         invader.OperatingVehicle.OperatorList.Remove(invader);
 
+                    if (invader.OperatorList.Count > 0)
+                    {
+                        foreach (Invader vehicleOperator in invader.OperatorList)
+                        {
+                            vehicleOperator.OperatingVehicle = null;
+                            vehicleOperator.CurrentMacroBehaviour = MacroBehaviour.AttackTower;
+                            vehicleOperator.CurrentMicroBehaviour = MicroBehaviour.MovingForwards;
+                        }
+                    }
+
                     #region Create the Coin visual based on the resource value of the invader
                     for (int i = 0; i < invader.ResourceValue / 10; i++)
                     {
@@ -5244,19 +5347,18 @@ namespace TowerDefensePrototype
                 {
                     case InvaderType.Soldier:
                         {
-                            //Make the soldier move back towards the vehicle it has to operate
-                            //both in X and Y axes
-
                             if (invader.OperatingVehicle != null)
                             {
-                                //Not close enough to actually operate the vehicle - move closer
-                                if (Vector2.Distance(invader.Position, invader.OperatingVehicle.Position) > 16)
+                                invader.CurrentMacroBehaviour = MacroBehaviour.OperateVehicle;
+
+                                if (invader.Velocity.X > 0)
                                 {
-
+                                    invader.Orientation = SpriteEffects.FlipHorizontally;
                                 }
-
-                                //invader.Position.Y += 0.2f;
-                                //invader.MaxY += 0.2f;
+                                else
+                                {
+                                    invader.Orientation = SpriteEffects.None;
+                                }
                             }
                         }
                         break;
@@ -5265,12 +5367,16 @@ namespace TowerDefensePrototype
                     case InvaderType.BatteringRam:
                         {
                             BatteringRam batteringRam = invader as BatteringRam;
+                            batteringRam.CurrentOperators = batteringRam.OperatorList.Count();
 
                             if (batteringRam.CurrentOperators < batteringRam.NeededOperators)
                             {
-                                //The battering ram needs operators. Choose some.
+                                batteringRam.OperatorList.Clear();
+
+                                //The battering ram needs operators. Recruit the closest ones.
                                 List<Invader> closeInvaders = InvaderList.OrderBy(Invader => Vector2.Distance(Invader.Position, batteringRam.Position)).ToList();
                                 closeInvaders.RemoveAll(Invader => Invader.InvaderType != InvaderType.Soldier);
+                                //Also need to remove invaders that are already operating other vehicles
 
                                 if (closeInvaders.Count > 1)
                                 {
@@ -5280,12 +5386,13 @@ namespace TowerDefensePrototype
                                     closeInvaders[0].Speed = batteringRam.Speed;
                                     closeInvaders[1].Speed = batteringRam.Speed;
 
+                                    //These invaders need to end up on either side of the vehicle - further and closer depth
                                     batteringRam.OperatorList.Add(closeInvaders[0]);
                                     batteringRam.OperatorList.Add(closeInvaders[1]);
                                 }
                             }
 
-                            batteringRam.CurrentOperators = batteringRam.OperatorList.Count;
+                            //batteringRam.CurrentOperators = batteringRam.OperatorList.Count;
                         }
                         break;
                     #endregion
@@ -9517,7 +9624,7 @@ namespace TowerDefensePrototype
 
             Resources = CurrentLevel.Resources;
         }
-
+         
 
         private void CursorDraw(SpriteBatch spriteBatch)
         {
@@ -9960,6 +10067,7 @@ namespace TowerDefensePrototype
             DrawableList.AddRange(newDrawable);
 
             DrawableList.Sort((x, y) => x.DrawDepth.CompareTo(y.DrawDepth));
+
             //DrawableList = DrawableList.OrderBy(Drawable => Drawable.DrawDepth).ToList();
 
             //COULD ALSO TRY THIS - INSERT ITEMS IN CORRECT ORDER INSTEAD OF SORTING AFTERWARDS
@@ -10597,6 +10705,13 @@ namespace TowerDefensePrototype
             //Auomatically corrects for the gametime
             return Vector2.Lerp(value1, value2, lerp * (float)(gameTime.ElapsedGameTime.TotalSeconds * 60));
         }
+
+        //********REALLY REALLY COOL!!*****
+        //Can keep incrementing the value and it'll just loop around to the first value again. Really neat
+        //public void NextSearchType()
+        //{
+        //    searchMethod = (SearchMethod)(((int)searchMethod + 1) % (int)SearchMethod.Max);
+        //}
         #endregion
 
         #region Various functions to clear current selections

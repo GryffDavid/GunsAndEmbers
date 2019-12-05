@@ -11,8 +11,8 @@ namespace TowerDefensePrototype
     class SawBladeTrap : Trap
     {
         public SawBladeTrap(Vector2 position)
+            : base(position)
         {
-            Position = position;
             Solid = false;
             MaxHP = 50;
             TrapType = TrapType.SawBlade;

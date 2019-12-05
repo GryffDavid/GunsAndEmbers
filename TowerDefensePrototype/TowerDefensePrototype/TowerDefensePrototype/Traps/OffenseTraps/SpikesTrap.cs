@@ -11,8 +11,8 @@ namespace TowerDefensePrototype
     class SpikesTrap : Trap
     {
         public SpikesTrap(Vector2 position)
+            : base(position)
         {
-            Position = position;
             Solid = false;
             TrapType = TrapType.Spikes;
             MaxHP = 50;

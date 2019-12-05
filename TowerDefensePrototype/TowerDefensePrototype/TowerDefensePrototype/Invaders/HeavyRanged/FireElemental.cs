@@ -9,10 +9,10 @@ using Microsoft.Xna.Framework.Graphics;
 namespace TowerDefensePrototype
 {
     class FireElemental : Invader
-    {    
-        public FireElemental(Vector2 position)
+    {
+        public FireElemental(Vector2 position, Vector2? yRange = null)
+            : base(position, yRange)
         {
-            Position = position;
             CurrentHP = 50;
             MaxHP = 50;
             ResourceMinMax = new Vector2(50, 100);

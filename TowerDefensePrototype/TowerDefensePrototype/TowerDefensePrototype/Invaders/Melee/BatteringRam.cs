@@ -10,13 +10,13 @@ namespace TowerDefensePrototype
 {
     class BatteringRam : Invader
     {
-        public BatteringRam(Vector2 position)
+        public BatteringRam(Vector2 position, Vector2? yRange = null) 
+            : base(position, yRange)
         {
             Speed = 0.65f;
-            Position = position;
             MaxHP = 20;
             ResourceMinMax = new Vector2(8, 20);
-            YRange = new Vector2(700, 900);
+            //YRange = new Vector2(700, 900);
 
             InvaderType = InvaderType.BatteringRam;
 
@@ -42,7 +42,7 @@ namespace TowerDefensePrototype
                         Direction.X = -1;
 
                         if (CurrentOperators == NeededOperators &&
-                            OperatorList.All(Invader => Vector2.Distance(Invader.Position, this.Position) < 16))
+                            OperatorList.All(Invader => Vector2.Distance(Invader.Position, this.Position) < 48))
                         {
                             if (Slow == true)
                                 Velocity.X = Direction.X * SlowSpeed;
@@ -51,7 +51,7 @@ namespace TowerDefensePrototype
                         }
                         else
                         {
-                            Velocity.X = 0;
+                            CurrentMicroBehaviour = MicroBehaviour.Stationary;
                         }
                     }
                     break;
@@ -60,7 +60,12 @@ namespace TowerDefensePrototype
                 #region Stationary
                 case MicroBehaviour.Stationary:
                     {
-                        int p = 0;
+                        Velocity.X = 0;
+
+                        if (CurrentOperators == NeededOperators)
+                        {
+                            CurrentMicroBehaviour = MicroBehaviour.Attack;
+                        }
                     }
                     break;
                 #endregion

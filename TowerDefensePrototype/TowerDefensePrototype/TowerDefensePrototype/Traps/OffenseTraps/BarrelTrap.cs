@@ -11,8 +11,8 @@ namespace TowerDefensePrototype
     class BarrelTrap : Trap
     {
         public BarrelTrap(Vector2 position)
+            : base(position)
         {
-            Position = position;
             Solid = true;
             MaxHP = 50;
             TrapType = TrapType.Barrel;

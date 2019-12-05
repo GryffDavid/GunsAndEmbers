@@ -29,11 +29,16 @@ namespace TowerDefensePrototype
                 // , new ShieldGenerator(new Vector2(2050, 600))
                 // , new Soldier(new Vector2(2050, 600))
                  
-                 , new BatteringRam(new Vector2(1800, 600))
-                 , new Soldier(new Vector2(1800, 600))
-                 , new Soldier(new Vector2(1800, 600))
-                 , new Soldier(new Vector2(1800, 600))
-                 , new Soldier(new Vector2(1800, 600))
+                 , new BatteringRam(new Vector2(1800, 600), new Vector2(800, 800))
+                 , new Soldier(new Vector2(1700, 600), new Vector2(700, 700))
+                 , new Soldier(new Vector2(1700, 600), new Vector2(700, 700))
+
+                 , new BatteringRam(new Vector2(1800, 600), new Vector2(800, 800))
+                 , new Soldier(new Vector2(1700, 600), new Vector2(700, 700))
+                 , new Soldier(new Vector2(1700, 600), new Vector2(700, 700))
+
+                 , new Soldier(new Vector2(1700, 600), new Vector2(700, 700))
+                 , new Soldier(new Vector2(1700, 600), new Vector2(700, 700))
 
                 // , new Soldier(new Vector2(2050, 600))
                 // , new Soldier(new Vector2(2050, 600))

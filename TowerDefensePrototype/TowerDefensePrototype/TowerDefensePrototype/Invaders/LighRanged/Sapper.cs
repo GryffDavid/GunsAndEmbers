@@ -12,7 +12,8 @@ namespace TowerDefensePrototype.Invaders
     //Needs low health so that it's easy to kill quickly, but devestating if not taken care of
     class Sapper : LightRangedInvader
     {
-        public Sapper()
+        public Sapper(Vector2 position, Vector2? yRange = null)
+            : base(position, yRange)
         {
 
         }

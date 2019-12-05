@@ -224,3 +224,4 @@ Content\ShadowBlur.xnb
 Content\EmissiveBlur.xnb
 Content\ParticleEffect.xnb
 Content\StoryDialogue\StoryDialogue1.xnb
+Content\Fonts\SpriteFont1.xnb

@@ -15,7 +15,8 @@ namespace TowerDefensePrototype
         public float ShieldRadius = 80f;
         public List<LightningBolt> BoltList = new List<LightningBolt>();
 
-        public ShieldGenerator(Vector2 position)
+        public ShieldGenerator(Vector2 position, Vector2? yRange = null)
+            : base(position, yRange)
         {
             Speed = 0.65f;
             Position = position;

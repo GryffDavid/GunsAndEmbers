@@ -29,7 +29,7 @@ namespace TowerDefensePrototype
             Range = 500;
             TurretFireType = TurretFireType.FullAuto;
 
-            CurrentAnimation = new InvaderAnimation()
+            CurrentAnimation = new TurretAnimation()
             {
                 TotalFrames = 6
             };
@@ -72,7 +72,6 @@ namespace TowerDefensePrototype
                 {
                     AmmoBelt.Draw(spriteBatch);
                 }
-
             }
         }
     }

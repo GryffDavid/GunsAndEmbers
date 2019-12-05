@@ -25,11 +25,11 @@ namespace TowerDefensePrototype
         //The healing beam can be interrupted by a damage threshold - i.e. taking more than 10 damage in a single burst interrupts the heal
         //and it then needs to charge back up again
         //A red sine-wave shaped beam would be pretty cool. Just saying.
-        public HealDrone(Vector2 position)
+        public HealDrone(Vector2 position, Vector2? yRange = null)
+            : base(position, yRange)
         {
             CurrentHeight = position.Y;
-            Speed = 1.5f;
-            Position = position;            
+            Speed = 1.5f;        
             MaxHP = 300;
             CurrentHP = MaxHP;
             ResourceMinMax = new Vector2(1, 5);

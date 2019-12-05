@@ -66,6 +66,12 @@ namespace TowerDefensePrototype
             }
         }
 
+        public LightRangedInvader(Vector2 position, Vector2? yRange = null)
+            : base(position, yRange)
+        {
+
+        }
+
         #region For handling ranged attacking
         public InvaderFireType FireType; //Whether the invader fires a single projectile, fires a burst or fires a beam etc.
         public Vector2 TowerDistanceRange; //How far away from the tower the invader will be before stopping to fire

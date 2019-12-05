@@ -11,10 +11,10 @@ namespace TowerDefensePrototype
 {
     class JumpMan : LightRangedInvader
     {
-        public JumpMan(Vector2 position)
+        public JumpMan(Vector2 position, Vector2? yRange = null)
+            : base(position, yRange)
         {
             Speed = 0.68f;
-            Position = position;
             CurrentHP = 20;
             MaxHP = 20;
             ResourceMinMax = new Vector2(8, 20);

@@ -66,6 +66,11 @@ namespace TowerDefensePrototype
             }
         }
 
+        public HeavyRangedInvader(Vector2 position, Vector2? yRange) : base(position, yRange)
+        {
+
+        }
+
         #region For drawing barrel animations
         public InvaderAnimation BarrelAnimation;
         public VertexPositionColorTexture[] barrelVertices = new VertexPositionColorTexture[4];

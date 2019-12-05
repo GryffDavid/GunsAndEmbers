@@ -11,6 +11,7 @@ namespace TowerDefensePrototype
     class TriggerTrap : Trap
     {
         public TriggerTrap(Vector2 position)
+            : base(position)
         {
 
         }
