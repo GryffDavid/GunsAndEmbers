@@ -23,7 +23,6 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using Microsoft.Xna.Framework.Storage;
 
-
 namespace TowerDefensePrototype
 {
     #region Enums and structs
@@ -410,7 +409,8 @@ namespace TowerDefensePrototype
                          GrenadeProjectileSprite,
                          GasGrenadeProjectileSprite,
                          FireGrenadeProjectileSprite,
-                         HarpoonProjectileSprite;
+                         HarpoonProjectileSprite,
+                         StickyMineProjectileSprite;
 
         #endregion
 
@@ -632,7 +632,7 @@ namespace TowerDefensePrototype
         List<ExplosionEffect> ExplosionEffectList = new List<ExplosionEffect>();
         List<Shield> ShieldList = new List<Shield>();
         List<ToonLightning> ToonLightningList = new List<ToonLightning>();
-
+        List<StickyMine> StickyMineList = new List<StickyMine>();
 
         SmokeTrail SmokeTrail = new SmokeTrail(new Vector2(200, 200));
         Vector2 GroundRange = new Vector2(672, 896);
@@ -1223,6 +1223,9 @@ namespace TowerDefensePrototype
 
                 if (RopeList.Count > 0)
                     RopeList.Clear();
+
+                TurretSpriteDictionary.Clear();
+                TrapAnimationsDictionary.Clear();
 
                 Content.Unload();
 
@@ -6242,6 +6245,15 @@ namespace TowerDefensePrototype
                             }
                             break;
                         #endregion
+
+                        #region Sticky Mine
+                        case HeavyProjectileType.StickyMine:
+                            {
+                                StickyMine newMine = new StickyMine();
+                                StickyMineList.Add(newMine);
+                            }
+                            break; 
+                        #endregion
                     }
 
                     DeactivateProjectile(heavyProjectile);
@@ -8300,6 +8312,24 @@ namespace TowerDefensePrototype
                     }
                     break;
                 #endregion
+
+                case TurretType.StickyMine:
+                    {
+                        HeavyProjectile = new StickyMineProjectile(turret, GasGrenadeProjectileSprite, SparkParticle, turret.BarrelEnd, 30,
+                            turret.FireRotation, 0.2f, 5, 80, new Vector2(690, 960));
+
+
+                        //SmokeTrail trail = new SmokeTrail(turret.BarrelEnd);
+                        //trail.ProjectileTether = HeavyProjectile;
+                        //SmokeTrailList.Add(trail);
+                       
+
+                        //HeavyProjectile.Initialize();
+                        HeavyProjectileList.Add(HeavyProjectile);
+
+                        AddDrawable(HeavyProjectile);
+                    }
+                    break;
 
                 #region Cluster turret
                 case TurretType.Cluster:

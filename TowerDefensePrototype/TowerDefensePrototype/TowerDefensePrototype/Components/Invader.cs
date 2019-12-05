@@ -37,7 +37,8 @@ namespace TowerDefensePrototype
         JumpMan,
         RifleMan,
         ShieldGenerator,
-        HarpoonCannon
+        HarpoonCannon,
+        DropShip
     };
     #endregion
 

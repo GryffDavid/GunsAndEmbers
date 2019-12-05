@@ -24,7 +24,8 @@ namespace TowerDefensePrototype
         Grenade,
         GasGrenade,
         FireGrenade,
-        Harpoon
+        Harpoon,
+        StickyMine
     }; 
     #endregion
     

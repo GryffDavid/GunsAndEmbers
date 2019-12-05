@@ -121,6 +121,8 @@
     <Compile Include="Components\Pathfinder.cs" />
     <Compile Include="Components\ResourceCounter.cs" />
     <Compile Include="Components\Shield.cs" />
+    <Compile Include="Invaders\Airborne\DropShip.cs" />
+    <Compile Include="Invaders\DropShipDoor.cs" />
     <Compile Include="Invaders\HeavyRanged\HarpoonCannon.cs" />
     <Compile Include="Invaders\ShieldGenerator.cs" />
     <Compile Include="ParticleSystem\Corpse.cs" />
@@ -130,7 +132,9 @@
     <Compile Include="ParticleSystem\Rope.cs" />
     <Compile Include="ParticleSystem\SmokeTrail.cs" />
     <Compile Include="ParticleSystem\ToonLightning.cs" />
+    <Compile Include="Projectiles\Grenades\StickyMineProjectile.cs" />
     <Compile Include="Projectiles\Heavy\HarpoonProjectile.cs" />
+    <Compile Include="Projectiles\StickyMine.cs" />
     <Compile Include="Traps\DefenseTraps\GlueTrap.cs" />
     <Compile Include="Traps\OffenseTraps\FlameThrowerTrap.cs" />
     <Compile Include="Traps\OffenseTraps\LandMineTrap.cs" />
