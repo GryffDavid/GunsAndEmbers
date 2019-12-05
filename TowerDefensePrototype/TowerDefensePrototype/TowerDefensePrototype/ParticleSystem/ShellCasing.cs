@@ -17,6 +17,7 @@ namespace TowerDefensePrototype
         float Transparency;
 
         public Color Color = Color.White;
+        public float ShrinkDelay = 2000f; //Only shrink after 2 seconds have passed
                 
         public ShellCasing(Vector2 position, Vector2 velocity, Texture2D shellTexture, Vector2? scale = null)
         {

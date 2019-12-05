@@ -210,7 +210,7 @@ namespace TowerDefensePrototype
                         height = MathHelper.Clamp(CurrentAnimation.FrameSize.Y * heightMod, 16, 64);
                         float width = MathHelper.Clamp(CurrentAnimation.FrameSize.Y * heightMod, 16, 92);
 
-                        shadowColor = Color.Lerp(Color.Lerp(Color.Black, Color.Transparent, 0f), Color.Transparent, lightDistance / light.Radius);
+                        shadowColor = Color.Lerp(Color.Black, Color.Transparent, (lightDistance / light.Radius)*0.15f);
                         foreach (Light light3 in lightList.FindAll(Light2 => Vector2.Distance(ShadowPosition, new Vector2(Light2.Position.X, Light2.Position.Y)) < light.Radius && Light2 != light).ToList())
                         {
                             shadowColor *= MathHelper.Clamp(Vector2.Distance(new Vector2(light3.Position.X, light3.Position.Y), ShadowPosition) / light3.Radius, 0.8f, 1f);

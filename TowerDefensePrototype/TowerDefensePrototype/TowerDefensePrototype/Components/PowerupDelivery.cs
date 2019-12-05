@@ -15,7 +15,7 @@ namespace TowerDefensePrototype
         //This arrives shooting down from the sky like a pod which the player then shoots to open up and collect the Powerup
 
         public Texture2D Texture, TrailTexture, FinTexture;
-        public BoundingBox BoundingBox;
+        //public BoundingBox BoundingBox;
         public Vector2 Position, Velocity, Direction;
         public float Gravity, MaxY, Rotation, Speed, FinRotation;
         public float CurrentHP, MaxHP;
@@ -55,7 +55,7 @@ namespace TowerDefensePrototype
 
             Emitter TrailEmitter = new Emitter(TrailTexture, new Vector2(Position.X + 16, Position.Y + 8), new Vector2(90, 180),
                 new Vector2(0, 0), new Vector2(10, 20), 0.4f, true, new Vector2(0, 360), new Vector2(-0.5f, 0.5f),
-                new Vector2(1f, 1f), Color.Lerp(Color.LightSkyBlue, Color.Transparent, 0.5f), Color.Lerp(Color.White, Color.Transparent, 0.5f), -0.00f, -1, 1, 1, false, new Vector2(0, 720), true, null,
+                new Vector4(1f, 1f, 1f, 1f), Color.Lerp(Color.LightSkyBlue, Color.Transparent, 0.5f), Color.Lerp(Color.White, Color.Transparent, 0.5f), -0.00f, -1, 1, 1, false, new Vector2(0, 720), true, null,
                 null, null, null, null, null, null, null, true, true, 0);
             EmitterList.Add(TrailEmitter);
 
@@ -174,7 +174,7 @@ namespace TowerDefensePrototype
             
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public override void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(Texture, new Rectangle((int)Position.X, (int)Position.Y, Texture.Width, Texture.Height),
                              null, Color.White, Rotation, new Vector2(Texture.Width, Texture.Height / 2), SpriteEffects.None, (MaxY - 5) / 1080);

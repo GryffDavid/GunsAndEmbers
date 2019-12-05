@@ -241,7 +241,11 @@ namespace TowerDefensePrototype
         } 
         #endregion
 
+        public float NextYPos; //The point on the Y axis that the invader should move towards
+
         public Trap TargetTrap;
+        public Invader TargetInvader;
+        public Invader OperatingVehicle;
 
         public DamageOverTimeStruct CurrentDOT;
 
@@ -278,6 +282,10 @@ namespace TowerDefensePrototype
 
         public AnimatedSprite ThinkingAnimation;
         public Shield Shield;
+
+        public int CurrentOperators = 0;
+        public int NeededOperators = 2;
+        public List<Invader> OperatorList = new List<Invader>();
         #endregion
 
         public virtual void Initialize()
@@ -285,6 +293,8 @@ namespace TowerDefensePrototype
             base.Active = true;
             CurrentHP = MaxHP;
             MaxY = Random.Next((int)YRange.X, (int)YRange.Y);
+            NextYPos = MaxY;
+
             ResourceValue = Random.Next((int)ResourceMinMax.X, (int)ResourceMinMax.Y);
             
             if (Airborne == true)
@@ -393,6 +403,7 @@ namespace TowerDefensePrototype
 
                 if (Velocity.X == 0 && InvaderAnimationState != AnimationState_Invader.Stand && Frozen == false)
                 {
+                    var thing = this.InvaderType;
                     InvaderAnimationState = AnimationState_Invader.Stand;
                 }
 
@@ -613,6 +624,11 @@ namespace TowerDefensePrototype
                 else
                 {
                     CurrentHealDelay += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+                }
+
+                if (OperatingVehicle != null)
+                {
+                    Color = Color.Turquoise;
                 }
 
                 ShadowPosition = new Vector2(Position.X, Position.Y + CurrentAnimation.FrameSize.Y - 2);

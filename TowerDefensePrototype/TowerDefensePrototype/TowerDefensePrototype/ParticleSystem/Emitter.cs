@@ -26,20 +26,21 @@ namespace TowerDefensePrototype
         public List<Particle> ParticleList;
         public List<Texture2D> TextureList;
         public Texture2D Texture;
-        public Vector2 ScaleRange, TimeRange, RotationIncrementRange, SpeedRange, StartingRotationRange, EmitterDirection, EmitterVelocity, YRange, Friction;
+        public Vector2 TimeRange, RotationIncrementRange, SpeedRange, StartingRotationRange, EmitterDirection, EmitterVelocity, YRange, Friction;
+        public Vector4 ScaleRange;
         public float Transparency, Gravity, ActiveSeconds, Interval, MaxY, EmitterSpeed,
                      EmitterAngle, EmitterGravity, FadeDelay, StartingInterval;
         public Color StartColor, EndColor, ThirdColor;
         public bool Fade, CanBounce, AddMore, Shrink, StopBounce, HardBounce, BouncedOnGround,
                     RotateVelocity, FlipHor, FlipVer, ReduceDensity, SortParticles;
-        public bool Grow;
+        public bool Grow, MaintainScale;
         public string TextureName;
         public int Burst;
         static Random Random = new Random();
         public double IntervalTime, CurrentTime;
         public SpriteEffects Orientation = SpriteEffects.None;
-        public Invader Anchor;
         public object Tether;
+        public Invader Anchor;
 
         //TODO Acceleration
 
@@ -91,12 +92,12 @@ namespace TowerDefensePrototype
         /// <param name="reduceDensity">Whether the number of particles burst every interval reduces over time or not</param>
         /// <param name="sortParticles">Whether every particle needs to be individually depth sorted based on the Y position</param>
         public Emitter(Texture2D texture, Vector2 position, Vector2 angleRange, Vector2 speedRange, Vector2 timeRange,
-           float startingTransparency, bool fade, Vector2 startingRotationRange, Vector2 rotationIncrement, Vector2 scaleRange,
+           float startingTransparency, bool fade, Vector2 startingRotationRange, Vector2 rotationIncrement, Vector4 scaleRange,
            Color startColor, Color endColor, float gravity, float activeSeconds, float interval, int burst, bool canBounce,
            Vector2 yrange, bool? shrink = null, float? drawDepth = null, bool? stopBounce = null, bool? hardBounce = null,
            Vector2? emitterSpeed = null, Vector2? emitterAngle = null, float? emitterGravity = null, bool? rotateVelocity = null,
             Vector2? friction = null, bool? flipHor = null, bool? flipVer = null, float? fadeDelay = null, bool? reduceDensity = null,
-            bool? sortParticles = null, bool? grow = false, Vector4? thirdColor = null)
+            bool? sortParticles = null, bool? grow = false, Vector4? thirdColor = null, bool? maintainScale = true)
         {
             Active = true;
             Texture = texture;
@@ -118,8 +119,8 @@ namespace TowerDefensePrototype
             StartingInterval = interval;
             IntervalTime = Interval;
             Burst = burst;
-            CanBounce = canBounce;
-            Grow = grow.Value;
+            CanBounce = canBounce;            
+            MaintainScale = maintainScale.Value;
 
             if (thirdColor != null)
                 ThirdColor = new Color(thirdColor.Value.X, thirdColor.Value.Y, thirdColor.Value.Z, thirdColor.Value.W);
@@ -140,6 +141,11 @@ namespace TowerDefensePrototype
                 StopBounce = false;
             else
                 StopBounce = stopBounce.Value;
+
+            if (grow == null)
+                Grow = false;
+            else
+                Grow = grow.Value;
 
             if (hardBounce == null)
                 HardBounce = false;
@@ -216,12 +222,12 @@ namespace TowerDefensePrototype
         }
 
         public Emitter(List<Texture2D> textureList, Vector2 position, Vector2 angleRange, Vector2 speedRange, Vector2 timeRange,
-           float startingTransparency, bool fade, Vector2 startingRotationRange, Vector2 rotationIncrement, Vector2 scaleRange,
+           float startingTransparency, bool fade, Vector2 startingRotationRange, Vector2 rotationIncrement, Vector4 scaleRange,
            Color startColor, Color endColor, float gravity, float activeSeconds, float interval, int burst, bool canBounce,
            Vector2 yrange, bool? shrink = null, float? drawDepth = null, bool? stopBounce = null, bool? hardBounce = null,
            Vector2? emitterSpeed = null, Vector2? emitterAngle = null, float? emitterGravity = null, bool? rotateVelocity = null,
             Vector2? friction = null, bool? flipHor = null, bool? flipVer = null, float? fadeDelay = null, bool? reduceDensity = null,
-            bool? sortParticles = null, bool? grow = false, Vector4? thirdColor = null)
+            bool? sortParticles = null, bool? grow = false, Vector4? thirdColor = null, bool? maintainScale = true)
         {
             Active = true;
             TextureList = textureList;
@@ -245,6 +251,7 @@ namespace TowerDefensePrototype
             Burst = burst;
             CanBounce = canBounce;
             Grow = grow.Value;
+            MaintainScale = maintainScale.Value;
 
             if (thirdColor != null)
                 ThirdColor = new Color(thirdColor.Value.X, thirdColor.Value.Y, thirdColor.Value.Z, thirdColor.Value.W);
@@ -455,11 +462,23 @@ namespace TowerDefensePrototype
 
                     for (int i = 0; i < newBurst; i++)
                     {
-                        float angle, hp, scale, rotation, speed, startingRotation;
+                        float angle, hp, rotation, speed, startingRotation;
+                        Vector2 scale;
 
                         angle = -MathHelper.ToRadians((float)DoubleRange(AngleRange.X, AngleRange.Y));
                         hp = (float)DoubleRange(TimeRange.X, TimeRange.Y);
-                        scale = (float)DoubleRange(ScaleRange.X, ScaleRange.Y);
+
+                        if (MaintainScale != true)
+                        {
+                            scale = new Vector2((float)DoubleRange(ScaleRange.X, ScaleRange.Y),
+                                                (float)DoubleRange(ScaleRange.Z, ScaleRange.W));
+                        }
+                        else
+                        {
+                            float thing = (float)DoubleRange(ScaleRange.X, ScaleRange.Y);
+                            scale = new Vector2(thing, thing);
+                        }
+
                         rotation = (float)DoubleRange(RotationIncrementRange.X, RotationIncrementRange.Y);
                         speed = (float)DoubleRange(SpeedRange.X, SpeedRange.Y);
                         startingRotation = (float)DoubleRange(StartingRotationRange.X, StartingRotationRange.Y);
@@ -501,10 +520,15 @@ namespace TowerDefensePrototype
         {
             effect.Parameters["Texture"].SetValue(Texture);
 
-            foreach (Particle particle in ParticleList)
+            for (int i = ParticleList.Count - 1; i > 1; i--)
             {
-                particle.Draw(graphics, effect);
+                ParticleList[i].Draw(graphics, effect);
             }
+
+            //foreach (Particle particle in ParticleList)
+            //{
+            //    particle.Draw(graphics, effect);
+            //}
             
         }
 

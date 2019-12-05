@@ -22,12 +22,12 @@ namespace TowerDefensePrototype
 
             Emitter FlashSparks = new Emitter(glowballTexture, Position,
             new Vector2(0, 360), new Vector2(2, 3), new Vector2(15, 25), 1f, true, new Vector2(0, 360),
-            new Vector2(2, 5), new Vector2(0.25f, 0.25f), Color.LimeGreen, Color.LimeGreen, 0.0f, -1, 1, 1,
+            new Vector2(2, 5), new Vector4(0.25f, 0.25f, 0.25f, 0.25f), Color.LimeGreen, Color.LimeGreen, 0.0f, -1, 1, 1,
             false, new Vector2(0, 720), false, null, false, false);
 
             Emitter FlashSmoke = new Emitter(smokeTexture, Position,
             new Vector2(0, 360), new Vector2(1, 2), new Vector2(5, 15), 1f, true, new Vector2(0, 360),
-            new Vector2(2, 5), new Vector2(1f, 1f), Color.LimeGreen, Color.LimeGreen, 0.0f, -1, 1, 1,
+            new Vector2(2, 5), new Vector4(1f, 1f,  1f, 1f), Color.LimeGreen, Color.LimeGreen, 0.0f, -1, 1, 1,
             false, new Vector2(0, 720), false, null, false, false);
 
             EmitterList.Add(FlashSmoke);

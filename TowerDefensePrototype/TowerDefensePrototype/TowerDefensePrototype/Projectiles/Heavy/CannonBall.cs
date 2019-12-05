@@ -16,10 +16,10 @@ namespace TowerDefensePrototype
         {
             HeavyProjectileType = HeavyProjectileType.CannonBall;
 
-            EmitterList.Add(new Emitter(particleTexture, new Vector2(Position.X + 16, Position.Y + 8), new Vector2(90, 180),
-                new Vector2(0, 0), new Vector2(640, 960), 1f, true, new Vector2(0, 360), new Vector2(-0.5f, 0.5f),
-                new Vector2(0.25f, 0.5f), Color.DarkGray, Color.DarkGray, -0.00f, -1, 10, 1, false, new Vector2(0, 720), null, DrawDepth,
-                null, null, null, null, null, null, null, true, true));
+            EmitterList.Add(new Emitter(particleTexture, new Vector2(Position.X + 16, Position.Y + 8), new Vector2(0, 360),
+                new Vector2(0.25f, 0.5f), new Vector2(640, 960), 1f, false, new Vector2(-35, 35), new Vector2(-0.5f, 0.5f),
+                new Vector4(0.025f, 0.05f, 0.025f, 0.05f), Color.DarkGray, Color.Gray, -0.00f, -1, 10, 5, false, new Vector2(0, 720), true, DrawDepth,
+                null, null, null, null, null, null, null, false, false, 150f));
         }
 
         //public override void Update(GameTime gameTime)

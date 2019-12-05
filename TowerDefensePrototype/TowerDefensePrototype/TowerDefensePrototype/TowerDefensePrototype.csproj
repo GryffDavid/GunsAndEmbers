@@ -124,6 +124,7 @@
     <Compile Include="ParticleSystem\ExplosionEffect.cs" />
     <Compile Include="ParticleSystem\JetEngine.cs" />
     <Compile Include="ParticleSystem\JetTrail.cs" />
+    <Compile Include="ParticleSystem\SmokeTrail.cs" />
     <Compile Include="Traps\OffenseTraps\LandMineTrap.cs" />
     <Compile Include="Traps\TriggerTrap.cs" />
     <Compile Include="Turrets\Light\SniperTurret.cs" />
