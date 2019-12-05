@@ -21,29 +21,19 @@ namespace TowerDefensePrototype
         {
             CurrentText = ItemsList[CurrentID].Message;
 
-            //if (ItemsList[CurrentID].Time != -1)
-            //{
-
-            //}
-
             switch (CurrentID)
             {
                 default:
-                    {
-                        CurrentTime += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+                    CurrentTime += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
 
-                        if (CurrentTime > ItemsList[CurrentID].Time)
-                        {
-                            CurrentID++;
-                            CurrentTime = 0;
-                        }
+                    if (CurrentTime > ItemsList[CurrentID].Time)
+                    {
+                        CurrentID++;
+                        CurrentTime = 0;
                     }
                     break;
 
                 case 3:
-                    //if (Game1.CurrentProfile.Buttons[0] == null)
-                    //    Game1.CurrentProfile.Buttons[0] = new Weapon(TurretType.MachineGun, null);
-
                     if (Game1.CurrentProfile.Buttons[0] == null)
                         Game1.DynamicAddWeapon(0, TurretType.MachineGun, null);
 
@@ -54,94 +44,159 @@ namespace TowerDefensePrototype
                     break;
 
                 case 4:
-                    if (Game1.TurretList.Count<Turret>(Turret => Turret != null && Turret.TurretType == TurretType.MachineGun) > 0)
+                    if (Game1.TurretList.Count<Turret>(Turret => Turret != null && 
+                        Turret.TurretType == TurretType.MachineGun) > 0)
                     {
                         CurrentID++;
                     }
                     break;
 
                 case 5:
-                    if (Game1.TurretList[0].ShotsFired == 1)
+                    if (Game1.TurretList[0].ShotsFired >= 5)
                     {
                         CurrentID++;
+
+                        Crate crate = new Crate(new Vector2(500, 500), new Vector2(690, 930));
+                        Game1.AddInvader(crate, gameTime);                        
                     }
                     break;
 
                 case 6:
+                    if (Game1.InvaderList.Count == 0)
                     {
                         CurrentID++;
-                        //SPAWN TUTORIAL CRATE HERE
-                        //if (Game1.TurretList[0].ShotsFired == 10)
-                        //{
-                        //    CurrentID++;
-                        //}
                     }
                     break;
 
                 case 7:
-                    if (Game1.SelectedTurret == null)
+                    if (Game1.CurrentTurret == null)
                     {
                         CurrentID++;
-
+                        Game1.DynamicAddWeapon(1, null, TrapType.Fire);
                         Game1.Resources += 120;
-
-                        if (Game1.CurrentProfile.Buttons[1] == null)
-                            Game1.DynamicAddWeapon(1, null, TrapType.Fire);
                     }
                     break;
 
                 case 8:
+                    if (Game1.SelectedTrap == TrapType.Fire)
                     {
-                        if (Game1.SelectedTrap == TrapType.Fire)
-                        {
-                            CurrentID++;
-                        }
+                        CurrentID++;
                     }
                     break;
 
                 case 9:
-                    {
-                        //COULD MAKE THESE APPEAR AS "OBJECTIVES" I.E. SHOW "FIRE TRAPS PLACED 1/5" etc.
-                        //THE IDEA IS OK, BUT I ALSO LIKE THE IDEA OF JUST THROWING THE PLAYER INTO A LEVEL
-                        //WITHOUT ANY OBJECTIVE EXCEPT "DO ANYTHING YOU CAN TO DEFEND THIS TOWER".
-                        //THE OBJECTIVES COULD BE USED TO EARN NEW THINGS ETC. BUT MAYBE SHOULDN'T BE THE
-                        //CORE MECHANIC
-                        if (Game1.TrapList.Count > 0)
+                    if (Game1.TrapList.Count > 0)
                         if (Game1.TrapList[0].TrapType == TrapType.Fire)
                         {
                             Game1.Resources += (4 * 120);
                             CurrentID++;
                         }
-                    }
                     break;
 
                 case 10:
+                    if (Game1.TrapList.Count == 5)
                     {
-                        if (CrateNum < 6)
-                        {
-                            if (Game1.InvaderList.Count == 0)
-                            {
+                        CurrentID++;
+                    }
+                    break;
 
-                                Crate crate = new Crate(new Vector2(1000, 100), new Vector2(690, 930));
+                case 11:
+                    if (Game1.StartWave == false)
+                        Game1.StartWaves();
+
+                    CurrentTime += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+                    
+                    if (CurrentTime > ItemsList[CurrentID].Time)
+                    {
+                        CurrentID++;
+                        CurrentTime = 0;
+                    }
+                    break;
+
+                case 12:
+                    //The turret has overheated. Warn the player about this mechanic
+                    if (Game1.TurretList[0].Overheated == true)
+                    {
+                        CurrentID++;
+                        Game1.Resources += 250;
+                    }
+
+                    //The wave has been defeated before the player overheats the turret. Move along anyway.
+                    if (Game1.StartWave == false)
+                    {
+                        CurrentID = 15;
+                    }
+                    break;
+
+                case 13:
+                    if (Game1.TurretList[0].Overheated == false ||
+                        (Game1.TurretList[1] != null && Game1.TurretList[1].TurretType == TurretType.MachineGun))
+                    {
+                        CurrentID++;
+                    }
+                    break;
+
+                case 14:
+                    if (Game1.StartWave == false && Game1.InvaderList.Count == 0)
+                    {
+                        CurrentID = 15;
+                    }
+                    break;
+
+                case 16:
+                    if (Game1.TurretList[0] == null)
+                    {
+                        CurrentID++;
+                        Game1.DynamicAddWeapon(2, TurretType.Cannon, null);
+                        Game1.Resources = 600;
+                    }
+                    break;
+
+                case 17:
+                    if (Game1.TurretList[0] != null &&
+                        Game1.TurretList[0].TurretType == TurretType.Cannon)
+                    {
+                        CurrentID++;
+                    }
+                    break;
+
+                case 18:
+                    //The cannon has been fired
+                    if (Game1.TurretList[0].ShotsFired >= 1 &&
+                        Game1.TurretList[0].TurretType == TurretType.Cannon)
+                    {
+                        CurrentID++;                        
+                    }
+                    break;
+
+                case 20:
+                    {
+                        if (CrateNum == 0)
+                        {
+                            for (int i = 0; i < 7; i++)
+                            {
+                                Crate crate = new Crate(new Vector2(500, 500), new Vector2(690, 930), 20);
                                 Game1.AddInvader(crate, gameTime);
                                 CrateNum++;
                             }
                         }
                         else
                         {
-                            CurrentID++;
+                            //All the crates were destroyed                            
+                            if (Game1.InvaderList.Count == 0)
+                            {
+                                CurrentID++;
+                            }
                         }
                     }
                     break;
 
-                case 11:
+                case 21:
                     {
 
                     }
                     break;
-                    
             }
-            
 
             base.Update(gameTime);
         }

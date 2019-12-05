@@ -12,11 +12,11 @@ namespace TowerDefensePrototype
     {
         public override float OriginalSpeed { get { return 0.0f; } }
 
-        public Crate(Vector2 position, Vector2? yRange = null)
+        public Crate(Vector2 position, Vector2? yRange = null, float? maxHP = 10)
             : base(position, yRange)
         {
             Speed = 0;
-            MaxHP = 10;
+            MaxHP = maxHP.Value;
             ResourceMinMax = new Vector2(5, 10);
             YRange = new Vector2(700, 900);
 

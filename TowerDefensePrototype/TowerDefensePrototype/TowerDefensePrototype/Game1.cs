@@ -390,7 +390,8 @@ namespace TowerDefensePrototype
 
         #region Fonts
         SpriteFont DefaultFont, TooltipFont, ResourceFont, BigUIFont,
-                   RobotoBold40_2, RobotoRegular40_2, RobotoRegular20_2, RobotoRegular20_0, RobotoItalic20_0;
+                   RobotoBold40_2, RobotoRegular40_2, RobotoRegular20_2, RobotoRegular20_0, RobotoItalic20_0,
+                   DialogueFont;
         #endregion
 
         #region Projectile sprites
@@ -487,7 +488,7 @@ namespace TowerDefensePrototype
         bool DialogVisible = false;
         bool Diagnostics = false;
         bool BoundingBoxes = false;
-        bool StartWave = false;
+        public bool StartWave = false;
         bool Victory = false;
 
         float MenuSFXVolume, MenuMusicVolume, CurrentInvaderTime, CurrentWaveTime, CurrentWavePauseTime;
@@ -582,7 +583,7 @@ namespace TowerDefensePrototype
         Trap NewTrap;
         Button StartWaveButton;
         //WaveCountDown WaveCountDown;
-        Turret CurrentTurret;
+        public Turret CurrentTurret;
         Tabs ProfileManagementTabs;
         BeamProjectile CurrentBeam;
         //UIInvaderInfo UIInvaderInfo;
@@ -1950,7 +1951,9 @@ namespace TowerDefensePrototype
         private void LoadFonts()
         {
             DefaultFont = SecondaryContent.Load<SpriteFont>("Fonts/RobotoRegular20_2");
+            DialogueFont = SecondaryContent.Load<SpriteFont>("Fonts/RobotoBold20_0_Outline");
             //ButtonFont = SecondaryContent.Load<SpriteFont>("Fonts/RobotoRegular20_2");
+
             TooltipFont = SecondaryContent.Load<SpriteFont>("Fonts/SpriteFont1");
             BigUIFont = SecondaryContent.Load<SpriteFont>("Fonts/RobotoRegular40_2");
             ResourceFont = Content.Load<SpriteFont>("Fonts/RobotoRegular20_2");
@@ -2467,7 +2470,7 @@ namespace TowerDefensePrototype
 
                 spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
 
-                spriteBatch.DrawString(DefaultFont, CurrentLevel.LevelDialogue.CurrentText, new Vector2(100, 100), Color.Black);
+                spriteBatch.DrawString(DialogueFont, CurrentLevel.LevelDialogue.CurrentText, new Vector2(100, 100), Color.White);
 
                 #region Draw diagnostics
                 if (Diagnostics == true)
@@ -9900,7 +9903,9 @@ namespace TowerDefensePrototype
                 //    UIWeaponInfoList.Add(null);
                 //}
 
-                CooldownButtonList.Add(button);
+                CooldownButtonList[i] = button;
+                //CooldownButtonList.RemoveAt(CooldownButtonList.Count - 1);
+                //CooldownButtonList.Add(button);
             //}
         }
 
@@ -10860,8 +10865,29 @@ namespace TowerDefensePrototype
             NameInput.RealString = "";
             NameInput.TypePosition = 0;
 
-            GameState = GameState.ProfileManagement;
+            //GameState = GameState.ProfileManagement;
+            //GameState = GameState.Playing;
 
+            if (CurrentProfile != null)
+            {
+                UnloadGameContent();
+                Tower.CurrentHP = Tower.MaxHP;
+                Tower.Shield.CurrentShield = Tower.Shield.MaxShield;
+                LevelNumber = CurrentProfile.LevelNumber;
+                LoadLevel(LevelNumber);
+                //LoadUpgrades();
+                StorageDevice.BeginShowSelector(this.SaveProfile, null);
+                GameState = GameState.Loading;
+                LoadingThread = new Thread(LoadGameContent);
+                LoadingThread.Name = "Loading Content Thread";
+
+                //Changed this to run in background now. Keep an eye on it.
+                //Did that in an attempt to stop the loading screen giving an "Unexpected Error"
+                //LoadingThread.IsBackground = false;
+                LoadingThread.Start();
+
+                IsLoading = false;
+            }
         }
         #endregion
 
