@@ -5,8 +5,8 @@ using System.Text;
 
 namespace TowerDefensePrototype
 {
-    public class InvaderAnimation : Animation
+    public class TrapAnimation : Animation
     {
-        public InvaderState CurrentInvaderState;
+        public TrapState CurrentTrapState;
     }
 }

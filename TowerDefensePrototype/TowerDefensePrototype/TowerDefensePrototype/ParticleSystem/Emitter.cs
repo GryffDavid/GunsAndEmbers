@@ -26,7 +26,7 @@ namespace TowerDefensePrototype
         public SpriteEffects Orientation = SpriteEffects.None;
         public Invader Anchor;
 
-       
+        //VertexPositionColorTexture[] 
 
         public Emitter(String textureName, Vector2 position, Vector2 angleRange, Vector2 speedRange, Vector2 hpRange,
             float startingTransparency, bool fade, Vector2 startingRotationRange, Vector2 rotationIncrement, Vector2 scaleRange,
@@ -441,6 +441,14 @@ namespace TowerDefensePrototype
             //    ParticleList[i].Draw(spriteBatch);
             //}
         }
+
+        //public override void Draw(GraphicsDevice graphics, Effect effect)
+        //{
+        //    foreach (Particle particle in ParticleList)
+        //    {
+        //        particle.Draw(graphics, effect);
+        //    }
+        //}
 
         public double DoubleRange(double one, double two)
         {

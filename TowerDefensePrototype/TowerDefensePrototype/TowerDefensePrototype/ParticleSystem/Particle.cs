@@ -21,6 +21,9 @@ namespace TowerDefensePrototype
         Color Color = Color.White;
         float RadRotation;
 
+        VertexPositionColorTexture[] ParticleVertices = new VertexPositionColorTexture[4];
+        int[] ParticleIndices = new int[6];
+
         public Particle(Texture2D texture, Vector2 position, float angle, float speed, float maxHP,
             float startingTransparency, bool fade, float startingRotation, float rotationChange,
             float scale, Color startColor, Color endColor, float gravity, bool canBounce, float maxY, bool shrink,
@@ -250,6 +253,41 @@ namespace TowerDefensePrototype
             CurrentColor = Color.Lerp(EndColor, StartColor, PercentageHP / 100);
             Color = Color.Lerp(Color.Transparent, CurrentColor, CurrentTransparency);
             RadRotation = MathHelper.ToRadians(CurrentRotation);
+
+            ParticleVertices[0] = new VertexPositionColorTexture()
+            {
+                Color = Color,
+                Position = new Vector3(CurrentPosition.X - Texture.Width/2, CurrentPosition.Y - Texture.Height/2, 0),
+                TextureCoordinate = new Vector2(0, 0)
+            };
+
+            ParticleVertices[1] = new VertexPositionColorTexture()
+            {
+                Color = Color,
+                Position = new Vector3(CurrentPosition.X + Texture.Width / 2, CurrentPosition.Y - Texture.Height / 2, 0),
+                TextureCoordinate = new Vector2(1, 0)
+            };
+
+            ParticleVertices[2] = new VertexPositionColorTexture()
+            {
+                Color = Color,
+                Position = new Vector3(CurrentPosition.X + Texture.Width / 2, CurrentPosition.Y + Texture.Height / 2, 0),
+                TextureCoordinate = new Vector2(1, 1)
+            };
+
+            ParticleVertices[3] = new VertexPositionColorTexture()
+            {
+                Color = Color,
+                Position = new Vector3(CurrentPosition.X - Texture.Width / 2, CurrentPosition.Y + Texture.Height / 2, 0),
+                TextureCoordinate = new Vector2(0, 1)
+            };
+
+            ParticleIndices[0] = 0;
+            ParticleIndices[1] = 1;
+            ParticleIndices[2] = 2;
+            ParticleIndices[3] = 2;
+            ParticleIndices[4] = 3;
+            ParticleIndices[5] = 0;
         }
 
         public override void Draw(SpriteBatch spriteBatch)
@@ -297,5 +335,15 @@ namespace TowerDefensePrototype
                 //}
             }
         }
+
+        //public override void Draw(GraphicsDevice graphics, Effect effect)
+        //{
+        //    foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+        //    {
+        //        pass.Apply();
+        //        graphics.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, ParticleVertices, 0, ParticleVertices.Count(), 
+        //                                           ParticleIndices, ParticleIndices.Count(), 2, VertexPositionColorTexture.VertexDeclaration);
+        //    }
+        //}
     }
 }

@@ -30,6 +30,8 @@ namespace TowerDefensePrototype
 
             InvaderState = InvaderState.Walk;
 
+            //BlendState = BlendState.Additive;
+
             //DustEmitter = new Emitter("Particles/Smoke", new Vector2(DestinationRectangle.Center.X, DestinationRectangle.Bottom - 8),
             //                                   new Vector2(60, 60), new Vector2(0.5f, 1f), new Vector2(20, 30), 0.5f, true, new Vector2(0, 0),
             //                                   new Vector2(-2, 2), new Vector2(0.25f, 0.5f), Color.SaddleBrown, Color.SaddleBrown, 0f, -1, 600, 1, false, new Vector2(0, 720), false);

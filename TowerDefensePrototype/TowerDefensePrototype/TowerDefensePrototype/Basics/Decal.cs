@@ -59,5 +59,10 @@ namespace TowerDefensePrototype
                             (int)(Texture.Height*Scale.Y)), null, Color.Lerp(Color.Transparent, Color.White, TransparencyPercentage/100), Rotation, new Vector2(Texture.Width / 2, Texture.Height / 2), 
                             SpriteEffects.None, 0);
         }
+
+        public void DrawNormal(SpriteBatch spriteBatch)
+        {
+
+        }
     }
 }

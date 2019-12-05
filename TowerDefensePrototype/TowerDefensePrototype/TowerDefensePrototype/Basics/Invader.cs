@@ -9,8 +9,6 @@ using Microsoft.Xna.Framework.Audio;
 
 namespace TowerDefensePrototype
 {
-   
-
     public abstract class Invader : Drawable
     {
         //public string AssetName;
@@ -60,7 +58,8 @@ namespace TowerDefensePrototype
                     CurrentAnimation = AnimationList.Find(Animation => Animation.CurrentInvaderState == value);   
                  
                     if (CurrentAnimation.CurrentInvaderState == InvaderState.Stand)
-                    CurrentAnimation.CurrentFrame = Random.Next(0, CurrentAnimation.TotalFrames);
+                        CurrentAnimation.CurrentFrame = Random.Next(0, CurrentAnimation.TotalFrames);
+
                     CurrentAnimation.CurrentFrameDelay = 0;
                 }
             }
@@ -70,8 +69,8 @@ namespace TowerDefensePrototype
         public VertexPositionColorTexture[] shadowVertices = new VertexPositionColorTexture[4];
         public int[] shadowIndices = new int[6];
 
-        public VertexPositionColorTexture[] spriteVertices = new VertexPositionColorTexture[4];
-        public int[] spriteIndices = new int[6];
+        public VertexPositionColorTexture[] invaderVertices = new VertexPositionColorTexture[4];
+        public int[] invaderIndices = new int[6];
 
         public VertexPositionColorTexture[] normalVertices = new VertexPositionColorTexture[4];
         public int[] normalIndices = new int[6];
@@ -163,18 +162,18 @@ namespace TowerDefensePrototype
                 }
 
                 #region Update Fire Emitter
-                //if (FireEmitter != null)
-                //{
-                //    FireEmitter.Update(gameTime);
-                //    FireEmitter.Position = new Vector2(DestinationRectangle.Left +
-                //                                       Random.Next(0, CurrentTexture.Width / CurrentAnimation.TotalFrames),
-                //                                       DestinationRectangle.Bottom - Random.Next(0, CurrentTexture.Height));
+                if (FireEmitter != null)
+                {
+                    FireEmitter.Update(gameTime);
+                    FireEmitter.Position = new Vector2(DestinationRectangle.Left +
+                                                       Random.Next(0, (int)CurrentAnimation.FrameSize.X / CurrentAnimation.TotalFrames),
+                                                       DestinationRectangle.Bottom - Random.Next(0, (int)CurrentAnimation.FrameSize.Y));
 
-                //    if (FireEmitter.ParticleList.Count == 0 && FireEmitter.AddMore == false)
-                //    {
-                //        FireEmitter = null;
-                //    }
-                //}
+                    if (FireEmitter.ParticleList.Count == 0 && FireEmitter.AddMore == false)
+                    {
+                        FireEmitter = null;
+                    }
+                }
                 #endregion
 
                 #region Update Health Emitter
@@ -446,52 +445,52 @@ namespace TowerDefensePrototype
                     #region Draw the sprite
 
                     graphics.SamplerStates[0] = SamplerState.PointClamp;
-                    spriteVertices[0] = new VertexPositionColorTexture()
+                    invaderVertices[0] = new VertexPositionColorTexture()
                     {
                         Color = Color,
                         Position = new Vector3(DestinationRectangle.X, DestinationRectangle.Y, 0),
                         TextureCoordinate = new Vector2(animX, 0)
                     };
 
-                    spriteVertices[1] = new VertexPositionColorTexture()
+                    invaderVertices[1] = new VertexPositionColorTexture()
                     {
                         Color = Color,
                         Position = new Vector3(DestinationRectangle.X + CurrentAnimation.DiffuseSourceRectangle.Width, DestinationRectangle.Y, 0),
                         TextureCoordinate = new Vector2(animX + animWid, 0)
                     };
 
-                    spriteVertices[2] = new VertexPositionColorTexture()
+                    invaderVertices[2] = new VertexPositionColorTexture()
                     {
                         Color = Color,
                         Position = new Vector3(DestinationRectangle.X + CurrentAnimation.DiffuseSourceRectangle.Width, DestinationRectangle.Y + CurrentAnimation.DiffuseSourceRectangle.Height, 0),
                         TextureCoordinate = new Vector2(animX + animWid, 0.5f)
                     };
 
-                    spriteVertices[3] = new VertexPositionColorTexture()
+                    invaderVertices[3] = new VertexPositionColorTexture()
                     {
                         Color = Color,
                         Position = new Vector3(DestinationRectangle.X, DestinationRectangle.Y + CurrentAnimation.DiffuseSourceRectangle.Height, 0),
                         TextureCoordinate = new Vector2(animX, 0.5f)
                     };
 
-                    spriteIndices[0] = 0;
-                    spriteIndices[1] = 1;
-                    spriteIndices[2] = 2;
-                    spriteIndices[3] = 2;
-                    spriteIndices[4] = 3;
-                    spriteIndices[5] = 0;
+                    invaderIndices[0] = 0;
+                    invaderIndices[1] = 1;
+                    invaderIndices[2] = 2;
+                    invaderIndices[3] = 2;
+                    invaderIndices[4] = 3;
+                    invaderIndices[5] = 0;
 
                     foreach (EffectPass pass in effect.CurrentTechnique.Passes)
                     {
                         pass.Apply();
-                        graphics.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, spriteVertices, 0, 4, spriteIndices, 0, 2, VertexPositionColorTexture.VertexDeclaration);
+                        graphics.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, invaderVertices, 0, 4, invaderIndices, 0, 2, VertexPositionColorTexture.VertexDeclaration);
                     }
                     #endregion
                 }
 
                 if (HealthEmitter != null)
                 {
-                    HealthEmitter.Draw(spriteBatch);
+                    HealthEmitter.Draw(graphics, effect);
                 }
 
                 if (FireEmitter != null)
@@ -523,7 +522,7 @@ namespace TowerDefensePrototype
                 foreach (EffectPass pass in effect.CurrentTechnique.Passes)
                 {
                     pass.Apply();
-                    graphics.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, spriteVertices, 0, 4, spriteIndices, 0, 2, VertexPositionColorTexture.VertexDeclaration);
+                    graphics.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, invaderVertices, 0, 4, invaderIndices, 0, 2, VertexPositionColorTexture.VertexDeclaration);
                 }
             }
         }
@@ -639,7 +638,5 @@ namespace TowerDefensePrototype
             SlowDelay = slowStruct.Milliseconds;
             SlowSpeed = slowStruct.SpeedPercentage;
         }
-
-
     }
 }

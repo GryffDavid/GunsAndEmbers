@@ -17,8 +17,8 @@ namespace TowerDefensePrototype
             Direction = new Vector2(-1f, 0);
             Speed = 0.68f;
             Position = position;
-            CurrentHP = 40;
-            MaxHP = 40;
+            CurrentHP = 20;
+            MaxHP = 20;
             ResourceMinMax = new Vector2(8, 20);
             CurrentAttackDelay = 0;
             AttackDelay = 1500;
@@ -30,11 +30,24 @@ namespace TowerDefensePrototype
             Airborne = false;
 
             InvaderState = InvaderState.Walk;
+            //BlendState = BlendState.Additive;
         }
 
-        public void Update(GameTime gameTime)
+        public override void Update(GameTime gameTime, Vector2 cursorPosition)
         {
+            //if (Velocity.X < 0)
+            //{
+            //    CurrentInvaderState = InvaderState.Walk;
+            //}
 
+            //switch (InvaderState)
+            //{
+            //    case InvaderState.Walk:
+            //        CurrentAnimation = AnimationList[0];
+            //        break;
+            //}
+
+            base.Update(gameTime, cursorPosition);
         }
 
         public override void TrapDamage(Trap trap)

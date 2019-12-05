@@ -21,9 +21,7 @@ namespace TowerDefensePrototype
         }
 
         public override void Update(GameTime gameTime, Vector2 cursorPosition)
-        {            
-            base.Update(gameTime, cursorPosition);
-            
+        {
             if (CurrentBurst >= MaxBurst &&
                 CurrentBurstDelay < MaxBurstDelay)
             {
@@ -35,6 +33,8 @@ namespace TowerDefensePrototype
                 CurrentBurstDelay = 0;
                 CurrentBurst = 0;
             }
+
+            base.Update(gameTime, cursorPosition);
         }
     }
 }

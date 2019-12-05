@@ -163,9 +163,11 @@ Content\Sounds\Menu\MenuWoosh.xnb
 Content\Sounds\Implosion.xnb
 Content\Sounds\Implosion2.xnb
 Content\Sounds\TurretOverheat.xnb
+Content\Sounds\Menu\MenuMusic1.xnb
 Content\Shaders\HealthBarEffect.xnb
 Content\Shaders\ShockWaveEffect.xnb
 Content\Shaders\ShieldBubbleEffect.xnb
+Content\Shaders\BackgroundEffect.xnb
 Content\Shaders\ButtonBlurEffect.xnb
 Content\Shaders\CrepuscularRaysEffect.xnb
 Content\Shaders\AlphaTest.xnb
@@ -173,4 +175,6 @@ Content\DepthEffect.xnb
 Content\LightCombinedEffect.xnb
 Content\LightEffect.xnb
 Content\ShadowBlur.xnb
+Content\EmissiveBlur.xnb
 Content\StoryDialogue\StoryDialogue1.xnb
+Content\MappingOutlines.xnb
