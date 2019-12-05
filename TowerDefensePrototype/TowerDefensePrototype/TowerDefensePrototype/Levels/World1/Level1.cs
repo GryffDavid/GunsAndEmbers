@@ -20,25 +20,25 @@ namespace TowerDefensePrototype
 
             Wave Wave1 = new Wave(true, 2050, 3000,
                  new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 4000.0f,
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
-                 new Soldier(new Vector2(2050, 600)),
+                 //new Soldier(new Vector2(2050, 600)),
+                 //new Soldier(new Vector2(2050, 600)),
+                 //new Soldier(new Vector2(2050, 600)),
+                 //new Soldier(new Vector2(2050, 600)),
+                 //new Soldier(new Vector2(2050, 600)),
+                 //new Soldier(new Vector2(2050, 600)),
+                 //new Soldier(new Vector2(2050, 600)),
+                 //new Soldier(new Vector2(2050, 600)),
+                 //new Soldier(new Vector2(2050, 600)),
+                 //// 4000.0f,
+                 //new Soldier(new Vector2(2050, 600)),
+                 //new Soldier(new Vector2(2050, 600)),
+                 //new Soldier(new Vector2(2050, 600)),
+                 //new Soldier(new Vector2(2050, 600)),
+                 //new Soldier(new Vector2(2050, 600)),
+                 //new Soldier(new Vector2(2050, 600)),
+                 //new Soldier(new Vector2(2050, 600)),
+                 //new Soldier(new Vector2(2050, 600)),
+                 //new Soldier(new Vector2(2050, 600)),
                  new Soldier(new Vector2(2050, 600)));
 
             Wave Wave3 = new Wave(true, 200, 1000,
@@ -142,7 +142,7 @@ namespace TowerDefensePrototype
                  new Soldier(new Vector2(2050, 600)));
 
             WaveList.Add(Wave1);
-            WaveList.Add(Wave3);
+            //WaveList.Add(Wave3);
             //WaveList.Add(Wave4);
             //WaveList.Add(Wave5);
             //WaveList.Add(Wave6);

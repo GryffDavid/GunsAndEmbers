@@ -59,7 +59,7 @@ namespace TowerDefensePrototype
 
                 spriteBatch.Draw(TurretBase, BaseRectangle, null, Color, 0, BasePivot, SpriteEffects.None, 0.90f);
 
-                spriteBatch.Draw(TurretBase, new Rectangle((int)(BasePivot.X + Position.X), (int)(BasePivot.Y + Position.Y), 1920, 4), null, Color.White, FireRotation, Vector2.Zero, SpriteEffects.None, 0);
+                //spriteBatch.Draw(TurretBase, new Rectangle((int)(BasePivot.X + Position.X), (int)(BasePivot.Y + Position.Y), 1920, 4), null, Color.White, FireRotation, Vector2.Zero, SpriteEffects.None, 0);
             }
         }
     }

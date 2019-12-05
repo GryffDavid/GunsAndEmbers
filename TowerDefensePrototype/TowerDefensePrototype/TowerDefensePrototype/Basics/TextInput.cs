@@ -29,6 +29,15 @@ namespace TowerDefensePrototype
             TypePosition = 0;
         }
 
+        public TextInput(Vector2 position, int spaceLimit, SpriteFont font, Color color)
+        {
+            Position = position;
+            SpaceLimit = spaceLimit;
+            Font = font;
+            Color = color;
+            TypePosition = 0;
+        }
+
         public void LoadContent(ContentManager contentManager)
         {
             Font = contentManager.Load<SpriteFont>(FontName);

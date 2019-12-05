@@ -144,7 +144,7 @@
     <Compile Include="Basics\Light.cs" />
     <Compile Include="Invaders\TestInvader.cs" />
     <Compile Include="Levels\TutorialLevel.cs" />
-    <Compile Include="PowerUps\PowerUpDelivery.cs" />
+    <Compile Include="Basics\PowerupDelivery.cs" />
     <Compile Include="SpecialAbilities\AirStrikeSpecial.cs" />
     <Compile Include="Traps\OffenseTraps\LineTrap.cs" />
     <Compile Include="Projectiles\PersistentBeamProjectile.cs" />
@@ -200,7 +200,6 @@
     <Compile Include="Invaders\BatteringRam.cs" />
     <Compile Include="Projectiles\LightProjectile.cs" />
     <Compile Include="ParticleSystem\Particle.cs" />
-    <Compile Include="Traps\DefenseTraps\TarTrap.cs" />
     <Compile Include="Invaders\Tank.cs" />
     <Compile Include="Projectiles\MachineGunProjectile.cs" />
     <Compile Include="Basics\TextInput.cs" />

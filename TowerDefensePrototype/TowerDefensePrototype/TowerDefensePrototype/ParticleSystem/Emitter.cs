@@ -15,9 +15,9 @@ namespace TowerDefensePrototype
         public Texture2D Texture;
         public Vector2 ScaleRange, HPRange, RotationIncrementRange, SpeedRange, StartingRotationRange, EmitterDirection, EmitterVelocity, YRange;
         public float Transparency, Gravity, ActiveSeconds, Interval, MaxY, EmitterSpeed,
-                     EmitterAngle, EmitterGravity, Friction, FadeDelay, DrawDepth;
+                     EmitterAngle, EmitterGravity, Friction, FadeDelay, DrawDepth, StartingInterval;
         public Color StartColor, EndColor;
-        public bool Active, Fade, CanBounce, AddMore, Shrink, StopBounce, HardBounce, BouncedOnGround, RotateVelocity, FlipHor, FlipVer;
+        public bool Active, Fade, CanBounce, AddMore, Shrink, StopBounce, HardBounce, BouncedOnGround, RotateVelocity, FlipHor, FlipVer, ReduceDensity;
         public string TextureName;
         public int Burst;
         static Random Random = new Random();
@@ -29,7 +29,8 @@ namespace TowerDefensePrototype
             Color startColor, Color endColor, float gravity, float activeSeconds, float interval, int burst, bool canBounce,
             Vector2 yrange, bool? shrink = null, float? drawDepth = null, bool? stopBounce = null, bool? hardBounce = null, 
             Vector2? emitterSpeed = null, Vector2? emitterAngle = null, float? emitterGravity = null, 
-            bool? rotateVelocity = null, float? friction = null, bool? flipHor = null, bool? flipVer = null, float? fadeDelay = null)
+            bool? rotateVelocity = null, float? friction = null, bool? flipHor = null, bool? flipVer = null, 
+            float? fadeDelay = null, bool? reduceDensity = null)
         {
             Active = true;
             TextureName = textureName;
@@ -48,7 +49,8 @@ namespace TowerDefensePrototype
             Gravity = gravity;
             ActiveSeconds = activeSeconds;
             Interval = interval;
-            IntervalTime = Interval;
+            StartingInterval = interval;
+            IntervalTime = Interval;            
             Burst = burst;
             CanBounce = canBounce;
 
@@ -116,13 +118,18 @@ namespace TowerDefensePrototype
             else
                 RotateVelocity = false;
 
+            if (reduceDensity != null)
+                ReduceDensity = reduceDensity.Value;
+            else
+                ReduceDensity = false;
+
             if (friction != null)
                 Friction = friction.Value;
             else
                 Friction = 0;
 
             YRange = yrange;
-            //MaxY = Random.Next((int)yrange.X, (int)yrange.Y);
+            MaxY = Random.Next((int)yrange.X, (int)yrange.Y);
             AddMore = true;
         }
 
@@ -130,8 +137,8 @@ namespace TowerDefensePrototype
            float startingTransparency, bool fade, Vector2 startingRotationRange, Vector2 rotationIncrement, Vector2 scaleRange,
            Color startColor, Color endColor, float gravity, float activeSeconds, float interval, int burst, bool canBounce,
            Vector2 yrange, bool? shrink = null, float? drawDepth = null, bool? stopBounce = null, bool? hardBounce = null, 
-           Vector2? emitterSpeed = null, Vector2? emitterAngle = null, float? emitterGravity = null, bool? rotateVelocity = null, 
-            float? friction = null, bool? flipHor = null, bool? flipVer = null, float? fadeDelay = null)
+           Vector2? emitterSpeed = null, Vector2? emitterAngle = null, float? emitterGravity = null, bool? rotateVelocity = null,
+            float? friction = null, bool? flipHor = null, bool? flipVer = null, float? fadeDelay = null, bool? reduceDensity = null)
         {
             Active = true;
             Texture = texture;
@@ -150,6 +157,7 @@ namespace TowerDefensePrototype
             Gravity = gravity;
             ActiveSeconds = activeSeconds;
             Interval = interval;
+            StartingInterval = interval;
             IntervalTime = Interval;
             Burst = burst;
             CanBounce = canBounce;            
@@ -218,6 +226,11 @@ namespace TowerDefensePrototype
             else
                 RotateVelocity = false;
 
+            if (reduceDensity != null)
+                ReduceDensity = reduceDensity.Value;
+            else
+                ReduceDensity = false;
+
             if (flipHor == null)
                 FlipHor = false;
             else
@@ -229,7 +242,7 @@ namespace TowerDefensePrototype
                 FlipVer = flipVer.Value;
 
             YRange = yrange;
-            //MaxY = Random.Next((int)yrange.X, (int)yrange.Y);            
+            MaxY = Random.Next((int)yrange.X, (int)yrange.Y);            
             AddMore = true;
         }
 
@@ -255,7 +268,18 @@ namespace TowerDefensePrototype
                     {
                         AddMore = false;
                     }
-                }                
+                }
+
+                if (ReduceDensity == true)
+                {
+                    //After halftime, begin reducing the density from 100% down to 0% as the time continues to expire                    
+                    //Interval = MathHelper.Lerp((float)Interval, (float)(Interval * 5), 0.0001f);
+                    float PercentageThrough = ((float)CurrentTime / (ActiveSeconds * 1000)) * 100;
+
+                    if (PercentageThrough >= 50)
+                        Interval = StartingInterval + (Interval / 100 * PercentageThrough);
+                    
+                }
 
                 if (EmitterSpeed != 0)
                 {

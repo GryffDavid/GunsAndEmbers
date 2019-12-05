@@ -28,7 +28,7 @@ namespace TowerDefensePrototype
             MaxHealth = 200;
             LaunchVelocity = 12;
 
-            TurretFireType = TurretFireType.Single;
+            TurretFireType = TurretFireType.SemiAuto;
             
             CurrentAnimation = new Animation()
             {

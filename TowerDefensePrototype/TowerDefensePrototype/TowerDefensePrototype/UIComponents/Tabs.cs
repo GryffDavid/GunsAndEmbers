@@ -22,7 +22,7 @@ namespace TowerDefensePrototype
             public ButtonSpriteState CurrentTabState;
         }
 
-        Vector2 TabsPosition;
+        Vector2 TabsPosition, BoxSize;
         Texture2D BoxTexture;
         SpriteFont Font;
         List<string> TabNames = new List<string>();
@@ -32,7 +32,7 @@ namespace TowerDefensePrototype
 
         MouseState CurrentMouseState, PreviousMouseState;        
 
-        public Tabs(Vector2 position, Texture2D boxTexture, SpriteFont font, params string[] tabNames)
+        public Tabs(Vector2 position, Texture2D boxTexture, SpriteFont font, Vector2? size = null, params string[] tabNames)
         {          
             TabsPosition = position;
             SelectedIndex = 0;
@@ -40,29 +40,25 @@ namespace TowerDefensePrototype
             TabNames = tabNames.ToList();
             BoxTexture = boxTexture;
 
-            TabList.Add(new Tab()
+            if (size != null)
             {
-                Position = TabsPosition,
-                Index = 0,
-                Size = new Vector2(128, 48),
-                Text = TabNames[0]
-            });
+                BoxSize = size.Value;
+            }
+            else
+            {
+                BoxSize = new Vector2(1920, 48);
+            }
 
-            TabList.Add(new Tab()
+            for (int i = 0; i < tabNames.Length; i++)
             {
-                Position = TabsPosition + new Vector2(128, 0),
-                Index = 1,
-                Size = new Vector2(128, 48),
-                Text = TabNames[1]
-            });
-
-            TabList.Add(new Tab()
-            {
-                Position = TabsPosition + new Vector2(256, 0),
-                Index = 2,
-                Size = new Vector2(128, 48),
-                Text = TabNames[2]
-            });
+                TabList.Add(new Tab()
+                {
+                    Position = TabsPosition + (i * new Vector2(128, 0)),
+                    Index = i,
+                    Size = new Vector2(128, 48), 
+                    Text = TabNames[i]
+                });
+            }
 
             foreach (Tab tab in TabList)
             {
@@ -130,7 +126,7 @@ namespace TowerDefensePrototype
 
         public void Draw(SpriteBatch spriteBatch, BasicEffect basicEffect, GraphicsDevice graphicsDevice)
         {
-            spriteBatch.Draw(BoxTexture, new Rectangle((int)TabsPosition.X, (int)TabsPosition.Y, 1920, 48), Color.Lerp(Color.White, Color.Transparent, 0.5f));
+            spriteBatch.Draw(BoxTexture, new Rectangle((int)TabsPosition.X, (int)TabsPosition.Y, (int)BoxSize.X, (int)BoxSize.Y), Color.Lerp(Color.Black, Color.Transparent, 0.75f));
 
 
             foreach (Tab tab in TabList)
@@ -138,20 +134,28 @@ namespace TowerDefensePrototype
                 if (tab.Index == SelectedIndex)
                 {
                     spriteBatch.Draw(BoxTexture, new Rectangle((int)tab.Position.X, (int)(tab.Position.Y + tab.Size.Y - 4), (int)tab.Size.X, 4), Color.White);
-                    //tab.Color = Color.Lerp(Color.White, Color.Transparent, 0.5f);
                 }
 
                 if (tab.CurrentTabState == ButtonSpriteState.Hover)
                 {
                     tab.Color = Color.Lerp(Color.White, Color.Transparent, 0.5f);
+                    spriteBatch.DrawString(Font, tab.Text, new Vector2(tab.Position.X + tab.Size.X / 2, tab.Position.Y + tab.Size.Y / 2), Color.White, 0, new Vector2(Font.MeasureString(tab.Text).X / 2, Font.MeasureString(tab.Text).Y / 2), 1f, SpriteEffects.None, 0);
                 }
                 else
                 {
+                    if (tab.Index == SelectedIndex)
+                    {
+                        spriteBatch.DrawString(Font, tab.Text, new Vector2(tab.Position.X + tab.Size.X / 2, tab.Position.Y + tab.Size.Y / 2), Color.White, 0, new Vector2(Font.MeasureString(tab.Text).X / 2, Font.MeasureString(tab.Text).Y / 2), 1f, SpriteEffects.None, 0);
+                    }
+                    else
+                    {
+                        spriteBatch.DrawString(Font, tab.Text, new Vector2(tab.Position.X + tab.Size.X / 2, tab.Position.Y + tab.Size.Y / 2), Color.Lerp(Color.White, Color.Transparent, 0.5f), 0, new Vector2(Font.MeasureString(tab.Text).X / 2, Font.MeasureString(tab.Text).Y / 2), 1f, SpriteEffects.None, 0);
+                    }
+
                     tab.Color = Color.Transparent;
                 }
 
                 spriteBatch.Draw(BoxTexture, new Rectangle((int)tab.Position.X, (int)tab.Position.Y, (int)tab.Size.X, (int)tab.Size.Y), tab.Color);
-                spriteBatch.DrawString(Font, tab.Text, new Vector2(tab.Position.X + tab.Size.X / 2, tab.Position.Y + tab.Size.Y / 2), Color.White, 0, new Vector2(Font.MeasureString(tab.Text).X / 2, Font.MeasureString(tab.Text).Y / 2), 1f, SpriteEffects.None, 0);
             }
         }
     }

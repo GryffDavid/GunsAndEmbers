@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.Content;
 
 namespace TowerDefensePrototype
 {
+    //This should rather implement verlet intergration for the physics calculations. It'll look far better
     class GrenadeProjectile : TimerHeavyProjectile
     {
         public GrenadeProjectile(float maxTime, Vector2 position, float speed, float angle, float gravity, float damage, Vector2? yrange = null)

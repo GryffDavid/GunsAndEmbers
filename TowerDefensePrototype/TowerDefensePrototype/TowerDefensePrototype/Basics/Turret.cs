@@ -36,7 +36,7 @@ namespace TowerDefensePrototype
         public float ChanceToEffect;
 
         //Type of fire: Full-auto, semi-auto, reload
-        public TurretFireType TurretFireType;
+        public TurretFireType TurretFireType;// = TurretFireType.SemiAuto;
 
         //Shots per magazine: Number of shots before turrets need to be reloaded
         public int MagazineCapacity;
@@ -50,6 +50,10 @@ namespace TowerDefensePrototype
 
         //Responsiveness: The LERP value that determines how fast the turret can move from one direction to another
         public float Responsiveness;
+
+        //The time between when the mouse is clicked and then the shot is fired. 
+        //Like the Deathstar building up power before blowing up Alderaan
+        public float ChargeTime;
 
         public void Initialize(ContentManager contentManager)
         {
@@ -108,7 +112,10 @@ namespace TowerDefensePrototype
                 emitter.Update(gameTime);
             }
 
-            FireRotation = Rotation + MathHelper.ToRadians((float)(-AngleOffset + Random.NextDouble() * (AngleOffset - (-AngleOffset))));
+            if (Active == true && Selected == true)
+            {
+                FireRotation = Rotation + MathHelper.ToRadians((float)(-AngleOffset + Random.NextDouble() * (AngleOffset - (-AngleOffset))));
+            }
 
             if (double.IsNaN(Rotation) == true)
                 Rotation = -20;
@@ -365,5 +372,10 @@ namespace TowerDefensePrototype
                 HealthBar.Draw(graphicsDevice);
             }
         }
+
+        //public void UpdateFireDirection()
+        //{
+        //    FireRotation = Rotation + MathHelper.ToRadians((float)(-AngleOffset + Random.NextDouble() * (AngleOffset - (-AngleOffset))));
+        //}
     }
 }

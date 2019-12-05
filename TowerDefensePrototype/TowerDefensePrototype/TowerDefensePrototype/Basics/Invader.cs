@@ -40,6 +40,7 @@ namespace TowerDefensePrototype
         public InvaderState CurrentInvaderState;
         public InvaderState? PreviousInvaderState = null;
         public InvaderBehaviour Behaviour;// = InvaderBehaviour.AttackTower;
+        public DamageType DamageVulnerability;
 
         private InvaderBehaviour RandomOrientation(params InvaderBehaviour[] Orientations)
         {

@@ -80,6 +80,10 @@ namespace TowerDefensePrototype
                             double? updateDelay = null, float? rotation = null, float? fadeTime = null, bool fadeIn = false)
         {
             Active = true;
+
+            //If texture ends up being null for some reason, check that the level is set to load 
+            //its resources - background, ground etc. are all static sprites
+
             Texture = texture;
             Position = position;
 
@@ -129,6 +133,9 @@ namespace TowerDefensePrototype
             StartColor = Color;
             FadeIn = fadeIn;
 
+
+            //If texture ends up being null for some reason, check that the level is set to load 
+            //its resources - background, ground etc. are all static sprites
             DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, (int)(Texture.Width * Scale.X), (int)(Texture.Height * Scale.Y));
         }
 

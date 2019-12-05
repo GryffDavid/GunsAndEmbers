@@ -120,6 +120,32 @@ namespace TowerDefensePrototype
                         WeaponType = "Beam";
                         Charges = turret.Charges;
                         break;
+
+                    case TurretType.Cluster:
+                        WeaponName = "Cluster Cannon";
+                        break;
+
+                    case TurretType.FlameThrower:
+                        WeaponName = "Flamethrower";
+                        break;
+
+                    case TurretType.Shotgun:
+                        WeaponName = "Shotgun";
+                        break;
+
+                    case TurretType.Freeze:
+                        WeaponName = "Freeze Cannon";
+                        break;
+
+                    case TurretType.Grenade:
+                        WeaponName = "Grenade Launcher";
+                        break;
+
+                    case TurretType.Beam:
+                        WeaponName = "Beam Cannon";
+                        break;
+
+
                 }
 
                 Bar1Value = (int)(100f / (float)UIBar1.MaxValue * (float)UIBar1.CurrentValue);
@@ -147,17 +173,33 @@ namespace TowerDefensePrototype
 
                 switch (trap.TrapType)
                 {
+                    case TrapType.Barrel:
+                        WeaponName = "Mine Trap";
+                        break;
+
                     case TrapType.Fire:
                         WeaponName = "Immolation Trap";
                         DamageType = DamageType.Fire;
                         break;
 
                     case TrapType.SawBlade:
-
+                        WeaponName = "Sawblade Trap";
                         break;
 
                     case TrapType.Spikes:
+                        WeaponName = "Spikes Trap";
+                        break;
 
+                    case TrapType.Catapult:
+                        WeaponName = "Catapult Trap";
+                        break;
+
+                    case TrapType.Ice:
+                        WeaponName = "Ice Trap";
+                        break;
+
+                    case TrapType.Wall:
+                        WeaponName = "Wall";
                         break;
                 }
             }
@@ -269,12 +311,15 @@ namespace TowerDefensePrototype
                         new Rectangle((int)(Position.X + 5), (int)(Position.Y - 80), 24, 24),
                         Color.White);
 
-                    Vector2 NewSize = new Vector2(20, (int)((20f / DamageIcon.Width) * DamageIcon.Height));
-                    spriteBatch.Draw(DamageIcon,
-                        new Rectangle(
-                            (int)Position.X + 5, (int)(Position.Y - BoxSize.Y + 23),
-                            (int)NewSize.X, (int)NewSize.Y), null,
-                            Color.Orange, 0, new Vector2(0, DamageIcon.Height / 2), SpriteEffects.None, 0);
+                    if (DamageIcon != null)
+                    {
+                        Vector2 NewSize = new Vector2(20, (int)((20f / DamageIcon.Width) * DamageIcon.Height));
+                        spriteBatch.Draw(DamageIcon,
+                            new Rectangle(
+                                (int)Position.X + 5, (int)(Position.Y - BoxSize.Y + 23),
+                                (int)NewSize.X, (int)NewSize.Y), null,
+                                Color.Orange, 0, new Vector2(0, DamageIcon.Height / 2), SpriteEffects.None, 0);
+                    }
 
                     //Draw the resource cost of the weapon
                     //*****CHANGE THIS COLOUR TO GRAY IF THE PLAYER CANNOT AFFORD THE WEAPON*****//
@@ -601,10 +646,6 @@ namespace TowerDefensePrototype
 
                 case TrapType.Spikes:
                     cost = new SpikeTrap(Vector2.Zero).ResourceCost;
-                    break;
-
-                case TrapType.Tar:
-                    cost = new TarTrap(Vector2.Zero).ResourceCost;
                     break;
 
                 case TrapType.Wall:

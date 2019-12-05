@@ -124,11 +124,12 @@ Content\Icons\CurrencyIcon.xnb
 Content\Icons\DamageTypeIcons\FireDamageIcon.xnb
 Content\Particles\MachineBullet.xnb
 Content\Backgrounds\MenuBackground.xnb
-Content\Fonts\DefaultFont.xnb
-Content\Fonts\ButtonFont.xnb
-Content\Fonts\TooltipFont.xnb
-Content\Fonts\WaveCountDownFont.xnb
-Content\Fonts\BigUIFont.xnb
+Content\Fonts\RobotoRegular40_2.xnb
+Content\Fonts\RobotoRegular20_2(2).xnb
+Content\ShortButtonLeft.xnb
+Content\ShortButtonRight.xnb
+Content\Buttons\ShortButtonLeft.xnb
+Content\Buttons\ShortButtonRight.xnb
 Content\Sounds\MenuClick.xnb
 Content\Sounds\FireTrapStart.xnb
 Content\Sounds\MenuAmbiance.xnb
@@ -158,3 +159,5 @@ Content\Shaders\ShieldBubbleEffect.xnb
 Content\Shaders\BackgroundEffect.xnb
 Content\Shaders\ButtonBlurEffect.xnb
 Content\Shaders\CrepuscularRaysEffect.xnb
+Content\PowerUpDeliveryPod.xnb
+Content\PowerUpDeliveryFin.xnb

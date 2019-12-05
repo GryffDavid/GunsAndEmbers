@@ -22,37 +22,40 @@ namespace TowerDefensePrototype
             Size = size;
             Trap = trap;
             Turret = turret;
+            Visible = true;
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            //Top right
-            spriteBatch.Draw(OutlineTexture,
-                new Rectangle(
-                    (int)Position.X, (int)Position.Y,
-                    OutlineTexture.Width, OutlineTexture.Height),
-                    Color.White);
+            if (Visible == true)
+            {
+                //Top right
+                spriteBatch.Draw(OutlineTexture,
+                    new Rectangle(
+                        (int)Position.X, (int)Position.Y,
+                        OutlineTexture.Width, OutlineTexture.Height),
+                        Color.White);
 
-            //Top left
-            spriteBatch.Draw(OutlineTexture,
-                new Rectangle(
-                    (int)(Position.X + Size.X - OutlineTexture.Width), (int)Position.Y,
-                    OutlineTexture.Width, OutlineTexture.Height),
-                    null, Color.White, 0, new Vector2(0, 0), SpriteEffects.FlipHorizontally, 0); 
+                //Top left
+                spriteBatch.Draw(OutlineTexture,
+                    new Rectangle(
+                        (int)(Position.X + Size.X - OutlineTexture.Width), (int)Position.Y,
+                        OutlineTexture.Width, OutlineTexture.Height),
+                        null, Color.White, 0, new Vector2(0, 0), SpriteEffects.FlipHorizontally, 0);
 
-            //Bottom right
-            spriteBatch.Draw(OutlineTexture,
-                new Rectangle(
-                    (int)(Position.X + Size.X - OutlineTexture.Width),
-                    (int)(Position.Y + Size.Y - OutlineTexture.Height), OutlineTexture.Width, OutlineTexture.Height),
-                    null, Color.White, MathHelper.ToRadians(180), new Vector2(OutlineTexture.Width, OutlineTexture.Height), SpriteEffects.None, 0); 
+                //Bottom right
+                spriteBatch.Draw(OutlineTexture,
+                    new Rectangle(
+                        (int)(Position.X + Size.X - OutlineTexture.Width),
+                        (int)(Position.Y + Size.Y - OutlineTexture.Height), OutlineTexture.Width, OutlineTexture.Height),
+                        null, Color.White, MathHelper.ToRadians(180), new Vector2(OutlineTexture.Width, OutlineTexture.Height), SpriteEffects.None, 0);
 
-            //Bottom left
-            spriteBatch.Draw(OutlineTexture,
-                new Rectangle((int)Position.X, (int)(Position.Y + Size.Y - OutlineTexture.Height), 
-                    OutlineTexture.Width, OutlineTexture.Height),
-                null, Color.White, 0, Vector2.Zero, SpriteEffects.FlipVertically, 0);
-
+                //Bottom left
+                spriteBatch.Draw(OutlineTexture,
+                    new Rectangle((int)Position.X, (int)(Position.Y + Size.Y - OutlineTexture.Height),
+                        OutlineTexture.Width, OutlineTexture.Height),
+                    null, Color.White, 0, Vector2.Zero, SpriteEffects.FlipVertically, 0);
+            }
         }
     }
 }

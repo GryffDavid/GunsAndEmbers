@@ -35,8 +35,7 @@ namespace TowerDefensePrototype
         public void DrawQuad(GraphicsDevice graphicsDevice)
         {
             graphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, Vertices, 0, Vertices.Length, Indices, 0, 
-                Indices.Length / 3, VertexPositionColor.VertexDeclaration);
-   
+                                                     Indices.Length / 3, VertexPositionColor.VertexDeclaration);   
         }
     }
 }

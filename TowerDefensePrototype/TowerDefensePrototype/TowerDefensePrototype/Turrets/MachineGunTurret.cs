@@ -28,7 +28,7 @@ namespace TowerDefensePrototype
             MaxHeatTime = 4000;
             CoolValue = 0.25f;
             Range = 500;
-            TurretFireType = TurretFireType.SemiAuto;
+            TurretFireType = TurretFireType.FullAuto;
 
             CurrentAnimation = new Animation()
             {

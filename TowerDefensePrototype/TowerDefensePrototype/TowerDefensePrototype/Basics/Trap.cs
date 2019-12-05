@@ -166,7 +166,8 @@ namespace TowerDefensePrototype
 
             if (Active == true)
             {
-                spriteBatch.Draw(CurrentTexture, DestinationRectangle, SourceRectangle, Color.White, MathHelper.ToRadians(0), Vector2.Zero, SpriteEffects.None, DrawDepth);
+                spriteBatch.Draw(CurrentTexture, DestinationRectangle, SourceRectangle, Color.White, 
+                                 MathHelper.ToRadians(0), Vector2.Zero, SpriteEffects.None, DrawDepth);
             }
         }
 

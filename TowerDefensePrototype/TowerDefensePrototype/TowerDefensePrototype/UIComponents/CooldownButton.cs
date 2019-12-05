@@ -46,7 +46,7 @@ namespace TowerDefensePrototype
             OutlineColor = Color.Lerp(Color.White, Color.Transparent, 0.5f);
             OutlineThickness = outlineThickness;
 
-            InteriorColor = Color.Lerp(Color.White, Color.Transparent, 0.95f);
+            InteriorColor = Color.Lerp(Color.Black, Color.Transparent, 0.75f);
 
             CurrentPosition = position;
             CurrentSize = size;
@@ -73,22 +73,22 @@ namespace TowerDefensePrototype
                 #region First triangle
                 //Top left corner
                 IconVertices[0] = new VertexPositionColorTexture(
-                    new Vector3(CurrentPosition.X + IconPosition.X - IconSize.X / 2,
-                                CurrentPosition.Y + IconPosition.Y - IconSize.Y / 2,
+                    new Vector3(CurrentPosition.X + IconPosition.X - (IconSize.X / 2),
+                                CurrentPosition.Y + IconPosition.Y - (IconSize.Y / 2),
                                 0) + IconOffset,
                     IconColor, new Vector2(0, 0));
 
                 //Top right corner
                 IconVertices[1] = new VertexPositionColorTexture(
-                    new Vector3(CurrentPosition.X + IconPosition.X + IconSize.X / 2,
-                                CurrentPosition.Y + IconPosition.Y - IconSize.Y / 2,
+                    new Vector3(CurrentPosition.X + IconPosition.X + (IconSize.X / 2),
+                                CurrentPosition.Y + IconPosition.Y - (IconSize.Y / 2),
                                 0) + IconOffset,
                     IconColor, new Vector2(1, 0));
 
                 //Bottom right corner
                 IconVertices[2] = new VertexPositionColorTexture(
-                    new Vector3(CurrentPosition.X + IconPosition.X + IconSize.X / 2,
-                                CurrentPosition.Y + IconPosition.Y + IconSize.Y / 2,
+                    new Vector3(CurrentPosition.X + IconPosition.X + (IconSize.X / 2),
+                                CurrentPosition.Y + IconPosition.Y + (IconSize.Y / 2),
                                 0) + IconOffset,
                     IconColor, new Vector2(1, 1));
                 #endregion
@@ -96,22 +96,22 @@ namespace TowerDefensePrototype
                 #region Second triangle
                 //Bottom right corner
                 IconVertices[3] = new VertexPositionColorTexture(
-                    new Vector3(CurrentPosition.X + IconPosition.X + IconSize.X / 2,
-                                CurrentPosition.Y + IconPosition.Y + IconSize.Y / 2,
+                    new Vector3(CurrentPosition.X + IconPosition.X + (IconSize.X / 2),
+                                CurrentPosition.Y + IconPosition.Y + (IconSize.Y / 2),
                                 0) + IconOffset,
                     IconColor, new Vector2(1, 1));
 
                 //Bottom left corner
                 IconVertices[4] = new VertexPositionColorTexture(
-                    new Vector3(CurrentPosition.X + IconPosition.X - IconSize.X / 2,
-                                CurrentPosition.Y + IconPosition.Y + IconSize.Y / 2,
+                    new Vector3(CurrentPosition.X + IconPosition.X - (IconSize.X / 2),
+                                CurrentPosition.Y + IconPosition.Y + (IconSize.Y / 2),
                                 0) + IconOffset,
                     IconColor, new Vector2(0, 1));
 
                 //Top left corner
                 IconVertices[5] = new VertexPositionColorTexture(
-                    new Vector3(CurrentPosition.X + IconPosition.X - IconSize.X / 2,
-                                CurrentPosition.Y + IconPosition.Y - IconSize.Y / 2,
+                    new Vector3(CurrentPosition.X + IconPosition.X - (IconSize.X / 2),
+                                CurrentPosition.Y + IconPosition.Y - (IconSize.Y / 2),
                                 0) + IconOffset,
                     IconColor, new Vector2(0, 0));
                 #endregion
@@ -310,12 +310,19 @@ namespace TowerDefensePrototype
             if (MouseRectangle.Contains(new Point((int)cursorPosition.X, (int)cursorPosition.Y)))
             {
                 CurrentButtonState = ButtonSpriteState.Hover;
+                InteriorColor = Color.Lerp(Color.White, Color.Transparent, 0.5f);
             }
             else
             {
                 CurrentButtonState = ButtonSpriteState.Released;
+                InteriorColor = Color.Lerp(Color.Black, Color.Transparent, 0.75f);
             }
             #endregion
+
+            for (int i = 0; i < InteriorVertices.Length; i++)
+            {
+                InteriorVertices[i].Color = InteriorColor;
+            }
 
             #region Change the outline color based on the button state
             if (CurrentButtonState == ButtonSpriteState.Hover)
@@ -417,22 +424,22 @@ namespace TowerDefensePrototype
                 #region First triangle
                 //Top left corner
                 IconVertices[0] = new VertexPositionColorTexture(
-                    new Vector3(CurrentPosition.X + IconPosition.X - IconSize.X / 2,
-                                CurrentPosition.Y + IconPosition.Y - IconSize.Y / 2 + IconSizeOffset.Y,
+                    new Vector3(CurrentPosition.X + IconPosition.X - (IconSize.X / 2),
+                                CurrentPosition.Y + IconPosition.Y - (IconSize.Y / 2) + IconSizeOffset.Y,
                                 0) + IconOffset,
                     IconColor, new Vector2(0, IconTextureSizeOffset.Y));
 
                 //Top right corner
                 IconVertices[1] = new VertexPositionColorTexture(
-                    new Vector3(CurrentPosition.X + IconPosition.X + IconSize.X / 2,
-                                CurrentPosition.Y + IconPosition.Y - IconSize.Y / 2 + IconSizeOffset.Y,
+                    new Vector3(CurrentPosition.X + IconPosition.X + (IconSize.X / 2),
+                                CurrentPosition.Y + IconPosition.Y - (IconSize.Y / 2) + IconSizeOffset.Y,
                                 0) + IconOffset,
                     IconColor, new Vector2(1, IconTextureSizeOffset.Y));
 
                 //Bottom right corner
                 IconVertices[2] = new VertexPositionColorTexture(
-                    new Vector3(CurrentPosition.X + IconPosition.X + IconSize.X / 2,
-                                CurrentPosition.Y + IconPosition.Y + IconSize.Y / 2,
+                    new Vector3(CurrentPosition.X + IconPosition.X + (IconSize.X / 2),
+                                CurrentPosition.Y + IconPosition.Y + (IconSize.Y / 2),
                                 0) + IconOffset,
                     IconColor, new Vector2(1, 1));
                 #endregion
@@ -440,22 +447,22 @@ namespace TowerDefensePrototype
                 #region Second triangle
                 //Bottom right corner
                 IconVertices[3] = new VertexPositionColorTexture(
-                    new Vector3(CurrentPosition.X + IconPosition.X + IconSize.X / 2,
-                                CurrentPosition.Y + IconPosition.Y + IconSize.Y / 2,
+                    new Vector3(CurrentPosition.X + IconPosition.X + (IconSize.X / 2),
+                                CurrentPosition.Y + IconPosition.Y + (IconSize.Y / 2),
                                 0) + IconOffset,
                     IconColor, new Vector2(1, 1));
 
                 //Bottom left corner
                 IconVertices[4] = new VertexPositionColorTexture(
-                    new Vector3(CurrentPosition.X + IconPosition.X - IconSize.X / 2,
-                                CurrentPosition.Y + IconPosition.Y + IconSize.Y / 2,
+                    new Vector3(CurrentPosition.X + IconPosition.X - (IconSize.X / 2),
+                                CurrentPosition.Y + IconPosition.Y + (IconSize.Y / 2),
                                 0) + IconOffset,
                     IconColor, new Vector2(0, 1));
 
                 //Top left corner
                 IconVertices[5] = new VertexPositionColorTexture(
-                    new Vector3(CurrentPosition.X + IconPosition.X - IconSize.X / 2,
-                                CurrentPosition.Y + IconPosition.Y - IconSize.Y / 2 + IconSizeOffset.Y,
+                    new Vector3(CurrentPosition.X + IconPosition.X - (IconSize.X / 2),
+                                CurrentPosition.Y + IconPosition.Y - (IconSize.Y / 2)+ IconSizeOffset.Y,
                                 0) + IconOffset,
                     IconColor, new Vector2(0, IconTextureSizeOffset.Y));
                 #endregion
