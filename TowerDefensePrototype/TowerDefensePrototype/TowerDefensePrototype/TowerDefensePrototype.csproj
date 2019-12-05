@@ -289,7 +289,8 @@
       <Project>{9D3EE047-E4E9-4E5F-A571-E255D7680B0D}</Project>
       <Name>GameDataTypes</Name>
     </ProjectReference>
-    <ProjectReference Include="..\TowerDefensePrototypeContent\TowerDefensePrototypeContent.contentproj">
+    <ProjectReference Include="..\..\TowerDefensePrototypeContent\TowerDefensePrototypeContent.contentproj">
+      <Project>{26381B64-2B28-4C17-9328-73E97633D99F}</Project>
       <Name>TowerDefensePrototypeContent</Name>
       <XnaReferenceType>Content</XnaReferenceType>
     </ProjectReference>
