@@ -2621,6 +2621,7 @@ namespace TowerDefensePrototype
                 GraphicsDevice.Clear(Color.Transparent);
 
                 BlurEffect.Parameters["InputTexture"].SetValue(SpecMap);
+                BlurEffect.Parameters["InputTexture2"].SetValue(EmissiveMap);
                 BlurEffect.CurrentTechnique = BlurEffect.Techniques["Technique1"];
 
                 foreach (EffectPass pass in BlurEffect.CurrentTechnique.Passes)
@@ -2835,14 +2836,6 @@ namespace TowerDefensePrototype
 
                 spriteBatch.End();
                 #endregion
-
-                //#region Draw to SpecMap
-                //GraphicsDevice.SetRenderTarget(SpecMap);
-                //GraphicsDevice.Clear(Color.Black);
-                //spriteBatch.Begin();
-
-                //spriteBatch.End();
-                //#endregion
 
                 #region Draw to DepthMap
                 GraphicsDevice.SetRenderTarget(DepthMap);

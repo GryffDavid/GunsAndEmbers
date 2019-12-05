@@ -203,5 +203,10 @@ namespace TowerDefensePrototype
                 vertices[i].Color = Color;
             }
         }
+
+        public virtual void DrawSpriteEmissve(GraphicsDevice graphics, BasicEffect effect)
+        {
+
+        }
     }
 }
