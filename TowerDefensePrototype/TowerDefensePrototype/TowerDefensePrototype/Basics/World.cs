@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace TowerDefensePrototype.Basics
+namespace TowerDefensePrototype
 {
-    class World
+    public class World
     {
+        public WorldType WorldType;
+        public string BackgroundAsset, GroundAsset;
         //This stores the data for each world type
         //Background
         //Color

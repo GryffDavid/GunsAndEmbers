@@ -21,6 +21,7 @@ namespace TowerDefensePrototype
     public enum HeavyProjectileType { CannonBall, FlameThrower, Arrow, Acid };
     public enum LightProjectileType { MachineGun, Freeze };
     public enum GameState { Menu, Loading, Playing, Paused, ProfileSelect, Options, ProfileManagement };
+    public enum WorldType { Normal, Ice, Lava };
 
     public class Game1 : Microsoft.Xna.Framework.Game
     {
@@ -91,6 +92,7 @@ namespace TowerDefensePrototype
         SpriteFont ProfileFont;
 
         StaticSprite TestBackground;
+        World CurrentWorld;
 
         //Sound effects
 
@@ -600,6 +602,8 @@ namespace TowerDefensePrototype
         {
             if (GameState == GameState.Loading && IsLoading == false)
             {
+                CurrentWorld = new IceWorld();
+
                 WaveListIndex = 0;
                 IsLoading = true;
 
@@ -607,7 +611,11 @@ namespace TowerDefensePrototype
 
                 GroundPosition = new Vector2(0, 560);
 
-                TestBackground = new StaticSprite("TestBackground", new Vector2(0, 220));
+                Ground = new StaticSprite(CurrentWorld.GroundAsset, new Vector2(0, 400));
+                Mountains = new StaticSprite("background3", new Vector2(0, 0));
+                Tower = new Tower("Tower", new Vector2(32, 304 - 32), 2000);
+
+                TestBackground = new StaticSprite(CurrentWorld.BackgroundAsset, new Vector2(0, 220));
                 TestBackground.Scale = new Vector2(1, 0.8f);
                 TestBackground.LoadContent(Content);
 
@@ -619,15 +627,54 @@ namespace TowerDefensePrototype
                 #region IconNameList, PauseMenuNameList;
                 //This gets the names of the icons that are to appear on the
                 //buttons that allow the player to select traps/turrets they want to place
-                IconNameList = new List<string>();
-                IconNameList.Add("WallIcon");
-                IconNameList.Add("SpikesIcon");
-                IconNameList.Add("FireIcon");
-                IconNameList.Add("BasicTurretIcon2");
-                IconNameList.Add("CannonTurretIcon");
-                IconNameList.Add("FlameThrowerTurretIcon");
-                IconNameList.Add("SnowFlakeIcon");
-                IconNameList.Add("BombIcon");
+                IconNameList = new List<string>(8);
+
+                for (int i = 0; i < 9; i++)
+                {
+                    IconNameList.Add(null);
+                }
+
+                for (int i = 0; i < CurrentProfile.Buttons.Count; i++)
+                {
+                    int Index = i;
+
+                    switch (CurrentProfile.Buttons[Index])
+                    {
+                        case null:
+                            IconNameList[Index] = "Blank";
+                            break;
+
+                        case "FireTrap":
+                            IconNameList[Index] = "FireIcon";
+                            break;
+
+                        case "Wall":
+                            IconNameList[Index] = "WallIcon";
+                            break;
+
+                        case "Cannon":
+                            IconNameList[Index] = "CannonTurretIcon";
+                            break;
+
+                        case "MachineGun":
+                            IconNameList[Index] = "BasicTurretIcon2";
+                            break;
+
+                        case "IceTrap":
+                            IconNameList[Index] = "SnowFlakeIcon";
+                            break;
+                    }
+                    
+                }
+
+                //IconNameList.Add("WallIcon");
+                //IconNameList.Add("SpikesIcon");
+                //IconNameList.Add("FireIcon");
+                //IconNameList.Add("BasicTurretIcon2");
+                //IconNameList.Add("CannonTurretIcon");
+                //IconNameList.Add("FlameThrowerTurretIcon");
+                //IconNameList.Add("SnowFlakeIcon");
+                //IconNameList.Add("BombIcon");
 
                 PauseMenuNameList = new List<string>();
                 PauseMenuNameList.Add("Resume Game");
@@ -642,9 +689,9 @@ namespace TowerDefensePrototype
                 CloudList.Add(new StaticSprite("Cloud3", new Vector2(800, 16), new Vector2(1.5f, 1.5f), null, new Vector2(1, 0), true, false, 35));
                 CloudList.Add(new StaticSprite("Cloud4", new Vector2(900, 0), null, null, new Vector2(1, 0), true, false, 28));
 
-                Tower = new Tower("Tower", new Vector2(32, 304 - 32), 2000);
-                Ground = new StaticSprite("Ground7", new Vector2(0, 400));
-                Mountains = new StaticSprite("background3", new Vector2(0, 0));
+                
+                
+                
                 HUDTest = new StaticSprite("TestHUD1", new Vector2(8, 8));
 
                 LoadGameSounds();
@@ -681,8 +728,16 @@ namespace TowerDefensePrototype
 
                 for (int i = 0; i < 8; i++)
                 {
-                    SelectButtonList.Add(new Button(SelectButtonAssetName, new Vector2(16 + (i * 160), GroundPosition.Y + 16), IconNameList[i]));
-                    SelectButtonList[i].LoadContent(Content);
+                    if (i < IconNameList.Count - 1)
+                    {
+                        SelectButtonList.Add(new Button(SelectButtonAssetName, new Vector2(16 + (i * 160), GroundPosition.Y + 16), IconNameList[i]));
+                        SelectButtonList[i].LoadContent(Content);
+                    }
+                    else
+                    {
+                        SelectButtonList.Add(new Button(SelectButtonAssetName, new Vector2(16 + (i * 160), GroundPosition.Y + 16)));
+                        SelectButtonList[i].LoadContent(Content);
+                    }
                 }
 
                 for (int i = 0; i < 4; i++)
@@ -842,53 +897,109 @@ namespace TowerDefensePrototype
                     ClearTurretSelect();
                     Index = SelectButtonList.IndexOf(button);
 
+                    
+                    Action CheckLayout = new Action(() =>
+                    {
+                        if (Index <= CurrentProfile.Buttons.Count - 1)
+                        {
+                            switch (CurrentProfile.Buttons[Index])
+                            {
+                                case null:
+                                    {
+                                        SelectedTrap = TrapType.Blank;
+                                        SelectedTurret = TurretType.Blank;
+                                    }
+                                    break;
+
+                                case "":
+                                    {
+                                        SelectedTrap = TrapType.Blank;
+                                        SelectedTurret = TurretType.Blank;
+                                    }
+                                    break;
+
+                                case "FireTrap":
+                                    {
+                                        SelectedTrap = TrapType.Fire;
+                                        SelectedTurret = TurretType.Blank;
+                                    }
+                                    break;
+
+                                case "IceTrap":
+                                    {
+                                        SelectedTrap = TrapType.Ice;
+                                        SelectedTurret = TurretType.Blank;
+                                    }
+                                    break;
+
+                                case "Wall":
+                                    {
+                                        SelectedTrap = TrapType.Wall;
+                                        SelectedTurret = TurretType.Blank;
+                                    }
+                                    break;
+
+                                case "MachineGun":
+                                    {
+                                        SelectedTrap = TrapType.Blank;
+                                        SelectedTurret = TurretType.Basic;
+                                    }
+                                    break;
+
+                                case "Cannon":
+                                    {
+                                        SelectedTrap = TrapType.Blank;
+                                        SelectedTurret = TurretType.Cannon;
+                                    }
+                                    break;
+                            }
+                        }
+                        else
+                        {
+                            SelectedTrap = TrapType.Blank;
+                            SelectedTurret = TurretType.Blank;
+                        }
+                    });
+
                     switch (Index)
                     {
-                        case 0:                            
-                            SelectedTrap = TrapType.Wall;
-                            SelectedTurret = TurretType.Blank;
+                        case 0:
+                            CheckLayout();
                             ReadyToPlace = true;
                             break;
 
                         case 1:
-                            SelectedTrap = TrapType.Spikes;
-                            SelectedTurret = TurretType.Blank;
+                            CheckLayout();
                             ReadyToPlace = true;
                             break;
 
                         case 2:
-                            SelectedTrap = TrapType.Fire;
-                            SelectedTurret = TurretType.Blank;
+                            CheckLayout();
                             ReadyToPlace = true;
                             break;
 
                         case 3:
-                            SelectedTurret = TurretType.Basic;
-                            SelectedTrap = TrapType.Blank;
+                            CheckLayout();
                             ReadyToPlace = true;
                             break;
 
                         case 4:
-                            SelectedTurret = TurretType.Cannon;
-                            SelectedTrap = TrapType.Blank;
+                            CheckLayout();
                             ReadyToPlace = true;
                             break;
 
                         case 5:
-                            SelectedTurret = TurretType.FlameThrower;
-                            SelectedTrap = TrapType.Blank;
+                            CheckLayout();
                             ReadyToPlace = true;
                             break;
 
                         case 6:
-                            SelectedTurret = TurretType.Blank;
-                            SelectedTrap = TrapType.Ice;
+                            CheckLayout();
                             ReadyToPlace = true;
                             break;
 
                         case 7:
-                            SelectedTurret = TurretType.Blank;
-                            SelectedTrap = TrapType.Barrel;
+                            CheckLayout();
                             ReadyToPlace = true;
                             break;
                     }
@@ -2680,6 +2791,12 @@ namespace TowerDefensePrototype
         }
 
         public void HandleProfileManagement()
+        {
+
+        }
+
+        //Handle levels
+        public void LoadLevel()
         {
 
         }
