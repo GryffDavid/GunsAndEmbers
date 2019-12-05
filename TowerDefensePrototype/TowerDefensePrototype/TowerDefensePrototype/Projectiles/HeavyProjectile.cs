@@ -423,12 +423,17 @@ namespace TowerDefensePrototype
                 #endregion
             }
 
+            DrawEmitters(graphics, particleEffect);
+
+            base.Draw(graphics, effect, shadowEffect, particleEffect);
+        }
+
+        public void DrawEmitters(GraphicsDevice graphics, Effect particleEffect)
+        {
             foreach (Emitter emitter in EmitterList)
             {
                 emitter.Draw(graphics, particleEffect);
             }
-
-            base.Draw(graphics, effect, shadowEffect, particleEffect);
         }
 
         public override void DrawSpriteDepth(GraphicsDevice graphics, Effect effect)

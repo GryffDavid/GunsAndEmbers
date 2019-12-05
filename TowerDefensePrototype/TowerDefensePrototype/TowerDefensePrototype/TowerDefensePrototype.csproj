@@ -126,6 +126,7 @@
     <Compile Include="Invaders\Crate.cs" />
     <Compile Include="Invaders\DropShipDoor.cs" />
     <Compile Include="Invaders\DropShipSkids.cs" />
+    <Compile Include="Invaders\HeavyRanged\FlameJetTrooper.cs" />
     <Compile Include="Invaders\HeavyRanged\HarpoonCannon.cs" />
     <Compile Include="Invaders\ShieldGenerator.cs" />
     <Compile Include="LevelDialogue\Level2Dialogue.cs" />

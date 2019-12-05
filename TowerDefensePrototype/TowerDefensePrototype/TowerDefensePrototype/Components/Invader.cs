@@ -46,7 +46,8 @@ namespace TowerDefensePrototype
         ShieldGenerator,
         HarpoonCannon,
         DropShip,
-        Crate
+        Crate,
+        FlameJetTrooper
     };
     #endregion
 
@@ -171,6 +172,8 @@ namespace TowerDefensePrototype
         public static List<Emitter> EmitterList;
         public static List<Drawable> DrawableList;
         public static List<Light> LightList;
+
+        //public List<Emitter> InvaderEmitterList = new List<Emitter>();
 
         #region Vertex declarations
         public VertexPositionColorTexture[] shadowVertices = new VertexPositionColorTexture[4];
@@ -886,6 +889,11 @@ namespace TowerDefensePrototype
             }
 
         }
+
+        //public void DrawEmitters(GraphicsDevice graphics, Effect particleEffect)
+        //{
+        //    foreach (Emitter emitter in 
+        //}
 
         public override void DrawSpriteDepth(GraphicsDevice graphics, Effect effect)
         {

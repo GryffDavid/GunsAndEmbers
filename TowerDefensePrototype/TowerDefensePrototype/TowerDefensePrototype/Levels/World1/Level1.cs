@@ -37,7 +37,12 @@ namespace TowerDefensePrototype
                 //new RifleMan(new Vector2(2050, 600), new Vector2(700, 850)),
                 //new RifleMan(new Vector2(2050, 600), new Vector2(700, 850))
 
-                new JumpMan(new Vector2(2050, 600), new Vector2(700, 850)),
+                //new JumpMan(new Vector2(2050, 600), new Vector2(700, 850)),
+
+                //new FlameJetTrooper(new Vector2(2050, 600), new Vector2(700, 850)),
+                //new FlameJetTrooper(new Vector2(2050, 600), new Vector2(700, 850)),
+                new FlameJetTrooper(new Vector2(2050, 600), new Vector2(700, 850)),
+
                 //new JumpMan(new Vector2(2050, 600), new Vector2(700, 850)),
                 //new JumpMan(new Vector2(2050, 600), new Vector2(700, 850)),
                 //new JumpMan(new Vector2(2050, 600), new Vector2(700, 850)),

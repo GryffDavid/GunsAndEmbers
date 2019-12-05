@@ -389,6 +389,16 @@ namespace TowerDefensePrototype
 
                 }
 
+                if (Tether != null && Tether.GetType()== typeof(FlameJetTrooper))
+                {
+                    Position = (Tether as Invader).Center;
+
+                    if ((Tether as Invader).Active == false)
+                    {
+                        AddMore = false;
+                    }
+                }
+
                 if (EmitterSpeed != 0)
                 {
                     EmitterVelocity.Y += EmitterGravity * ((float)gameTime.ElapsedGameTime.TotalSeconds * 60.0f);

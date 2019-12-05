@@ -664,6 +664,7 @@ namespace TowerDefensePrototype
             //Could allow the player to toggle this setting on or off with a special setting.
             //e.g. pressing Ctrl+i in the options menu might bring up a special box that allows them to change it
             //graphics.SynchronizeWithVerticalRetrace = false;
+
             SetUpGameWindow();
             //IsFixedTimeStep = false;
             //TargetElapsedTime = TimeSpan.FromMilliseconds(1000f / 60f);
@@ -1468,6 +1469,51 @@ namespace TowerDefensePrototype
                             };
                         }
                         break; 
+                    #endregion
+
+                    #region FlameJetTropper
+                    case InvaderType.FlameJetTrooper:
+                        {
+                            AnimationsList = new List<InvaderAnimation>()
+                            {
+                                new InvaderAnimation() 
+                                { 
+                                    CurrentInvaderState = AnimationState_Invader.Walk,
+                                    Texture = Content.Load<Texture2D>("Invaders/Soldier/SoldierWalk"),
+                                    AnimationType = AnimationType.Normal,
+                                    Animated = true,
+                                    CurrentFrame = 0,
+                                    FrameDelay = 30,
+                                    Looping = true,
+                                    TotalFrames = 24
+                                },
+
+                                new InvaderAnimation() 
+                                {
+                                    CurrentInvaderState = AnimationState_Invader.Melee,
+                                    Texture = Content.Load<Texture2D>("Invaders/Soldier/SoldierMelee"),
+                                    AnimationType = AnimationType.Normal,
+                                    Animated = true,
+                                    CurrentFrame = 0,
+                                    FrameDelay = 150,
+                                    Looping = false,
+                                    TotalFrames = 4
+                                },
+
+                                new InvaderAnimation() 
+                                {
+                                    CurrentInvaderState = AnimationState_Invader.Stand,
+                                    Texture = Content.Load<Texture2D>("Invaders/Soldier/SoldierStand"),
+                                    AnimationType = AnimationType.Normal,
+                                    Animated = true,
+                                    CurrentFrame = 0,
+                                    FrameDelay = 25,
+                                    Looping = true,
+                                    TotalFrames = 30                    
+                                }
+                            };
+                        }
+                        break;
                     #endregion
 
                     #region RifleMan
@@ -2539,6 +2585,19 @@ namespace TowerDefensePrototype
                         {
                             drawable.Draw(GraphicsDevice, ParticleEffect);
                         }
+                    }
+
+                    if (drawable.GetType().BaseType == typeof(HeavyProjectile) && drawable.Emissive == true)
+                    {
+                        drawable.Draw(GraphicsDevice, ProjectileBasicEffect, ShadowBlurEffect, ParticleEffect);
+
+                        //foreach (Emitter emitter in (drawable as HeavyProjectile).EmitterList)
+                        //{
+                        //    if (emitter.Emissive == true)
+                        //    {
+                        //        emitter.Draw(GraphicsDevice, ParticleEffect);
+                        //    }
+                        //}
                     }
                 }
 
@@ -6404,6 +6463,78 @@ namespace TowerDefensePrototype
                                     heavyProjectile.YRange = new Vector2(invader.MaxY, invader.MaxY);
                                     HeavyProjectileList.Add(heavyProjectile);
                                     AddDrawable(heavyProjectile);
+                                }
+                            }
+                            break;
+
+                        case InvaderType.FlameJetTrooper:
+                            {
+                                if (invader.InAir == false)
+                                {
+                                    invader.Trajectory(new Vector2(-3, -8));
+                                    invader.Gravity = 0.2f;
+                                    invader.Airborne = false;
+                                    invader.InAir = true;
+                                }
+                                
+                                if (invader.CurrentMicroBehaviour == MicroBehaviour.Attack)
+                                {
+                                    if (YSortedEmitterList.All(Emitter => Emitter.Tether != invader))
+                                    {
+
+                                        Emitter Sparks1 = new Emitter(RoundSparkParticle, new Vector2(invader.Position.X + invader.CurrentAnimation.FrameSize.X - 10,
+                                                invader.Position.Y + invader.CurrentAnimation.FrameSize.Y / 2), new Vector2(-120f, -116f),
+                                                new Vector2(2.35f, 11.4f), new Vector2(900f, 1200f), 1f, false, new Vector2(-2f, 2f),
+                                                new Vector2(-1f, 1f), new Vector2(0.1f, 0.25f), new Color(255, 255, 128, 0),
+                                                new Color(255, 128, 0, 255), -0.032f, 0.03f, 18f, 70, true, new Vector2(invader.MaxY + 8, invader.MaxY + 32),
+                                                true, invader.MaxY / 1080f, true, true, new Vector2(0f, 0f), new Vector2(0f, 0f), 0f, true,
+                                                new Vector2(0.036f, 0f), false, false, 0f, false, false, true, null);
+
+                                        Sparks1.Tether = invader;
+
+                                        Sparks1.Emissive = true;
+                                        YSortedEmitterList.Add(Sparks1);
+
+                                        Emitter FireEmitter = new Emitter(ToonSmoke2, new Vector2(invader.Position.X + invader.CurrentAnimation.FrameSize.X - 10,
+                                                                                                  invader.Position.Y + invader.CurrentAnimation.FrameSize.Y / 2),
+                                            new Vector2(-120f, -116f), new Vector2(6.85f, 9.9f),
+                                            new Vector2(1200f, 1500f), 1f, false, new Vector2(0f, 0f), new Vector2(-2f, 2f), new Vector2(0.07f, 0.09f),
+                                             new Color(255, 128, 0, 60), Color.Black,
+                                            -0.035f, -1f, 51f, 4, true, new Vector2(invader.MaxY + 8, invader.MaxY + 32), true, invader.MaxY / 1080f,
+                                            true , true, new Vector2(0f, 0f), new Vector2(0f, 0f), 0.283f, true,
+                                            new Vector2(0.021f, 0.036f), false, false, 0f, false, false, true, null);
+
+                                        FireEmitter.Emissive = true;
+
+                                        FireEmitter.Tether = invader;
+
+                                        YSortedEmitterList.Add(FireEmitter);
+
+                                        AddDrawable(FireEmitter, Sparks1);
+
+                                        //FireEmitter.Tether = trap;
+
+                                        //HeavyProjectile heavyProjectile = new FlameProjectile(invader, CannonBallProjectileSprite, ToonSmoke3,
+                                        //    new Vector2(heavyRangedInvader.Center.X, heavyRangedInvader.Center.Y),
+                                        //    Random.Next((int)(heavyRangedInvader.LaunchVelocityRange.X), (int)(heavyRangedInvader.LaunchVelocityRange.Y)),
+                                        //    (float)Math.PI + MathHelper.ToRadians(15), 0.2f, heavyRangedInvader.RangedDamage,
+                                        //    new Vector2(MathHelper.Clamp(heavyRangedInvader.MaxY + 32, 690, 930), 930));
+
+
+                                        ////HeavyProjectile heavyProjectile = new CannonBall(invader, CannonBallProjectileSprite, ToonSmoke3,
+                                        ////       new Vector2(heavyRangedInvader.Center.X, heavyRangedInvader.Center.Y),
+                                        ////       Random.Next((int)(heavyRangedInvader.LaunchVelocityRange.X), (int)(heavyRangedInvader.LaunchVelocityRange.Y)),
+                                        ////       (float)Math.PI + MathHelper.ToRadians(15), 0.2f, heavyRangedInvader.RangedDamage, 40,
+                                        ////       new Vector2(MathHelper.Clamp(heavyRangedInvader.MaxY + 32, 690, 930), 930));
+
+                                        //heavyProjectile.YRange = new Vector2(invader.MaxY, invader.MaxY);
+                                        //HeavyProjectileList.Add(heavyProjectile);
+                                        //AddDrawable(heavyProjectile);
+                                    }
+                                    else
+                                    {
+
+                                    }
                                 }
                             }
                             break;

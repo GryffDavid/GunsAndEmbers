@@ -234,6 +234,7 @@ Content\Turrets\GrappleTurret\GrappleTurretBase.xnb
 Content\Icons\TurretIcons\FelCannonTurretIcon.xnb
 Content\Icons\TrapIcons\PopFragTrapIcon.xnb
 Content\Traps\GlueTrap.xnb
+Content\Particles\PaintSplat4.xnb
 Content\Sounds\Menu\MenuClick.xnb
 Content\Sounds\FireTrapStart.xnb
 Content\Sounds\Menu\MenuAmbiance.xnb
@@ -270,4 +271,3 @@ Content\Shaders\LightEffect.xnb
 Content\StoryDialogue\Level1Dialogue.xnb
 Content\StoryDialogue\Level2Dialogue.xnb
 Content\StoryDialogue\LoadoutMenuDialogue.xnb
-Content\Particles\PaintSplat4.xnb
