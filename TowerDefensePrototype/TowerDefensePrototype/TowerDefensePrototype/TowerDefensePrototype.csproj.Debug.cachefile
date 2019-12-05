@@ -79,6 +79,7 @@ Content\lightmask.xnb
 Content\Icons\TurretIcons\ShotgunTurretIcon.xnb
 Content\Traps\Trap.xnb
 Content\IceBlock.xnb
+Content\NullBox.xnb
 Content\Fonts\DefaultFont.xnb
 Content\Fonts\ButtonFont.xnb
 Content\Fonts\TooltipFont.xnb

@@ -226,15 +226,15 @@ D:\Google Drive\Tower Defense Backups\TowerDefensePrototype 59\GameDataTypes\obj
 D:\Google Drive\Tower Defense Backups\TowerDefensePrototype 59\GameDataTypes\obj\x86\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
 D:\Google Drive\Tower Defense Backups\TowerDefensePrototype 59\GameDataTypes\obj\x86\Debug\GameDataTypes.dll
 D:\Google Drive\Tower Defense Backups\TowerDefensePrototype 59\GameDataTypes\obj\x86\Debug\GameDataTypes.pdb
-D:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 59\GameDataTypes\bin\x86\Debug\GameDataTypes.dll
-D:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 59\GameDataTypes\bin\x86\Debug\GameDataTypes.pdb
-D:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 59\GameDataTypes\obj\x86\Debug\GameDataTypes.csprojResolveAssemblyReference.cache
-D:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 59\GameDataTypes\obj\x86\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
-D:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 59\GameDataTypes\obj\x86\Debug\GameDataTypes.dll
-D:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 59\GameDataTypes\obj\x86\Debug\GameDataTypes.pdb
-G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 59\GameDataTypes\bin\x86\Debug\GameDataTypes.dll
-G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 59\GameDataTypes\bin\x86\Debug\GameDataTypes.pdb
-G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 59\GameDataTypes\obj\x86\Debug\GameDataTypes.csprojResolveAssemblyReference.cache
-G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 59\GameDataTypes\obj\x86\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
-G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 59\GameDataTypes\obj\x86\Debug\GameDataTypes.dll
-G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 59\GameDataTypes\obj\x86\Debug\GameDataTypes.pdb
+D:\Google Drive\Tower Defense Backups\TowerDefensePrototype 60\GameDataTypes\bin\x86\Debug\GameDataTypes.dll
+D:\Google Drive\Tower Defense Backups\TowerDefensePrototype 60\GameDataTypes\bin\x86\Debug\GameDataTypes.pdb
+D:\Google Drive\Tower Defense Backups\TowerDefensePrototype 60\GameDataTypes\obj\x86\Debug\GameDataTypes.csprojResolveAssemblyReference.cache
+D:\Google Drive\Tower Defense Backups\TowerDefensePrototype 60\GameDataTypes\obj\x86\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
+D:\Google Drive\Tower Defense Backups\TowerDefensePrototype 60\GameDataTypes\obj\x86\Debug\GameDataTypes.dll
+D:\Google Drive\Tower Defense Backups\TowerDefensePrototype 60\GameDataTypes\obj\x86\Debug\GameDataTypes.pdb
+G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 60 (Click-and-Drag Walls)\GameDataTypes\bin\x86\Debug\GameDataTypes.dll
+G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 60 (Click-and-Drag Walls)\GameDataTypes\bin\x86\Debug\GameDataTypes.pdb
+G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 60 (Click-and-Drag Walls)\GameDataTypes\obj\x86\Debug\GameDataTypes.csprojResolveAssemblyReference.cache
+G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 60 (Click-and-Drag Walls)\GameDataTypes\obj\x86\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
+G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 60 (Click-and-Drag Walls)\GameDataTypes\obj\x86\Debug\GameDataTypes.dll
+G:\Google Drive\Tower Defense Backups\Old Backups\TowerDefensePrototype 60 (Click-and-Drag Walls)\GameDataTypes\obj\x86\Debug\GameDataTypes.pdb

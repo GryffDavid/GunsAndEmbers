@@ -40,7 +40,7 @@ namespace TowerDefensePrototype
             Source = source;
             Destination = destination;            
 
-            Segments = CreateBolt(source, destination, 2);
+            Segments = CreateBolt(source, destination, 0.25f);
             Color = color;
             Alpha = 1f;
             AlphaMultiplier = 0.6f;

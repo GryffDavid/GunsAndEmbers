@@ -507,14 +507,14 @@ namespace TowerDefensePrototype
                         CoinList.RemoveAt(i);
                 }
 
-                foreach (Particle coin in CoinList)
-                {
-                    if (coin.BouncedOnGround == true && coin.Velocity.X == 0)
-                    {
-                        coin.Velocity = Vector2.Zero;
-                        coin.CurrentPosition = Vector2.SmoothStep(coin.CurrentPosition, new Vector2(100, 100), 0.1f);
-                    }
-                }
+                //foreach (Particle coin in CoinList)
+                //{
+                //    if (coin.BouncedOnGround == true && coin.Velocity.X == 0)
+                //    {
+                //        coin.Velocity = Vector2.Zero;
+                //        coin.CurrentPosition = Vector2.SmoothStep(coin.CurrentPosition, new Vector2(100, 100), 0.1f);
+                //    }
+                //}
 
                 #region Handle EmitterList2
                 foreach (Emitter emitter in EmitterList2)
@@ -1671,7 +1671,7 @@ namespace TowerDefensePrototype
                 {
                     towerButton.Update(CursorPosition);
 
-                    if (towerButton.JustClicked == true)
+                    if (towerButton.JustClicked == true && SelectedTurret != null)
                     {
                         #region Create an effect under the turret as it's placed
                         if (SelectedTurret != null)
@@ -3097,22 +3097,26 @@ namespace TowerDefensePrototype
             {
                 foreach (Trap trap in TrapList)
                 {
-                    if (invader.DestinationRectangle.Intersects(trap.DestinationRectangle))
+
+                    switch (trap.TrapType)
                     {
-                        switch (trap.TrapType)
-                        {
-                            case TrapType.Wall:
+                        case TrapType.Wall:
+                            {
+                                Wall wallTrap = trap as Wall;
+
+                                if (invader.BoundingBox.Intersects(wallTrap.WallRay) <= Vector2.Distance(wallTrap.Position, (Vector2)wallTrap.Position2))
                                 {
-                                    Wall wallTrap = trap as Wall;
+                                    var intersection = invader.BoundingBox.Intersects(wallTrap.WallRay);
                                     invader.CurrentMoveVector.X = 0;
                                 }
-                                break;
-                        }
+                            }
+                            break;
                     }
+
                 }
 
-                //If an invader is not colliding with a wall trap or the tower, move as normal
-                if (!TrapList.Any(Trap => Trap.DestinationRectangle.Intersects(invader.DestinationRectangle) && Trap.TrapType == TrapType.Wall) &&
+
+                if (!TrapList.Any(Trap => Trap.TrapType == TrapType.Wall && ((Trap as Wall).WallRay.Intersects(invader.BoundingBox) != null)) &&
                     Vector2.Distance(
                     PointToVector(invader.DestinationRectangle.Center),
                     new Vector2(Tower.DestinationRectangle.Right, invader.DestinationRectangle.Center.Y)) > 5)
@@ -4822,6 +4826,68 @@ namespace TowerDefensePrototype
             };
             #endregion
 
+
+            Func<Turret, Trap, LightProjectile, bool> DetermineCollision = (Turret turret, Trap trap, LightProjectile projectile) =>
+            {
+                if (projectile.Ray.Intersects((trap as Wall).WallPlane) != null)
+                {
+                    float MinDistTrap = (float)projectile.Ray.Intersects((trap as Wall).WallPlane);
+
+                    Vector2 TrapCollisionPoint =
+                        new Vector2(turret.BarrelRectangle.X + (projectile.Ray.Direction.X * (float)MinDistTrap),
+                                    turret.BarrelRectangle.Y + (projectile.Ray.Direction.Y * (float)MinDistTrap));
+
+                    #region Get all the X values between the two nodes
+                    List<int> XList = new List<int>();
+                    //If the first node is placed left and the second node is placed right
+                    if ((trap as Wall).Position2.Value.X > (trap as Wall).Position.X)
+                    {
+                        for (int x = (int)(trap as Wall).Position.X; x <= (int)(trap as Wall).Position2.Value.X; x++)
+                        {
+                            XList.Add(x);
+                        }
+                    }
+                    //If the second node is placed left and the first node is placed right
+                    if ((trap as Wall).Position2.Value.X < (trap as Wall).Position.X)
+                    {
+                        for (int x = (int)(trap as Wall).Position2.Value.X; x <= (int)(trap as Wall).Position.X; x++)
+                        {
+                            XList.Add(x);
+                        }
+                    }
+                    #endregion
+
+                    #region Get all the Y values between the two nodes
+                    List<int> YList = new List<int>();
+                    //If the first node is placed up and the second node is placed down
+                    if ((trap as Wall).Position2.Value.Y > (trap as Wall).Position.Y)
+                    {
+                        for (int y = (int)(trap as Wall).Position.Y; y <= (int)(trap as Wall).Position2.Value.Y; y++)
+                        {
+                            YList.Add(y);
+                        }
+                    }
+                    //If the second node is placed up and the first node is placed down
+                    if ((trap as Wall).Position.Y > (trap as Wall).Position2.Value.Y)
+                    {
+                        for (int y = (int)(trap as Wall).Position2.Value.Y; y <= (int)(trap as Wall).Position.Y; y++)
+                        {
+                            YList.Add(y);
+                        }
+                    }
+                    #endregion
+
+                    if (XList.Contains((int)TrapCollisionPoint.X) && YList.Contains((int)TrapCollisionPoint.Y))
+                    {
+                        return true;
+                    }
+                    else
+                        return false;
+                }
+                else
+                    return false;
+            };
+
             foreach (Turret turret in TurretList)
             {
                 foreach (LightProjectile projectile in LightProjectileList)
@@ -4830,28 +4896,43 @@ namespace TowerDefensePrototype
 
                     if (turret != null && turret.Active == true && turret.Selected == true && CurrentProjectile != null)
                     {
-                        List<Trap> HitTraps = TrapList.FindAll(Trap => Trap.BoundingBox.Intersects(CurrentProjectile.Ray) != null && Trap.Solid == true);
+                        //All the traps which are solid and the bounding box intersects the ray OR the plane intersects the ray
+                        List<Trap> HitTraps = 
+                            TrapList.FindAll(Trap => Trap.BoundingBox.Intersects(CurrentProjectile.Ray) != null  || 
+                                             CurrentProjectile.Ray.Intersects((Trap as Wall).WallPlane) != null && 
+                                             DetermineCollision(turret, Trap, CurrentProjectile) == true &&
+                                             Trap.Solid == true);
+
                         List<Invader> HitInvaders = InvaderList.FindAll(Invader => Invader.BoundingBox.Intersects(CurrentProjectile.Ray) != null);
                         Vector2 CollisionEnd;
 
+
                         #region Invader AND Trap
                         //If a projectile hit an invader AND a solid trap
-                        if (TrapList.Any(Trap => Trap.BoundingBox.Intersects(CurrentProjectile.Ray) != null && Trap.Solid == true &&
+                        if (TrapList.Any(Trap => Trap.BoundingBox.Intersects(CurrentProjectile.Ray) != null ||
+                                         CurrentProjectile.Ray.Intersects((Trap as Wall).WallPlane) != null &&
+                                         DetermineCollision(turret, Trap, CurrentProjectile) == true &&
+                                         Trap.Solid == true) &&
                             InvaderList.Any(Invader => Invader.BoundingBox.Intersects(CurrentProjectile.Ray) != null &&
-                            CurrentProjectile.Active == true)))
+                                            CurrentProjectile.Active == true))
                         {
                             //First Invader to be hit
                             float MinDistInv = (float)HitInvaders.Min(Invader => Invader.BoundingBox.Intersects(CurrentProjectile.Ray));
                             Invader HitInvader = HitInvaders.Find(Invader => Invader.BoundingBox.Intersects(CurrentProjectile.Ray) == MinDistInv);
 
                             //First solid trap to be hit
-                            float MinDistTrap = (float)HitTraps.Min(Trap => Trap.BoundingBox.Intersects(CurrentProjectile.Ray));
-                            Trap HitTrap = HitTraps.Find(Trap => Trap.BoundingBox.Intersects(CurrentProjectile.Ray) == MinDistTrap);
+                            Nullable<float> MinDistTrap;
+                                MinDistTrap = HitTraps.Min(Trap => Trap.BoundingBox.Intersects(CurrentProjectile.Ray));  
 
-                            //
+                            if (MinDistTrap == null)
+                                MinDistTrap = (float)HitTraps.Min(Trap => CurrentProjectile.Ray.Intersects((Trap as Wall).WallPlane)); 
+
+                            Trap HitTrap = HitTraps.Find(Trap => Trap.BoundingBox.Intersects(CurrentProjectile.Ray) == MinDistTrap ||
+                                                                 CurrentProjectile.Ray.Intersects((Trap as Wall).WallPlane) == MinDistTrap);
 
                             #region A trap was hit first
-                            if (HitTraps.Any(Trap => Trap.BoundingBox.Intersects(CurrentProjectile.Ray) < MinDistInv))
+                            if (HitTraps.Any(Trap => Trap.BoundingBox.Intersects(CurrentProjectile.Ray) < MinDistInv ||
+                                CurrentProjectile.Ray.Intersects((Trap as Wall).WallPlane) < MinDistInv))
                             {
                                 CollisionEnd = new Vector2(turret.BarrelRectangle.X + (CurrentProjectile.Ray.Direction.X * (float)MinDistTrap),
                                                            turret.BarrelRectangle.Y + (CurrentProjectile.Ray.Direction.Y * (float)MinDistTrap));
@@ -4876,16 +4957,24 @@ namespace TowerDefensePrototype
 
                         #region Trap
                         //If a projectile hit just a solid trap
-                        if (HitTraps.Any(Trap => Trap.BoundingBox.Intersects(CurrentProjectile.Ray) != null && Trap.Solid == true &&
+                        if (HitTraps.Any(Trap => Trap.BoundingBox.Intersects(CurrentProjectile.Ray) != null || 
+                            CurrentProjectile.Ray.Intersects((Trap as Wall).WallPlane) != null && 
+                            Trap.Solid == true &&
                             InvaderList.All(Invader => Invader.BoundingBox.Intersects(CurrentProjectile.Ray) == null &&
                             CurrentProjectile.Active == true)))
                         {
-                            float MinDistTrap = (float)HitTraps.Min(Trap => Trap.BoundingBox.Intersects(CurrentProjectile.Ray));
-                            Trap HitTrap = HitTraps.Find(Trap => Trap.BoundingBox.Intersects(CurrentProjectile.Ray) == MinDistTrap);
+                            //float MinDistTrap = (float)HitTraps.Min(Trap => Trap.BoundingBox.Intersects(CurrentProjectile.Ray));
+                            float MinDistTrap = (float)HitTraps.Min(Trap => CurrentProjectile.Ray.Intersects((Trap as Wall).WallPlane));
+                            //Trap HitTrap = HitTraps.Find(Trap => Trap.BoundingBox.Intersects(CurrentProjectile.Ray) == MinDistTrap);
+                            Trap HitTrap = HitTraps.Find(Trap => CurrentProjectile.Ray.Intersects((Trap as Wall).WallPlane) == MinDistTrap);
 
                             //Vector2 CollisionEnd;
                             CollisionEnd = new Vector2(turret.BarrelRectangle.X + (CurrentProjectile.Ray.Direction.X * (float)MinDistTrap),
-                                                           turret.BarrelRectangle.Y + (CurrentProjectile.Ray.Direction.Y * (float)MinDistTrap));
+                                                       turret.BarrelRectangle.Y + (CurrentProjectile.Ray.Direction.Y * (float)MinDistTrap));
+
+                            //CoinList.Add(new Particle(Coin, CollisionEnd,
+                            //(float)RandomDouble(0, 0), (float)RandomDouble(0, 0), 20000f, 1f, true, (float)RandomDouble(0, 360), (float)RandomDouble(-5, 5), 0.75f,
+                            //Color.White, Color.White, 0, true, 1920, false, null, true));
 
                             CreateEffect(turret.BarrelEnd, CollisionEnd, CurrentProjectile.LightProjectileType);
                             TrapEffect(CollisionEnd, turret, HitTrap);
@@ -4894,7 +4983,8 @@ namespace TowerDefensePrototype
 
                         #region Invader
                         //If a projectile hit just an invader or hit an invader and a non-solid trap
-                        if (HitTraps.All(Trap => Trap.BoundingBox.Intersects(CurrentProjectile.Ray) == null) &&
+                        if (HitTraps.All(Trap => Trap.BoundingBox.Intersects(CurrentProjectile.Ray) == null && 
+                            CurrentProjectile.Ray.Intersects((Trap as Wall).WallPlane) == null) &&
                             InvaderList.Any(Invader => Invader.BoundingBox.Intersects(CurrentProjectile.Ray) != null) &&
                             CurrentProjectile.Active == true)
                         {
@@ -4913,7 +5003,8 @@ namespace TowerDefensePrototype
 
                         #region Ground
                         //If a projectile doesn't hit a trap or an invader but does hit the ground
-                        if (HitTraps.All(Trap => Trap.BoundingBox.Intersects(CurrentProjectile.Ray) == null) &&
+                        if (HitTraps.All(Trap => Trap.BoundingBox.Intersects(CurrentProjectile.Ray) == null && 
+                            CurrentProjectile.Ray.Intersects((Trap as Wall).WallPlane) == null) &&
                             InvaderList.All(Invader => Invader.BoundingBox.Intersects(CurrentProjectile.Ray) == null) &&
                             CurrentProjectile.Ray.Intersects(Ground.BoundingBox) != null &&
                             CurrentProjectile.Active == true)
@@ -4926,7 +5017,7 @@ namespace TowerDefensePrototype
                                 CollisionEnd = new Vector2(turret.BarrelCenter.X + (CurrentProjectile.Ray.Direction.X * (float)DistToGround),
                                                            turret.BarrelCenter.Y + (CurrentProjectile.Ray.Direction.Y * (float)DistToGround));
 
-                                CollisionEnd.Y += (float)RandomDouble(-turret.AngleOffset*5, turret.AngleOffset*5);
+                                CollisionEnd.Y += (float)RandomDouble(-turret.AngleOffset * 5, turret.AngleOffset * 5);
 
                                 CreateEffect(turret.BarrelEnd, CollisionEnd, CurrentProjectile.LightProjectileType);
                                 GroundEffect(turret.BarrelEnd, CollisionEnd, CurrentProjectile.LightProjectileType);
@@ -4937,7 +5028,8 @@ namespace TowerDefensePrototype
                         #region Sky
 
                         //If a projectile doesn't hit a trap, an invader or the ground
-                        if (HitTraps.All(Trap => Trap.BoundingBox.Intersects(CurrentProjectile.Ray) == null) &&
+                        if (HitTraps.All(Trap => Trap.BoundingBox.Intersects(CurrentProjectile.Ray) == null && 
+                            CurrentProjectile.Ray.Intersects((Trap as Wall).WallPlane) == null) &&                            
                             InvaderList.All(Invader => Invader.BoundingBox.Intersects(CurrentProjectile.Ray) == null) &&
                             CurrentProjectile.Ray.Intersects(Ground.BoundingBox) == null &&
                             CurrentProjectile.Active == true)
@@ -4977,6 +5069,57 @@ namespace TowerDefensePrototype
             }
 
 
+            //Place the first end of the forcefield
+            if (CurrentMouseState.LeftButton == ButtonState.Released &&
+                PreviousMouseState.LeftButton == ButtonState.Pressed &&
+                ReadyToPlace == true &&
+                TrapList.Count < TrapLimit &&
+                CursorPosition.X > (Tower.Position.X + Tower.Texture.Width) &&
+                CursorPosition.Y < (930) && CursorPosition.Y > (690) &&
+                SelectedTrap == TrapType.Wall 
+                && WallTrap == null)
+            {
+                WallTrap = new Wall(CursorPosition, null);
+                CurrentForceField = new LightningBolt(WallTrap.Position, CursorPosition, Color.White, 0.00001f, 0.0025f);
+            }
+
+            //Place the second end of the forcefield
+            if (WallTrap != null)
+                if (CurrentMouseState.LeftButton == ButtonState.Released &&
+                PreviousMouseState.LeftButton == ButtonState.Pressed &&
+                ReadyToPlace == true &&
+                TrapList.Count < TrapLimit &&
+                CursorPosition.X > (Tower.Position.X + Tower.Texture.Width) &&
+                CursorPosition.Y < (930) && CursorPosition.Y > (690) &&
+                SelectedTrap == TrapType.Wall &&
+                WallTrap.Position2 == null &&
+                Vector2.Distance(CursorPosition, WallTrap.Position) > 64 &&
+                Vector2.Distance(CursorPosition, WallTrap.Position) < 128)
+                {
+                    ForceFieldList.Add(CurrentForceField);                    
+                    CurrentForceField = null;                    
+                    WallTrap.Position2 = CursorPosition;
+                    TrapList.Add(WallTrap);
+                    TrapList[TrapList.IndexOf(WallTrap)].LoadContent(Content);
+
+                    Vector2 dir = -(WallTrap.Position - (Vector2)WallTrap.Position2);
+                    dir.Normalize();
+                    
+                    WallTrap.WallRay = new Ray(new Vector3(WallTrap.Position.X, WallTrap.Position.Y, 0), new Vector3(dir.X, dir.Y, 0));
+
+                    //Create a plane with 3 vectors for the projectiles to collide with
+                    WallTrap.WallPlane = new Plane(new Vector3(WallTrap.Position.X, WallTrap.Position.Y, 0), new Vector3(WallTrap.Position2.Value.X, WallTrap.Position2.Value.Y, 0), 
+                        new Vector3(MathHelper.Lerp(WallTrap.Position.X, WallTrap.Position2.Value.X, 0.5f), MathHelper.Lerp(WallTrap.Position.Y, WallTrap.Position2.Value.Y, 0.5f), 1));
+
+                    ReadyToPlace = false;
+                    Resources -= new Wall(Vector2.Zero, Vector2.Zero).ResourceCost;
+                    PlaceTrap.Play();
+
+                    ClearSelected();
+                    WallTrap = null;
+                }
+
+
             if (CurrentMouseState.LeftButton == ButtonState.Released &&
                 PreviousMouseState.LeftButton == ButtonState.Pressed &&
                 ReadyToPlace == true &&
@@ -4991,18 +5134,18 @@ namespace TowerDefensePrototype
 
                 switch (SelectedTrap)
                 {
-                    case TrapType.Wall:
-                        if (Resources >= new Wall(Vector2.Zero, Vector2.Zero).ResourceCost)
-                        {
-                            NewTrap = new Wall(new Vector2(CursorPosition.X - 16, CursorPosition.Y), new Vector2(CursorPosition.X - 64, CursorPosition.Y - 64));
-                            TrapList.Add(NewTrap);
-                            TrapList[TrapList.IndexOf(NewTrap)].LoadContent(Content);
-                            ReadyToPlace = false;
-                            Resources -= new Wall(Vector2.Zero, Vector2.Zero).ResourceCost;
-                            PlaceTrap.Play();
-                            ClearSelected();
-                        }
-                        break;
+                    //case TrapType.Wall:
+                    //    if (Resources >= new Wall(Vector2.Zero, Vector2.Zero).ResourceCost)
+                    //    {
+                    //        NewTrap = new Wall(new Vector2(CursorPosition.X - 16, CursorPosition.Y), new Vector2(CursorPosition.X - 64, CursorPosition.Y - 64));
+                    //        TrapList.Add(NewTrap);
+                    //        TrapList[TrapList.IndexOf(NewTrap)].LoadContent(Content);
+                    //        ReadyToPlace = false;
+                    //        Resources -= new Wall(Vector2.Zero, Vector2.Zero).ResourceCost;
+                    //        PlaceTrap.Play();
+                    //        ClearSelected();
+                    //    }
+                    //    break;
 
                     case TrapType.Fire:
                         if (Resources >= new FireTrap(Vector2.Zero).ResourceCost)
@@ -6099,6 +6242,9 @@ namespace TowerDefensePrototype
                         if (turret != null)
                             turret.Selected = false;
                     }
+
+                    WallTrap = null;
+                    CurrentForceField = null;
                 }
             }
         }
@@ -6106,8 +6252,11 @@ namespace TowerDefensePrototype
         private void ClearSelected()
         {
             SelectedTurret = null;
-            SelectedTrap = null;
+            SelectedTrap = null;           
             ReadyToPlace = false;
+
+            WallTrap = null;
+            CurrentForceField = null;
         }
         #endregion
 
