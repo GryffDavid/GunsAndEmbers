@@ -14,7 +14,7 @@ namespace TowerDefensePrototype
 
     class Button
     {
-        string AssetName, IconName, Text, FontName;
+        public string AssetName, IconName, Text, FontName;
         public Vector2 FrameSize, Scale, Position, CursorPosition;
         public Rectangle DestinationRectangle, SourceRectangle;
 
@@ -26,7 +26,7 @@ namespace TowerDefensePrototype
 
         MouseState CurrentMouseState, PreviousMouseState;
         MousePosition CurrentMousePosition, PreviousMousePosition;
-        ButtonSpriteState CurrentButtonState;
+        public ButtonSpriteState CurrentButtonState;
 
         int CurrentFrame;
         public bool Active, JustClicked;

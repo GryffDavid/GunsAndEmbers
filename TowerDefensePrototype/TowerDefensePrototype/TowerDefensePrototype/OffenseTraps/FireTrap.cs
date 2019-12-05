@@ -19,7 +19,8 @@ namespace TowerDefensePrototype
             AssetName = "FireTrap";
             CurrentHP = 50;
             TrapType = TrapType.Fire;
-            DetonateDelay = 300;
+            DetonateDelay = 1000;
+            DetonateLimit = 10;
         }
     }
 }

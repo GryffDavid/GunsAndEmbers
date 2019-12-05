@@ -18,6 +18,7 @@ namespace TowerDefensePrototype
             TrapType = TrapType.Spikes;
             CurrentHP = 50;
             DetonateDelay = 300;
+            DetonateLimit = -1;
         }
     }
 }

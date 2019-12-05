@@ -17,11 +17,7 @@ namespace TowerDefensePrototype
             CurrentHP = 50;
             AssetName = "Wall";
             TrapType = TrapType.Wall;
+            DetonateLimit = -1;
         }
-        
-        //public override TrapType TrapType
-        //{
-        //    get { return TrapType.Wall; }
-        //}
     }
 }

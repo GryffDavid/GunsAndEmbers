@@ -61,6 +61,7 @@ namespace TowerDefensePrototype
 
             if (CanBounce == true)
                 if (CurrentPosition.Y >= 493 && BouncedOnGround == false)
+                //if (Vector2.Distance(CurrentPosition, new Vector2(CurrentPosition.X, 493)) <= 4 && BouncedOnGround == false)
                 {
                     Velocity.Y = -Velocity.Y / 3;
                     Velocity.X = Velocity.X / 3;

@@ -22,6 +22,8 @@ namespace TowerDefensePrototype
         public float DetonateDelay, CurrentDetonateDelay;
         public HorizontalBar TimingBar;
 
+        public float DetonateLimit;
+
         public virtual void LoadContent(ContentManager contentManager)
         {
             Active = true;            
@@ -32,7 +34,6 @@ namespace TowerDefensePrototype
             Texture = contentManager.Load<Texture2D>(AssetName);
             BoundingBox = new BoundingBox(new Vector3((int)Position.X, (int)Position.Y, 0), new Vector3((int)Position.X + Texture.Width, (int)Position.Y - Texture.Height, 0));
             DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y - Texture.Height, (int)(Texture.Width), (int)(Texture.Height));
-            CurrentDetonateDelay = DetonateDelay;
         }
 
         public virtual void Update(GameTime gameTime)
@@ -45,7 +46,17 @@ namespace TowerDefensePrototype
             }
             else
             {
-                CanTrigger = false;
+                CanTrigger = false;               
+            }            
+
+            if (DetonateLimit == 0)
+            {
+                Active = false;
+            }
+
+            if (DetonateLimit == -1)
+            {
+                Active = true;
             }
 
             TimingBar.Update(new Vector2(DestinationRectangle.X, DestinationRectangle.Bottom + 16), (int)CurrentDetonateDelay);
