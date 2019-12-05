@@ -10,6 +10,8 @@ namespace TowerDefensePrototype
 {
     class WallTrap : Trap
     {
+        public static new int ResourceCost = 200;
+
         public WallTrap(Vector2 position)
             : base(position)
         {

@@ -11,6 +11,8 @@ namespace TowerDefensePrototype
 {
     class FelCannonTurret : Turret
     {
+        public static new int ResourceCost = 600;
+
         public FelCannonTurret(Vector2 position)
         {
             Active = true;
@@ -22,7 +24,6 @@ namespace TowerDefensePrototype
             Animated = false;
             Looping = false;
             MaxHealth = 500;
-            ResourceCost = 600;
 
             CurrentAnimation = new TurretAnimation()
             {

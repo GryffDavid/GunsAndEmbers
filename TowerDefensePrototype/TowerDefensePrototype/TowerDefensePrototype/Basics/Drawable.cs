@@ -19,7 +19,12 @@ namespace TowerDefensePrototype
         {
             get { return _MaxY; }
             set 
-            { 
+            {
+                if (_MaxY != PreviousMaxY)
+                {
+                    PreviousMaxY = _MaxY;
+                }
+
                 _MaxY = value;
                 DrawDepth = MaxY / 1080.0f;
             }

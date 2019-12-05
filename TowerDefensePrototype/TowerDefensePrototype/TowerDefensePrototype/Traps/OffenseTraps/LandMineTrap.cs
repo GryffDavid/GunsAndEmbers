@@ -10,6 +10,8 @@ namespace TowerDefensePrototype
 {
     class LandMineTrap : Trap
     {
+        public static new int ResourceCost = 25;
+
         public LandMineTrap(Vector2 position)
             : base(position)
         {
@@ -20,7 +22,6 @@ namespace TowerDefensePrototype
             DetonateLimit = 1;
             OnGround = true;
             NormalDamage = 100;
-            ResourceCost = 25;
             PowerCost = 1;
         }
     }

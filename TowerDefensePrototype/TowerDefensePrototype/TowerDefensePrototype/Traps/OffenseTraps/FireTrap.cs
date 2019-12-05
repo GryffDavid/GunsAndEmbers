@@ -10,6 +10,8 @@ namespace TowerDefensePrototype
 {
     class FireTrap : Trap
     {
+        public static new int ResourceCost = 120;
+
         public FireTrap(Vector2 position)
             : base(position)
         {
@@ -19,7 +21,6 @@ namespace TowerDefensePrototype
             DetonateDelay = 1500;
             DetonateLimit = 5;
             //AffectedTime = 300;
-            ResourceCost = 120;
             PowerCost = 1;
 
             NormalDamage = 0;

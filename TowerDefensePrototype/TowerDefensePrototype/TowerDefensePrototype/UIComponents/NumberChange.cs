@@ -26,7 +26,7 @@ namespace TowerDefensePrototype
             Change = change;
             Number = number;
             MaxTime = 500;
-            Angle = (float)RandomDouble(-120, -60);
+            Angle = (float)Game1.RandomDouble(-120, -60);
 
             if (color == null)
             {
@@ -69,11 +69,6 @@ namespace TowerDefensePrototype
         public void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.DrawString(SpriteFont, Number.ToString(), Position, Color);
-        }
-
-        public double RandomDouble(double a, double b)
-        {
-            return a + Random.NextDouble() * (b - a);
         }
     }
 }

@@ -10,6 +10,8 @@ namespace TowerDefensePrototype
 {
     class SpikesTrap : Trap
     {
+        public static new int ResourceCost = 200;
+
         public SpikesTrap(Vector2 position)
             : base(position)
         {

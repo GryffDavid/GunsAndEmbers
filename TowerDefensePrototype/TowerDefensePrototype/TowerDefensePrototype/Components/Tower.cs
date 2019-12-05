@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace TowerDefensePrototype
 {
-    class Tower
+    public class Tower
     {
         public Texture2D Texture;
         string AssetName;

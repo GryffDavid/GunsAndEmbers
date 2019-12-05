@@ -10,6 +10,8 @@ namespace TowerDefensePrototype
 {
     class LineTrap : Trap
     {
+        public static new int ResourceCost = 200;
+
         public LineTrap(Vector2 position)
             : base(position)
         {

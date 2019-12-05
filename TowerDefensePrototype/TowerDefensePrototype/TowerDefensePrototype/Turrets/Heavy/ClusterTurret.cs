@@ -11,6 +11,8 @@ namespace TowerDefensePrototype
 {
     public class ClusterTurret : Turret
     {
+        public static new int ResourceCost = 600;
+
         public ClusterTurret(Vector2 position)
         {
             Active = true;

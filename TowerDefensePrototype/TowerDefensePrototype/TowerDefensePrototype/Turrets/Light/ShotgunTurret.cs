@@ -9,7 +9,9 @@ using Microsoft.Xna.Framework.Content;
 namespace TowerDefensePrototype
 {    
     class ShotgunTurret : Turret
-    {      
+    {
+        public static new int ResourceCost = 200;
+
         public ShotgunTurret(Vector2 position)
         {
             Active = true;
@@ -21,7 +23,6 @@ namespace TowerDefensePrototype
             AngleOffset = 4;
             Animated = false;
             Looping = false;
-            ResourceCost = 200;
             MaxHeat = 100;
             MaxHeatTime = 2000;
             CoolValue = 0.5f;

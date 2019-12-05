@@ -10,6 +10,8 @@ namespace TowerDefensePrototype
 {
     class SawBladeTrap : Trap
     {
+        public static new int ResourceCost = 200;
+
         public SawBladeTrap(Vector2 position)
             : base(position)
         {

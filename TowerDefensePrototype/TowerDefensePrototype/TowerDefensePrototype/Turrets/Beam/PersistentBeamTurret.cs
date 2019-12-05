@@ -10,6 +10,8 @@ namespace TowerDefensePrototype
 {    
     class PersistentBeamTurret : Turret
     {
+        public static new int ResourceCost = 200;
+
         public PersistentBeamTurret(Vector2 position)
         {
             Active = true;
@@ -22,7 +24,6 @@ namespace TowerDefensePrototype
             AngleOffset = 0f;
             Animated = false;
             Looping = false;
-            ResourceCost = 200;
             MaxHeat = 100;
             MaxHeatTime = 10000;
             CoolValue = 0.25f;

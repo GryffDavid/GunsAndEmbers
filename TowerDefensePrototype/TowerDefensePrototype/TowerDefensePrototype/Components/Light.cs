@@ -114,9 +114,9 @@ namespace TowerDefensePrototype
 
                 if (CurrentFlickerTime >= MaxFlickerTime)
                 {
-                    Position.Y = MathHelper.Clamp(Position.Y + (float)RandomDouble(-1, 1), StartPosition.Y - 2, StartPosition.Y + 2);
-                    Position.X = MathHelper.Clamp(Position.X + (float)RandomDouble(-1, 1), StartPosition.X - 2, StartPosition.X + 2);
-                    Position.Z = MathHelper.Clamp(Position.Z + (float)RandomDouble(-1, 1), StartPosition.Z - 1, StartPosition.Z + 1);
+                    Position.Y = MathHelper.Clamp(Position.Y + (float)Game1.RandomDouble(-1, 1), StartPosition.Y - 2, StartPosition.Y + 2);
+                    Position.X = MathHelper.Clamp(Position.X + (float)Game1.RandomDouble(-1, 1), StartPosition.X - 2, StartPosition.X + 2);
+                    Position.Z = MathHelper.Clamp(Position.Z + (float)Game1.RandomDouble(-1, 1), StartPosition.Z - 1, StartPosition.Z + 1);
                     CurrentFlickerTime = 0;
                 }
 
@@ -124,7 +124,7 @@ namespace TowerDefensePrototype
                 {
                     CurrentOscillationTime = 0;
                     //MaxOscillationTime
-                    MaxOscillationTime = MathHelper.Clamp(MaxOscillationTime + (float)RandomDouble(-50, 50), 400, 600);                    
+                    MaxOscillationTime = MathHelper.Clamp(MaxOscillationTime + (float)Game1.RandomDouble(-50, 50), 400, 600);                    
                 }
             }
 
@@ -158,11 +158,6 @@ namespace TowerDefensePrototype
                 pass.Apply();
                 graphics.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, lightVertices, 0, 4, lightIndices, 0, 2, VertexPositionColorTexture.VertexDeclaration);
             }
-        }
-
-        public double RandomDouble(double a, double b)
-        {
-            return a + Random.NextDouble() * (b - a);
         }
     }
 }

@@ -11,6 +11,8 @@ namespace TowerDefensePrototype
 {
     class FlameThrowerTurret : Turret
     {
+        public static new int ResourceCost = 200;
+
         public FlameThrowerTurret(Vector2 position)
         {
             Active = true;
@@ -22,7 +24,6 @@ namespace TowerDefensePrototype
             AngleOffset = 0f;
             Animated = false;
             Looping = false;
-            ResourceCost = 200;
             MaxHeat = 150;
             MaxHeatTime = 2000;
             CoolValue = 0.5f;

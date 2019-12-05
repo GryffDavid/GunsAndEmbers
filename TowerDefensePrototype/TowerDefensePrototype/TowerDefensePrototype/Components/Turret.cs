@@ -57,7 +57,7 @@ namespace TowerDefensePrototype
         public double FireDelay, CurrentFrameTime;
         public double ElapsedTime = 0;
         public int Damage, CurrentFrame;
-        public int ResourceCost;        
+        public static int ResourceCost;        
         static Random Random = new Random();
         public TurretType TurretType;
         public Color Color;

@@ -15,16 +15,7 @@ namespace TowerDefensePrototype
 
         protected override void OnButtonClickHappened(MouseButton button)
         {
-            switch (ValueState)
-            {
-                case true:
-                    ValueState = false;
-                    break;
-
-                case false:
-                    ValueState = true;
-                    break;
-            }
+            ValueState = !ValueState;
         }
 
         public CheckBox(Texture2D buttonStrip, Vector2 position, Texture2D icon)

@@ -11,6 +11,8 @@ namespace TowerDefensePrototype
 {
     class GasGrenadeTurret : Turret
     {
+        public static new int ResourceCost = 200;
+
         public GasGrenadeTurret(Vector2 position)
         {
             Active = true;

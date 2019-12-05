@@ -10,6 +10,8 @@ namespace TowerDefensePrototype
 {
     class FreezeTurret : Turret
     {
+        public static new int ResourceCost = 200;
+
         public FreezeTurret(Vector2 position)
         {
             Active = true;
@@ -21,7 +23,6 @@ namespace TowerDefensePrototype
             AngleOffset = 0;
             Animated = false;
             Looping = false;
-            ResourceCost = 200;
 
             CurrentAnimation = new TurretAnimation()
             {

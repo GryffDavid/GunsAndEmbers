@@ -10,6 +10,8 @@ namespace TowerDefensePrototype
 {
     class CatapultTrap : Trap
     {
+        public static new int ResourceCost = 200;
+
         //Maybe make invaders take extra turret damage when in the sky after using the catapult trap
         public CatapultTrap(Vector2 position)
             : base(position)

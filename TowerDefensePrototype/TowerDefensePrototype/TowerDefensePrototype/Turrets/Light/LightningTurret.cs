@@ -10,6 +10,8 @@ namespace TowerDefensePrototype
 {
     class LightningTurret : Turret
     {
+        public static new int ResourceCost = 200;
+
         public LightningTurret(Vector2 position)
         {
             Active = true;
@@ -21,7 +23,6 @@ namespace TowerDefensePrototype
             AngleOffset = 0f;
             Animated = false;
             Looping = false;
-            ResourceCost = 200;
             MaxHeat = 100;
             ShotHeat = 5;
             MaxHeatTime = 4000;

@@ -139,7 +139,8 @@ namespace TowerDefensePrototype
             Positions.Add(0);
 
             for (int i = 0; i < Length / 8; i++)
-                Positions.Add((float)RandomDouble(0,1));
+                Positions.Add((float)Game1.RandomDouble(0, 1));
+                //Positions.Add((float)RandomDouble(0,1));
 
             Positions.Sort();
 
@@ -159,7 +160,7 @@ namespace TowerDefensePrototype
                 else
                     Envelope = 1;
 
-                Displacement = (float)RandomDouble(-Sway, Sway);
+                Displacement = (float)Game1.RandomDouble(-Sway, Sway);
                 Displacement -= (Displacement - PreviousDisplacement) * (1 - Scale);
                 Displacement *= Envelope;
 
@@ -172,11 +173,6 @@ namespace TowerDefensePrototype
             Results.Add(new Line(PreviousPoint, destination, thickness));
 
             return Results;
-        }
-
-        public double RandomDouble(double a, double b)
-        {
-            return Random.NextDouble() * (b - a) + a;
         }
 
         public class Line

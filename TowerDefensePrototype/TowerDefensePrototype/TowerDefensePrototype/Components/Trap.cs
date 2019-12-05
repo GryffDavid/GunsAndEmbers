@@ -34,7 +34,8 @@ namespace TowerDefensePrototype
         public bool Solid, CanTrigger;
         public bool OnGround = false; //Whether the trap is drawn on the ground layer on if it's sorted by depth as usual
         public float MaxHP, CurrentHP, DetonateDelay, CurrentDetonateDelay, Bottom;
-        public int ResourceCost, DetonateLimit, CurrentDetonateLimit, CurrentFrame, PowerCost;
+        public int DetonateLimit, CurrentDetonateLimit, CurrentFrame, PowerCost;
+        public static int ResourceCost;
         public double CurrentFrameDelay;
         public double CurrentRemovalTime;
         public double MaxRemovalTime = 1000;
@@ -84,9 +85,7 @@ namespace TowerDefensePrototype
         public int[] normalIndices = new int[6];
         #endregion
 
-        Color shadowColor;
         public Color Color = Color.White;
-        float height, heightMod;
 
         public Trap(Vector2 position)
         {
@@ -110,13 +109,14 @@ namespace TowerDefensePrototype
             HealthBar = new UIBar(new Vector2(Center.X, Position.Y + CurrentAnimation.FrameSize.Y + 8), new Vector2(32, 4), Color.White, false, true); 
 
             DrawDepth = (float)(DestinationRectangle.Bottom / 1080f);
+
+            MaxY = DestinationRectangle.Bottom;
+            PreviousMaxY = MaxY;
             //Affected = false;
         }
 
         public virtual void Update(GameTime gameTime)
         {
-            PreviousMaxY = MaxY;
-
             if (CurrentHP <= 0)
                 Active = false;
 

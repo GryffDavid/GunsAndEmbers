@@ -586,48 +586,49 @@ namespace TowerDefensePrototype
             switch (turretType)
             {
                 case TurretType.MachineGun:
-                    cost = new MachineGunTurret(Vector2.Zero).ResourceCost;
+                    cost = MachineGunTurret.ResourceCost;
                     break;
 
                 case TurretType.Cannon:
-                    cost = new CannonTurret(Vector2.Zero).ResourceCost;
+                    cost = CannonTurret.ResourceCost;
                     break;
 
                 case TurretType.FlameThrower:
-                    cost = new FlameThrowerTurret(Vector2.Zero).ResourceCost;
+                    cost = FlameThrowerTurret.ResourceCost;
                     break;
 
                 case TurretType.Lightning:
-                    cost = new LightningTurret(Vector2.Zero).ResourceCost;
+                    cost = LightningTurret.ResourceCost;
                     break;
 
                 case TurretType.Cluster:
-                    cost = new ClusterTurret(Vector2.Zero).ResourceCost;
+                    cost = ClusterTurret.ResourceCost;
                     break;
 
                 case TurretType.FelCannon:
-                    cost = new FelCannonTurret(Vector2.Zero).ResourceCost;
+                    cost = FelCannonTurret.ResourceCost;
                     break;
 
                 case TurretType.Beam:
-                    cost = new BeamTurret(Vector2.Zero).ResourceCost;
+                    cost = BeamTurret.ResourceCost;
                     break;
 
                 case TurretType.Freeze:
-                    cost = new FreezeTurret(Vector2.Zero).ResourceCost;
+                    cost = FreezeTurret.ResourceCost;
                     break;
 
                 case TurretType.Boomerang:
-                    cost = new BoomerangTurret(Vector2.Zero).ResourceCost;
+                    cost = BoomerangTurret.ResourceCost;
                     break;
 
                 case TurretType.Grenade:
-                    cost = new GrenadeTurret(Vector2.Zero).ResourceCost;
+                    cost = GrenadeTurret.ResourceCost;
                     break;
             }
 
             return cost;
         }
+
         private int TrapCost(TrapType trapType)
         {
             int cost = 0;
@@ -635,31 +636,31 @@ namespace TowerDefensePrototype
             switch (trapType)
             {
                 case TrapType.Fire:
-                    cost = new FireTrap(Vector2.Zero).ResourceCost;
+                    cost = FireTrap.ResourceCost;
                     break;
 
                 case TrapType.Catapult:
-                    cost = new CatapultTrap(Vector2.Zero).ResourceCost;
+                    cost = CatapultTrap.ResourceCost;
                     break;
 
                 case TrapType.Ice:
-                    cost = new IceTrap(Vector2.Zero).ResourceCost;
+                    cost = IceTrap.ResourceCost;
                     break;
 
                 case TrapType.SawBlade:
-                    cost = new SawBladeTrap(Vector2.Zero).ResourceCost;
+                    cost = SawBladeTrap.ResourceCost;
                     break;
 
                 case TrapType.Spikes:
-                    cost = new SpikesTrap(Vector2.Zero).ResourceCost;
+                    cost = SpikesTrap.ResourceCost;
                     break;
 
                 case TrapType.Wall:
-                    cost = new WallTrap(Vector2.Zero).ResourceCost;
+                    cost = WallTrap.ResourceCost;
                     break;
 
                 case TrapType.Barrel:
-                    cost = new BarrelTrap(Vector2.Zero).ResourceCost;
+                    cost = BarrelTrap.ResourceCost;
                     break;
             }
 

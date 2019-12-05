@@ -11,6 +11,8 @@ namespace TowerDefensePrototype
 {
     class CannonTurret : Turret
     {
+        public static new int ResourceCost = 600;
+
         public CannonTurret(Vector2 position)
         {
             Active = true;
@@ -22,7 +24,6 @@ namespace TowerDefensePrototype
             Animated = false;
             Looping = false;
             MaxHealth = 500;
-            ResourceCost = 600;
             BlastRadius = 270;
             MaxHealth = 200;
             LaunchVelocity = 16;

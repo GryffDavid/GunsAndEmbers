@@ -12,8 +12,7 @@ namespace TowerDefensePrototype
     {
         public Texture2D Texture;
         Vector2 Position;
-        float MinScale, MaxScale, CurrentScale;
-        float CurrentTime, MaxTime;
+        float CurrentScale;
         Color Color;
 
         public ExplosionEffect(Vector2 position)

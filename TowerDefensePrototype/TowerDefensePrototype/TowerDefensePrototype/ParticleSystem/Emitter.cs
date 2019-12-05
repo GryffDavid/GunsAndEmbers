@@ -22,6 +22,7 @@ namespace TowerDefensePrototype
 
     public class Emitter : Drawable
     {
+        public new float MaxY;
         public Vector2 Position, PreviousPosition, AngleRange;
         public List<Particle> ParticleList;
         public List<Texture2D> TextureList;
@@ -164,13 +165,13 @@ namespace TowerDefensePrototype
                 FadeDelay = 0;
 
             if (emitterSpeed != null)
-                EmitterSpeed = (float)DoubleRange(emitterSpeed.Value.X, emitterSpeed.Value.Y);
+                EmitterSpeed = (float)Game1.RandomDouble(emitterSpeed.Value.X, emitterSpeed.Value.Y);
             else
                 EmitterSpeed = 0;
 
             if (emitterAngle != null)
             {
-                EmitterAngle = -MathHelper.ToRadians((float)DoubleRange(emitterAngle.Value.X, emitterAngle.Value.Y));
+                EmitterAngle = -MathHelper.ToRadians((float)Game1.RandomDouble(emitterAngle.Value.X, emitterAngle.Value.Y));
             }
             else
             {
@@ -219,6 +220,7 @@ namespace TowerDefensePrototype
 
             YRange = yrange;
             MaxY = Random.Next((int)yrange.X, (int)yrange.Y);
+            PreviousMaxY = MaxY;
             AddMore = true;
         }
 
@@ -290,13 +292,13 @@ namespace TowerDefensePrototype
                 FadeDelay = 0;
 
             if (emitterSpeed != null)
-                EmitterSpeed = (float)DoubleRange(emitterSpeed.Value.X, emitterSpeed.Value.Y);
+                EmitterSpeed = (float)Game1.RandomDouble(emitterSpeed.Value.X, emitterSpeed.Value.Y);
             else
                 EmitterSpeed = 0;
 
             if (emitterAngle != null)
             {
-                EmitterAngle = -MathHelper.ToRadians((float)DoubleRange(emitterAngle.Value.X, emitterAngle.Value.Y));
+                EmitterAngle = -MathHelper.ToRadians((float)Game1.RandomDouble(emitterAngle.Value.X, emitterAngle.Value.Y));
             }
             else
             {
@@ -345,6 +347,7 @@ namespace TowerDefensePrototype
 
             YRange = yrange;
             MaxY = Random.Next((int)yrange.X, (int)yrange.Y);
+            PreviousMaxY = MaxY;
             AddMore = true;
         }
 
@@ -360,6 +363,8 @@ namespace TowerDefensePrototype
         {
             if (Active == true)
             {
+                //PreviousMaxY = MaxY;
+
                 //If the emitter is given a value smaller than or equal to 0, it will carry on emitting infinitely//
                 //If the value is bigger than zero, it will only emit particles for the length of time given//
                 if (ActiveSeconds > 0)
@@ -436,21 +441,21 @@ namespace TowerDefensePrototype
 
                 if (FlipHor == true && FlipVer == false)
                 {
-                    Orientation = RandomOrientation(SpriteEffects.None, SpriteEffects.FlipHorizontally);
+                    Orientation = Game1.RandomOrientation(SpriteEffects.None, SpriteEffects.FlipHorizontally);
                     //Get back None or FlipHor
                     //1
                 }
 
                 if (FlipHor == false && FlipVer == true)
                 {
-                    Orientation = RandomOrientation(SpriteEffects.None, SpriteEffects.FlipVertically);
+                    Orientation = Game1.RandomOrientation(SpriteEffects.None, SpriteEffects.FlipVertically);
                     //Get back None or FlipVer
                     //2
                 }
 
                 if (FlipHor == true && FlipVer == true)
                 {
-                    Orientation = RandomOrientation(SpriteEffects.None, SpriteEffects.FlipVertically, SpriteEffects.FlipHorizontally);
+                    Orientation = Game1.RandomOrientation(SpriteEffects.None, SpriteEffects.FlipVertically, SpriteEffects.FlipHorizontally);
                     //Get back None, FlipHor, FlipVer
                     //3
                 }
@@ -466,23 +471,23 @@ namespace TowerDefensePrototype
                         float angle, hp, rotation, speed, startingRotation;
                         Vector2 scale;
 
-                        angle = -MathHelper.ToRadians((float)DoubleRange(AngleRange.X, AngleRange.Y));
-                        hp = (float)DoubleRange(TimeRange.X, TimeRange.Y);
+                        angle = -MathHelper.ToRadians((float)Game1.RandomDouble(AngleRange.X, AngleRange.Y));
+                        hp = (float)Game1.RandomDouble(TimeRange.X, TimeRange.Y);
 
                         if (MaintainScale != true)
                         {
-                            scale = new Vector2((float)DoubleRange(ScaleRange.X, ScaleRange.Y),
-                                                (float)DoubleRange(ScaleRange.Z, ScaleRange.W));
+                            scale = new Vector2((float)Game1.RandomDouble(ScaleRange.X, ScaleRange.Y),
+                                                (float)Game1.RandomDouble(ScaleRange.Z, ScaleRange.W));
                         }
                         else
                         {
-                            float thing = (float)DoubleRange(ScaleRange.X, ScaleRange.Y);
+                            float thing = (float)Game1.RandomDouble(ScaleRange.X, ScaleRange.Y);
                             scale = new Vector2(thing, thing);
                         }
 
-                        rotation = (float)DoubleRange(RotationIncrementRange.X, RotationIncrementRange.Y);
-                        speed = (float)DoubleRange(SpeedRange.X, SpeedRange.Y);
-                        startingRotation = (float)DoubleRange(StartingRotationRange.X, StartingRotationRange.Y);
+                        rotation = (float)Game1.RandomDouble(RotationIncrementRange.X, RotationIncrementRange.Y);
+                        speed = (float)Game1.RandomDouble(SpeedRange.X, SpeedRange.Y);
+                        startingRotation = (float)Game1.RandomDouble(StartingRotationRange.X, StartingRotationRange.Y);
                         MaxY = Random.Next((int)YRange.X, (int)YRange.Y);
                         
                         Particle NewParticle = new Particle(Texture, Position, angle, speed, hp, Transparency, Fade, startingRotation,
@@ -531,29 +536,6 @@ namespace TowerDefensePrototype
             //    particle.Draw(graphics, effect);
             //}
             
-        }
-
-        public double DoubleRange(double one, double two)
-        {
-            return one + Random.NextDouble() * (two - one);
-        }
-
-        private SpriteEffects RandomOrientation(params SpriteEffects[] Orientations)
-        {
-            //List<SpriteEffects> OrientationList = new List<SpriteEffects>();
-
-            //foreach (SpriteEffects orientation in Orientations)
-            //{
-            //    OrientationList.Add(orientation);
-            //}
-
-            return Orientations[Random.Next(0, Orientations.Length)];
-        }
-
-        public Texture2D GetRandomTexture(params Texture2D[] texture2D)
-        {
-            int next = Random.Next(0, texture2D.Length);
-            return texture2D[next];
         }
     }
 }

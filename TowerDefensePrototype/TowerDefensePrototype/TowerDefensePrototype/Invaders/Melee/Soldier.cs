@@ -73,7 +73,7 @@ namespace TowerDefensePrototype
                             CurrentMacroBehaviour = MacroBehaviour.AttackTower;
                             CurrentMicroBehaviour = MicroBehaviour.Stationary;
                             OperatingVehicle = null;
-                            Speed = OriginalSpeed * (float)RandomDouble(0.75f, 1.5f);
+                            Speed = OriginalSpeed * (float)Game1.RandomDouble(0.75f, 1.5f);
                             CurrentBehaviourDelay = 0;
                         }
 

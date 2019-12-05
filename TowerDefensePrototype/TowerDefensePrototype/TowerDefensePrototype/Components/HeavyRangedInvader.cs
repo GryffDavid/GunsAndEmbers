@@ -80,7 +80,7 @@ namespace TowerDefensePrototype
         #endregion
 
         #region For handling ranged attacking
-        public InvaderFireType FireType; //Whether the invader fires a single projectile, fires a burst or fires a beam etc.
+        //public InvaderFireType FireType; //Whether the invader fires a single projectile, fires a burst or fires a beam etc.
         public Vector2 TowerDistanceRange, TrapDistanceRange; //How far away from the tower the invader will be before stopping to fire
         public Vector2 AngleRange; //The angle that the projectile is fired at.
         public Vector2 LaunchVelocityRange; //The range of speeds that the invader can use to launch a heavy projectile
@@ -92,9 +92,9 @@ namespace TowerDefensePrototype
         public float MinTowerRange, MinTrapRange;
 
         public float RangedDamage; //How much damage the projectile does
-        public float LaunchVelocity; //How fast the heavy projectile is travelling when launched
+        //public float LaunchVelocity; //How fast the heavy projectile is travelling when launched
         public float CurrentFireDelay, MaxFireDelay; //How many milliseconds between shots
-        public int CurrentBurstShots, MaxBurstShots; //How many shots are fired in a row before a longer recharge is needed
+        //public int CurrentBurstShots, MaxBurstShots; //How many shots are fired in a row before a longer recharge is needed
 
         public float CurrentAngle = 0;
         public float EndAngle;
@@ -129,6 +129,8 @@ namespace TowerDefensePrototype
             BarrelEnd = new Vector2(BarrelDestinationRectangle.Center.X - (float)Math.Cos(CurrentAngle) * (BarrelPivot.X),
                                     BarrelDestinationRectangle.Center.Y - (float)Math.Sin(CurrentAngle) * (BarrelPivot.X));
             #endregion
+
+            DistToTower = Position.X - Tower.DestinationRectangle.Right;
 
             base.Update(gameTime, cursorPosition);
         }

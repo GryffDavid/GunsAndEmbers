@@ -212,12 +212,12 @@ namespace TowerDefensePrototype
             {
                 NextRad1 = Random.Next(100, 500);
                 NextRad2 = Random.Next(100, 250);
-                NextVFriction = MathHelper.Lerp(VFriction, (float)RandomDouble(0.85f, 0.999f), 0.1f);
+                NextVFriction = MathHelper.Lerp(VFriction, (float)Game1.RandomDouble(0.85f, 0.999f), 0.1f);
 
                 CurrentTime = 0;
 
                 MaxTime = Random.Next(150, 800);
-                eightSize = (float)RandomDouble(0.1f, 0.8f);
+                eightSize = (float)Game1.RandomDouble(0.1f, 0.8f);
             }
 
             Rad1 = MathHelper.Lerp(Rad1, NextRad1, 0.2f);
@@ -234,7 +234,7 @@ namespace TowerDefensePrototype
                 Rad1 * (float)Math.Cos(t * tMult),
                 Rad2 * (float)Math.Sin(t * tMult)) + ControlPoint1;
 
-            ControlPoint3 = Vector2.Lerp(ControlPoint3, ControlPoint2, (float)RandomDouble(0.0001f, 0.1f));
+            ControlPoint3 = Vector2.Lerp(ControlPoint3, ControlPoint2, (float)Game1.RandomDouble(0.0001f, 0.1f));
 
             if (t >= 8 * Math.PI)
             {
@@ -250,20 +250,6 @@ namespace TowerDefensePrototype
                 pass.Apply();
                 graphics.DrawUserPrimitives(PrimitiveType.TriangleStrip, vertices, 0, vertices.Length - 2);
             }
-        }
-
-        //public override void Draw(GraphicsDevice graphics, BasicEffect effect)
-        //{
-        //    foreach (EffectPass pass in effect.CurrentTechnique.Passes)
-        //    {
-        //        pass.Apply();
-        //        graphics.DrawUserPrimitives(PrimitiveType.TriangleStrip, vertices, 0, vertices.Length - 2);
-        //    }
-        //}
-
-        public double RandomDouble(double a, double b)
-        {
-            return a + Random.NextDouble() * (b - a);
         }
     }
 }

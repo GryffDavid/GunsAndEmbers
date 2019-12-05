@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Collections.ObjectModel;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -110,12 +109,12 @@ namespace TowerDefensePrototype
     
     public abstract class Invader : Drawable
     {
-        
         public virtual float OriginalSpeed { get { return 1.0f; } }
 
         #region Variables used for invaders
         public static ObservableCollection<Trap> TrapList;
         public static List<Invader> InvaderList;
+        public static Tower Tower;
 
         #region Vertex declarations
         public VertexPositionColorTexture[] shadowVertices = new VertexPositionColorTexture[4];
@@ -349,7 +348,7 @@ namespace TowerDefensePrototype
             CurrentHP = MaxHP;
             //MaxY = Random.Next((int)YRange.X, (int)YRange.Y);
             NextYPos = MaxY;
-
+            PreviousMaxY = MaxY;
             
             if (Airborne == true)
             {
@@ -457,10 +456,33 @@ namespace TowerDefensePrototype
         {
             if (Active == true)
             {
-                PreviousMaxY = MaxY;
-                //PreviousBottom = Bottom;
-
                 OperatorList.RemoveAll(Invader => Invader.Active == false);
+
+                #region Hit a Trap
+                Trap hitTrap = TrapList.FirstOrDefault(Trap => Trap.CollisionBox.Intersects(CollisionBox) && Trap.Solid == true);
+                if (hitTrap != null)
+                {
+                    TargetTrap = hitTrap;
+                    TrapCollision = true;
+                }
+                else
+                {
+                    //This next line should be handles on a per-invader type basis. i.e. Soldiers lose target when not colliding. Mobile cannon keeps target even when not colliding
+                    //invader.TargetTrap = null;
+                    TrapCollision = false;
+                } 
+                #endregion
+
+                #region Hit the Tower
+                if (Tower.BoundingBox.Intersects(BoundingBox))
+                {
+                    TowerCollision = true;
+                }
+                else
+                {
+                    TowerCollision = false;
+                }                
+                #endregion
 
                 if (Waypoints.Count == 0)
                 {
@@ -988,11 +1010,6 @@ namespace TowerDefensePrototype
         public void SetOperatingVehicle(Invader operatingVehicle)
         {
             OperatingVehicle = operatingVehicle;
-        }
-
-        public double RandomDouble(double a, double b)
-        {
-            return a + Random.NextDouble() * (b - a);
         }
     }
 }

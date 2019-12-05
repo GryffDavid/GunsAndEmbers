@@ -62,7 +62,11 @@ namespace TowerDefensePrototype
         #endregion
 
         public Texture2D Texture;
+        
+        //NO PREMATURE OPTIMISATION
         public List<Emitter> EmitterList = new List<Emitter>();
+        //LEAVE IT ALONE FOR NOW
+
         public Vector2 Velocity, Position, YRange, Origin, Center, BasePosition, TipPosition;
         public Vector2 Scale = Vector2.One;
 
@@ -109,6 +113,7 @@ namespace TowerDefensePrototype
                 YRange = yrange.Value;
 
             MaxY = Random.Next((int)YRange.X, (int)YRange.Y);
+            PreviousMaxY = MaxY;
             DrawDepth = MaxY / 1080;
 
             if (blastRadius.HasValue)

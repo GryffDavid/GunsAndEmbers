@@ -117,7 +117,7 @@ namespace TowerDefensePrototype
             {
                 for (int y = 0; y < TileArray.GetLength(1); y++)
                 {
-                    if (TrapList.Any(Trap => BoundingBoxToRect(Trap.CollisionBox).Intersects(TileArray[x, y].DestinationRectangle) && Trap.Solid == true))
+                    if (TrapList.Any(Trap => Game1.BoundingBoxToRect(Trap.CollisionBox).Intersects(TileArray[x, y].DestinationRectangle) && Trap.Solid == true))
                     {
                         TileArray[x, y].TileState = TileState.Solid;
                     }
@@ -168,7 +168,6 @@ namespace TowerDefensePrototype
             //    }
             //}
         }
-
 
 
         private void DoSearchStep()
@@ -389,14 +388,6 @@ namespace TowerDefensePrototype
             //Just need to take into account that the size of the invaders fluctuates and therefore the size
             //of the tiles should fluctuate too.
             
-        }
-
-        public Rectangle BoundingBoxToRect(BoundingBox boundingBox)
-        {
-            Rectangle rect = new Rectangle((int)boundingBox.Min.X, (int)boundingBox.Min.Y,
-                                           (int)(boundingBox.Max.X - boundingBox.Min.X),
-                                           (int)(boundingBox.Max.Y - boundingBox.Min.Y));
-            return rect;
         }
     }
 }

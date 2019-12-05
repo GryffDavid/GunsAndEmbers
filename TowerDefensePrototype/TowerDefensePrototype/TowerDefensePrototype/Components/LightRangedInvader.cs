@@ -73,19 +73,19 @@ namespace TowerDefensePrototype
         }
 
         #region For handling ranged attacking
-        public InvaderFireType FireType; //Whether the invader fires a single projectile, fires a burst or fires a beam etc.
+        //public InvaderFireType FireType; //Whether the invader fires a single projectile, fires a burst or fires a beam etc.
         public Vector2 TowerDistanceRange; //How far away from the tower the invader will be before stopping to fire
         public Vector2 AngleRange; //The angle that the projectile is fired at.
 
         public bool InTowerRange = false;
         public bool InTrapRange = false;
         public float DistToTower = 1920;
-        public float DistToTrap, TrapPosition;
-        public float MinTowerRange, MinTrapRange;
+        //public float DistToTrap;//, TrapPosition;
+        public float MinTowerRange;//, MinTrapRange;
 
         public float RangedDamage; //How much damage the projectile does
         public float CurrentFireDelay, MaxFireDelay; //How many milliseconds between shots
-        public int CurrentBurstShots, MaxBurstShots; //How many shots are fired in a row before a longer recharge is needed
+        //public int CurrentBurstShots;//, MaxBurstShots; //How many shots are fired in a row before a longer recharge is needed
 
         public float CurrentAngle = 0;
         public float EndAngle;
@@ -114,6 +114,7 @@ namespace TowerDefensePrototype
             //    Velocity.X = 0;
             //    InTowerRange = true;
             //}
+            DistToTower = Position.X - Tower.DestinationRectangle.Right;
 
             base.Update(gameTime, cursorPosition);
         }

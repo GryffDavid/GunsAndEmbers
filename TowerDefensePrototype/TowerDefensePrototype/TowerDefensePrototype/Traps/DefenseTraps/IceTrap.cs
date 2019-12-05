@@ -10,6 +10,8 @@ namespace TowerDefensePrototype
 {
     class IceTrap : Trap
     {
+        public static new int ResourceCost = 200;
+
         public IceTrap(Vector2 position)
             : base(position)
         {
