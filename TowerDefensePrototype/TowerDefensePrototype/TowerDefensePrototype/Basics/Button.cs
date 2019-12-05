@@ -19,7 +19,7 @@ namespace TowerDefensePrototype
         Vector2 IconPosition;
         Color Color;
         Texture2D ButtonStrip, IconTexture;
-        Rectangle DestinationRectangle, SourceRectangle;
+        public Rectangle DestinationRectangle, SourceRectangle;
         Rectangle IconRectangle;
 
         MouseState CurrentMouseState, PreviousMouseState;
@@ -28,7 +28,7 @@ namespace TowerDefensePrototype
 
         int CurrentFrame;
         public bool Active, JustClicked;
-        public bool ButtonActive;//, CanBeClicked;
+        public bool ButtonActive;
 
         public Button(string assetName, Vector2 position, string iconName = null, Vector2? scale = null, Color? color = null)
         {
@@ -72,87 +72,88 @@ namespace TowerDefensePrototype
 
         public void Update(GameTime gameTime)
         {
-                CurrentMouseState = Mouse.GetState();
+            CurrentMouseState = Mouse.GetState();
 
-                CursorPosition = new Vector2(CurrentMouseState.X, CurrentMouseState.Y);
+            CursorPosition = new Vector2(CurrentMouseState.X, CurrentMouseState.Y);
 
-                switch (CurrentButtonState)
-                {
-                    case ButtonSpriteState.Released:
-                        CurrentFrame = 0;
-                        break;
+            switch (CurrentButtonState)
+            {
+                case ButtonSpriteState.Released:
+                    CurrentFrame = 0;
+                    break;
 
-                    case ButtonSpriteState.Hover:
-                        CurrentFrame = 1;
-                        break;
+                case ButtonSpriteState.Hover:
+                    CurrentFrame = 1;
+                    break;
 
-                    case ButtonSpriteState.Pressed:
-                        CurrentFrame = 2;
-                        break;
-                }
+                case ButtonSpriteState.Pressed:
+                    CurrentFrame = 2;
+                    break;
+            }
 
-                SourceRectangle = new Rectangle(CurrentFrame * (int)FrameSize.X, 0, (int)FrameSize.X, (int)FrameSize.Y);
+            SourceRectangle = new Rectangle(CurrentFrame * (int)FrameSize.X, 0, (int)FrameSize.X, (int)FrameSize.Y);
 
-                if (DestinationRectangle.Contains(new Point((int)CursorPosition.X, (int)CursorPosition.Y)))
-                {
-                    CurrentMousePosition = MousePosition.Inside;
-                }
+            if (DestinationRectangle.Contains(new Point((int)CursorPosition.X, (int)CursorPosition.Y)))
+            {
+                CurrentMousePosition = MousePosition.Inside;
+            }
 
-                if (!DestinationRectangle.Contains(new Point((int)CursorPosition.X, (int)CursorPosition.Y)))
-                {
-                    CurrentMousePosition = MousePosition.Outside;
-                }
+            if (!DestinationRectangle.Contains(new Point((int)CursorPosition.X, (int)CursorPosition.Y)))
+            {
+                CurrentMousePosition = MousePosition.Outside;
+            }
 
-                if (PreviousMousePosition == MousePosition.Outside && CurrentMousePosition == MousePosition.Inside && CurrentMouseState.LeftButton == ButtonState.Pressed && PreviousMouseState.LeftButton == ButtonState.Pressed)
-                {
-                    Active = false;
-                }
+            if (PreviousMousePosition == MousePosition.Outside && CurrentMousePosition == MousePosition.Inside && CurrentMouseState.LeftButton == ButtonState.Pressed && PreviousMouseState.LeftButton == ButtonState.Pressed)
+            {
+                Active = false;
+            }
 
-                if (PreviousMousePosition == MousePosition.Inside && CurrentMousePosition == MousePosition.Inside && CurrentMouseState.LeftButton == ButtonState.Pressed && PreviousMouseState.LeftButton == ButtonState.Released)
-                {
-                    Active = true;
-                }
+            if (PreviousMousePosition == MousePosition.Inside && CurrentMousePosition == MousePosition.Inside && CurrentMouseState.LeftButton == ButtonState.Pressed && PreviousMouseState.LeftButton == ButtonState.Released)
+            {
+                Active = true;
+            }
 
-                if (PreviousMousePosition == MousePosition.Inside && CurrentMousePosition == MousePosition.Outside)
-                {
-                    Active = false;
-                }
+            if (PreviousMousePosition == MousePosition.Inside && CurrentMousePosition == MousePosition.Outside)
+            {
+                Active = false;
+            }
 
-                if (Active == true)
-                {
-                    if (DestinationRectangle.Contains(new Point((int)CursorPosition.X, (int)CursorPosition.Y)) &&
+            if (Active == true)
+            {
+                if (DestinationRectangle.Contains(new Point((int)CursorPosition.X, (int)CursorPosition.Y)) &&
                     CurrentMouseState.LeftButton == ButtonState.Released &&
-                    PreviousMouseState.LeftButton == ButtonState.Pressed)
-                    {
-                        if (ButtonActive == true)
-                            JustClicked = true;
-                        }
-                    }
-
-                if (PreviousMouseState.LeftButton == ButtonState.Released && CurrentMouseState.LeftButton == ButtonState.Released)
+                    PreviousMouseState.LeftButton == ButtonState.Pressed
+                    )
                 {
-                    JustClicked = false;
+                    if (ButtonActive == true)
+                    JustClicked = true;
+                }
+            }
+
+            if (PreviousMouseState.LeftButton == ButtonState.Released && CurrentMouseState.LeftButton == ButtonState.Released)
+            {
+                JustClicked = false;
+            }
+
+            if (DestinationRectangle.Contains(new Point((int)CursorPosition.X, (int)CursorPosition.Y)))
+            {
+                if (CurrentMouseState.LeftButton == ButtonState.Pressed && PreviousMouseState.LeftButton == ButtonState.Released)
+                {
+                    CurrentButtonState = ButtonSpriteState.Pressed;
                 }
 
-                if (DestinationRectangle.Contains(new Point((int)CursorPosition.X, (int)CursorPosition.Y)))
+                if (CurrentMouseState.LeftButton == ButtonState.Released)
                 {
-                    if (CurrentMouseState.LeftButton == ButtonState.Pressed && PreviousMouseState.LeftButton == ButtonState.Released)
-                    {
-                        CurrentButtonState = ButtonSpriteState.Pressed;
-                    }
-
-                    if (CurrentMouseState.LeftButton == ButtonState.Released)
-                    {
-                        CurrentButtonState = ButtonSpriteState.Hover;
-                    }
+                    CurrentButtonState = ButtonSpriteState.Hover;
                 }
-                else
-                {
-                    CurrentButtonState = ButtonSpriteState.Released;
-                }
+            }
+            else
+            {
+                CurrentButtonState = ButtonSpriteState.Released;
+            }
 
-                PreviousMousePosition = CurrentMousePosition;
-                PreviousMouseState = CurrentMouseState;
+            PreviousMousePosition = CurrentMousePosition;
+            PreviousMouseState = CurrentMouseState;            
         }
 
         public void Draw(SpriteBatch spriteBatch)

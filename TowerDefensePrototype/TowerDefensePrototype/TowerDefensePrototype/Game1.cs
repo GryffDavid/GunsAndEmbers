@@ -12,7 +12,7 @@ using Microsoft.Xna.Framework.Media;
 namespace TowerDefensePrototype
 {
     public enum TrapType { Blank, Wall, Spikes, Catapult, Fire };
-    public enum TurretType { Blank };
+    public enum TurretType { Blank, Basic };
 
     public class Game1 : Microsoft.Xna.Framework.Game
     {
@@ -26,13 +26,13 @@ namespace TowerDefensePrototype
             graphics.PreferredBackBufferWidth = 1280;
             graphics.PreferredBackBufferHeight = 720;
             IsMouseVisible = true;
-            //graphics.IsFullScreen = true;
+            graphics.IsFullScreen = false;
             Content.RootDirectory = "Content";
         }
 
         protected override void Initialize()
         {
-            UserInterface = new UserInterface(6, 3, 120, Content);           
+            UserInterface = new UserInterface(6, 3, 500, Content);           
             base.Initialize();
         }
 

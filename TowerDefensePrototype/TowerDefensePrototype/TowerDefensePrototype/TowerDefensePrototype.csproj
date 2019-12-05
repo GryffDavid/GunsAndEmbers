@@ -110,9 +110,9 @@
     <Compile Include="Basics\Button.cs" />
     <Compile Include="Basics\BlankTrap.cs" />
     <Compile Include="Basics\Invader.cs" />
-    <Compile Include="Basics\Minion.cs" />
-    <Compile Include="BasicTurret.cs" />
-    <Compile Include="BlankTurret.cs" />
+    <Compile Include="Invaders\BatteringRam.cs" />
+    <Compile Include="Turrets\BasicTurret.cs" />
+    <Compile Include="Turrets\BlankTurret.cs" />
     <Compile Include="DefenseTraps\CatapultTrap.cs" />
     <Compile Include="OffenseTraps\FireTrap.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -123,7 +123,7 @@
     <Compile Include="Basics\Tower.cs" />
     <Compile Include="Basics\Trap.cs" />
     <Compile Include="Basics\Turret.cs" />
-    <Compile Include="Soldier.cs" />
+    <Compile Include="Invaders\Soldier.cs" />
     <Compile Include="UserInterface.cs" />
     <Compile Include="DefenseTraps\Wall.cs" />
   </ItemGroup>

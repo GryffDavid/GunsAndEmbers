@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace TowerDefensePrototype
 {
-    abstract class Invader
+    public abstract class Invader
     {
         public int HP;
 
@@ -17,11 +17,14 @@ namespace TowerDefensePrototype
         public Rectangle DestinationRectangle;
         public Vector2 Position;
         public bool Active;
-        public abstract void Behaviour();        
+        public abstract void Behaviour();
+        public bool CanMove;
+        public Color Color;
 
         public void LoadContent(ContentManager contentManager)
         {
             Texture = contentManager.Load<Texture2D>(AssetName);
+            Color = Color.White;
         }
 
         public void Update()
@@ -36,7 +39,7 @@ namespace TowerDefensePrototype
         public void Draw(SpriteBatch spriteBatch)
         {
             if (Active == true)
-            spriteBatch.Draw(Texture, DestinationRectangle, Color.White);
+            spriteBatch.Draw(Texture, DestinationRectangle, Color);
         }
 
         public void ChangeHP(int change)

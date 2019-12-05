@@ -13,6 +13,7 @@ namespace TowerDefensePrototype
         public Soldier(Vector2 position)
         {
             Active = true;
+            CanMove = true;
             Position = position;
             AssetName = "Soldier";
             HP = 100;
@@ -20,6 +21,7 @@ namespace TowerDefensePrototype
 
         public override void Behaviour()
         {
+            if (CanMove == true)
             Position.X -= 1;
         }
     }
