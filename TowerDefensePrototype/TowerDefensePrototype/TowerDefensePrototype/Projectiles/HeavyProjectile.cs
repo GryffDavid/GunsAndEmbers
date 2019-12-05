@@ -8,13 +8,13 @@ using Microsoft.Xna.Framework.Content;
 
 namespace TowerDefensePrototype
 {
-    public abstract class HeavyProjectile : Drawable
+    public abstract class HeavyProjectile
     {
         public Texture2D Texture;
         public string TextureName;
         public List<Emitter> EmitterList;
         public Vector2 Velocity, Position, YRange, Scale, Origin, Direction;
-        public float Angle, Speed, Gravity, CurrentRotation, CurrentTransparency, MaxY;
+        public float Angle, Speed, Gravity, CurrentRotation, CurrentTransparency, MaxY, DrawDepth;
         public bool Active, Rotate, Fade, CanBounce, BouncedOnGround, StopBounce, HardBounce, Shadow;
         public Color CurrentColor;
         public HeavyProjectileType HeavyProjectileType;
@@ -149,7 +149,7 @@ namespace TowerDefensePrototype
             }
         }
 
-        public override void Draw(SpriteBatch spriteBatch)
+        public void Draw(SpriteBatch spriteBatch)
         {           
             if (Active == true)
             {
@@ -176,24 +176,24 @@ namespace TowerDefensePrototype
                     Color ShadowColor = Color.Lerp(Color.Transparent, Color.Black, 0.02f);
 
                     spriteBatch.Draw(Texture,
-                        new Rectangle((int)Position.X, (int)MaxY + 4, (int)(Texture.Width * ShadowScale.X / 2), (int)(Texture.Height * ShadowScale.Y / 2)),
+                        new Rectangle((int)Position.X, (int)MaxY + 4, (int)(Texture.Width * ShadowScale.X), (int)(Texture.Height * ShadowScale.Y)),
                         null, ShadowColor, CurrentRotation, Origin, SpriteEffects.None, (DestinationRectangle.Bottom / 1080));
 
-                    spriteBatch.Draw(Texture,
-                       new Rectangle((int)Position.X, (int)MaxY + 4, (int)(Texture.Width * ShadowScale.X / 1.7f), (int)(Texture.Height * ShadowScale.Y / 1.7f)),
-                       null, ShadowColor, CurrentRotation, Origin, SpriteEffects.None, (DestinationRectangle.Bottom / 1080));
+                    //spriteBatch.Draw(Texture,
+                    //   new Rectangle((int)Position.X, (int)MaxY + 4, (int)(Texture.Width * ShadowScale.X / 1.7f), (int)(Texture.Height * ShadowScale.Y / 1.7f)),
+                    //   null, ShadowColor, CurrentRotation, Origin, SpriteEffects.None, (DestinationRectangle.Bottom / 1080));
 
-                    spriteBatch.Draw(Texture,
-                       new Rectangle((int)Position.X, (int)MaxY + 4, (int)(Texture.Width * ShadowScale.X / 1.5f), (int)(Texture.Height * ShadowScale.Y / 1.5f)),
-                       null, ShadowColor, CurrentRotation, Origin, SpriteEffects.None, (DestinationRectangle.Bottom / 1080));
+                    //spriteBatch.Draw(Texture,
+                    //   new Rectangle((int)Position.X, (int)MaxY + 4, (int)(Texture.Width * ShadowScale.X / 1.5f), (int)(Texture.Height * ShadowScale.Y / 1.5f)),
+                    //   null, ShadowColor, CurrentRotation, Origin, SpriteEffects.None, (DestinationRectangle.Bottom / 1080));
 
-                    spriteBatch.Draw(Texture,
-                       new Rectangle((int)Position.X, (int)MaxY + 4, (int)(Texture.Width * ShadowScale.X / 1.3f), (int)(Texture.Height * ShadowScale.Y / 1.3f)),
-                       null, ShadowColor, CurrentRotation, Origin, SpriteEffects.None, (DestinationRectangle.Bottom / 1080));
+                    //spriteBatch.Draw(Texture,
+                    //   new Rectangle((int)Position.X, (int)MaxY + 4, (int)(Texture.Width * ShadowScale.X / 1.3f), (int)(Texture.Height * ShadowScale.Y / 1.3f)),
+                    //   null, ShadowColor, CurrentRotation, Origin, SpriteEffects.None, (DestinationRectangle.Bottom / 1080));
 
-                    spriteBatch.Draw(Texture,
-                       new Rectangle((int)Position.X, (int)MaxY + 4, (int)(Texture.Width * ShadowScale.X), (int)(Texture.Height * ShadowScale.Y)),
-                       null, ShadowColor, CurrentRotation, Origin, SpriteEffects.None, (DestinationRectangle.Bottom / 1080));
+                    //spriteBatch.Draw(Texture,
+                    //   new Rectangle((int)Position.X, (int)MaxY + 4, (int)(Texture.Width * ShadowScale.X), (int)(Texture.Height * ShadowScale.Y)),
+                    //   null, ShadowColor, CurrentRotation, Origin, SpriteEffects.None, (DestinationRectangle.Bottom / 1080));
                 }
             }
 

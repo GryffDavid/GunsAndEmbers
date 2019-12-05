@@ -10,7 +10,7 @@ namespace TowerDefensePrototype
 {
     public enum InvaderState { Walking, Standing, Melee, Ranged };
 
-    public abstract class Invader : Drawable
+    public abstract class Invader
     {
         //public string AssetName;
         public Texture2D CurrentTexture, Shadow, IceBlock;
@@ -20,7 +20,7 @@ namespace TowerDefensePrototype
         public Color Color, BurnColor, FrozenColor, AcidColor;
         public BoundingBox BoundingBox;
         public Double AttackDelay, CurrentAttackDelay;
-        public float MaxHP, CurrentHP, PreviousHP, MaxY, Gravity, Bottom, BurnDamage, Speed, SlowSpeed;
+        public float MaxHP, CurrentHP, PreviousHP, MaxY, Gravity, Bottom, BurnDamage, Speed, SlowSpeed, DrawDepth;
         public int ResourceValue, AttackPower, CurrentFrame;
         public abstract void TrapDamage(TrapType trapType);
         public static Random Random = new Random();
@@ -199,13 +199,13 @@ namespace TowerDefensePrototype
                                               new Vector3(Position.X + FrameSize.X, Position.Y + FrameSize.Y, 0));
 
                 Bottom = DestinationRectangle.Bottom;
-                base.DrawDepth = Bottom / 1080;
+                DrawDepth = Bottom / 1080;
 
                 PreviousInvaderState = CurrentInvaderState;
             }
         }
 
-        public override void Draw(SpriteBatch spriteBatch)
+        public void Draw(SpriteBatch spriteBatch)
         {
             if (Active == true)
             {

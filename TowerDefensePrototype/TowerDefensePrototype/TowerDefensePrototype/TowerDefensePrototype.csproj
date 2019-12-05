@@ -114,22 +114,29 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Basics\BulletTrail.cs" />
+    <Compile Include="Basics\CooldownButton.cs" />
+    <Compile Include="Basics\UIBar.cs" />
     <Compile Include="Basics\Decal.cs" />
     <Compile Include="Basics\DialogBox.cs" />
     <Compile Include="Basics\Explosion.cs" />
+    <Compile Include="Basics\FrameRateCounter.cs" />
+    <Compile Include="Basics\GrassBlade.cs" />
     <Compile Include="Basics\LightRangedInvader.cs" />
     <Compile Include="Basics\ProgressBar.cs" />
     <Compile Include="Basics\LightningBolt.cs" />
     <Compile Include="Basics\Profile.cs" />
     <Compile Include="Basics\HeavyRangedInvader.cs" />
     <Compile Include="Basics\Quad.cs" />
-    <Compile Include="Basics\UIBar.cs" />
+    <Compile Include="Basics\SpecialAbility.cs" />
+    <Compile Include="Basics\UISlopedBar.cs" />
+    <Compile Include="Basics\UITurretInfo.cs" />
     <Compile Include="Basics\WaveCountDown.cs" />
     <Compile Include="Basics\NumberChange.cs" />
     <Compile Include="Basics\Light.cs" />
-    <Compile Include="Basics\Drawable.cs" />
     <Compile Include="Invaders\TestInvader.cs" />
     <Compile Include="Levels\TutorialLevel.cs" />
+    <Compile Include="PowerUps\PowerUpDelivery.cs" />
+    <Compile Include="SpecialAbilities\AirStrikeSpecial.cs" />
     <Compile Include="Traps\OffenseTraps\LineTrap.cs" />
     <Compile Include="Projectiles\PersistentBeamProjectile.cs" />
     <Compile Include="Projectiles\ShotgunProjectile.cs" />
@@ -153,7 +160,7 @@
     <Compile Include="Turrets\FreezeTurret.cs" />
     <Compile Include="Turrets\FelCannonTurret.cs" />
     <Compile Include="Turrets\GrenadeTurret.cs" />
-    <Compile Include="Upgrades\Upgrade2.cs" />
+    <Compile Include="Upgrades\GatlingSpeed50.cs" />
     <Compile Include="Invaders\Archer.cs" />
     <Compile Include="Invaders\FireElemental.cs" />
     <Compile Include="Invaders\Healer.cs" />
@@ -206,10 +213,11 @@
     <Compile Include="Turrets\CannonTurret.cs" />
     <Compile Include="Turrets\FlameThrowerTurret.cs" />
     <Compile Include="Turrets\LightningTurret.cs" />
-    <Compile Include="Upgrades\Upgrade1.cs" />
+    <Compile Include="Upgrades\GatlingDamage15.cs" />
     <Compile Include="Basics\Wave.cs" />
     <Compile Include="Basics\WeaponBox.cs" />
     <Compile Include="Basics\Weapon.cs" />
+    <Compile Include="Weather\SnowWeather.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Service References\aOtherStuff\Game.ico" />

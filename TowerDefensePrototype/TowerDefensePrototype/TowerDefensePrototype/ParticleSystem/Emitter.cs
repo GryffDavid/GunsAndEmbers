@@ -8,14 +8,14 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace TowerDefensePrototype
 {
-    public class Emitter : Drawable
+    public class Emitter
     {
         public Vector2 Position, AngleRange;
         public List<Particle> ParticleList;
         public Texture2D Texture;
-        public Vector2 ScaleRange, HPRange, RotationIncrementRange, SpeedRange, StartingRotationRange, EmitterDirection, EmitterVelocity;
+        public Vector2 ScaleRange, HPRange, RotationIncrementRange, SpeedRange, StartingRotationRange, EmitterDirection, EmitterVelocity, YRange;
         public float Transparency, Gravity, ActiveSeconds, Interval, MaxY, EmitterSpeed,
-                     EmitterAngle, EmitterGravity, Friction, FadeDelay;
+                     EmitterAngle, EmitterGravity, Friction, FadeDelay, DrawDepth;
         public Color StartColor, EndColor;
         public bool Active, Fade, CanBounce, AddMore, Shrink, StopBounce, HardBounce, BouncedOnGround, RotateVelocity, FlipHor, FlipVer;
         public string TextureName;
@@ -119,9 +119,10 @@ namespace TowerDefensePrototype
             if (friction != null)
                 Friction = friction.Value;
             else
-                Friction = 0;     
+                Friction = 0;
 
-            MaxY = Random.Next((int)yrange.X, (int)yrange.Y);
+            YRange = yrange;
+            //MaxY = Random.Next((int)yrange.X, (int)yrange.Y);
             AddMore = true;
         }
 
@@ -227,7 +228,8 @@ namespace TowerDefensePrototype
             else
                 FlipVer = flipVer.Value;
 
-                MaxY = Random.Next((int)yrange.X, (int)yrange.Y);
+            YRange = yrange;
+            //MaxY = Random.Next((int)yrange.X, (int)yrange.Y);            
             AddMore = true;
         }
 
@@ -325,7 +327,7 @@ namespace TowerDefensePrototype
                     rotation = (float)DoubleRange(RotationIncrementRange.X, RotationIncrementRange.Y);
                     speed = (float)DoubleRange(SpeedRange.X, SpeedRange.Y);
                     startingRotation = (float)DoubleRange(StartingRotationRange.X, StartingRotationRange.Y);
-
+                    MaxY = Random.Next((int)YRange.X, (int)YRange.Y);
                     IntervalTime += gameTime.ElapsedGameTime.TotalMilliseconds;
 
                     if (IntervalTime > Interval && AddMore == true)
@@ -353,6 +355,8 @@ namespace TowerDefensePrototype
                             rotation = (float)DoubleRange(RotationIncrementRange.X, RotationIncrementRange.Y);
                             speed = (float)DoubleRange(SpeedRange.X, SpeedRange.Y);
                             startingRotation = (float)DoubleRange(StartingRotationRange.X, StartingRotationRange.Y);
+                            MaxY = Random.Next((int)YRange.X, (int)YRange.Y);
+
                             ParticleList.Add(new Particle(Texture, Position, angle, speed, hp, Transparency, Fade, startingRotation,
                                                           rotation, scale, StartColor, EndColor, Gravity, CanBounce, MaxY, Shrink,
                                                           DrawDepth, StopBounce, HardBounce, false, RotateVelocity, Friction, Orientation, FadeDelay));
@@ -374,7 +378,7 @@ namespace TowerDefensePrototype
             }
         }
 
-        public override void Draw(SpriteBatch spriteBatch)
+        public void Draw(SpriteBatch spriteBatch)
         {
             foreach (Particle particle in ParticleList)
             {

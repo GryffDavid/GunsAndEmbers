@@ -8,13 +8,19 @@ using Microsoft.Xna.Framework.Content;
 
 namespace TowerDefensePrototype
 {
-    public abstract class Drawable
+    public class SpecialAbility
     {
-        public float DrawDepth = 0;
+        public SpecialType SpecialType;
+
+        public virtual void Update(GameTime gameTime)
+        {
+
+        }
 
         public virtual void Draw(SpriteBatch spriteBatch)
         {
 
         }
+
     }
 }

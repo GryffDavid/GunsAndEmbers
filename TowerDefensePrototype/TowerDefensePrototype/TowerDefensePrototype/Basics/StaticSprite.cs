@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Content;
 
 namespace TowerDefensePrototype
 {
-    class StaticSprite : Drawable
+    class StaticSprite
     {
         public Texture2D Texture;
         string AssetName;
@@ -18,7 +18,7 @@ namespace TowerDefensePrototype
         public BoundingBox BoundingBox;
         public bool VerticalLooping, HorizontalLooping;
         public double CurrentTime, UpdateDelay, FadeTime, CurrentFadeTime;
-        public float Rotation;
+        public float Rotation, DrawDepth;
         public float Transparency = 0;
 
         public StaticSprite(string assetName, Vector2 position, Vector2? scale = null, Color? color = null, 
@@ -150,7 +150,7 @@ namespace TowerDefensePrototype
 
                 if (HorizontalLooping == true && DestinationRectangle.Right < 0 && Move.X < 0)
                 {
-                    Position.X = 1280;
+                    Position.X = 1920;
                 }
 
                 if (VerticalLooping == true && DestinationRectangle.Top > 720 && Move.Y > 0)
@@ -160,7 +160,7 @@ namespace TowerDefensePrototype
 
                 if (VerticalLooping == true && DestinationRectangle.Bottom < 0 && Move.Y < 0)
                 {
-                    Position.Y = 720;
+                    Position.Y = 1080;
                 }
 
                 Position += Move;
@@ -171,7 +171,7 @@ namespace TowerDefensePrototype
             DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, (int)(Texture.Width * Scale.X), (int)(Texture.Height * Scale.Y));
         }
 
-        public override void Draw(SpriteBatch spriteBatch)
+        public void Draw(SpriteBatch spriteBatch)
         {
             //DestinationRectangle = new Rectangle((int)Position.X, (int)Position.Y, (int)(Texture.Width * Scale.X), (int)(Texture.Height * Scale.Y));
             BoundingBox = new BoundingBox(new Vector3(Position.X, Position.Y, 0), new Vector3(Position.X + (Texture.Width * Scale.X), Position.Y + (Texture.Width * Scale.Y), 0));

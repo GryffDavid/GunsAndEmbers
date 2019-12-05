@@ -65,7 +65,7 @@ Content\Buttons\WeaponBox.xnb
 Content\HealthBarSprite.xnb
 Content\Invaders\BlankTank.xnb
 Content\Particles\Smoke.xnb
-Content\Decal.xnb
+Content\Decals\ExplosionDecal1.xnb
 Content\SelectBox.xnb
 Content\Backgrounds\Sky.xnb
 Content\Backgrounds\Ground.xnb
@@ -74,7 +74,7 @@ Content\lightmask.xnb
 Content\Icons\TurretIcons\ShotgunTurretIcon.xnb
 Content\Traps\Trap.xnb
 Content\IceBlock.xnb
-Content\BloodDecal.xnb
+Content\Decals\BloodDecal1.xnb
 Content\Particles\Spark.xnb
 Content\ShieldNormalMap.xnb
 Content\ShieldDistortionMap.xnb
@@ -95,6 +95,7 @@ Content\Traps\FireTrap.xnb
 Content\Particles\FireParticle2.xnb
 Content\Traps\WallTrap.xnb
 Content\Particles\FireParticle.xnb
+Content\Particles\ExplosionParticle2.xnb
 Content\Fonts\DefaultFont.xnb
 Content\Fonts\ButtonFont.xnb
 Content\Fonts\TooltipFont.xnb
@@ -127,3 +128,8 @@ Content\Shaders\ShockWaveEffect.xnb
 Content\Shaders\ShieldBubbleEffect.xnb
 Content\Shaders\BackgroundEffect.xnb
 Content\Shaders\ButtonBlurEffect.xnb
+Content\Icons\HealthIcon.xnb
+Content\Buttons\DiamondButton.xnb
+Content\Fonts\BigUIFont.xnb
+Content\Icons\DamageTypeIcons\ConcussiveDamageIcon.xnb
+Content\Icons\OverheatIcon.xnb

@@ -14,9 +14,10 @@ namespace TowerDefensePrototype
         {
             Active = true;
             TurretType = TurretType.MachineGun;
+            DamageType = DamageType.Kinetic;
             Position = position;
             Selected = true;
-            FireDelay = 300;
+            FireDelay = 200;
             Damage = 3;
             AngleOffset = 2.5f;
             Animated = false;
@@ -57,8 +58,6 @@ namespace TowerDefensePrototype
 
                 spriteBatch.Draw(TurretBase, BaseRectangle, null, Color, 0, BasePivot, SpriteEffects.None, 0.90f);
             }
-
-            base.Draw(spriteBatch);
         }
     }
 }
