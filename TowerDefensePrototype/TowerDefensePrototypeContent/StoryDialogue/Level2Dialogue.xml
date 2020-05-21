@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<XnaContent>
+  <!-- TODO: replace this Asset with your own XML asset data. -->
+  <Asset Type="GameDataTypes.StoryDialogueItems">
+
+    <DialogueItems>
+      
+      <Item>
+        <Message>You last performance was a disgrace.</Message>
+      </Item>
+
+      <Item>
+        <Message>Oh, I'm sorry. That wasn't you. You did fine.</Message>
+      </Item>
+
+      <Item>
+        <Message>You need to learn about defensive traps. Not all traps do damange.</Message>
+      </Item>
+
+      <Item>
+        <Message>Some traps slow down the incoming invasion or stop it temporarily.</Message>
+      </Item>
+
+      <Item>
+        <Message>You now have access to a Wall. Place a few on the terrain in front of your tower.</Message>
+      </Item>
+
+      <Item>
+        <Message>Walls will temporaily stop most melee invaders that are too stupid to walk around them.</Message>
+      </Item>
+
+      <Item>
+        <Message>It's a good way to buy time but honestly the only permanent solution is to butcher them.</Message>
+      </Item>
+
+      <!---After wave one begins-->
+      
+      <Item>
+        <Message>Those invaders have ranged weapons. Your shield will absorb some ranged damage, but once it goes down it will
+        need time to recharge and your tower will be vulnerable.</Message>
+      </Item>
+
+      
+    </DialogueItems>
+  </Asset>
+</XnaContent>

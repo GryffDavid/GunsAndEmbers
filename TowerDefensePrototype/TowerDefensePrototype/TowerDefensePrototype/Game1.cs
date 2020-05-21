@@ -12274,7 +12274,7 @@ namespace TowerDefensePrototype
         /// <param name="powerup">The type of powerup whose icon is to be returned</param>
         /// <returns></returns>
         private Texture2D GetPowerupIcon(Powerup powerup)
-        {
+        {            
             //if (powerup.CurrentEffect.GeneralPowerup != null)
             //    switch (powerup.CurrentEffect.GeneralPowerup)
             //    {

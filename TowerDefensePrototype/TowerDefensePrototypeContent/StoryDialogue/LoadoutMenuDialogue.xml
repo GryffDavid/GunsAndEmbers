@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<XnaContent>
+  <!-- TODO: replace this Asset with your own XML asset data. -->
+  <Asset Type="GameDataTypes.StoryDialogueItems">
+
+    <DialogueItems>
+      
+      <Item>
+        <Message>This is the loadout menu.</Message>
+      </Item>
+
+      <Item>
+        <Message>You choose your weapons you want to use here. A combination of traps and turrets you think will work for you</Message>
+      </Item>
+
+      <Item>
+        <Message>Select a trap from the available traps now and place it into your loadout at the bottom of your screen.</Message>
+      </Item>
+
+      <Item>
+        <Message>Great job.</Message>
+      </Item>
+
+    </DialogueItems>
+  </Asset>
+</XnaContent>

@@ -1,0 +1,119 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<XnaContent>
+  <!-- TODO: replace this Asset with your own XML asset data. -->
+  <Asset Type="GameDataTypes.StoryDialogueItems">
+
+    <DialogueItems>
+      
+      <Item>
+        <Message>Greetings commander, how was your flight in?</Message>
+      </Item>
+
+      <Item>
+        <Message>Welcome to your new assignment. You'll be using our new system of weapons to defend this outpost until further notice.</Message>
+      </Item>
+
+      <Item>
+        <Message>You can place turrets onto your tower and you can place traps onto the terrain.</Message>
+      </Item>
+
+      <Item>
+        <Message>Select the Machine Gun turret to place onto your tower.</Message>
+        <!--Make the machine gun turret available-->
+      </Item>
+
+      <Item>
+        <Message>Good, now place it onto your tower into the open slot.</Message>
+      </Item>
+
+      <Item>
+        <Message>Great. You can aim your turret by moving the crosshair around and fire by left-clicking. Try this now.</Message>
+      </Item>
+
+      <Item>
+        <Message>Good job. Try destroying that crate over there.</Message>
+      </Item>
+
+      <Item>
+        <Message>Well done, deselect the turret by right clicking.</Message>
+      </Item>
+
+      <Item>
+        <Message>You now have access to an Immolation trap. Select it now.</Message>
+      </Item>
+
+      <Item>
+        <Message>Place it on the terrain. Anywhere you like.</Message>
+      </Item>
+
+      <Item>
+        <Message>I've restocked your resources so that you can place a few more.</Message>
+      </Item>
+
+      <Item>
+        <Message>There's a wave of invaders incoming. Take them out before they reach the base of your tower.</Message>
+        <Time>4000</Time>
+      </Item>
+
+      <!--WAVE ONE BEGINS HERE-->
+
+      <Item>
+        <Message> </Message>
+      </Item>
+
+      <Item>
+        <Message>Your Machine Gun has overheated. You can place another on your tower to use while the other cools down.</Message>
+      </Item>
+
+      <Item>
+        <Message> </Message>
+      </Item>
+
+      <Item>
+        <Message>Well done, commander. You've defeated your first wave of invaders. Now is a good time to learn about Heavy projectiles.</Message>
+        <Time>3000</Time>
+      </Item>
+
+      <Item>
+        <Message>First, let's remove the machine gun from the top slot of your tower. Do this by middle-clicking it.</Message>
+      </Item>
+
+      <Item>
+        <Message>You now have access to a Cannon turret, place one in the top slot.</Message>
+      </Item>
+
+      <Item>
+        <Message>Try firing a shot with your new Cannon turret.</Message>
+      </Item>
+
+      <Item>
+        <Message>See how the heavy cannon round falls to the ground? You need to anticipate where it's going to land.</Message>
+        <Time>4000</Time>
+      </Item>
+
+      <Item>
+        <Message>The Cannon does splash damage. Try destroying these crates.</Message>
+      </Item>
+
+      <Item>
+        <Message>The cannon is very effective on groups of invaders.</Message>
+        <Time>3000</Time>
+      </Item>
+
+      <Item>
+        <Message>There's another wave of invaders incoming. Take them out as you see fit.</Message>
+        <Time>3000</Time>
+      </Item>
+
+      <Item>
+        <Message> </Message>
+      </Item>
+
+      <Item>
+        <Message>You seem to have a passable grasp on the basics of using your weapons. I'm fairly confident you won't fail us immediately.</Message>
+        <Time>4000</Time>
+      </Item>
+
+    </DialogueItems>
+  </Asset>
+</XnaContent>

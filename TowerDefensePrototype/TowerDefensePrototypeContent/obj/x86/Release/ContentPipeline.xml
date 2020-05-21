@@ -1,0 +1,851 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<XnaContent xmlns:Pipeline="Microsoft.Xna.Framework.Content.Pipeline">
+  <Asset Type="Pipeline:BuildItemCollection">
+    <Item>
+      <Source>Blank.png</Source>
+      <Name>Blank</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Blank.xnb</Output>
+      <Time>2014-06-15T19:38:20.194047+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Invaders\Soldier.png</Source>
+      <Name>Invaders\Soldier</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Invaders\Soldier.xnb</Output>
+      <Time>2014-05-09T18:00:21.078125+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Invaders\BatteringRam.png</Source>
+      <Name>Invaders\BatteringRam</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Invaders\BatteringRam.xnb</Output>
+      <Time>2013-07-31T22:05:43.0654296+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Tower.png</Source>
+      <Name>Tower</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Tower.xnb</Output>
+      <Time>2013-08-03T14:04:51.7861328+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Traps\Wall.png</Source>
+      <Name>Traps\Wall</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Traps\Wall.xnb</Output>
+      <Time>2013-08-03T14:31:57.46875+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Traps\SpikeTrap.png</Source>
+      <Name>Traps\SpikeTrap</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Traps\SpikeTrap.xnb</Output>
+      <Time>2013-08-03T14:37:22.4521484+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Cursors\DefaultCursor.png</Source>
+      <Name>Cursors\DefaultCursor</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Cursors\DefaultCursor.xnb</Output>
+      <Time>2014-02-26T16:56:50.6760312+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Particles\Splodge.png</Source>
+      <Name>Particles\Splodge</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Particles\Splodge.xnb</Output>
+      <Time>2013-11-20T18:59:43.868164+02:00</Time>
+    </Item>
+    <Item>
+      <Source>WhiteBlock.png</Source>
+      <Name>WhiteBlock</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\WhiteBlock.xnb</Output>
+      <Time>2013-08-18T11:02:39.4658203+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Particles\FireParticle.png</Source>
+      <Name>Particles\FireParticle</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Particles\FireParticle.xnb</Output>
+      <Time>2013-09-04T10:21:52.9336798+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Particles\Shell.png</Source>
+      <Name>Particles\Shell</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Particles\Shell.xnb</Output>
+      <Time>2014-06-02T17:21:20.2116093+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Icons\FireIcon.png</Source>
+      <Name>Icons\FireIcon</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Icons\FireIcon.xnb</Output>
+      <Time>2013-09-23T22:48:36.7988281+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Icons\WallIcon.png</Source>
+      <Name>Icons\WallIcon</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Icons\WallIcon.xnb</Output>
+      <Time>2013-09-24T09:51:09.3007812+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Icons\SpikesIcon.png</Source>
+      <Name>Icons\SpikesIcon</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Icons\SpikesIcon.xnb</Output>
+      <Time>2013-09-24T10:11:04.8066406+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Projectiles\CannonBall.png</Source>
+      <Name>Projectiles\CannonBall</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Projectiles\CannonBall.xnb</Output>
+      <Time>2013-10-25T16:55:09.0439453+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Particles\Smoke.png</Source>
+      <Name>Particles\Smoke</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Particles\Smoke.xnb</Output>
+      <Time>2013-10-25T15:19:01.4736328+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Turrets\MachineTurretBarrel.png</Source>
+      <Name>Turrets\MachineTurretBarrel</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Turrets\MachineTurretBarrel.xnb</Output>
+      <Time>2013-10-20T15:54:57.0538203+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Turrets\MachineTurretBase.png</Source>
+      <Name>Turrets\MachineTurretBase</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Turrets\MachineTurretBase.xnb</Output>
+      <Time>2014-05-17T17:44:36.5048828+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Turrets\FlameThrowerBase.png</Source>
+      <Name>Turrets\FlameThrowerBase</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Turrets\FlameThrowerBase.xnb</Output>
+      <Time>2013-10-20T20:35:52.4776485+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Turrets\FlameThrowerBarrel.png</Source>
+      <Name>Turrets\FlameThrowerBarrel</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Turrets\FlameThrowerBarrel.xnb</Output>
+      <Time>2013-10-20T20:35:52.4503047+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Turrets\CannonTurretBarrel.png</Source>
+      <Name>Turrets\CannonTurretBarrel</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Turrets\CannonTurretBarrel.xnb</Output>
+      <Time>2013-10-20T21:14:46.7520625+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Turrets\CannonTurretBase.png</Source>
+      <Name>Turrets\CannonTurretBase</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Turrets\CannonTurretBase.xnb</Output>
+      <Time>2013-10-20T21:16:36.0753047+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Backgrounds\PauseMenuBackground.png</Source>
+      <Name>Backgrounds\PauseMenuBackground</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Backgrounds\PauseMenuBackground.xnb</Output>
+      <Time>2013-11-09T18:22:06.008875+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Invaders\Airship.png</Source>
+      <Name>Invaders\Airship</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Invaders\Airship.xnb</Output>
+      <Time>2013-11-27T16:46:43.3261718+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Projectiles\Arrow.png</Source>
+      <Name>Projectiles\Arrow</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Projectiles\Arrow.xnb</Output>
+      <Time>2013-11-29T11:07:57.3271484+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Invaders\SoldierStrip3342.png</Source>
+      <Name>Invaders\SoldierStrip3342</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Invaders\SoldierStrip3342.xnb</Output>
+      <Time>2013-11-30T22:19:17.0527343+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Invaders\PixelTestStrip.png</Source>
+      <Name>Invaders\PixelTestStrip</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Invaders\PixelTestStrip.xnb</Output>
+      <Time>2013-12-08T18:45:21.5365469+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Traps\IceTrap.png</Source>
+      <Name>Traps\IceTrap</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Traps\IceTrap.xnb</Output>
+      <Time>2014-01-10T15:28:41.7372266+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Traps\BarrelTrap.png</Source>
+      <Name>Traps\BarrelTrap</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Traps\BarrelTrap.xnb</Output>
+      <Time>2014-01-16T22:10:44.7529296+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Invaders\Troll.png</Source>
+      <Name>Invaders\Troll</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Invaders\Troll.xnb</Output>
+      <Time>2014-01-23T20:59:13.0996093+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Icons\SnowFlakeIcon.png</Source>
+      <Name>Icons\SnowFlakeIcon</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Icons\SnowFlakeIcon.xnb</Output>
+      <Time>2014-01-17T18:13:13.6279296+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Icons\BombIcon.png</Source>
+      <Name>Icons\BombIcon</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Icons\BombIcon.xnb</Output>
+      <Time>2014-01-17T18:20:33.4492187+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Icons\BasicTurretIcon2.png</Source>
+      <Name>Icons\BasicTurretIcon2</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Icons\BasicTurretIcon2.xnb</Output>
+      <Time>2014-01-17T18:24:44.9277343+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Icons\CannonTurretIcon.png</Source>
+      <Name>Icons\CannonTurretIcon</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Icons\CannonTurretIcon.xnb</Output>
+      <Time>2014-01-17T18:24:44.9326171+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Icons\FlameThrowerTurretIcon.png</Source>
+      <Name>Icons\FlameThrowerTurretIcon</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Icons\FlameThrowerTurretIcon.xnb</Output>
+      <Time>2014-01-17T18:26:08.0058593+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Backgrounds\TestBackground.png</Source>
+      <Name>Backgrounds\TestBackground</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Backgrounds\TestBackground.xnb</Output>
+      <Time>2014-01-23T22:41:03.1875+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Ground7.png</Source>
+      <Name>Ground7</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Ground7.xnb</Output>
+      <Time>2014-03-13T14:12:33.6103515+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Invaders\SpiderSprite.png</Source>
+      <Name>Invaders\SpiderSprite</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Invaders\SpiderSprite.xnb</Output>
+      <Time>2014-01-24T23:42:51.3774531+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Projectiles\AcidProjectileSprite.png</Source>
+      <Name>Projectiles\AcidProjectileSprite</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Projectiles\AcidProjectileSprite.xnb</Output>
+      <Time>2014-01-27T18:06:25.4060859+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Invaders\Slime.png</Source>
+      <Name>Invaders\Slime</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Invaders\Slime.xnb</Output>
+      <Time>2014-01-31T21:21:15.0009666+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Buttons\ButtonLeft.png</Source>
+      <Name>Buttons\ButtonLeft</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Buttons\ButtonLeft.xnb</Output>
+      <Time>2014-02-26T19:02:57.7258359+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Buttons\ButtonRight.png</Source>
+      <Name>Buttons\ButtonRight</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Buttons\ButtonRight.xnb</Output>
+      <Time>2014-02-26T19:07:59.4592343+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Buttons\SmallButton.png</Source>
+      <Name>Buttons\SmallButton</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Buttons\SmallButton.xnb</Output>
+      <Time>2014-02-26T21:07:56.0676328+02:00</Time>
+    </Item>
+    <Item>
+      <Source>ProfileMenuTitle.png</Source>
+      <Name>ProfileMenuTitle</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\ProfileMenuTitle.xnb</Output>
+      <Time>2014-03-03T14:37:19.9704767+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Backgrounds\NewInterface.png</Source>
+      <Name>Backgrounds\NewInterface</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Backgrounds\NewInterface.xnb</Output>
+      <Time>2014-03-13T13:32:05.6386718+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Projectiles\Torpedo.png</Source>
+      <Name>Projectiles\Torpedo</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Projectiles\Torpedo.xnb</Output>
+      <Time>2014-03-15T21:07:39.4628906+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Cursors\Crosshair.png</Source>
+      <Name>Cursors\Crosshair</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Cursors\Crosshair.xnb</Output>
+      <Time>2014-03-15T21:03:44.1445312+02:00</Time>
+    </Item>
+    <Item>
+      <Source>LoadingAnimation.png</Source>
+      <Name>LoadingAnimation</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\LoadingAnimation.xnb</Output>
+      <Time>2014-03-21T20:15:13.6415546+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Invaders\Tank.png</Source>
+      <Name>Invaders\Tank</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Invaders\Tank.xnb</Output>
+      <Time>2014-04-28T10:42:27.7666016+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Backgrounds\MainMenuBackground.png</Source>
+      <Name>Backgrounds\MainMenuBackground</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Backgrounds\MainMenuBackground.xnb</Output>
+      <Time>2014-05-09T19:02:44.3496093+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Traps\SawbladeTrap.png</Source>
+      <Name>Traps\SawbladeTrap</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Traps\SawbladeTrap.xnb</Output>
+      <Time>2014-05-10T20:54:10.9365234+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Icons\SawbladeIcon.png</Source>
+      <Name>Icons\SawbladeIcon</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Icons\SawbladeIcon.xnb</Output>
+      <Time>2014-05-10T21:06:59.3417968+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Buttons\LeftArrow.png</Source>
+      <Name>Buttons\LeftArrow</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Buttons\LeftArrow.xnb</Output>
+      <Time>2014-05-10T21:34:28.4521484+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Buttons\RightArrow.png</Source>
+      <Name>Buttons\RightArrow</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Buttons\RightArrow.xnb</Output>
+      <Time>2014-05-10T21:34:28.453125+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Particles\BigShell.png</Source>
+      <Name>Particles\BigShell</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Particles\BigShell.xnb</Output>
+      <Time>2014-05-17T17:37:35.6123046+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Projectiles\CannonRound.png</Source>
+      <Name>Projectiles\CannonRound</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Projectiles\CannonRound.xnb</Output>
+      <Time>2014-05-17T17:35:29.2578125+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Turrets\MachineTurretBarrel2.png</Source>
+      <Name>Turrets\MachineTurretBarrel2</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Turrets\MachineTurretBarrel2.xnb</Output>
+      <Time>2014-05-17T17:41:27.9658203+02:00</Time>
+    </Item>
+    <Item>
+      <Source>TrapDetBlock.png</Source>
+      <Name>TrapDetBlock</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\TrapDetBlock.xnb</Output>
+      <Time>2014-05-17T20:35:52.3027343+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Turrets\MachineTurretAnimation3.png</Source>
+      <Name>Turrets\MachineTurretAnimation3</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Turrets\MachineTurretAnimation3.xnb</Output>
+      <Time>2014-05-18T15:28:09.5625781+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Turrets\MachineTurretAnimation4.png</Source>
+      <Name>Turrets\MachineTurretAnimation4</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Turrets\MachineTurretAnimation4.xnb</Output>
+      <Time>2014-05-18T20:55:45.6621875+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Turrets\CannonAnimation1.png</Source>
+      <Name>Turrets\CannonAnimation1</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Turrets\CannonAnimation1.xnb</Output>
+      <Time>2014-05-19T12:49:59.13875+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Particles\HealthParticle.png</Source>
+      <Name>Particles\HealthParticle</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Particles\HealthParticle.xnb</Output>
+      <Time>2014-05-22T15:16:59.0849609+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Particles\Cap.png</Source>
+      <Name>Particles\Cap</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Particles\Cap.xnb</Output>
+      <Time>2014-05-24T14:03:07.7089843+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Particles\Segment.png</Source>
+      <Name>Particles\Segment</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Particles\Segment.xnb</Output>
+      <Time>2014-05-24T13:53:40.265625+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Backgrounds\GradientBackground.png</Source>
+      <Name>Backgrounds\GradientBackground</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Backgrounds\GradientBackground.xnb</Output>
+      <Time>2014-05-24T09:25:43.5029296+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Buttons\TurretSlotButton.png</Source>
+      <Name>Buttons\TurretSlotButton</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Buttons\TurretSlotButton.xnb</Output>
+      <Time>2014-05-24T13:29:02.1552734+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Icons\MachineGunIcon.png</Source>
+      <Name>Icons\MachineGunIcon</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Icons\MachineGunIcon.xnb</Output>
+      <Time>2014-05-24T16:44:05.7226562+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Buttons\TextBox.png</Source>
+      <Name>Buttons\TextBox</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Buttons\TextBox.xnb</Output>
+      <Time>2014-05-25T19:39:59.4176797+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Icons\LockIcon.png</Source>
+      <Name>Icons\LockIcon</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Icons\LockIcon.xnb</Output>
+      <Time>2014-05-27T22:29:15.6375703+02:00</Time>
+    </Item>
+    <Item>
+      <Source>DialogBox.png</Source>
+      <Name>DialogBox</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\DialogBox.xnb</Output>
+      <Time>2014-06-02T21:04:03.0524296+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Buttons\NewButton.png</Source>
+      <Name>Buttons\NewButton</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Buttons\NewButton.xnb</Output>
+      <Time>2014-05-31T18:37:09.0996093+02:00</Time>
+    </Item>
+    <Item>
+      <Source>InformationBox.png</Source>
+      <Name>InformationBox</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\InformationBox.xnb</Output>
+      <Time>2014-06-02T19:46:01.3922734+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Projectiles\ClusterBomb.png</Source>
+      <Name>Projectiles\ClusterBomb</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Projectiles\ClusterBomb.xnb</Output>
+      <Time>2014-06-05T12:28:06.5680546+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Projectiles\ClusterBombShell.png</Source>
+      <Name>Projectiles\ClusterBombShell</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Projectiles\ClusterBombShell.xnb</Output>
+      <Time>2014-06-05T12:28:06.565125+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Particles\Coin.png</Source>
+      <Name>Particles\Coin</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Particles\Coin.xnb</Output>
+      <Time>2014-06-13T11:30:15.9804687+02:00</Time>
+    </Item>
+    <Item>
+      <Source>HealthBar.png</Source>
+      <Name>HealthBar</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\HealthBar.xnb</Output>
+      <Time>2014-06-15T13:22:43.3444376+02:00</Time>
+    </Item>
+    <Item>
+      <Source>ShieldBar.png</Source>
+      <Name>ShieldBar</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\ShieldBar.xnb</Output>
+      <Time>2014-06-15T13:22:44.4958048+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Levels\Level1.xml</Source>
+      <Name>Levels\Level1</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Levels\Level1.xnb</Output>
+      <Time>2014-02-13T22:16:13.5257656+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Levels\Level6.xml</Source>
+      <Name>Levels\Level6</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Levels\Level6.xnb</Output>
+      <Time>2014-02-13T22:47:50.5062343+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Fonts\BoxFont1.spritefont</Source>
+      <Name>Fonts\BoxFont1</Name>
+      <Importer>FontDescriptionImporter</Importer>
+      <Processor>FontDescriptionProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Fonts\BoxFont1.xnb</Output>
+      <Time>2014-06-01T21:50:24.6337656+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Fonts\HUDFont.spritefont</Source>
+      <Name>Fonts\HUDFont</Name>
+      <Importer>FontDescriptionImporter</Importer>
+      <Processor>FontDescriptionProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Fonts\HUDFont.xnb</Output>
+      <Time>2014-03-05T18:10:55.3972345+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Fonts\ButtonFont.spritefont</Source>
+      <Name>Fonts\ButtonFont</Name>
+      <Importer>FontDescriptionImporter</Importer>
+      <Processor>FontDescriptionProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Fonts\ButtonFont.xnb</Output>
+      <Time>2014-06-02T11:15:07.752625+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Fonts\BoxFont.spritefont</Source>
+      <Name>Fonts\BoxFont</Name>
+      <Importer>FontDescriptionImporter</Importer>
+      <Processor>FontDescriptionProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Fonts\BoxFont.xnb</Output>
+      <Time>2014-06-02T11:28:41.448914+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Fonts\DialogFont.spritefont</Source>
+      <Name>Fonts\DialogFont</Name>
+      <Importer>FontDescriptionImporter</Importer>
+      <Processor>FontDescriptionProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Fonts\DialogFont.xnb</Output>
+      <Time>2014-06-02T11:31:11.6569218+02:00</Time>
+    </Item>
+    <Item>
+      <Source>HealthBarEffect.fx</Source>
+      <Name>HealthBarEffect</Name>
+      <Importer>EffectImporter</Importer>
+      <Processor>EffectProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\HealthBarEffect.xnb</Output>
+      <Time>2014-06-15T13:35:54.2282267+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Sounds\MenuClick.wav</Source>
+      <Name>Sounds\MenuClick</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Sounds\MenuClick.xnb</Output>
+      <Time>2014-05-09T19:40:33.336914+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Sounds\FireTrapStart.wav</Source>
+      <Name>Sounds\FireTrapStart</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Sounds\FireTrapStart.xnb</Output>
+      <Time>2014-05-11T11:54:22.7317891+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Sounds\MenuAmbiance.wav</Source>
+      <Name>Sounds\MenuAmbiance</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Sounds\MenuAmbiance.xnb</Output>
+      <Time>2014-05-11T18:10:14.3294453+02:00</Time>
+    </Item>
+    <Item>
+      <Source>Sounds\LightningSound.wav</Source>
+      <Name>Sounds\LightningSound</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\Sounds\LightningSound.xnb</Output>
+      <Time>2014-05-24T15:54:43.1240234+02:00</Time>
+    </Item>
+    <BuildSuccessful>true</BuildSuccessful>
+    <Settings>
+      <TargetPlatform>Windows</TargetPlatform>
+      <TargetProfile>HiDef</TargetProfile>
+      <BuildConfiguration>Release</BuildConfiguration>
+      <CompressContent>true</CompressContent>
+      <RootDirectory>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototypeContent\</RootDirectory>
+      <LoggerRootDirectory>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\</LoggerRootDirectory>
+      <IntermediateDirectory>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototypeContent\obj\x86\Release\</IntermediateDirectory>
+      <OutputDirectory>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\TowerDefensePrototype\TowerDefensePrototype\bin\x86\Release\Content\</OutputDirectory>
+    </Settings>
+    <Assemblies>
+      <Assembly>
+        <Key>C:\Program Files (x86)\Microsoft XNA\XNA Game Studio\v4.0\References\Windows\x86\Microsoft.Xna.Framework.Content.Pipeline.XImporter.dll</Key>
+        <Value>2010-08-23T12:41:18+02:00</Value>
+      </Assembly>
+      <Assembly>
+        <Key>C:\Program Files (x86)\Microsoft XNA\XNA Game Studio\v4.0\References\Windows\x86\Microsoft.Xna.Framework.Content.Pipeline.VideoImporters.dll</Key>
+        <Value>2010-08-23T12:41:18+02:00</Value>
+      </Assembly>
+      <Assembly>
+        <Key>C:\Program Files (x86)\Microsoft XNA\XNA Game Studio\v4.0\References\Windows\x86\Microsoft.Xna.Framework.Content.Pipeline.TextureImporter.dll</Key>
+        <Value>2010-08-23T12:41:18+02:00</Value>
+      </Assembly>
+      <Assembly>
+        <Key>C:\Program Files (x86)\Microsoft XNA\XNA Game Studio\v4.0\References\Windows\x86\Microsoft.Xna.Framework.Content.Pipeline.FBXImporter.dll</Key>
+        <Value>2010-08-23T12:41:18+02:00</Value>
+      </Assembly>
+      <Assembly>
+        <Key>C:\Program Files (x86)\Microsoft XNA\XNA Game Studio\v4.0\References\Windows\x86\Microsoft.Xna.Framework.Content.Pipeline.EffectImporter.dll</Key>
+        <Value>2010-08-23T12:41:18+02:00</Value>
+      </Assembly>
+      <Assembly>
+        <Key>C:\Program Files (x86)\Microsoft XNA\XNA Game Studio\v4.0\References\Windows\x86\Microsoft.Xna.Framework.Content.Pipeline.AudioImporters.dll</Key>
+        <Value>2010-08-23T12:41:18+02:00</Value>
+      </Assembly>
+      <Assembly>
+        <Key>C:\Users\Gryff\SkyDrive\Google Drive\Tower Defense Backups\TowerDefensePrototype 40\GameDataTypes\bin\x86\Release\GameDataTypes.dll</Key>
+        <Value>2014-06-17T12:49:15.9460001+02:00</Value>
+      </Assembly>
+      <Assembly>
+        <Key>C:\Windows\Microsoft.Net\assembly\GAC_32\Microsoft.Xna.Framework.Content.Pipeline\v4.0_4.0.0.0__842cf8be1de50553\Microsoft.Xna.Framework.Content.Pipeline.dll</Key>
+        <Value>2012-10-31T20:05:23.0966796+02:00</Value>
+      </Assembly>
+    </Assemblies>
+  </Asset>
+</XnaContent>
