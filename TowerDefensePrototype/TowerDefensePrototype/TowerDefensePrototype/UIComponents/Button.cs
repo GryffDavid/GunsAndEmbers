@@ -304,7 +304,7 @@ namespace TowerDefensePrototype
                                 break;
 
                             case "Right":
-                                spriteBatch.DrawString(Font, Text, new Vector2(DestinationRectangle.Right - TextSize.X - 16,
+                                spriteBatch.DrawString(Font, Text, new Vector2(DestinationRectangle.Right - TextSize.X - 100,
                                     DestinationRectangle.Center.Y - (TextSize.Y / 2)), drawColor, MathHelper.ToRadians(0), 
                                     Vector2.Zero, 1, SpriteEffects.None, 0.5f);
                                 break;
@@ -329,7 +329,7 @@ namespace TowerDefensePrototype
                                 break;
 
                             case "Right":
-                                spriteBatch.DrawString(Font, Text, new Vector2(DestinationRectangle.Right - TextSize.X - 16+2,
+                                spriteBatch.DrawString(Font, Text, new Vector2(DestinationRectangle.Right - TextSize.X - 100+2,
                                     DestinationRectangle.Center.Y - (TextSize.Y / 2) + 2), drawColor, MathHelper.ToRadians(0), 
                                     Vector2.Zero, 1, SpriteEffects.None, 0.5f);
                                 break;

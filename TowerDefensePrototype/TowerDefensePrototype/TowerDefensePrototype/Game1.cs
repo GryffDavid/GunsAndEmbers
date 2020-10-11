@@ -876,7 +876,7 @@ namespace TowerDefensePrototype
             #region Initialise Profile Management Menu
             ProfileManagementTabs = new Tabs(new Vector2(0, 0), WhiteBlock, RobotoRegular20_2, null, "loadout", "upgrades", "stats");
 
-            ProfileManagementPlay = new Button(ButtonRightSprite, new Vector2(1920 - 450 + 300, 1080 - 32 - 50), null, null, null, "play     ", RobotoRegular20_2, "Right", Color.White);
+            ProfileManagementPlay = new Button(ButtonRightSprite, new Vector2(1920 - 450 + 300, 1080 - 32 - 50), null, null, null, "play", RobotoRegular20_2, "Right", Color.White);
             ProfileManagementPlay.Initialize(OnButtonClick);
 
             ProfileManagementBack = new Button(ButtonLeftSprite, new Vector2(-300, 1080 - 32 - 50), null, null, null, "     back", RobotoRegular20_2, "Left", Color.White);
@@ -2420,7 +2420,7 @@ namespace TowerDefensePrototype
                                 case ProfileManagementState.Loadout:
                                     spriteBatch.DrawString(RobotoRegular20_2, "turrets", new Vector2(158 + 113, 105 - 32), Color.White);
                                     spriteBatch.DrawString(RobotoRegular20_2, "traps", new Vector2(158 + 113, 120 + 130 + 60 + 200 - 36), Color.White);
-                                    spriteBatch.DrawString(RobotoRegular20_2, "selected weapons", new Vector2(118, 1080 - 224), Color.White);
+                                    spriteBatch.DrawString(RobotoRegular20_2, "selected weapons", new Vector2(340, 1080 - 158), Color.White);
 
                                     MoveTurretsRight.Draw(spriteBatch);
                                     MoveTurretsLeft.Draw(spriteBatch);
@@ -4873,8 +4873,8 @@ namespace TowerDefensePrototype
 
             #region Press F to break code
             if (CurrentKeyboardState.IsKeyDown(Keys.LeftControl) &&
-                    CurrentKeyboardState.IsKeyDown(Keys.F) &&
-                    PreviousKeyboardState.IsKeyUp(Keys.F))
+                CurrentKeyboardState.IsKeyDown(Keys.F) &&
+                PreviousKeyboardState.IsKeyUp(Keys.F))
             {
                 int stop = 0;
                 stop++;
@@ -5096,8 +5096,21 @@ namespace TowerDefensePrototype
                                 ProfileManagementTabs.Update(gameTime);
                                 ProfileManagementState = (ProfileManagementState)(ProfileManagementTabs.SelectedIndex);
 
-                                ProfileManagementPlay.Update(CursorPosition, gameTime);
+                                ProfileManagementPlay.Update(CursorPosition, gameTime);                                
                                 ProfileManagementBack.Update(CursorPosition, gameTime);
+
+                                if (ProfileManagementBack.CurrentButtonState == ButtonSpriteState.Hover)
+                                    ProfileManagementBack.NextPosition.X = 0;                                
+
+                                if (ProfileManagementBack.CurrentButtonState == ButtonSpriteState.Released)
+                                    ProfileManagementBack.NextPosition.X = -50;
+
+
+                                if (ProfileManagementPlay.CurrentButtonState == ButtonSpriteState.Hover)
+                                    ProfileManagementPlay.NextPosition.X = 1920-ProfileManagementPlay.FrameSize.X;
+
+                                if (ProfileManagementPlay.CurrentButtonState == ButtonSpriteState.Released)
+                                    ProfileManagementPlay.NextPosition.X = 1920-ProfileManagementPlay.FrameSize.X + 50;
 
                                 switch (ProfileManagementState)
                                 {
@@ -5891,7 +5904,7 @@ namespace TowerDefensePrototype
 
 
                                             #region Move Turrets Right
-                                            if (button == MoveTurretsRight &&
+                                            if (button == MoveTurretsLeft &&
                                                 SelectTurretList[0].DestinationRectangle.Left < MoveTurretsLeft.DestinationRectangle.Right)
                                             {
                                                 foreach (WeaponBox turretBox in SelectTurretList)
@@ -5904,7 +5917,7 @@ namespace TowerDefensePrototype
                                             #endregion
 
                                             #region Move Turrets Left
-                                            if (button == MoveTurretsLeft &&
+                                            if (button == MoveTurretsRight &&
                                                 SelectTurretList[SelectTurretList.Count - 1].DestinationRectangle.Right > MoveTurretsRight.DestinationRectangle.Left)
                                             {
                                                 foreach (WeaponBox turretBox in SelectTurretList)
@@ -5918,7 +5931,7 @@ namespace TowerDefensePrototype
 
 
                                             #region Move Traps Right
-                                            if (button == MoveTrapsRight &&
+                                            if (button == MoveTrapsLeft &&
                                                 SelectTrapList[0].DestinationRectangle.Left < MoveTrapsLeft.DestinationRectangle.Right)
                                             {
                                                 foreach (WeaponBox trapBox in SelectTrapList)
@@ -5931,7 +5944,7 @@ namespace TowerDefensePrototype
                                             #endregion
 
                                             #region Move Traps Left
-                                            if (button == MoveTrapsLeft &&
+                                            if (button == MoveTrapsRight &&
                                                 SelectTrapList[SelectTrapList.Count - 1].DestinationRectangle.Right > MoveTrapsRight.DestinationRectangle.Left)
                                             {
                                                 foreach (WeaponBox trapBox in SelectTrapList)
