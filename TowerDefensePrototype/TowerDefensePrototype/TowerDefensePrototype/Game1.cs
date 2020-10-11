@@ -4153,6 +4153,12 @@ namespace TowerDefensePrototype
                         //    solid.Update(gameTime);
                         //}
 
+                        //TEST - Rumbling when a dropship is near. Should be scaled to how far off or on screen it is.
+                        if (InvaderList.Count(Invader => Invader.InvaderType == InvaderType.DropShip && Invader.Velocity.X != 0) > 0)
+                        {
+                            Camera.Shake(50, 1f);
+                        }
+
                         #region TEST - Create powerup delivery
                         if (CurrentMouseState.LeftButton == ButtonState.Released &&
                             CurrentKeyboardState.IsKeyUp(Keys.Enter) &&
@@ -6842,7 +6848,6 @@ namespace TowerDefensePrototype
                 HeavyProjectile heavyProjectile = HeavyProjectileList[i];
                 TimerHeavyProjectile timedHeavyProjectile = heavyProjectile as TimerHeavyProjectile;
 
-
                 #region Remove the projectile
                 if (heavyProjectile.Active == false &&
                     heavyProjectile.EmitterList.All(Emitter => Emitter.AddMore == false && Emitter.ParticleList.Count == 0))
@@ -6856,11 +6861,6 @@ namespace TowerDefensePrototype
                 #region Regular Heavy Projectile
                 if (heavyProjectile.Active == true && timedHeavyProjectile == null)
                 {
-                    if (heavyProjectile.HeavyProjectileType == HeavyProjectileType.Boomerang)
-                    {
-                        heavyProjectile.Velocity.X -= 0.6f;
-                    }
-
                     //Traps should only be hit by projectiles with a similar DrawDepth
                     //Projectiles needs to have shadows drawn on the ground too, to prevent confusion
                     #region TRAP was hit
@@ -7278,6 +7278,7 @@ namespace TowerDefensePrototype
 
                             #region Gas Grenade
                             case HeavyProjectileType.GasGrenade:
+
                                 #region This makes a radiation symbol from gas
                                 //Emitter gasEmitter = new Emitter(SmokeParticle, timedProjectile.Sticks.Center, new Vector2(0, 360),
                                 //    new Vector2(0.5f, 6.0f), new Vector2(1000, 3000), 0.51f, true, new Vector2(0, 360), new Vector2(-0.5f, 0.5f),
@@ -7311,23 +7312,29 @@ namespace TowerDefensePrototype
                                 #endregion
 
                                 Emitter gasEmitter = new Emitter(ToonSmoke3, timedHeavyProjectile.Rod.Center, new Vector2(-10, 190),
-                                    new Vector2(0.5f, 6.0f), new Vector2(4000, 6000), 1f, false, new Vector2(-20, 20), new Vector2(-0.5f, 0.5f),
-                                    new Vector2(0.025f, 0.135f), Color.LimeGreen, Color.Lime, 0.001f, 5f, 700, 40, true, new Vector2(timedHeavyProjectile.MaxY, timedHeavyProjectile.MaxY + 16), true,
-                                    timedHeavyProjectile.Rod.Center.Y / 1080, true, false, null, null, null, false, new Vector2(0.038f, 0.08f), false, false, 500, true, true);
+                                    new Vector2(0.5f, 6.0f), new Vector2(8000, 10000), 0.85f, false, new Vector2(-20, 20), new Vector2(-0.5f, 0.5f),
+                                    new Vector2(0.025f, 0.135f), Color.GreenYellow, Color.LimeGreen, -0.001f, 5f, 700, 40, true, new Vector2(timedHeavyProjectile.MaxY, timedHeavyProjectile.MaxY + 16), true,
+                                    timedHeavyProjectile.Rod.Center.Y / 1080, true, false, null, null, null, false, new Vector2(0.038f, 0.08f), false, false, 500, true, true)
+                                { Emissive = true };
+                                //AdditiveEmitterList.Add(gasEmitter);
                                 YSortedEmitterList.Add(gasEmitter);
                                 //AddDrawable(gasEmitter);
 
                                 Emitter gasEmitter2 = new Emitter(ToonSmoke3, timedHeavyProjectile.Rod.Center, new Vector2(0, 10),
-                                    new Vector2(0.5f, 12.0f), new Vector2(4000, 6000), 1f, false, new Vector2(-20, 20), new Vector2(-0.5f, 0.5f),
-                                    new Vector2(0.025f, 0.135f), Color.LimeGreen, Color.Lime, 0.001f, 5f, 500, 40, true, new Vector2(timedHeavyProjectile.MaxY, timedHeavyProjectile.MaxY + 16), true,
-                                    timedHeavyProjectile.Rod.Center.Y / 1080, true, false, null, null, null, false, new Vector2(0.05f, 0.05f), false, false, 500, true, true);
+                                    new Vector2(0.5f, 12.0f), new Vector2(8000, 10000), 0.85f, false, new Vector2(-20, 20), new Vector2(-0.5f, 0.5f),
+                                    new Vector2(0.025f, 0.135f), Color.GreenYellow, Color.LimeGreen, -0.001f, 5f, 500, 40, true, new Vector2(timedHeavyProjectile.MaxY, timedHeavyProjectile.MaxY + 16), true,
+                                    timedHeavyProjectile.Rod.Center.Y / 1080, true, false, null, null, null, false, new Vector2(0.05f, 0.05f), false, false, 500, true, true)
+                                { Emissive = true };
                                 YSortedEmitterList.Add(gasEmitter2);
+                                //AdditiveEmitterList.Add(gasEmitter2);
                                 //AddDrawable(gasEmitter2);
 
                                 Emitter gasEmitter3 = new Emitter(ToonSmoke3, timedHeavyProjectile.Rod.Center, new Vector2(170, 180),
-                                    new Vector2(0.5f, 12.0f), new Vector2(4000, 6000), 1f, false, new Vector2(-20, 20), new Vector2(-0.5f, 0.5f),
-                                    new Vector2(0.025f, 0.135f), Color.LimeGreen, Color.Lime, 0.001f, 5f, 700, 40, true, new Vector2(timedHeavyProjectile.MaxY, timedHeavyProjectile.MaxY + 16), true,
-                                    timedHeavyProjectile.Rod.Center.Y / 1080, true, false, null, null, null, false, new Vector2(0.05f, 0.05f), false, false, 500, true, true);
+                                    new Vector2(0.5f, 12.0f), new Vector2(8000, 10000), 0.85f, false, new Vector2(-20, 20), new Vector2(-0.5f, 0.5f),
+                                    new Vector2(0.025f, 0.135f), Color.GreenYellow, Color.LimeGreen, -0.001f, 5f, 700, 40, true, new Vector2(timedHeavyProjectile.MaxY, timedHeavyProjectile.MaxY + 16), true,
+                                    timedHeavyProjectile.Rod.Center.Y / 1080, true, false, null, null, null, false, new Vector2(0.05f, 0.05f), false, false, 500, true, true)
+                                { Emissive = true };
+                                //AdditiveEmitterList.Add(gasEmitter3);
                                 YSortedEmitterList.Add(gasEmitter3);
                                 //AddDrawable(gasEmitter3);
 
@@ -7360,6 +7367,17 @@ namespace TowerDefensePrototype
                         heavyProjectile.EmitterList.All(Emitter => Emitter.AddMore = false);
                         return;
                     }
+                }
+                #endregion
+
+                #region Specific Behaviour based on Heavy Projectile type
+                switch (heavyProjectile.HeavyProjectileType)
+                {
+                    case HeavyProjectileType.Boomerang:
+                        {
+                            heavyProjectile.Velocity.X -= 0.6f;
+                        }
+                        break;
                 }
                 #endregion
 
@@ -11143,8 +11161,7 @@ namespace TowerDefensePrototype
                     case TrapType.FlameThrower:
                         {
                             if (trap.TrapState == TrapAnimationState.Active)
-                            {                               
-
+                            {
                                 #region Create fire emitter
                                 if (!YSortedEmitterList.Exists(Emitter => Emitter.Tether == trap))
                                 {
@@ -12071,7 +12088,7 @@ namespace TowerDefensePrototype
                                 (nextInvader as DropShip).DoorTexture = DropShipDoorTexture;
                                 (nextInvader as DropShip).VapourTexture = ToonSmoke3;
                                 (nextInvader as DropShip).RopeTexture = RopeTexture1;
-                                (nextInvader as DropShip).Game1 = this;
+                                (nextInvader as DropShip).Game1 = this;                                
                             }
                             break;
                         #endregion

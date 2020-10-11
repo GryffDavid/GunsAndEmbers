@@ -52,7 +52,7 @@ namespace TowerDefensePrototype
                 new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
                 new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
                 new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
-                new Soldier(new Vector2(2050, 600), new Vector2(700, 850))
+                new Soldier(new Vector2(2050, 600), new Vector2(700, 850)),
 
                 //new StationaryCannon(new Vector2(2050, 600), new Vector2(700, 850)),
                 //new StationaryCannon(new Vector2(2050, 600), new Vector2(700, 850)),
@@ -79,9 +79,9 @@ namespace TowerDefensePrototype
                 //new HealDrone(new Vector2(2050, 600), new Vector2(700, 850)),
                 //new HealDrone(new Vector2(2050, 600), new Vector2(700, 850)),
 
-                //new DropShip(new Vector2(2050, 300), new Vector2(300, 300),
-                //        new BatteringRam(new Vector2(1800, 0), new Vector2(700, 850)),
-                //        new BatteringRam(new Vector2(1800, 0), new Vector2(700, 850)))
+                new DropShip(new Vector2(2050, 300), new Vector2(300, 300),
+                        new BatteringRam(new Vector2(1800, 0), new Vector2(700, 850)),
+                        new BatteringRam(new Vector2(1800, 0), new Vector2(700, 850)))
                 );
 
             #endregion

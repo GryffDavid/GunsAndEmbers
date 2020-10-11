@@ -63,12 +63,13 @@ namespace TowerDefensePrototype
             }
 
             double colorPercent = (100.0 / MaxTime * CurrentTime) / 100.0;
-            Color = Color.Lerp(OriginalColor, Color.Transparent, (float)colorPercent);
+            Color = OriginalColor;// Color.Lerp(OriginalColor, Color.Transparent, (float)colorPercent);
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.DrawString(SpriteFont, Number.ToString(), Position, Color);
+            spriteBatch.DrawString(SpriteFont, Number.ToString(), Position, Color, 0, Vector2.Zero, 1.1f, SpriteEffects.None, 0);
+            spriteBatch.DrawString(SpriteFont, Number.ToString(), Position, Color.White, 0, Vector2.Zero - Vector2.One, 1.0f, SpriteEffects.None, 0);
         }
     }
 }
