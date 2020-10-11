@@ -21,7 +21,7 @@ namespace TowerDefensePrototype
             WaveList = new List<Wave>();
             WorldType = WorldType.Snowy;
             StartWeather = Weather.Snow;
-            Resources = 2000;
+            Resources = 20000;
                         
             //A float in the middle of the list changes the delay between invaders
             //An int in the middle of the list creates a pause without changing the timing

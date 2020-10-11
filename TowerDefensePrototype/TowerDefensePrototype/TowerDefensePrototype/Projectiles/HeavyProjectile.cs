@@ -393,13 +393,13 @@ namespace TowerDefensePrototype
                 dir.Normalize();
 
                 float rot = (float)Math.Atan2(dir.Y, dir.X);
-                
+
                 shadowEffect.Parameters["Texture"].SetValue(Texture);
                 shadowEffect.Parameters["texSize"].SetValue(new Vector2(Texture.Width, Texture.Height));
                 shadowEffect.Parameters["World"].SetValue(Matrix.CreateTranslation(-shadowVertices[0].Position) *
                                                           Matrix.CreateRotationZ(rot) *
                                                           Matrix.CreateTranslation(shadowVertices[0].Position));
-                
+
                 foreach (EffectPass pass in shadowEffect.CurrentTechnique.Passes)
                 {
                     pass.Apply();

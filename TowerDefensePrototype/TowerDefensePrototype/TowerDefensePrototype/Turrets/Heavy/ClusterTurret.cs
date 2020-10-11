@@ -5,7 +5,6 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Input;
 
 namespace TowerDefensePrototype
 {
@@ -24,10 +23,15 @@ namespace TowerDefensePrototype
             Position = position;
             Selected = true;
             FireDelay = 5000;
-            Damage = 100;
-            MaxHealth = 200;
+            Damage = 14;
             Animated = false;
             Looping = false;
+            MaxHealth = 500;
+            BlastRadius = 220;
+            MaxHealth = 200;
+            LaunchVelocity = 19;
+
+            TurretFireType = TurretFireType.SemiAuto;
 
             CurrentAnimation = new TurretAnimation()
             {

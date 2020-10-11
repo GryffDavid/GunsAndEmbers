@@ -16,16 +16,10 @@ namespace TowerDefensePrototype
         {
             HeavyProjectileType = HeavyProjectileType.ClusterBomb;
 
-            Rotate = true;
-
-            EmitterList = new List<Emitter>();
-
-            Color ParticleColor1 = Color.Gray;
-            Color ParticleColor2 = Color.DarkGray;
-
-            EmitterList.Add(new Emitter(particleTexture, new Vector2(Position.X + 16, Position.Y + 8), new Vector2(90, 180), 
-                new Vector2(1.5f, 2), new Vector2(15, 20), 0.2f, true, new Vector2(-20, 20), new Vector2(-4, 4),
-                new Vector2(0.1f, 0.25f), ParticleColor1, ParticleColor2, 0.0f, -1, 1, 1, false, new Vector2(0, 720)));
+            EmitterList.Add(new Emitter(particleTexture, new Vector2(Position.X + 16, Position.Y + 8), new Vector2(0, 360),
+                new Vector2(0.25f, 0.5f), new Vector2(640, 960), 1f, false, new Vector2(-35, 35), new Vector2(-0.5f, 0.5f),
+                new Vector2(0.025f, 0.05f), Color.DarkGray, Color.Gray, -0.00f, -1, 10, 5, false, new Vector2(0, 720), true, DrawDepth,
+                null, null, null, null, null, null, null, false, false, 150f));
         }
     }
 }
