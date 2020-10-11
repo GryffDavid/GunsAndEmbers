@@ -8248,13 +8248,13 @@ namespace TowerDefensePrototype
                 {
                     #region MachineGun
                     case LightProjectileType.MachineGun:
-                        Trail = new BulletTrail(CollisionStart, CollisionEnd)
-                        {
-                            Texture = BulletTrailSegment
-                        };
-                        //Trail.Segment = BulletTrailSegment;
-                        //Trail.Cap = BulletTrailCap;
-                        Trail.SetUp();
+                            Trail = new BulletTrail(CollisionStart, CollisionEnd)
+                            {
+                                Texture = BulletTrailSegment
+                            };
+                            //Trail.Segment = BulletTrailSegment;
+                            //Trail.Cap = BulletTrailCap;
+                            Trail.SetUp();
                             TrailList.Add(Trail);
                             AddDrawable(Trail);
                         break;
@@ -8330,10 +8330,15 @@ namespace TowerDefensePrototype
 
                     #region Shotgun
                     case LightProjectileType.Shotgun:
-                        //Trail = new BulletTrail(CollisionStart, CollisionEnd);
-                        ////Trail.Segment = BulletTrailSegment;
-                        //Trail.SetUp();
-                        //TrailList.Add(Trail);
+                        Trail = new BulletTrail(CollisionStart, CollisionEnd)
+                        {
+                            Texture = BulletTrailSegment
+                        };
+                        //Trail.Segment = BulletTrailSegment;
+                        //Trail.Cap = BulletTrailCap;
+                        Trail.SetUp();
+                        TrailList.Add(Trail);
+                        AddDrawable(Trail);
                         break;
                     #endregion
                 }
@@ -8726,6 +8731,7 @@ namespace TowerDefensePrototype
                 {
                     #region MachineGun
                     case LightProjectileType.MachineGun:
+                    case LightProjectileType.Shotgun:
                         //Emitter DebrisEmitter = new Emitter(SplodgeParticle, new Vector2(CollisionEnd.X, CollisionEnd.Y),
                         //                                    new Vector2(60, 120), new Vector2(2, 4), new Vector2(320, 640), 1f, false,
                         //                                    new Vector2(0, 0), new Vector2(0, 0),
