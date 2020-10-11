@@ -28,6 +28,7 @@ namespace TowerDefensePrototype
             Animated = false;
             Looping = false;
             MaxHealth = 500;
+            LaunchVelocity = 45;
 
             CurrentAnimation = new TurretAnimation()
             {

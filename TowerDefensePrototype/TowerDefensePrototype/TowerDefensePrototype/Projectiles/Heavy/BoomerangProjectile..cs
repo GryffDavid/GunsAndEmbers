@@ -16,7 +16,7 @@ namespace TowerDefensePrototype
         {
             HeavyProjectileType = HeavyProjectileType.Boomerang;
 
-            Rotate = true;
+            Rotate = true;            
 
             EmitterList = new List<Emitter>();
 

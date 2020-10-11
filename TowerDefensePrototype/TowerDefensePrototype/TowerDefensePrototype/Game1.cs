@@ -6856,6 +6856,11 @@ namespace TowerDefensePrototype
                 #region Regular Heavy Projectile
                 if (heavyProjectile.Active == true && timedHeavyProjectile == null)
                 {
+                    if (heavyProjectile.HeavyProjectileType == HeavyProjectileType.Boomerang)
+                    {
+                        heavyProjectile.Velocity.X -= 0.6f;
+                    }
+
                     //Traps should only be hit by projectiles with a similar DrawDepth
                     //Projectiles needs to have shadows drawn on the ground too, to prevent confusion
                     #region TRAP was hit
@@ -7798,8 +7803,148 @@ namespace TowerDefensePrototype
                                 newMine.DrawDepth = heavyProjectile.Position.Y / 1080f;
                                 AddDrawable(newMine);
                             }
-                            break; 
+                            break;
                         #endregion
+
+                        case HeavyProjectileType.Boomerang:
+                            {
+                                #region Regular ground
+                                ////This was made with the particle editor
+                                //for (int i = 0; i < 10; i++)
+                                //{
+                                //    //Emitter MultiFire_Explosion5 = new Emitter(ExplosionParticle2, new Vector2(heavyProjectile.Position.X, heavyProjectile.BoundingBox.Max.Y),
+                                //    //    new Vector2(-155f, -115f), new Vector2(1f, 1f),
+                                //    //    new Vector2(500f, 1500f), 1f, true, new Vector2(-2f, 2f), new Vector2(-1f, 1f), new Vector2(0.0825f, 0.0960f),
+                                //    //    new Color(255, 128, 0, 6), new Color(0, 0, 0, 255), 0f, 0.78f, 30f, 3, true, new Vector2(heavyProjectile.BoundingBox.Max.Y, heavyProjectile.BoundingBox.Max.Y + 24), false,
+                                //    //    (heavyProjectile.BoundingBox.Max.Y - 4) / 1080f, true, true, new Vector2(4f, 5f), new Vector2(42f, 120f), 0.2f, false, new Vector2(0.1f, 0.2f),
+                                //    //    false, false, 0f, false, false, true, null);
+
+                                //    Emitter MultiFire_Explosion5 = new Emitter(ExplosionParticle2, new Vector2(heavyProjectile.Position.X, heavyProjectile.BoundingBox.Max.Y),
+                                //        new Vector2(-81f, -41f), new Vector2(1f, 1f),
+                                //        new Vector2(500f, 1500f), 1f, false, new Vector2(-2f, 2f),
+                                //        new Vector2(-1f, 1f), new Vector2(0.03f, 0.0585f), new Color(255, 128, 0, 6),
+                                //        new Color(0, 0, 0, 255), 0f, 0.78f, 16f, 3, true, new Vector2(heavyProjectile.BoundingBox.Max.Y + 2, heavyProjectile.BoundingBox.Max.Y + 24), true,
+                                //        (heavyProjectile.BoundingBox.Max.Y - 4) / 1080f, true, true, new Vector2(4f, 5f), new Vector2(42f, 120f), 0.2f, false,
+                                //        new Vector2(0.1f, 0.2f), false, false, 0f, true, false, true, null);
+                                //    MultiFire_Explosion5.Emissive = true;
+
+                                //    YSortedEmitterList.Add(MultiFire_Explosion5);
+                                //    AddDrawable(MultiFire_Explosion5);
+                                //}
+
+                                #region Smoke
+                                Emitter Emitter2 = new Emitter(ToonSmoke2,
+                                                                                        new Vector2(heavyProjectile.Position.X, heavyProjectile.BoundingBox.Max.Y), new Vector2(60, 120), new Vector2(1, 1),
+                                                                           new Vector2(500, 1000), 1f, false, new Vector2(-10, 10), new Vector2(-1, 1), new Vector2(0.05f, 0.06f), new Color(255, 128, 0, 6), Color.Black,
+                                                                           -0.005f, 0.4f, 50, 10, false, new Vector2(0, 720), true, (heavyProjectile.BoundingBox.Max.Y - 4) / 1080f,
+                                                                           null, null, null, null, null, false, null, null, null,
+                                                                           null, null, null, true, null);
+
+                                Emitter Emitter = new Emitter(ToonSmoke3,
+                                                             new Vector2(heavyProjectile.Position.X, heavyProjectile.BoundingBox.Max.Y), new Vector2(60, 120), new Vector2(1, 1),
+                                                              new Vector2(500, 1000), 1f, false, new Vector2(-10, 10), new Vector2(-1, 1), new Vector2(0.05f, 0.06f), new Color(255, 128, 0, 6), Color.Black,
+                                                              -0.005f, 0.4f, 50, 10, false, new Vector2(0, 720), true, (heavyProjectile.BoundingBox.Max.Y - 4) / 1080f,
+                                                              null, null, null, null, null, false, null, null, null,
+                                                              null, null, null, true, null);
+
+                                YSortedEmitterList.Add(Emitter);
+                                YSortedEmitterList.Add(Emitter2);
+
+                                AddDrawable(Emitter, Emitter2);
+                                #endregion
+
+                                Emitter ExplosionEmitter = new Emitter(ExplosionParticle2,
+                                        new Vector2(heavyProjectile.Position.X, heavyProjectile.BoundingBox.Max.Y),
+                                        new Vector2(20, 160), new Vector2(0.3f, 0.8f), new Vector2(500, 1000), 1f, true, new Vector2(-2, 2),
+                                        new Vector2(-1, 1), new Vector2(0.15f, 0.25f), new Color(255, 128, 0, 6), new Color(0, 0, 0, 255), -0.2f, 0.1f, 10, 1, false,
+                                        new Vector2(heavyProjectile.BoundingBox.Max.Y, heavyProjectile.BoundingBox.Max.Y + 8), false, heavyProjectile.BoundingBox.Max.Y / 1080f,
+                                        null, null, null, null, null, null, new Vector2(0.1f, 0.2f), true, true, null, null, null, true)
+                                {
+                                    Emissive = true
+                                };
+
+                                YSortedEmitterList.Add(ExplosionEmitter);
+
+                                Emitter ExplosionEmitter3 = new Emitter(ExplosionParticle2,
+                                        new Vector2(heavyProjectile.Position.X, heavyProjectile.BoundingBox.Max.Y),
+                                        new Vector2(85, 95), new Vector2(2, 4), new Vector2(400, 640), 1f, false, new Vector2(0, 0),
+                                        new Vector2(0, 0), new Vector2(0.085f, 0.2f), new Color(255, 128, 0, 6), new Color(0, 0, 0, 255), -0.1f, 0.05f, 10, 1, false,
+                                        new Vector2(heavyProjectile.BoundingBox.Max.Y, heavyProjectile.BoundingBox.Max.Y + 8), true, heavyProjectile.BoundingBox.Max.Y / 1080f,
+                                        null, null, null, null, null, null, new Vector2(0.0025f, 0.0025f), true, true, 50)
+                                {
+                                    Emissive = true
+                                };
+
+                                YSortedEmitterList.Add(ExplosionEmitter3);
+
+                                Emitter BOOMEmitter = new Emitter(BOOMParticle, new Vector2(heavyProjectile.Position.X, heavyProjectile.BoundingBox.Max.Y - 12),
+                                                       new Vector2(0, 0), new Vector2(0.001f, 0.001f), new Vector2(400, 400), 1f, false,
+                                                       new Vector2(-25, 25), new Vector2(0, 0), new Vector2(0.35f, 0.35f),
+                                                       Color.White, Color.White, 0f, 0.05f, 50, 1, false, new Vector2(0, 1080), true,
+                                                       heavyProjectile.BoundingBox.Max.Y + 4 / 1080f, null, null, null, null, null, false, new Vector2(0.11f, 0.11f), false, false,
+                                                       null, false, false, true);
+                                YSortedEmitterList.Add(BOOMEmitter);
+
+                                Emitter DebrisEmitter = new Emitter(SplodgeParticle,
+                                       new Vector2(heavyProjectile.Position.X, heavyProjectile.BoundingBox.Max.Y - 24),
+                                       new Vector2(70, 110), new Vector2(3, 7), new Vector2(1200, 2400), 1f, false, new Vector2(0, 360),
+                                       new Vector2(1, 3), new Vector2(0.05f, 0.1f), Color.DimGray, Color.DimGray,
+                                       0.2f, 0.2f, 5, 1, true, new Vector2(heavyProjectile.BoundingBox.Max.Y - 16, heavyProjectile.BoundingBox.Max.Y + 16), true,
+                                       heavyProjectile.BoundingBox.Max.Y / 1080f, true, true);
+                                YSortedEmitterList.Add(DebrisEmitter);
+
+                                //This was generated with the particle editor
+                                Emitter HitEffect1 = new Emitter(HitEffectParticle, new Vector2(heavyProjectile.Position.X, heavyProjectile.BoundingBox.Max.Y), new Vector2(20f, 160f), new Vector2(5f, 8f),
+                                    new Vector2(250f, 500f), 1f, false, new Vector2(0f, 360f), new Vector2(-2f, 2f),
+                                    new Vector2(0.35f, 0.35f), new Color(255, 255, 191, 255),
+                                    new Color(255, 255, 255, 255), 0f, 0.05f, 50f, 7, false, new Vector2(0f, 1080), true,
+                                    (heavyProjectile.BoundingBox.Max.Y + 8) / 1080f,
+                                    false, false, null, null, 0f, true, new Vector2(0.11f, 0.11f), false, false, 0f,
+                                    false, false, false, null)
+                                {
+                                    Emissive = true
+                                };
+
+                                YSortedEmitterList.Add(HitEffect1);
+
+                                AddDrawable(DebrisEmitter, HitEffect1, ExplosionEmitter3, ExplosionEmitter, BOOMEmitter);
+                                #endregion
+
+                                ExplosionEffect explosionEffect = new ExplosionEffect(new Vector2(heavyProjectile.Position.X, heavyProjectile.BoundingBox.Max.Y))
+                                {
+                                    Texture = ExplosionRingSprite
+                                };
+                                ExplosionEffectList.Add(explosionEffect);
+
+                                Decal NewDecal = new Decal(ExplosionDecal1, new Vector2(heavyProjectile.Position.X, heavyProjectile.BoundingBox.Max.Y),
+                                                          (float)RandomDouble(0, 0), 0.75f);
+
+                                DecalList.Add(NewDecal);
+
+                                //ShockWaveEffect.Parameters["CenterCoords"].SetValue(new Vector2(1 / (1920 / heavyProjectile.Position.X), 1 / (1080 / heavyProjectile.Position.Y)));
+                                //ShockWaveEffect.Parameters["WaveParams"].SetValue(new Vector4(1, 0.5f, 0.06f, 60));
+                                //ShockWaveEffect.Parameters["CurrentTime"].SetValue(0);
+
+                                Explosion newExplosion = new Explosion(new Vector2(heavyProjectile.Position.X, heavyProjectile.BoundingBox.Max.Y), heavyProjectile.BlastRadius, heavyProjectile.Damage);
+
+                                CreateExplosion(newExplosion, heavyProjectile);
+
+                                Camera.Shake(15, 1.5f);
+                                CannonExplosion.Play();
+
+                                LightList.Add(new Light()
+                                {
+                                    Active = true,
+                                    Color = Color.OrangeRed,
+                                    CurTime = 0,
+                                    MaxTime = 150f,
+                                    Depth = heavyProjectile.BoundingBox.Max.Y / 1080f,
+                                    Position = new Vector3(heavyProjectile.Position.X, heavyProjectile.BoundingBox.Max.Y, 250),
+                                    Power = 0.8f,
+                                    Size = 600f
+                                });
+                            }
+                            break;
                     }
 
                     DeactivateProjectile(heavyProjectile);
@@ -10753,12 +10898,12 @@ namespace TowerDefensePrototype
                 #region Boomerang turret
                 case TurretType.Boomerang:
                     {
-                        HeavyProjectile = new BoomerangProjectile(turret, BoomerangProjectileSprite, SmokeParticle, new Vector2(turret.BarrelEnd.X, turret.BarrelEnd.Y), 12, turret.Rotation, 0.2f, turret.Damage, 100,
+                        HeavyProjectile = new BoomerangProjectile(turret, BoomerangProjectileSprite, SmokeParticle, new Vector2(turret.BarrelEnd.X, turret.BarrelEnd.Y), turret.LaunchVelocity, turret.Rotation, 0.4f, turret.Damage, 100,
                             new Vector2(MathHelper.Clamp(turret.Position.Y + 32, 690, 930), 930));
 
                         //HeavyProjectile.Initialize();
                         HeavyProjectileList.Add(HeavyProjectile);
-                        //AddDrawable(HeavyProjectile);
+                        AddDrawable(HeavyProjectile);
                     }
                     break;
                 #endregion
