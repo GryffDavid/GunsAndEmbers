@@ -315,8 +315,10 @@ namespace TowerDefensePrototype
                 PreviousHitObject = _HitObject;
                 _HitObject = value;
             }
-        } 
+        }
         #endregion
+
+        public Emitter FireEmitter, HealthEmitter;
 
         public Texture2D CurrentEmotionIcon, FearEmotionIcon;
 
@@ -488,6 +490,23 @@ namespace TowerDefensePrototype
         {
             if (Active == true)
             {
+                if (HealthEmitter != null)
+                {
+                    HealthEmitter.Position = Center;
+                    HealthEmitter.Update(gameTime);
+                }
+
+                if (HealthEmitter != null && IsBeingHealed == false)
+                {
+                    HealthEmitter.AddMore = false;
+                }
+
+                if (HealthEmitter != null)
+                if (HealthEmitter.ParticleList.Count == 0 && HealthEmitter.AddMore == false)
+                {
+                    HealthEmitter.Active = false;                    
+                }
+
                 if (EmotionSprite != null)
                     EmotionSprite.Update(new Vector2(DestinationRectangle.Center.X - 16, DestinationRectangle.Top - 40));
 

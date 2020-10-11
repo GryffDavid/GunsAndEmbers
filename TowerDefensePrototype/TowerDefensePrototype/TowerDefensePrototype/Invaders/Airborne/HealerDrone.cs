@@ -18,6 +18,8 @@ namespace TowerDefensePrototype
         public float CurrentHeight;
         public bool IsHealing = false;
 
+        public List<LightningBolt> BoltList = new List<LightningBolt>();
+
         //MEDBOT
         //Flies above the other invaders and heals them when necessary.
         //Should check which invader is the most urgently in need of attention but not too close to the tower
@@ -57,6 +59,12 @@ namespace TowerDefensePrototype
 
         public override void Update(GameTime gameTime, Vector2 cursorPosition)
         {
+            foreach (LightningBolt bolt in BoltList)
+            {
+                bolt.Update(gameTime);
+            }
+            BoltList.RemoveAll(Bolt => Bolt.Alpha <= 0);
+
             switch (HealerBehaviour)
             {
                 case SpecificBehaviour.Circle:
@@ -171,6 +179,22 @@ namespace TowerDefensePrototype
                     {
                         TargetInvader.HealDamage(1);
                         TargetInvader.CurrentHealDelay = 0;
+                    }
+                    #endregion
+
+                    #region Make sure there's a beam
+                    if (BoltList.Count < 5)
+                    {
+                        LightningBolt Lightning = new LightningBolt(this, TargetInvader, new Color(0, 150, 30, 255), 0.02f, 75f, true);
+                        BoltList.Add(Lightning);
+                    }
+                    else
+                    {
+                        foreach (LightningBolt bolt in BoltList)
+                        {
+                            bolt.Source = Center + new Vector2(0, 8);
+                            bolt.Destination = TargetInvader.Center;
+                        }
                     }
                     #endregion
                 }

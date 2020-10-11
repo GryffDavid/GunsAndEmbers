@@ -1022,6 +1022,9 @@ namespace TowerDefensePrototype
                 ThinkingAnimation = new AnimatedSprite("ThinkingAnimation", Vector2.Zero, new Vector2(24, 24), 6, 100, Color.White, new Vector2(1, 1), true);
                 ThinkingAnimation.LoadContent(Content);
 
+                LightningBolt.Segment = Content.Load<Texture2D>("Particles/Segment");
+                LightningBolt.Cap = Content.Load<Texture2D>("Particles/Cap");
+
                 CrepuscularLightTexture = Content.Load<Texture2D>("Flare1");
 
                 //CrepLightList.Add(new CrepuscularLight()
@@ -2714,6 +2717,20 @@ namespace TowerDefensePrototype
                     pass.Apply();
                     GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, EmissiveVertices, 0, 2);
                 }
+
+                foreach (Invader invader in InvaderList.Where(Invader => Invader.HealthEmitter != null))
+                {
+                    invader.HealthEmitter.Draw(spriteBatch);
+                }
+
+                foreach (Invader invader in InvaderList.Where(Invader => Invader.InvaderType == InvaderType.HealDrone))
+                {
+                    foreach (LightningBolt bolt in (invader as HealDrone).BoltList)
+                    {
+                        bolt.Draw(spriteBatch);
+                    }
+                }
+
                 spriteBatch.End();
 
                 #region Blur
@@ -4148,6 +4165,28 @@ namespace TowerDefensePrototype
                             light.Update(gameTime);
                         }
 
+                        foreach (Invader invader in InvaderList.Where(Invader => Invader.IsBeingHealed == true && Invader.HealthEmitter == null))
+                        {
+                            if (invader.HealthEmitter == null)
+                            {
+                                Emitter testEmitter = new Emitter(HealthParticle, invader.Center, new Vector2(80, 110),
+                                    new Vector2(3f, 6f), new Vector2(300, 500), 1f, false, new Vector2(0, 0), new Vector2(0, 0),
+                                    new Vector2(2, 2), Color.LightGreen, Color.Green, 0.25f, -1, 150, 1, false, new Vector2(0, 720), false, invader.DrawDepth,
+                                    null, null, null, null, null, null, null, false, false, 150f);
+
+                                AddDrawable(testEmitter);
+
+                                testEmitter.DrawDepth = invader.DrawDepth + 0.001f;
+                                invader.HealthEmitter = testEmitter;
+                            }                            
+                        }
+
+                        foreach (Invader invader in InvaderList.Where(Invader => Invader.HealthEmitter != null && Invader.IsBeingHealed == false && Invader.HealthEmitter.Active == false))
+                        {
+                            DrawableList.Remove(invader.HealthEmitter);
+                            invader.HealthEmitter = null;
+                        }
+
                         //foreach (Solid solid in SolidList)
                         //{
                         //    solid.Update(gameTime);
@@ -4237,7 +4276,12 @@ namespace TowerDefensePrototype
                         foreach (JetEngine engine in JetEngineList)
                         {
                             engine.Update(gameTime);
+
+                            if (engine.InvaderTether.Active == false)
+                                DrawableList.Remove(engine);
                         }
+
+                        JetEngineList.RemoveAll(engine => engine.InvaderTether.Active == false);
                         
                         //ToonLightningList.RemoveAll(Lightning => Lightning.Active == false);
 

@@ -142,6 +142,7 @@
     <Compile Include="ParticleSystem\Corpse.cs" />
     <Compile Include="ParticleSystem\ExplosionEffect.cs" />
     <Compile Include="ParticleSystem\JetEngine.cs" />
+    <Compile Include="ParticleSystem\LightningBolt.cs" />
     <Compile Include="ParticleSystem\Pipe.cs" />
     <Compile Include="ParticleSystem\Rope.cs" />
     <Compile Include="ParticleSystem\SmokeTrail.cs" />
