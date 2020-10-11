@@ -2,7 +2,7 @@
 ![Animation of Gameplay](https://github.com/GryffDavid/READMEImages/blob/master/TowerDefense/Gameplay1.gif)
 ![Animation of Gameplay 2](https://github.com/GryffDavid/READMEImages/blob/master/TowerDefense/Gameplay2.gif)
 
-[YouTube Video](#https://youtu.be/xH4tC8bOpSg)
+[YouTube Video](https://youtu.be/xH4tC8bOpSg)
 
 11 October 2020, Readme still a work in progress
 
