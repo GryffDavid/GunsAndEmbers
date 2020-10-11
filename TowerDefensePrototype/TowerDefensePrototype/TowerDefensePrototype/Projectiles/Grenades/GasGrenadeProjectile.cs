@@ -28,10 +28,10 @@ namespace TowerDefensePrototype
             Color ParticleColor1 = Color.Gray;
             Color ParticleColor2 = Color.DarkGray;
 
-            EmitterList.Add(new Emitter(particleTexture, new Vector2(Position.X + 16, Position.Y + 8), new Vector2(90, 180),
-                 new Vector2(0, 0), new Vector2(40, 60), 0.9f, true, new Vector2(0, 360), new Vector2(-0.5f, 0.5f),
-                 new Vector2(0.25f, 0.5f), ParticleColor1, ParticleColor2, -0.00f, -1, 10, 1, false, new Vector2(0, 720), null, null,
-                 null, null, null, null, null, null, null, true, true));
+            EmitterList.Add(new Emitter(particleTexture, new Vector2(Position.X + 16, Position.Y + 8), new Vector2(0, 180),
+                 new Vector2(2, 2.5f), new Vector2(540, 960), 1f, false, new Vector2(-20, 20), new Vector2(-0.5f, 0.5f),
+                 new Vector2(0.0325f, 0.0625f), ParticleColor1, ParticleColor2, -0.02f, -1, 60, 10, false, new Vector2(0, 720), true, null,
+                 null, null, null, null, null, false, new Vector2(0.025f, 0.025f), true, true));
         }
     }
 }

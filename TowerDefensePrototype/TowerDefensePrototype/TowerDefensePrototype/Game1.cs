@@ -6470,9 +6470,9 @@ namespace TowerDefensePrototype
                         invader.DamageOverTime(new DamageOverTimeStruct()
                         {
                             Color = Color.LawnGreen,
-                            Damage = 3,
-                            InitialDamage = 30,
-                            MaxInterval = 50,
+                            Damage = 1,
+                            InitialDamage = 0,
+                            MaxInterval = 400,
                             MaxDelay = 4000
                         }, Color.LawnGreen);
                     }
@@ -7305,24 +7305,24 @@ namespace TowerDefensePrototype
                                 //EmitterList2.Add(gasEmitter5);
                                 #endregion
 
-                                Emitter gasEmitter = new Emitter(SmokeParticle, timedHeavyProjectile.Rod.Center, new Vector2(-10, 190),
-                                    new Vector2(0.5f, 6.0f), new Vector2(800, 1000), 0.25f, true, new Vector2(0, 360), new Vector2(-0.5f, 0.5f),
-                                    new Vector2(0.5f, 1.0f), Color.LawnGreen, Color.GreenYellow, 0.003f, 1f, 2, 2, true, new Vector2(timedHeavyProjectile.MaxY, timedHeavyProjectile.MaxY + 16), false,
-                                    timedHeavyProjectile.Rod.Center.Y / 1080, true, false, null, null, null, null, new Vector2(0.038f, 0.08f), true, true, 500, true, true);
+                                Emitter gasEmitter = new Emitter(ToonSmoke3, timedHeavyProjectile.Rod.Center, new Vector2(-10, 190),
+                                    new Vector2(0.5f, 6.0f), new Vector2(4000, 6000), 1f, false, new Vector2(-20, 20), new Vector2(-0.5f, 0.5f),
+                                    new Vector2(0.025f, 0.135f), Color.LimeGreen, Color.Lime, 0.001f, 5f, 700, 40, true, new Vector2(timedHeavyProjectile.MaxY, timedHeavyProjectile.MaxY + 16), true,
+                                    timedHeavyProjectile.Rod.Center.Y / 1080, true, false, null, null, null, false, new Vector2(0.038f, 0.08f), false, false, 500, true, true);
                                 YSortedEmitterList.Add(gasEmitter);
                                 //AddDrawable(gasEmitter);
 
-                                Emitter gasEmitter2 = new Emitter(SmokeParticle, timedHeavyProjectile.Rod.Center, new Vector2(0, 10),
-                                    new Vector2(0.5f, 12.0f), new Vector2(800, 1000), 0.25f, true, new Vector2(0, 360), new Vector2(-0.5f, 0.5f),
-                                    new Vector2(0.5f, 1.0f), Color.LawnGreen, Color.GreenYellow, 0.003f, 2f, 10, 2, true, new Vector2(timedHeavyProjectile.MaxY, timedHeavyProjectile.MaxY + 16), true,
-                                    timedHeavyProjectile.Rod.Center.Y / 1080, true, false, null, null, null, null, new Vector2(0.05f, 0.05f), true, true, 500, true, true);
+                                Emitter gasEmitter2 = new Emitter(ToonSmoke3, timedHeavyProjectile.Rod.Center, new Vector2(0, 10),
+                                    new Vector2(0.5f, 12.0f), new Vector2(4000, 6000), 1f, false, new Vector2(-20, 20), new Vector2(-0.5f, 0.5f),
+                                    new Vector2(0.025f, 0.135f), Color.LimeGreen, Color.Lime, 0.001f, 5f, 500, 40, true, new Vector2(timedHeavyProjectile.MaxY, timedHeavyProjectile.MaxY + 16), true,
+                                    timedHeavyProjectile.Rod.Center.Y / 1080, true, false, null, null, null, false, new Vector2(0.05f, 0.05f), false, false, 500, true, true);
                                 YSortedEmitterList.Add(gasEmitter2);
                                 //AddDrawable(gasEmitter2);
 
-                                Emitter gasEmitter3 = new Emitter(SmokeParticle, timedHeavyProjectile.Rod.Center, new Vector2(170, 180),
-                                    new Vector2(0.5f, 12.0f), new Vector2(800, 1000), 0.25f, true, new Vector2(0, 360), new Vector2(-0.5f, 0.5f),
-                                    new Vector2(0.5f, 1.0f), Color.LawnGreen, Color.GreenYellow, 0.003f, 1f, 10, 2, true, new Vector2(timedHeavyProjectile.MaxY, timedHeavyProjectile.MaxY + 16), true,
-                                    timedHeavyProjectile.Rod.Center.Y / 1080, true, false, null, null, null, null, new Vector2(0.05f, 0.05f), true, true, 500, true, true);
+                                Emitter gasEmitter3 = new Emitter(ToonSmoke3, timedHeavyProjectile.Rod.Center, new Vector2(170, 180),
+                                    new Vector2(0.5f, 12.0f), new Vector2(4000, 6000), 1f, false, new Vector2(-20, 20), new Vector2(-0.5f, 0.5f),
+                                    new Vector2(0.025f, 0.135f), Color.LimeGreen, Color.Lime, 0.001f, 5f, 700, 40, true, new Vector2(timedHeavyProjectile.MaxY, timedHeavyProjectile.MaxY + 16), true,
+                                    timedHeavyProjectile.Rod.Center.Y / 1080, true, false, null, null, null, false, new Vector2(0.05f, 0.05f), false, false, 500, true, true);
                                 YSortedEmitterList.Add(gasEmitter3);
                                 //AddDrawable(gasEmitter3);
 
@@ -8225,7 +8225,8 @@ namespace TowerDefensePrototype
             {
                 if (sourceTurret != null && CurrentTurret != null)
                 {
-                    Ground.BoundingBox.Min = new Vector3(0, MathHelper.Clamp(CursorPosition.Y, Math.Max(690, CurrentTurret.BaseRectangle.Bottom + 16), 960), 0);
+                    //Ground.BoundingBox.Min = new Vector3(0, MathHelper.Clamp(CursorPosition.Y, Math.Max(690, CurrentTurret.BaseRectangle.Bottom + 16), 960), 0);
+                    Ground.BoundingBox.Min = new Vector3(0,MathHelper.Clamp(Random.Next((int)CursorPosition.Y - 16, (int)CursorPosition.Y + 16), Math.Max(690, CurrentTurret.BaseRectangle.Bottom + 16), 960), 0);
                 }
 
                 if (sourceInvader != null)
@@ -10768,7 +10769,7 @@ namespace TowerDefensePrototype
                         TimerHeavyProjectile heavyProjectile;
 
                         heavyProjectile = new GrenadeProjectile(turret, 2500, GrenadeProjectileSprite, SmokeParticle,
-                            new Vector2(turret.BarrelEnd.X, turret.BarrelEnd.Y), 8, turret.Rotation, 0.1f, 5, 0,
+                            new Vector2(turret.BarrelEnd.X, turret.BarrelEnd.Y), turret.LaunchVelocity, turret.Rotation, 0.35f, 5, 0,
                             new Vector2(MathHelper.Clamp(turret.Position.Y + 32, 690, 930), 930), true);
 
                         //heavyProjectile.Initialize();
@@ -10785,8 +10786,8 @@ namespace TowerDefensePrototype
                     {
                         TimerHeavyProjectile heavyProjectile;
 
-                        heavyProjectile = new GasGrenadeProjectile(turret, 2500, GrenadeProjectileSprite, SmokeParticle,
-                            new Vector2(turret.BarrelEnd.X, turret.BarrelEnd.Y), 16, turret.Rotation, 0.3f, 5, 0,
+                        heavyProjectile = new GasGrenadeProjectile(turret, 2500, GrenadeProjectileSprite, ToonSmoke3,
+                            new Vector2(turret.BarrelEnd.X, turret.BarrelEnd.Y), 16, turret.Rotation, 0.3f, 0, 0,
                             new Vector2(MathHelper.Clamp(turret.Position.Y + 32, 690, 930), 930), true);
 
                         //heavyProjectile./Initialize();

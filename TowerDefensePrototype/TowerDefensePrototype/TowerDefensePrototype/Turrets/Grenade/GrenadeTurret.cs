@@ -32,6 +32,7 @@ namespace TowerDefensePrototype
             MaxHeatTime = 2000;
             CoolValue = 0.15f;
             ShotHeat = 10;
+            LaunchVelocity = 19;
 
             TurretFireType = TurretFireType.SemiAuto;
 
