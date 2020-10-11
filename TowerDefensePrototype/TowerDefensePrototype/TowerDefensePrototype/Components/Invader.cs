@@ -238,6 +238,7 @@ namespace TowerDefensePrototype
             set
             {
                 _Color = value;
+                base.Color = value;
 
                 for (int i = 0; i < vertices.Length; i++)
                 {
@@ -587,12 +588,11 @@ namespace TowerDefensePrototype
                 }
                 #endregion
 
-                
+
 
                 #region This controls how the invader behaves when it's slow
                 if (CurrentSlow != null)
                 {
-
                     if (Slow == true)
                     {
                         CurrentSlow.CurrentDelay += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
@@ -752,7 +752,7 @@ namespace TowerDefensePrototype
                 
                 if (HitByBeam == true)
                 {
-                    Color = Color.Black;
+                    Color = Color.White;
                     CurrentBeamDelay += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
                 }
 
@@ -779,13 +779,9 @@ namespace TowerDefensePrototype
                 if (EmotionSprite != null)
                     EmotionSprite.Draw(graphics, effect);
 
-                //effect.TextureEnabled = true;
-                //effect.VertexColorEnabled = true;
-                //effect.Texture = CurrentAnimation.Texture;
-
                 if (InAir == false)
                 {
-                    //#region Draw invader shadows                    
+                    #region Draw invader shadows                    
                     //foreach (Light light in LightList)
                     //{
                     //    double dist = Math.Sqrt(Math.Pow(0.45f * (DestinationRectangle.Center.X - light.Position.X), 2) + Math.Pow(DestinationRectangle.Bottom - light.Position.Y, 2));
@@ -868,7 +864,7 @@ namespace TowerDefensePrototype
                     //        }
                     //    }
                     //}
-                    //#endregion
+                    #endregion
                 }
 
                 #region Draw invader sprite
@@ -877,6 +873,12 @@ namespace TowerDefensePrototype
                 //    pass.Apply();
                 //    graphics.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, vertices, 0, 4, indices, 0, 2, VertexPositionColorTexture.VertexDeclaration);
                 //}
+
+                if (vertices[0].Color == FrozenColor)
+                {
+                    int stop = 0;
+                }
+
                 base.Draw(graphics, effect, shadowEffect);
 
                 #endregion
@@ -885,7 +887,6 @@ namespace TowerDefensePrototype
 
                 #endregion
             }
-
         }
 
         //public void DrawEmitters(GraphicsDevice graphics, Effect particleEffect)

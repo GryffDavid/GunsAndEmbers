@@ -2153,6 +2153,24 @@ namespace TowerDefensePrototype
                         break;
                     #endregion
 
+                    case TrapType.Ice:
+                        {
+                            AnimationsList = new List<TrapAnimation>()
+                            {
+                                new TrapAnimation()
+                                {
+                                    CurrentTrapState = TrapAnimationState.Untriggered,
+                                    Texture = Content.Load<Texture2D>("Traps/Trap"),
+                                    Animated = false,
+                                    CurrentFrame = 0,
+                                    TotalFrames = 1,
+
+                                    AnimationType = GraphicsType.Diffuse
+                                }
+                            };
+                        }
+                        break;
+
                     case TrapType.PopFrag:
                         {
                             AnimationsList = new List<TrapAnimation>()
@@ -11192,18 +11210,28 @@ namespace TowerDefensePrototype
                 {
                     #region Fire Trap
                     case TrapType.Fire:
-                        switch (HitTrap.CurrentDetonateLimit)
                         {
-                            default:
-                                foreach (Emitter emitter in YSortedEmitterList.Where(emit => emit.Tether == HitTrap && emit.TextureName.Contains("Fire")))
-                                {
-                                    //emitter.EndColor = Color.Lerp(emitter.EndColor, Color.Red, 0.1f);
-                                    emitter.StartColor = Color.Lerp(emitter.StartColor, Color.Red, 0.1f);
-                                }
-                                break;
+                            invader.TrapDamage(HitTrap);
+
+                            switch (HitTrap.CurrentDetonateLimit)
+                            {
+                                default:
+                                    foreach (Emitter emitter in YSortedEmitterList.Where(emit => emit.Tether == HitTrap && emit.TextureName.Contains("Fire")))
+                                    {
+                                        //emitter.EndColor = Color.Lerp(emitter.EndColor, Color.Red, 0.1f);
+                                        emitter.StartColor = Color.Lerp(emitter.StartColor, Color.Red, 0.1f);
+                                    }
+                                    break;
+                            }
                         }
                         break;
                     #endregion
+
+                    case TrapType.Ice:
+                        {
+                            invader.Freeze(new FreezeStruct() { MaxDelay = 2500 }, Color.SkyBlue);
+                        }
+                        break;
 
                     #region Glue Trap
                     case TrapType.Glue:
@@ -11212,7 +11240,7 @@ namespace TowerDefensePrototype
                             DecalList.Add(decal);
                             //Emitter glueEmitter = new Emitter(ToonGlueDrip1, HitTrap.Center, new Vector2(0, 360), new Vector2(4, 5),
                             //    new Vector2(2000, 2500), 1f, true, new Vector2(0, 0), new Vector2(0, 0),
-                            //    new Vector2(0.04f, 0.08f), Color.Purple, Color.MediumPurple, 0.2f, 0.1f, 10, 40, true,
+                            //    new Vector2(0.04f, 0.08f),  Color.Purple, Color.MediumPurple, 0.2f, 0.1f, 10, 40, true,
                             //    new Vector2(HitTrap.Position.Y, HitTrap.Position.Y + 8), false, null, true, null, null, null, null, true,
                             //    new Vector2(0.04f, 0.00f));
                            
