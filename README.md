@@ -4,13 +4,11 @@
 
 [YouTube Video](https://youtu.be/xH4tC8bOpSg)
 
-11 October 2020, Readme still a work in progress
+13 October 2020, Readme still a work in progress
 
 This Readme is essentially a design outline of the game and a post-mortem of sorts too. However, I definitely haven't given up on the idea or the implementation and I still stand by the concept. I would love to finish this game given enough time and money... and an artist. 
 
 Although the game is not complete, the core mechanics and most of the features have been implemented in some form. No final art has been produced and everything is just placeholder, programmer art. I'm very much a designer and programmer and definitely not an artist. I am however happy with the [particle effects](https://github.com/GryffDavid/MultithreadedParticles) and the programmatically generated effects such as the [lightning](https://github.com/GryffDavid/StylizedLightning), [smoke](https://github.com/GryffDavid/VectorSmoke) and [grass](https://github.com/GryffDavid/2DDynamicGrass), as well as some of the sound effects I made too.
-
-The project was initially started in July 2013, about a year into my using C# and XNA. The budget was $0. I worked on it fairly consistently until about late-2017 when I set it aside due to burnout after only really taking public holidays off for 4 years straight - no weekends. I worked on [another project](https://github.com/GryffDavid/ArenaPlatformer) after that until September 2018 when my mother got sick. I took care of her until her passing in February 2020. I didn't completely stop during that time, but my work was sporadic and inefficient.
 
 ## Table of Contents
 
@@ -35,6 +33,7 @@ The project was initially started in July 2013, about a year into my using C# an
 - [What I Learned](#What-I-learned)
 - [Design Successes](#Design-Successes)
 - [Design Problems](#Design-Problems)
+- [Background](#Background)
 - [Code Links](#Code-Links)
 
 ## Mechanics and Gameplay
@@ -200,5 +199,8 @@ Traps are placed directly onto the terrain in front of the tower. Some traps are
 ## Design Problems
 - The 2.5D may not have been the best choice, but I don't regret it. If I were to start the whole project over again I would still go with 2.5D. It certainly complicated things, but I do like the extra variety and mechanics it brings as opposed to the initial design which was just 2D. It does mean that the invaders can't be *too* intelligent though because otherwise they'd just walk around each trap by moving along the Z depth. They have to be a bit dumb which could be immersion breaking for the player. The 2.5D also complicates the heavy projectile arcing, although I have found that my solution of predicting where approximately it's going to land and then adjusting the Z depth based on invader density is quite good.
 - The invaders bunching up against the tower is perhaps a problem that needs to be re-thought. It forces the player to fire turrets almost directly downward which is irritating and not satisfying at all.
+
+## Background
+The project was initially started in July 2013, about a year into my using C# and XNA. The budget was $0. I worked on it fairly consistently until about late-2017 when I set it aside due to burnout after only really taking public holidays off for 4 years straight - no weekends. I worked on [another project](https://github.com/GryffDavid/ArenaPlatformer) after that until September 2018 when my mother got sick. I took care of her until her passing in February 2020. I didn't completely stop during that time, but my work was sporadic and inefficient.
 
 ## Code Links
