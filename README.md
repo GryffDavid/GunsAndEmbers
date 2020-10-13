@@ -1,10 +1,5 @@
 
 # Guns and Embers
-![Animation of Gameplay](https://github.com/GryffDavid/READMEImages/blob/master/TowerDefense/Gameplay1.gif)
-![Animation of Gameplay 2](https://github.com/GryffDavid/READMEImages/blob/master/TowerDefense/Gameplay2.gif)
-
-[YouTube Video](https://youtu.be/xH4tC8bOpSg)
-
 13 October 2020, Readme still a work in progress
 
 This Readme is essentially a design outline of the game and a post-mortem of sorts too. However, I definitely haven't given up on the idea or the implementation and I still stand by the concept. I would love to finish this game given enough time and money... and an artist. 
@@ -50,7 +45,10 @@ Although the game is not complete, the core mechanics and most of the features h
 - There is also a certain element of emergent gameplay that I like and discovered. How two traps interact in an interesting way or how a trap and turret interact. While programming, I was often subsequently surprised by some bit of emergent gameplay that I didn't plan for that turned out to be really cool. So I started to embrace that by making sure that traps interact in a way that the player would perhaps expect them to or at least in a way that makes sense so the player when observing the interaction says, "Oh, of course. That makes sense. I didn't think of that" instead of "That's dumb. Why didn't that work?!". Such as a flamethrower trap having the flame blocked by a wall trap, which could then be done intentionally to trap invaders between the wall and flamethrower with nowhere to escape.
 
 ## Gameplay
+![Animation of Gameplay](https://github.com/GryffDavid/READMEImages/blob/master/TowerDefense/Gameplay1.gif)
+![Animation of Gameplay 2](https://github.com/GryffDavid/READMEImages/blob/master/TowerDefense/Gameplay2.gif)
 
+[YouTube Video](https://youtu.be/xH4tC8bOpSg)
 
 
 ## Features implemented
