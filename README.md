@@ -1,3 +1,4 @@
+
 # Guns and Embers
 ![Animation of Gameplay](https://github.com/GryffDavid/READMEImages/blob/master/TowerDefense/Gameplay1.gif)
 ![Animation of Gameplay 2](https://github.com/GryffDavid/READMEImages/blob/master/TowerDefense/Gameplay2.gif)
@@ -37,14 +38,23 @@ Although the game is not complete, the core mechanics and most of the features h
 - [Code Links](#Code-Links)
 
 ## Mechanics and Gameplay
-This is a non-traditional tower defence game. Players control a tower to which they can attach turrets to repel incoming invaders. Traps can be placed on the terrain in front of the tower. The turrets work in a manner very similar to artillery games such as Worms or Scorched Earth. Players choose a loadout from an assortment of traps and turrets before beginning the level. Invaders of various types approach the tower in escalating waves. This lead to quite fast-paced, escalating gameplay as traps need to be replaced between bouts of artillery fire. Quick decisions about trap placement are essential and certain traps and turrets can be used together strategically to devastate incoming invaders. Such as careful use of a freeze turret and a flame trap to lock an invader in place in the flames, dealing multiple rounds of high damage-over-time. Tactical placement of the traps can be thought of the same as the trap placement mechanics in Orcs Must Die and its sequel. Placement of the turrets into the slots on the tower is also important. Placing a heavy artillery turret in the top-most slot will increase it's range just based on physics alone - the projectile will have more time to move in the X axis as it falls along the Y axis due to gravity. So placement of turrets on the tower involves the player making a tactical decision. There is also a certain element of emergent gameplay that I like and discovered. How two traps interact in an interesting way or how a trap and turret interact. While programming, I was often subsequently surprised by some bit of emergent gameplay that I didn't plan for that turned out to be really cool. So I started to embrace that by making sure that traps interact in a way that the player would perhaps expect them to or at least in a way that makes sense so the player when observing the interaction says, "Oh, of course. That makes sense. I didn't think of that" instead of "That's dumb. Why didn't that work?!". Such as a flamethrower trap having the flame blocked by a wall trap, which could then be done intentionally to trap invaders between the wall and flamethrower with nowhere to escape.
+- This is a non-traditional tower defence game. 
+- Players control a tower to which they can attach turrets to repel incoming invaders. 
+- Traps can be placed on the terrain in front of the tower. 
+- The turrets work in a manner very similar to artillery games such as Worms or Scorched Earth.
+- Players choose a loadout from an assortment of traps and turrets before beginning the level. 
+- Invaders of various types approach the tower in escalating waves. This lead to quite fast-paced, escalating gameplay as traps need to be replaced between bouts of artillery fire. 
+- Quick decisions about trap placement are essential and certain traps and turrets can be used together strategically to devastate incoming invaders. Such as careful use of a freeze turret and a flame trap to lock an invader in place in the flames, dealing multiple rounds of high damage-over-time. 
+- Tactical placement of the traps can be thought of the same as the trap placement mechanics in Orcs Must Die and its sequel. 
+- Placement of the turrets into the slots on the tower is also important. Placing a heavy artillery turret in the top-most slot will increase it's range just based on physics alone - the projectile will have more time to move in the X axis as it falls along the Y axis due to gravity. So placement of turrets on the tower involves the player making a tactical decision. 
+- There is also a certain element of emergent gameplay that I like and discovered. How two traps interact in an interesting way or how a trap and turret interact. While programming, I was often subsequently surprised by some bit of emergent gameplay that I didn't plan for that turned out to be really cool. So I started to embrace that by making sure that traps interact in a way that the player would perhaps expect them to or at least in a way that makes sense so the player when observing the interaction says, "Oh, of course. That makes sense. I didn't think of that" instead of "That's dumb. Why didn't that work?!". Such as a flamethrower trap having the flame blocked by a wall trap, which could then be done intentionally to trap invaders between the wall and flamethrower with nowhere to escape.
 
 ## Gameplay
 
 
 
 ## Features implemented
-Still working on this, so I'm not totally sure if the keying is accurate as of October 2020.
+Still working on this list, so I'm not totally sure if the feature implementation is accurate as of October 2020.
 - ❌ Feature is not implemented/Only some code exists
 - ✅ Feature is implemented and currently working
 - ❎ Feature has been implemented successfully in the past, but does not currently work
@@ -177,7 +187,8 @@ Traps are placed directly onto the terrain in front of the tower. Some traps are
 - There is no tutorial. 
 - There is a story, but it's not very good and I only have an incredibly loose outline. I was really much more focused on gameplay and mechanics, not too bothered about story. 
 - A proper structure to the levels and invaders.
-- Different terrain features/terrains. Different towers.
+- Different terrain features/terrains. 
+- Different towers.
 - Big invaders. For the most part the invaders are mostly small, which works quite well, but there should also be that "Wow" moment for a player when something big and unexpected turns up such as a tripod with a laser cannon for a face. Something the size of the tower that feels threatening and feels like it suddenly takes priority.
 
 ## Features Not Implemented, Otherwise Known as Ideas
