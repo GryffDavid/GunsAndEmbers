@@ -1,4 +1,3 @@
-
 # Guns and Embers
 This Readme is essentially a design outline of the game and a post-mortem of sorts too. However, I definitely haven't given up on the idea or the implementation and I still stand by the concept. I would love to finish this game given enough time and money... and an artist. 
 
@@ -74,7 +73,7 @@ This gameplay video shows some of the key mechanics and some of the cool feature
 - Balance. The speed of the invaders, how many there are, how much damage the turrets do, how much traps and turrets cost etc. All need to be balanced.
 - Lots of optimization. I have optimized some things, but there is so much that still needs to be done. But I am/was being careful about not prematurely optimizing, instead trying to flesh out mechanics and get the gameplay solid before worrying about optimizing and getting the code to production level. Optimizing on the fly felt pointless because so much of what I'd written was going to be rewritten because I'd learned something new and had a far better approach or because I wasn't sure if a mechanic was going to stick around.
 - There is no tutorial. 
-- There is a story, but it's not very good and I only have an incredibly loose outline. I was really much more focused on gameplay and mechanics, not too bothered about story. 
+- [There is a story](https://github.com/GryffDavid/GunsAndEmbers/blob/master/TD_StoryNotes.txt), but it's not very good and I only have an incredibly loose outline. I was really much more focused on gameplay and mechanics, not too bothered about story. 
 - A proper structure to the levels and waves of invaders.
 - Different terrain features/terrains. 
 - Different towers.
