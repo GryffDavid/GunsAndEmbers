@@ -1,4 +1,3 @@
-
 # Guns and Embers
 This Readme is essentially a design outline of the game and a post-mortem of sorts too. However, I definitely haven't given up on the idea or the implementation and I still stand by the concept. I would love to finish this game given enough time and money... and an artist. 
 
@@ -101,8 +100,16 @@ This gameplay video shows some of the key mechanics and some of the cool feature
 	- Another potential solution might be to give the player control of the Y-Axis (Z-Depth) by using the scroll wheel to move between the horizontal lanes that make up the terrain. i.e. Scrolling the wheel one click up would move the Z Depth one lane up and scrolling down would move it one lane down. This mechanic has been in my head for ages but I've yet to test it. I do think that it could add some added complexity and decision making/planning for the player, but it could also be overwhelming trying to aim the turret and pick a lane for the projectile to land in.
 - The invaders bunching up against the tower is perhaps a problem that needs to be re-thought. It forces the player to fire turrets almost directly downward which is irritating and not satisfying at all.
 
-## Features Not Implemented, Otherwise Known as Ideas
+## Features Not Implemented Otherwise Known as Ideas
+These are really just the ones I could find written down in a document called "Tower Defense Ideas". There are so many more than this scattered throughout text files and comments on code etc.
 - Ability to place a flamethrower trap facing "backwards" as to fire left instead of right. This would allow the player to trap invaders between a wall and a flamethrower and torch the invaders when they're bunched up against the wall.
+- A trap that moves up and down the Y-Axis (Z-Depth) on the ground, possibly with a laser or saw blade etc. attached. Should also cast shadows though, show off the dynamic lighting a bit!
+- Need to show the player the health and cooldown mechanics of the turrets
+- Cannon that shoots out a “projectile” that rapidly stops and then a sort of balloon opens, leaving a floating auto-turret that shoots enemies (approximately). ACAV - Automated Continuous Assault Vehicle
+- Flamethrower invader
+- Track the damage that each mounted turret does so that invaders can make a decision about what turret to target.
+- Player may need to use a grappling hook cannon to retrieve power ups or currency from the terrain.
+- Huge tripod with constant laser beams. Shoot off one leg and it collapses.
 
 ## Background
 The project was initially started in July 2013, about a year into my using C# and XNA. The budget for this project has always been $0. I worked on it fairly consistently until about late-2017 when I set it aside due to burnout after only really taking public holidays off for 4 years straight - no weekends. I worked on [another project](https://github.com/GryffDavid/ArenaPlatformer) after that until September 2018 when my mother got sick. I took care of her until her passing in February 2020. I didn't completely stop during that time, but my work was sporadic and inefficient.
