@@ -677,6 +677,8 @@ namespace TowerDefensePrototype
 
         LightProjectile CurrentBeam;
 
+        Emitter BlurryEmitter, FocusedEmitter;
+
         #endregion
 
         public static float _1Depth = 1f / 1080f;
@@ -1138,7 +1140,7 @@ namespace TowerDefensePrototype
                 LoadTurretSprites();
                 LoadTrapSprites();
                 LoadProjectileSprites();
-                //LoadWeatherSprites();
+                LoadWeatherSprites();
 
                 ExplosionDecal1 = Content.Load<Texture2D>("Decals/ExplosionDecal1");
                 BloodDecal1 = Content.Load<Texture2D>("Decals/BloodDecal1");
@@ -2257,6 +2259,16 @@ namespace TowerDefensePrototype
             SnowDust5 = Content.Load<Texture2D>("Weather/SnowDust5");
             BlurrySnowflake = Content.Load<Texture2D>("Weather/BlurrySnowflake");
             FocusedSnowflake = Content.Load<Texture2D>("Weather/FocusedSnowflake");
+
+            BlurryEmitter = new Emitter(BlurrySnowflake, new Vector2(0, -64), new Vector2(270, 270), new Vector2(0.95f, 1.8f),
+                new Vector2(7000, 9000), 0.5f, true, new Vector2(0, 360), new Vector2(0, 5), new Vector2(0.1f, 0.25f),
+                Color.White, Color.White, 0.0005f, -1, 25, 1, false, new Vector2(690, 930));
+
+            FocusedEmitter = new Emitter(FocusedSnowflake, new Vector2(0, -64), new Vector2(-90, -90), new Vector2(0.5f, 0.75f),
+                new Vector2(8000, 10000), 0.25f, true, new Vector2(0, 360), new Vector2(-1f, 1f), new Vector2(0.1f, 0.25f),
+                Color.White, Color.White, 0.0005f, -1, 25, 1, true, new Vector2(690, 930), false, 0.25f, true, false, null, null, null, null, null, true, true, null);
+
+            AddDrawable(BlurryEmitter, FocusedEmitter);
         }
 
         private void LoadFonts()
@@ -2753,10 +2765,13 @@ namespace TowerDefensePrototype
                 GraphicsDevice.SetRenderTarget(ColorMap);
                 GraphicsDevice.Clear(Color.Transparent);
 
+                
+
                 #region Draw the background type stuff - ground, tower, sky, snow etc.
                 spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null);
 
                 SkyBackground.Draw(spriteBatch);
+                FocusedEmitter.Draw(spriteBatch);
                 Ground.Draw(spriteBatch);
 
                 //spriteBatch.Draw(ShadowMap, ShadowMap.Bounds, Color.White);
@@ -2788,9 +2803,11 @@ namespace TowerDefensePrototype
                 //{
                 //    rope.Draw(spriteBatch);
                 //}
-
+                BlurryEmitter.Draw(spriteBatch);
                 spriteBatch.End();
                 #endregion
+
+                
 
                 foreach (SmokeTrail trail in SmokeTrailList)
                 {
@@ -2895,6 +2912,14 @@ namespace TowerDefensePrototype
                 //if (CurrentSpecialAbility != null)
                 //    CurrentSpecialAbility.Draw(spriteBatch);
 
+                //foreach (Invader invader in InvaderList.Where(Invader => Invader.InvaderType == InvaderType.HealDrone))
+                //{
+                //    foreach (LightningBolt bolt in (invader as HealDrone).BoltList)
+                //    {
+                //        bolt.Draw(spriteBatch);
+                //    }
+                //}
+
 
                 spriteBatch.End();
                 #endregion
@@ -2905,7 +2930,15 @@ namespace TowerDefensePrototype
                 {
                     emitter.Draw(spriteBatch);
                 }
-                                
+
+                foreach (Invader invader in InvaderList.Where(Invader => Invader.InvaderType == InvaderType.HealDrone))
+                {
+                    foreach (LightningBolt bolt in (invader as HealDrone).BoltList)
+                    {
+                        bolt.Draw(spriteBatch);
+                    }
+                }
+
                 //foreach (BulletTrail trail in TrailList)
                 //{
                 //    trail.Draw(spriteBatch);
@@ -2945,6 +2978,8 @@ namespace TowerDefensePrototype
                 }
                 spriteBatch.End();
                 #endregion
+
+                
                 //spriteBatch.End();
                 #endregion
 
@@ -4164,6 +4199,15 @@ namespace TowerDefensePrototype
                         {
                             light.Update(gameTime);
                         }
+
+                        BlurryEmitter.Update(gameTime);
+                        FocusedEmitter.Update(gameTime);
+
+                        BlurryEmitter.ParticleList.RemoveAll(Particle => Particle.CurrentPosition.Y > 1080);
+                        FocusedEmitter.ParticleList.RemoveAll(Particle => Particle.CurrentPosition.Y > 1080);
+
+                        BlurryEmitter.Position = new Vector2(Random.Next(0, 1920), -64);
+                        FocusedEmitter.Position = new Vector2(Random.Next(0, 1920), -64);
 
                         foreach (Invader invader in InvaderList.Where(Invader => Invader.IsBeingHealed == true && Invader.HealthEmitter == null))
                         {
@@ -11727,14 +11771,15 @@ namespace TowerDefensePrototype
                         {
                             FireTrapStart.Play();
 
-                            Emitter FireEmitter = new Emitter(ExplosionParticle2, new Vector2(NewTrap.Position.X + NewTrap.CurrentAnimation.FrameSize.X / 2,
+                            Emitter FireEmitter = new Emitter(ToonSmoke2, new Vector2(NewTrap.Position.X + NewTrap.CurrentAnimation.FrameSize.X / 2,
                                             NewTrap.Position.Y + NewTrap.CurrentAnimation.FrameSize.Y - 8), new Vector2(150f, 30f), new Vector2(0f, 0.5f),
                                 new Vector2(899f, 1490f), 0.94f, false, new Vector2(-6f, 6f), new Vector2(-0.5f, 1f),
-                                new Vector2(0.1025f, 0.1355f), new Color(255, 128, 0, 0), new Color(0, 0, 0, 255), -0.015f,
+                                new Vector2(0.05f, 0.05f), new Color(255, 128, 0, 60), new Color(0, 0, 0, 255), -0.015f,
                                 -1f, 93f, 3, false, new Vector2(0f, 720f), true, (NewTrap.DestinationRectangle.Bottom + 1.0f) / 1080f, false, false, new Vector2(0f, 0f),
                                 new Vector2(0f, 0f), 0f, false, new Vector2(0.069f, 0f), false, false, 0f, false, false, true, null)
                             {
-                                TextureName = "FireParticle"
+                                TextureName = "FireParticle",
+                                Emissive = true
                             };
 
                             Emitter SparkEmitter = new Emitter(RoundSparkParticle,

@@ -270,6 +270,8 @@ Content\Shaders\Depth.xnb
 Content\Shaders\LightCombined.xnb
 Content\Shaders\LightEffect.xnb
 Content\Shaders\NoBlack.xnb
+Content\Shaders\ShockwaveEffect.xnb
+Content\Shaders\ShieldBubbleEffect.xnb
 Content\StoryDialogue\Level1Dialogue.xnb
 Content\StoryDialogue\Level2Dialogue.xnb
 Content\StoryDialogue\LoadoutMenuDialogue.xnb
