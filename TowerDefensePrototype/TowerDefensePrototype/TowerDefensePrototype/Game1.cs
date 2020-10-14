@@ -8413,9 +8413,14 @@ namespace TowerDefensePrototype
                                     false, null, true, true, new Vector2(4, 8),
                                     new Vector2(MathHelper.ToDegrees(-(float)Math.Atan2(heavyProjectile.Velocity.Y, heavyProjectile.Velocity.X)) - 180 - (float)RandomDouble(0, 90),
                                                 MathHelper.ToDegrees(-(float)Math.Atan2(heavyProjectile.Velocity.Y, heavyProjectile.Velocity.X)) - 180 + (float)RandomDouble(0, 45)),
-                                                0.2f, false, new Vector2(0.25f, 0), null, null, null, true, null);
+                                                0.2f, false, new Vector2(0.25f, 0), null, null, null, true, null)
+                                    {
+                                        Emissive = true
+                                    };
 
-                                    AdditiveEmitterList.Add(SparkEmitter2);
+                                    YSortedEmitterList.Add(SparkEmitter2);
+
+                                    AddDrawable(SparkEmitter2);
                                 }
 
                                 Tower.TakeDamage(sourceInvader.RangedDamage);
