@@ -1059,6 +1059,9 @@ namespace TowerDefensePrototype
                 });
 
 
+                StartWaveButton = new Button(ButtonRightSprite, new Vector2(1920-400, 200), null, null, null, "Start Waves", DefaultFont, "Right");
+                StartWaveButton.Initialize(OnButtonClick);
+
                 //LightList.Add(new Light()
                 //{
                 //    Color = Color.Plum,
@@ -1076,7 +1079,7 @@ namespace TowerDefensePrototype
                 //    Position = new Vector3(500, 500, 100),
                 //    Size = 1600
                 //});
-                
+
                 #region Prepare Render Targets
                 Buffer2 = new RenderTarget2D(GraphicsDevice, 1920, 1080, false, SurfaceFormat.Rgba64, DepthFormat.None, 0, RenderTargetUsage.PreserveContents);
                 Buffer1 = new RenderTarget2D(GraphicsDevice, 1920, 1080);
