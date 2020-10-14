@@ -4,6 +4,8 @@ This Readme is essentially a design outline of the game and a post-mortem of sor
 
 Although the game is not complete, the core mechanics and most of the features have been implemented in some form. No final art has been produced and everything is just placeholder, programmer art. I'm very much a designer and programmer and definitely not an artist. I am however happy with the [particle effects](https://github.com/GryffDavid/MultithreadedParticles) and the programmatically generated effects such as the [lightning](https://github.com/GryffDavid/StylizedLightning), [smoke](https://github.com/GryffDavid/VectorSmoke) and [grass](https://github.com/GryffDavid/2DDynamicGrass), as well as some of the sound effects I made too.
 
+Would I say that it's currently playable? Not really. But that's mostly just based on there being no structure to the levels/weapon unlocks and other things such as no tutorial explaining how to trigger a FlameThrower trap etc.
+
 ## Table of Contents
 
 - [Mechanics and Gameplay](#Mechanics-and-Gameplay)
