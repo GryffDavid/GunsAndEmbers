@@ -13,7 +13,7 @@ Although the game is not complete, the core mechanics and most of the features h
 - [Design Problems](#Design-Problems)
 - [Features not Implemented](#Features-Not-Implemented,-Otherwise-Known-as-Ideas)
 - [Background](#Background)
-- - [Features implemented](#Features-implemented)
+- [Features implemented](#Features-implemented)
 	- [Turrets](#Turrets)
       - [Grenade Turrets](#Grenade-Turrets)
       - [Heavy Projectile Turrets](#Heavy-Projectile-Turrets)
