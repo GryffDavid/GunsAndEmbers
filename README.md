@@ -1,5 +1,3 @@
-
-
 # Guns and Embers
 This Readme is essentially a design outline of the game and a post-mortem of sorts too. However, I definitely haven't given up on the idea or the implementation and I still stand by the concept. I would love to finish this game given enough time and money... and an artist. 
 
@@ -47,10 +45,27 @@ Although the game is not complete, the core mechanics and most of the features h
 ![Animation of Gameplay](https://github.com/GryffDavid/READMEImages/blob/master/TowerDefense/Gameplay1.gif)
 ![Animation of Gameplay 2](https://github.com/GryffDavid/READMEImages/blob/master/TowerDefense/Gameplay2.gif)
 
-[YouTube Video](https://youtu.be/xH4tC8bOpSg)
-[Buggy, but mechanically solid gameplay from 2017](https://youtu.be/wTQDjgLDA-c?t=4)
+This gameplay video shows some of the key mechanics and some of the cool features that I'm happy with.
+- The artillery arcing projectiles onto the terrain
+- The [Gas Grenades](#GasGrenadeTurret) bouncing across the terrain and unleashing a cloud of toxic gas that does damage over time to invaders that pass through it
+- Invaders moving up and attacking the wall traps
+- The [DropShip](#DropShip) that flies in from the right and drops off 2 battering rams (Green placeholder graphics)
+- [Invaders](#Soldier) using pathfinding to navigate back through the traps to man the battering ram, taking it forward to attack the tower
+- The [Healing Drones](#HealerDrone) which target invaders that have taken damage, floating nearby until the invaders are fully healed. Waiting unti, more invaders are damaged or moving onto another hurt invader. They also will not move too close to the tower and will not heal any invader too close to the tower, making them a challenge to hit. Also I'm really happy with their motion.
+- The [Harpoon Cannon invaders](#HarpoonCannon) which shoot harpoons out that attach to a turret whereupon the invader pulls the rope taut and starts to reverse, eventually destroying the turret.
+- [Trap](#Traps) placement works quite well with 2 bugs that need addressing
+- The shield on the tower actually works very well and I'm happy with the damage absorption and shield regeneration mechanics. Although the visuals are missing in the video, the invader projectiles can be seen stopping in mid-air and the shield bar on the UI being knocked down.
+
+[Just Gameplay (YouTube)](https://youtu.be/00MV9-NqXG8?t=27)
+
+[Setup and gameplay. No menus (YouTube)](https://youtu.be/00MV9-NqXG8)
+
+[Menus, Setup and Gameplay (YouTube)](https://youtu.be/xH4tC8bOpSg)
+
+[Buggy, but mechanically solid gameplay from 2017 (YouTube)](https://youtu.be/wTQDjgLDA-c?t=4)
 
 ## What is missing
+- Balance.
 - Lots of optimization. I have optimized some things, but there is so much that still needs to be done. But I am/was being careful about not prematurely optimizing, instead trying to flesh out mechanics and get the gameplay solid before worrying about optimizing and getting the code to production level. Optimizing on the fly felt pointless because so much of what I'd written was going to be rewritten because I'd learned something new and had a far better approach or because I wasn't sure if a mechanic was going to stick around.
 - There is no tutorial. 
 - There is a story, but it's not very good and I only have an incredibly loose outline. I was really much more focused on gameplay and mechanics, not too bothered about story. 
@@ -79,12 +94,13 @@ Although the game is not complete, the core mechanics and most of the features h
 - The invaders bunching up against the tower is perhaps a problem that needs to be re-thought. It forces the player to fire turrets almost directly downward which is irritating and not satisfying at all.
 
 ## Features Not Implemented, Otherwise Known as Ideas
+- Ability to place a flamethrower trap facing "backwards" as to fire left instead of right. This would allow the player to trap invaders between a wall and a flamethrower and torch the invaders when they're bunched up against the wall.
 
 ## Background
-The project was initially started in July 2013, about a year into my using C# and XNA. The budget was $0. I worked on it fairly consistently until about late-2017 when I set it aside due to burnout after only really taking public holidays off for 4 years straight - no weekends. I worked on [another project](https://github.com/GryffDavid/ArenaPlatformer) after that until September 2018 when my mother got sick. I took care of her until her passing in February 2020. I didn't completely stop during that time, but my work was sporadic and inefficient.
+The project was initially started in July 2013, about a year into my using C# and XNA. The budget for this project has always been $0 and I'm the only person that has worked on it. I worked on it fairly consistently until about late-2017 when I set it aside due to burnout after only really taking public holidays off for 4 years straight - no weekends. I worked on [another project](https://github.com/GryffDavid/ArenaPlatformer) after that until September 2018 when my mother got sick. I took care of her until her passing in February 2020. I didn't completely stop during that time, but my work was sporadic and inefficient.
 
 ## Features implemented
-- ❌ Feature is not implemented/Only some code exists
+- ❌ Feature is only partially implemented/Only some code exists
 - ✅ Feature is implemented and currently working
 - ❎ Feature has been implemented successfully in the past, but does not currently work
 ### Turrets
@@ -93,24 +109,22 @@ The project was initially started in July 2013, about a year into my using C# an
 
 **GasGrenadeTurret** ✅ Fires a grenade out onto the terrain. After a little bit of time it explodes into a gas cloud that causes damage-over-time to any invader that walks through it.
 
-**GrenadeTurret** ✅ 
+**GrenadeTurret** ✅ Fires a grenade out onto the terrain, the grenade explodes after a time.
 
 ### Heavy Projectile Turrets
 **CannonTurret** ✅ Just a simple cannon that fires a large, heavy projectile. Fairly good range. Does damage to surrounding invaders when it hits the ground and creates an explosion.
 
 **BoomerangTurret** ❎ Very similar to the cannon turret, except that the projectile will arc back towards the tower. This lets the projectiles land on the opposite side of a defensive wall
 
-**ClusterTurret** ✅ 
+**ClusterTurret** ✅ Fires a large round out over the terrain. It explodes in mid-air, dropping a bunch of smaller projectiles that fall to the ground and explode on impact
 
-**FelCannonTurret** ❎ 
+**FelCannonTurret** ❎ A large ball of energy that shoots out lightning bolts that chain from one invader to the next upon impact with the ground
 
-**FlameThrowerTurret** ❎ Very short range, but devastating. Mostly used in the bottom most slot.
+**FlameThrowerTurret** ❎ Very short range, but devastating. Mostly used in the bottom most slot. Works very well on invaders that have bypassed the shield already.
 
 **GlueTurret** ❌ Medium range, fires a sticky glue onto the terrain that slows down invaders as they walk into it. 
 
-**GrappleTurret** ❌
-
-**HarpoonTurret** ❌
+**HarpoonTurret** ❌ This turret is meant to be used to retrieve powerups, boxes or crates that land on the terrain. Fire the harpoon out, when it's attached to the item, right click and yank back the crate to collect the item. Can also be used on vehicles or normal invaders to do damage and possibly mush them into the side of the tower.
 
 
 ### Light Projectile Turrets
@@ -120,15 +134,15 @@ The project was initially started in July 2013, about a year into my using C# an
 
 **ShotgunTurret** ✅ Burst of light projectiles with infinite range. Does more damage than the machine gun per-bullet.
 
-**SniperTurret** ❌
+**SniperTurret** ❌ 
 
 
 ### Beam Turrets
-**BeamTurret** ✅
+**BeamTurret** ✅ 
 
-**FreezeTurret** ❎
+**FreezeTurret** ❎ A single burst beam that freezes an invader in place for a time when hit. Works similar to the ice trap, but it can be a guaranteed hit and a specific invader can be targetted as opposed to their only being a chance of an invader walking through an ice trap.
 
-**PersistentBeamTurret** ❎
+**PersistentBeamTurret** ❎ A high powered energy beam that does damage when contacting an invader. Mouse button needs to be held down to keep the beam active.
 
 
 ---
@@ -137,11 +151,11 @@ Traps are placed directly onto the terrain in front of the tower. Some traps are
 ### Offensive Traps
 **TriggerTrap** ❎
 
-**BarrelTrap** ❎
+**BarrelTrap** ❎ A barrel placed onto the terrain that does nothing special when left alone, but will explode when the player shoots it with a turret, an explosion happens nearby (Whether from an invader or a player action)
 
-**FireTrap** ✅
+**FireTrap** ✅ Simple, just a fire that does damage over time when an invader walks through it. Has 5 charges and is extinguished after those 5 are exhausted.
 
-**FlameThrowerTrap** ✅
+**FlameThrowerTrap** ✅ Pops up out of the ground, blocking the invaders path and spraying fire onto them doing damage over time. Is manually triggered in the current version, but the intention is to have it automatically trigger when approached.
 
 **LandMineTrap** ✅
 
@@ -154,13 +168,13 @@ Traps are placed directly onto the terrain in front of the tower. Some traps are
 
 
 ### Defensive Traps
-**CatapultTrap** ❎
+**CatapultTrap** ❎ When an invader steps onto this they are catapulted back towards the right of the screen, setting them back. Works well when combined with a wall trap as the invader is catapulted back over the wall and then has to break through the wall again.
 
-**GlueTrap** ❎
+**GlueTrap** ❎ 
 
-**IceTrap** ✅ 
+**IceTrap** ✅ Freezes an invader in place when touched. Not as targetted as the Freeze Turret as it relies on chance of the invader walking into it whereas the Freeze Turret can be used on a specific invader that the player chooses.
 
-**Wall** ✅ 
+**Wall** ✅ Pretty self explanatory. Just an obstacle that needs to be destroyed for the invader to progress. Has an interesting effect in that it also blocks the player from shooting the invaders on the other side of the wall with any sort of light projectile. To damage the invaders attacking a wall, the player needs to use a heavy, arcing projectile or other means such as gas or fire.
 
 
 ---
@@ -180,7 +194,7 @@ Traps are placed directly onto the terrain in front of the tower. Some traps are
 
 **FlameJetTrooper** ✅ 
 
-**Harpooncannon** ✅ This works really well and I'm very happy with the implementation, even though the visuals are terrible. This invader fires a harpoon attached to a rope. When the harpoon anchors to a turret, the rope is retracted until it is pulled taut and then the invader reverses to a point that the turret can no longer hold on and it's ripped from the socket. It's devastating and it pulls the players focus and becomes top priority as soon as the harpoon is anchored.
+**HarpoonCannon** ✅ This works really well and I'm very happy with the implementation, even though the visuals are terrible. This invader fires a harpoon attached to a rope. When the harpoon anchors to a turret, the rope is retracted until it is pulled taut and then the invader reverses to a point that the turret can no longer hold on and it's ripped from the socket. It's devastating and it pulls the players focus and becomes top priority as soon as the harpoon is anchored.
 
 **JumpMan** ✅ Basically a soldier/rifleman, but not hindered by defensive traps. Using a jetpack of sorts to jump over walls/traps.
 
