@@ -1,4 +1,5 @@
 
+
 # Guns and Embers
 This Readme is essentially a design outline of the game and a post-mortem of sorts too. However, I definitely haven't given up on the idea or the implementation and I still stand by the concept. I would love to finish this game given enough time and money... and an artist. 
 
@@ -8,7 +9,13 @@ Although the game is not complete, the core mechanics and most of the features h
 
 - [Mechanics and Gameplay](#Mechanics-and-Gameplay)
 - [Gifs, Videos, Screenshots](#Gameplay)
-- [Features implemented](#Features-implemented)
+- [What is missing](#What-is-missing)
+- [What I Learned](#What-I-learned)
+- [Design Successes](#Design-Successes)
+- [Design Problems](#Design-Problems)
+- [Features not Implemented](#Features-Not-Implemented,-Otherwise-Known-as-Ideas)
+- [Background](#Background)
+- - [Features implemented](#Features-implemented)
 	- [Turrets](#Turrets)
       - [Grenade Turrets](#Grenade-Turrets)
       - [Heavy Projectile Turrets](#Heavy-Projectile-Turrets)
@@ -22,12 +29,6 @@ Although the game is not complete, the core mechanics and most of the features h
 		- [Heavy Ranged](#Heavy-Ranged)
 		- [Light Ranged](#Light-Ranged)
 		- [Melee](#Melee)
-- [What is missing](#What-is-missing)
-- [Features not Implemented](#Features-Not-Implemented,-Otherwise-Known-as-Ideas)
-- [What I Learned](#What-I-learned)
-- [Design Successes](#Design-Successes)
-- [Design Problems](#Design-Problems)
-- [Background](#Background)
 - [Code Links](#Code-Links)
 
 ## Mechanics and Gameplay
@@ -47,21 +48,52 @@ Although the game is not complete, the core mechanics and most of the features h
 ![Animation of Gameplay 2](https://github.com/GryffDavid/READMEImages/blob/master/TowerDefense/Gameplay2.gif)
 
 [YouTube Video](https://youtu.be/xH4tC8bOpSg)
+[Buggy, but mechanically solid gameplay from 2017](https://youtu.be/wTQDjgLDA-c?t=4)
 
+## What is missing
+- Lots of optimization. I have optimized some things, but there is so much that still needs to be done. But I am/was being careful about not prematurely optimizing, instead trying to flesh out mechanics and get the gameplay solid before worrying about optimizing and getting the code to production level. Optimizing on the fly felt pointless because so much of what I'd written was going to be rewritten because I'd learned something new and had a far better approach or because I wasn't sure if a mechanic was going to stick around.
+- There is no tutorial. 
+- There is a story, but it's not very good and I only have an incredibly loose outline. I was really much more focused on gameplay and mechanics, not too bothered about story. 
+- A proper structure to the levels and invaders.
+- Different terrain features/terrains. 
+- Different towers.
+- Big invaders. For the most part the invaders are mostly small, which works quite well, but there should also be that "Wow" moment for a player when something big and unexpected turns up such as a tripod with a laser cannon for a face. Something the size of the tower that feels threatening and feels like it suddenly takes priority.
+
+## What I learned
+- Learned a lot about design from a practical point of view.
+- Implementing 2.5D taught me a lot. I had to solve a *lot* of problems, the biggest of which being the lighting system implementation. Turns out there aren't a whole lot of 2.5D lighting examples to go off of (At least, at the time) so I ended up designing the whole thing from the ground up. 
+- The arc of the projectiles being predicted is essential because it means there isn't as much randomness about where the projectile is going to land. 
+- Physics. 
+[Insert Screenshots of how much I progressed over the course of 2 years]
+
+## Design Successes
+- The gameplay is genuinely fun which is extremely important. Arcing a huge exploding projectile through the air and having it land squarely into a clump on oncoming invaders is extremely satisfying. 
+- The emergent gameplay is a success that I wasn't expecting, but I embrace wholeheartedly.
+- The "mood" system and AI is pretty cool too. 
+- The lighting systems is really great and I definitely would not have been able to do that in just 2 dimensions.
+
+## Design Problems
+- Players picking a loadout before knowing what enemies are approaching is probably the biggest problem, but it's easily overcome with a couple small changes, but I would really need to base this decision on at least a handful of levels being complete with a solid variety of weapons. The solution would be to let the player just unlock the weapons along the progression of the game and let them just pick from the entire list as opposed to choosing a loadout before the level starts.
+- The 2.5D may not have been the best choice, but I don't regret it. If I were to start the whole project over again I would still go with 2.5D. It certainly complicated things, but I do like the extra variety and mechanics it brings as opposed to the initial design which was just 2D. It does mean that the invaders can't be *too* intelligent though because otherwise they'd just walk around each trap by moving along the Z depth. They have to be a bit dumb which could be immersion breaking for the player. 
+- The 2.5D also complicates the heavy projectile arcing, although I have found that my solution of predicting where approximately it's going to land and then adjusting the Z depth based on invader density is quite good.
+- The invaders bunching up against the tower is perhaps a problem that needs to be re-thought. It forces the player to fire turrets almost directly downward which is irritating and not satisfying at all.
+
+## Features Not Implemented, Otherwise Known as Ideas
+
+## Background
+The project was initially started in July 2013, about a year into my using C# and XNA. The budget was $0. I worked on it fairly consistently until about late-2017 when I set it aside due to burnout after only really taking public holidays off for 4 years straight - no weekends. I worked on [another project](https://github.com/GryffDavid/ArenaPlatformer) after that until September 2018 when my mother got sick. I took care of her until her passing in February 2020. I didn't completely stop during that time, but my work was sporadic and inefficient.
 
 ## Features implemented
-Still working on this list, so I'm not totally sure if the feature implementation is accurate as of October 2020.
 - ❌ Feature is not implemented/Only some code exists
 - ✅ Feature is implemented and currently working
 - ❎ Feature has been implemented successfully in the past, but does not currently work
 ### Turrets
+#### Grenade Turrets
+**StickyMineTurret** ❎ Fire a bunch of mines that stick onto the terrain and can't be interacted with by the invaders. The player can then choose to detonate all of the mines at the same time when they feel is appropriate.
 
-### Grenade Turrets
-**StickyMineTurret** ❌ Fire a bunch of mines that stick onto the terrain and can't be interacted with by the invaders. The player can then choose to detonate all of the mines at the same time when they feel is appropriate.
+**GasGrenadeTurret** ✅ Fires a grenade out onto the terrain. After a little bit of time it explodes into a gas cloud that causes damage-over-time to any invader that walks through it.
 
-**GasGrenadeTurret** ❎ Fires a grenade out onto the terrain. After a little bit of time it explodes into a gas cloud that causes damage-over-time to any invader that walks through it.
-
-**GrenadeTurret** ❎ 
+**GrenadeTurret** ✅ 
 
 ### Heavy Projectile Turrets
 **CannonTurret** ✅ Just a simple cannon that fires a large, heavy projectile. Fairly good range. Does damage to surrounding invaders when it hits the ground and creates an explosion.
@@ -177,37 +209,5 @@ Traps are placed directly onto the terrain in front of the tower. Some traps are
 **Spider** ✅ 
 
 **SuicideBomber** ✅ Does exactly what it says on the box. Fast moving, moves up close to the tower and detonates itself. Can move through the shield.
-
-## What is missing
-- Lots of optimization. I have optimized some things, but there is so much that still needs to be done. But I am/was being careful about not prematurely optimizing, instead trying to flesh out mechanics and get the gameplay solid before worrying about optimizing and getting the code to production level. Optimizing on the fly felt pointless because so much of what I'd written was going to be rewritten because I'd learned something new and had a far better approach or because I wasn't sure if a mechanic was going to stick around.
-- There is no tutorial. 
-- There is a story, but it's not very good and I only have an incredibly loose outline. I was really much more focused on gameplay and mechanics, not too bothered about story. 
-- A proper structure to the levels and invaders.
-- Different terrain features/terrains. 
-- Different towers.
-- Big invaders. For the most part the invaders are mostly small, which works quite well, but there should also be that "Wow" moment for a player when something big and unexpected turns up such as a tripod with a laser cannon for a face. Something the size of the tower that feels threatening and feels like it suddenly takes priority.
-
-## Features Not Implemented, Otherwise Known as Ideas
-
-
-## What I learned
--Learned a lot about design from a practical point of view.
--Implementing 2.5D taught me a lot. I had to solve a *lot* of problems, the biggest of which being the lighting system implementation. Turns out there aren't a whole lot of 2.5D lighting examples to go off of (At least, at the time) so I ended up designing the whole thing from the ground up. 
-- The arc of the projectiles being predicted is essential because it means there isn't as much randomness about where the projectile is going to land. 
-- Physics. 
-[Insert Screenshots of how much I progressed over the course of 2 years]
-
-## Design Successes
-- The gameplay is genuinely fun. Arcing a huge exploding projectile through the air and having it land squarely into a clump on oncoming invaders is extremely satisfying. 
-- The emergent gameplay that I wasn't expecting is a success. 
-- The "mood" system and AI is pretty cool too. 
-- The lighting systems is really great and I definitely would not have been able to do that in just 2 dimensions.
-
-## Design Problems
-- The 2.5D may not have been the best choice, but I don't regret it. If I were to start the whole project over again I would still go with 2.5D. It certainly complicated things, but I do like the extra variety and mechanics it brings as opposed to the initial design which was just 2D. It does mean that the invaders can't be *too* intelligent though because otherwise they'd just walk around each trap by moving along the Z depth. They have to be a bit dumb which could be immersion breaking for the player. The 2.5D also complicates the heavy projectile arcing, although I have found that my solution of predicting where approximately it's going to land and then adjusting the Z depth based on invader density is quite good.
-- The invaders bunching up against the tower is perhaps a problem that needs to be re-thought. It forces the player to fire turrets almost directly downward which is irritating and not satisfying at all.
-
-## Background
-The project was initially started in July 2013, about a year into my using C# and XNA. The budget was $0. I worked on it fairly consistently until about late-2017 when I set it aside due to burnout after only really taking public holidays off for 4 years straight - no weekends. I worked on [another project](https://github.com/GryffDavid/ArenaPlatformer) after that until September 2018 when my mother got sick. I took care of her until her passing in February 2020. I didn't completely stop during that time, but my work was sporadic and inefficient.
 
 ## Code Links
