@@ -1,3 +1,4 @@
+
 # Guns and Embers
 This Readme is essentially a design outline of the game and a post-mortem of sorts too. However, I definitely haven't given up on the idea or the implementation and I still stand by the concept. I would love to finish this game given enough time and money... and an artist. 
 
@@ -59,6 +60,7 @@ This gameplay video shows some of the key mechanics and some of the cool feature
 	- Holding Shift is supposed to let the player "stamp" traps on the terrain without having to click the UI button again. 
 	- There is a bug that prevents the player from placing a trap near another trap even if there is still space.
 - The shield on the tower actually works very well and I'm happy with the damage absorption and shield regeneration mechanics. Although the visuals are missing in the video, the invader projectiles can be seen stopping in mid-air and the shield bar on the UI being knocked down.
+- Also the crepuscular lighting effect that gets eclipsed by the dropship as it flies away. Not a mechanic, but I think it's cool.
 
 [Just Gameplay (YouTube)](https://youtu.be/00MV9-NqXG8?t=27)
 
