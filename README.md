@@ -1,5 +1,5 @@
 # Guns and Embers
-**Please note: This project was started when I had only been using C# for about 9 months. So the quality of the code varies widely as I learned over the course of the development. Parts of the game code were written with 9 months of experience in and others with 4+ years of experience. Large sections were rewritten and refactored over the course of the development and all this code is in the same project. This is essentially a cross-section of my learning to make a game from the ground up.**
+**Please note: This project was started when I had only been using C# for about 9 months. So the quality of the code varies widely as I learned over the course of the development. Parts of the game code were written with 9 months of experience in and others with 4+ years of experience. Large sections were rewritten and refactored over the course of the development all this in the same project. This is essentially a cross-section of my learning to make a game from the ground up.**
 
 This Readme is basically a design outline of the game and a post-mortem of sorts too. However, I definitely haven't given up on the idea or the implementation and I still stand by the concept. I would love to finish this game given enough time and money... and an artist. 
 
