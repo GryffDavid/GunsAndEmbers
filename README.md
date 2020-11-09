@@ -88,8 +88,10 @@ This gameplay video shows some of the key mechanics and some of the cool feature
 - Learned a lot about design from a practical point of view.
 - Implementing 2.5D taught me a lot. I had to solve a *lot* of problems, the biggest of which being the lighting system implementation. Turns out there aren't a whole lot of 2.5D lighting examples to go off of (At least, at the time) so I ended up designing the whole thing from the ground up. 
 - The arc of the projectiles being predicted is essential because it means there isn't as much randomness about where the projectile is going to land. 
-- Physics. 
-[Insert Screenshots of how much I progressed over the course of 2 years]
+- Physics.
+- Shader programming
+- Graphics programming
+- Honestly learned too much to fit into a single document. I kept a daily blog over the course of development in which I detailed the process of learning to make a game.
 
 ## Design Successes
 - The gameplay is genuinely fun which is extremely important. Arcing a huge exploding projectile through the air and having it land squarely into a clump on oncoming invaders is extremely satisfying. 
