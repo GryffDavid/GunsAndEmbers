@@ -1,5 +1,5 @@
 # Guns and Embers
-[Gameplay footage](#Gameplay-Example)
+**[GAMEPLAY FOOTAGE](#Gameplay-Example)**
 
 **Please note: This project was started when I had only been using C# for about 9 months. So the quality of the code varies widely as I learned over the course of the development. Parts of the game code were written with 9 months of experience and others with 4+ years of experience. Most of it hasn't been optimised or made production-ready. Large sections were rewritten and refactored over the course of the development and all of this in the same project. This is essentially a cross-section of my learning to make a game from the ground up.**
 
