@@ -16,7 +16,6 @@ Would I say that it's currently playable? Not really. But that's mostly just bas
 - [Mechanics and Gameplay](#Mechanics-and-Gameplay)
 - [Gameplay Example](#Gameplay-Example)
 - [What is missing](#What-is-missing)
-- [What I Learned](#What-I-learned)
 - [Design Successes](#Design-Successes)
 - [Design Problems](#Design-Problems)
 - [Features not Implemented](#Features-Not-Implemented,-Otherwise-Known-as-Ideas)
@@ -35,6 +34,7 @@ Would I say that it's currently playable? Not really. But that's mostly just bas
 		- [Heavy Ranged](#Heavy-Ranged)
 		- [Light Ranged](#Light-Ranged)
 		- [Melee](#Melee)
+- [What I Learned](#What-I-learned)
 - [Code Links](#Code-Links)
 
 ## Mechanics and Gameplay
@@ -85,12 +85,6 @@ This gameplay video shows some of the key mechanics and some of the cool feature
 - Different towers.
 - Big invaders. For the most part the invaders are mostly small, which works quite well, but there should also be that "Wow" moment for a player when something big and unexpected turns up such as a tripod with a laser cannon for a face. Something the size of the tower that feels threatening and feels like it suddenly takes priority.
 - Upgrades. There is an upgrade system that has been programmed, but looking back on it, it feels like it's just there because it's expected and not because it actually adds gameplay value.
-
-## What I learned
-- Learned a lot about design from a practical point of view.
-- Implementing 2.5D taught me a lot. I had to solve a *lot* of problems, the biggest of which being the lighting system implementation. Turns out there aren't a whole lot of 2.5D lighting examples to go off of (At least, at the time) so I ended up designing the whole thing from the ground up. 
-- The arc of the projectiles being predicted is essential because it means there isn't as much randomness about where the projectile is going to land.
-- Honestly learned too much to fit into a single document. I kept a daily blog over the course of development in which I detailed the process of learning to make a game.
 
 ## Design Successes
 - The gameplay is genuinely fun which is extremely important. Arcing a huge exploding projectile through the air and having it land squarely into a clump on oncoming invaders is extremely satisfying. 
@@ -248,6 +242,12 @@ Traps are placed directly onto the terrain in front of the tower. Some traps are
 **Spider** ✅ Moves up towards the tower firing large ichor projectiles at the tower when in range, but continue moving up towards the tower eventually settling on melee attacks at the base of the tower.
 
 **SuicideBomber** ✅ Does exactly what it says on the box. Fast moving, moves up close to the tower and detonates itself. Can move through the shield.
+
+## What I learned
+- Learned a lot about design from a practical point of view.
+- Implementing 2.5D taught me a lot. I had to solve a *lot* of problems, the biggest of which being the lighting system implementation. Turns out there aren't a whole lot of 2.5D lighting examples to go off of (At least, at the time) so I ended up designing the whole thing from the ground up. 
+- The arc of the projectiles being predicted is essential because it means there isn't as much randomness about where the projectile is going to land.
+- Honestly learned too much to fit into a single document. I kept a daily blog over the course of development in which I detailed the process of learning to make a game.
 
 ## Code Links
 [Main Game Class](https://github.com/GryffDavid/GunsAndEmbers/blob/master/TowerDefensePrototype/TowerDefensePrototype/TowerDefensePrototype/Game1.cs)
