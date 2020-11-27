@@ -2,7 +2,7 @@
 # Guns and Embers
 At the time that I started taking game development seriously in 2011/2012, Unreal engine wasn't an option for indies and Unity wasn't the engine it is now. XNA was the choice for me because it seemed like the way to learn the most. **XNA isn't an engine, it's a DirectX wrapper for C#. This means that for *anything* I wanted to do in the game I had to write it myself *completely from scratch***, which was tedious but also taught me more than I could have imagined. Lighting system? Wrote it myself. Multithreaded particle engine? Wrote every line myself. Projectile physics? Written from scratch. It was time consuming and slow but I also learned about what was happening behind the scenes because, for instance, I couldn't just drop a pathfinding system into the game, I had to research pathfinding and then program it myself.
 
-[Gameplay Footage - On this page](#Gameplay-Example)
+[Gameplay Footage - On this page. Gifs and links to YouTube videos](#Gameplay-Example)
 
 **Please note: This project was started when I had only been using C# for about 9 months. So the quality of the code varies widely as I learned over the course of the development. Parts of the game code were written with 9 months of experience and others with 4+ years of experience. Most of it hasn't been optimised or made production-ready. Large sections were rewritten and refactored over the course of the development and all of this in the same project. This is essentially a cross-section of my learning to make a game from the ground up.**
 
