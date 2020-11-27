@@ -1,3 +1,4 @@
+
 # Guns and Embers
 [Gameplay Footage - On this page](#Gameplay-Example)
 
@@ -15,6 +16,7 @@ Would I say that it's currently playable? Not really. But that's mostly just bas
 
 - [Mechanics and Gameplay](#Mechanics-and-Gameplay)
 - [Gameplay Example](#Gameplay-Example)
+  - [Videos](#Videos)
 - [What is missing](#What-is-missing)
 - [Design Successes](#Design-Successes)
 - [Design Problems](#Design-Problems)
@@ -67,9 +69,12 @@ This gameplay video shows some of the key mechanics and some of the cool feature
 - The shield on the tower actually works very well and I'm happy with the damage absorption and shield regeneration mechanics. Although the visuals are missing in the video, the invader projectiles can be seen stopping in mid-air and the shield bar on the UI being knocked down.
 - Also the crepuscular lighting effect that gets eclipsed by the dropship as it flies away. Not a mechanic, but I think it's cool.
 
+### Videos
 [Just Gameplay (YouTube)](https://youtu.be/00MV9-NqXG8?t=27)
 
 [Setup and gameplay. No menus (YouTube)](https://youtu.be/00MV9-NqXG8)
+
+[Just UI Example](https://youtu.be/_D4wxMNIdpI)
 
 [Menus, Setup and Gameplay (YouTube)](https://youtu.be/xH4tC8bOpSg)
 
