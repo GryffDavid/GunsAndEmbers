@@ -4,8 +4,6 @@ At the time that I started taking game development seriously in 2011/2012, Unrea
 
 [Gameplay Footage - On this page. Gifs, explanation and links to YouTube videos](#Gameplay-Example)
 
-**Please note: This project was started when I had only been using C# for about 9 months. So the quality of the code varies widely as I learned over the course of the development. Parts of the game code were written with 9 months of experience and others with 4+ years of experience. Most of it hasn't been optimised or made production-ready. Large sections were rewritten and refactored over the course of the development and all of this in the same project. This is essentially a cross-section of my learning to make a game from the ground up.**
-
 This Readme is basically a design outline of the game and a post-mortem of sorts too. However, I definitely haven't given up on the idea or the implementation and I still stand by the concept. I would love to finish this game given enough time and money... and an artist. This document doesn't cover any programming.
 
 Although the game is not finished, the core mechanics and features are implemented (Although no *major* optimisation has been done to avoid prematurely optimising code that might end up being replaced). No final art has been produced and everything is just placeholder, programmer art. I'm very much a designer and programmer and definitely not an artist. I am however happy with the [particle effects](https://github.com/GryffDavid/MultithreadedParticles) and the programmatically generated effects such as the [lightning](https://github.com/GryffDavid/StylizedLightning), [smoke](https://github.com/GryffDavid/VectorSmoke) and [grass](https://github.com/GryffDavid/2DDynamicGrass), as well as some of the sound effects I made too.
@@ -255,6 +253,8 @@ Traps are placed directly onto the terrain in front of the tower. Some traps are
 - Honestly learned too much to fit into a single document. I kept a daily blog over the course of development in which I detailed the process of learning to make a game.
 
 ## Code Links
+**Please note: This project was started when I had only been using C# for about 9 months. So the quality of the code varies widely as I learned over the course of the development. Parts of the game code were written with 9 months of experience and others with 4+ years of experience. Most of it hasn't been optimised or made production-ready. Large sections were rewritten and refactored over the course of the development and all of this in the same project. This is essentially a cross-section of my learning to make a game from the ground up.**
+
 [Main Game Class](https://github.com/GryffDavid/GunsAndEmbers/blob/master/TowerDefensePrototype/TowerDefensePrototype/TowerDefensePrototype/Game1.cs)
 
 [HLSL Shaders](https://github.com/GryffDavid/GunsAndEmbers/tree/master/TowerDefensePrototype/TowerDefensePrototypeContent/Shaders)
