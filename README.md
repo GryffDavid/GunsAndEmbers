@@ -112,7 +112,7 @@ These are really just the ones I could find written down in a document called "T
 - Huge tripod with constant laser beams. Shoot off one leg and it collapses.
 
 ## Background
-The project was initially started in July 2013, about a year into my using C# and XNA. The budget for this project has always been $0. I worked on it fairly consistently until about late-2017 when I set it aside due to burnout after only really taking public holidays off for 4 years straight - no weekends. I worked on [another project](https://github.com/GryffDavid/ArenaPlatformer) after that until September 2018 when my mother got sick. I took care of her until her passing in February 2020. I didn't completely stop during that time, but my work was sporadic and inefficient.
+The project was initially started in July 2013, about a year into my using C# and XNA. The budget for this project has always been $0. I worked on it fairly consistently until about September 2018 when my mother got sick. I took care of her until her passing in February 2020. I didn't completely stop during that time, but my work was sporadic and inefficient.
 
 ## Features implemented
 - ❌ Feature is only partially implemented/Only some code exists
